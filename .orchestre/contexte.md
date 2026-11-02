@@ -1,29 +1,36 @@
-# Carte du code — presti (2026-10-11T13:23:11Z)
+# Carte du code — presti (2026-11-02T11:05:06Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
 
 SaaS pour les artisans du bâtiment : plateforme de conversation, devis, factures, site à la demande Pile : Next.js + Supabase + Vercel.
 
-## Pages (42) — `app/**/page.tsx`
+## Pages (53) — `app/**/page.tsx`
 - `/abonnement` : ·
 - `/aide` : ·
+- `/assistant` : ·
+- `/atelier-demo` : ·
 - `/cgu` : ·
 - `/chiffres` : ·
+- `/comment-faire-un-devis` : ·
 - `/confidentialite` : ·
 - `/connexion` : lien
 - `/contact` : ·
-- `/controle` : ·, station
+- `/controle` : compta-tableaux, ·, station
+- `/crm` : chantiers/[id], clients/[ref], ·
 - `/dashboard` : ·
 - `/devis` : [id], ·
 - `/direction` : ·
 - `/essai-formulaire` : ·
 - `/factures` : ·
 - `/faq` : ·
+- `/generateur-devis` : ·
 - `/inventaire` : fournisseurs, ·, recherche
+- `/logiciel-devis-artisan` : ·
 - `/login` : ·
 - `/mentions-legales` : ·
 - `/messages` : canaux, ·
+- `/modele-devis` : [metier], ·
 - `/onboarding` : ·
 - `/outils` : ·
 - `/p` : [slug]/[...reste], [slug]
@@ -38,25 +45,32 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/studio` : commander/[jeton]
 - `/tarifs` : ·
 
-## API (166) — `app/api/**/route.ts`, préfixe `/api`
+## API (217) — `app/api/**/route.ts`, préfixe `/api`
 - `/account` : delete [GET POST DELETE], inscription [POST], slug [GET POST]
+- `/agenda` : [jeton] [GET]
 - `/agents` : battement [POST], decisions [POST GET], demandes/[id] [PATCH], demandes [GET], etat [GET], evenements [POST GET], reunion/chiffres [GET], reunion [POST], taches/[id]/rendre [POST], taches/prendre [POST], taches [POST], telegram/entree [POST], telegram/sortie [GET], tic [GET], usine/depot [POST], usine/entree [POST], vigile [GET]
+- `/assistant` : actions [POST], · [POST]
 - `/audience` : · [POST]
 - `/auth` : code [POST GET], code/verifier [POST], lien [POST], mdp-fuite [POST], reset-confirm [POST], reset-request [POST]
-- `/canaux` : relever [GET POST], · [GET POST DELETE]
+- `/canaux` : meta/liaison [GET POST], meta [GET POST], relever [GET POST], · [GET POST DELETE], telegram [GET POST DELETE], telegram/webhook/[canal] [POST]
+- `/compta` : assistant [POST], reglages [GET PUT], tableau [GET]
 - `/contact` : · [POST]
 - `/controle` : a-faire [GET], alertes/[id]/acquitter [POST], apports/[id]/statut [POST], apports [GET POST PATCH], audience [GET], barre [GET], cerveaux [GET], chiffres [GET], clients/[id]/action [POST], clients/[id] [GET], clients [GET], compta [GET POST], comptable [GET], courriers/[fil]/action [POST], courriers/[fil] [GET], courriers/relever [POST], courriers [GET], crons/[nom]/relancer [POST], demandes [POST GET], etat [GET], fil [GET], jauges [GET], journal [GET], packs/[id] [POST], packs [GET], pause [GET POST], pilotage/agents/[nom] [POST], pilotage/appels/[id] [POST], pilotage/consignes [POST], pilotage/decisions/[id] [POST], pilotage/gestes [POST], pilotage [GET], recherche [GET], reconfirmer [POST], reglages [GET POST], releve [GET POST], securite/bans [GET POST DELETE], sites/[id] [POST], sites [GET], station/reglages [GET PUT], station [GET], support/demander [POST], support/lire [GET], support [GET POST], tresorerie [GET]
 - `/conversation` : devis [POST], regles [POST], · [GET POST], stream [POST]
+- `/crm` : acompte [POST GET PUT PATCH DELETE OPTIONS], agenda [GET POST DELETE PUT PATCH OPTIONS], apres-chantier/message [GET POST PUT PATCH DELETE OPTIONS], apres-chantier/opposition [POST GET PUT PATCH DELETE OPTIONS], apres-chantier [GET PUT POST PATCH DELETE OPTIONS], assistants/activite [GET POST PUT PATCH DELETE OPTIONS], chantiers/[id]/materiaux [POST GET PUT PATCH DELETE OPTIONS], chantiers/[id]/pointage [GET POST DELETE PUT PATCH OPTIONS], chantiers/[id] [GET PATCH DELETE POST PUT OPTIONS], chantiers/[id]/suivi [GET POST DELETE PUT PATCH OPTIONS], chantiers/[id]/taches [POST GET PUT PATCH DELETE OPTIONS], chantiers/[id]/valider [POST GET PUT PATCH DELETE OPTIONS], chantiers [GET POST PUT PATCH DELETE OPTIONS], clients [GET POST PUT PATCH DELETE OPTIONS], commandes/[id]/relancer [POST GET PUT PATCH DELETE OPTIONS], commandes/[id] [PATCH GET POST PUT DELETE OPTIONS], commandes [POST GET PUT PATCH DELETE OPTIONS], equipe/[id] [PATCH DELETE GET POST PUT OPTIONS], equipe [GET POST PUT PATCH DELETE OPTIONS], materiaux/[id] [PATCH DELETE GET POST PUT OPTIONS], notes/[id] [PATCH DELETE GET POST PUT OPTIONS], notes [GET POST PUT PATCH DELETE OPTIONS], pieces/[id] [PATCH DELETE GET POST PUT OPTIONS], pieces [GET POST PUT PATCH DELETE OPTIONS], pipeline [POST GET PUT PATCH DELETE OPTIONS], rappels/[id] [PATCH DELETE GET POST PUT OPTIONS], rappels [GET POST PUT PATCH DELETE OPTIONS], reglages [GET PUT POST PATCH DELETE OPTIONS], relances/envoyer [POST GET PUT PATCH DELETE OPTIONS], relances [POST GET PUT PATCH DELETE OPTIONS], taches/[id] [PATCH DELETE GET POST PUT OPTIONS], vehicules/[id] [PATCH DELETE GET POST PUT OPTIONS], vehicules [GET POST PUT PATCH DELETE OPTIONS], vue [GET POST PUT PATCH DELETE OPTIONS]
 - `/cron` : alertes [GET], contenu [GET], crieur [GET], facteur [GET], juge-faits [GET], livraison [GET], maquettes-purge [GET], purge-comptes [GET], recenseur [GET], redacteur [GET], relances [GET], repondeur [GET], standardiste [GET], vigie-meta [GET]
+- `/demandes` : import [POST]
 - `/devis` : [id]/envoyer [POST], [id]/pdf [GET], [id] [POST DELETE], auto [POST], generer [POST], · [POST]
 - `/domain` : · [GET POST DELETE]
 - `/donnees` : export [GET], · [GET POST]
-- `/factures` : [id]/avoir [POST], [id]/facturx [GET], [id]/pdf [GET], [id] [GET PATCH DELETE], · [POST]
+- `/essais` : · [GET]
+- `/factures` : [id]/avoir [POST], [id]/envoyer [POST], [id]/facturx [GET], [id]/pdf [GET], [id] [GET PATCH DELETE], relances-auto/a-valider [POST], relances-auto [GET PUT POST], · [POST]
 - `/inventaire` : fournisseurs [GET POST DELETE], materiaux [GET POST DELETE], observations [GET POST], recherche/retenir [POST], recherche [POST], · [GET POST DELETE]
 - `/leads` : contact [POST], photos [POST], · [POST]
 - `/media` : · [POST GET]
 - `/messages` : · [POST]
 - `/p` : auth [GET POST]
+- `/pilote` : file [GET POST PUT PATCH DELETE], reglages [GET PUT POST DELETE]
 - `/plat-event` : · [POST]
 - `/plateforme` : apparence [GET POST], config [GET]
 - `/prospects` : entrant [POST]
@@ -68,23 +82,24 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/site` : commander/brouillon [GET PUT], commander/complement [GET PUT], commander/public/renvoyer [POST], commander/public [POST], commander [POST], generate [POST]
 - `/stripe` : portail [GET POST], webhook [POST]
 - `/studio` : commander [POST]
-- `/subscribe` : · [POST]
+- `/subscribe` : · [GET POST]
 - `/support` : demande [POST]
 - `/tarifs` : · [GET POST DELETE]
 - `/tools` : reponse [POST]
 - `/usine` : atelier/depot [POST], atelier/lien [POST], atelier/maquette [POST], atelier/travail [GET], facteur/avis [POST], facteur/travail [GET], porteur/oppositions [GET POST], porteur/rendu [POST], porteur/travail [GET], pubs/depot [POST], pubs/rendu [POST], pubs/travail [GET], qualite/rapport [POST], qualite/travail [GET], sav/brouillon [POST], sav/rapport [GET], sav/travail [GET], standard/classement [POST], standard/travail [GET]
 - `/webhooks` : meta [GET POST]
 
-## Drapeaux — `lib/flags.ts` (35) : une fonctionnalité non finie n'apparaît pas
-busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformeRegles=true · aideVisites=true · aideCentre=true · landingVideo=false · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · siteCommande=true · siteCommandeVente=true · siteAchatPublic=false · landingDemoSite=true · audience=true · pilotage=true · stationCarte=true · packPub=false · packPubVente=false · demandesEcosysteme=true · prospectsEntrant=true · aimantSite=false · ecommerce=false · essaiFormulaire=true
+## Drapeaux — `lib/flags.ts` (57) : une fonctionnalité non finie n'apparaît pas
+busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformeRegles=true · aideVisites=true · aideCentre=true · landingVideo=false · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · canauxLeboncoin=false · siteCommande=true · siteCommandeVente=true · siteAchatPublic=false · landingDemoSite=true · audience=true · pilotage=true · stationCarte=true · packPub=false · packPubVente=false · demandesEcosysteme=true · prospectsEntrant=true · aimantSite=false · ecommerce=false · essaiFormulaire=true · comptaDateReglement=true · comptaAlerteImpayes=true · comptaExportMensuel=true · assistant=true · crm=true · relancesImpayes=true · crmPieces=true · crmPlanning=true · crmApresChantier=true · crmPlan=true · crmSuivi=true · crmAtelierVivant=true · crmTempsReelComplet=true · piloteAutomatique=true · crmPointage=true · devisLots=true · facturesSituation=true · canauxTelegram=true · canauxNotifications=true · canauxLiens=true · importProspects=true
 
 ## Formules — `lib/plans.ts`
-- plans : gratuit (Essai, 0 €/mois, BASE) · essentiel (Essentiel, 29 €/mois, BASE) · studio (Studio, 59 €/mois, STUDIO) · signature (Signature, 99 €/mois, SIGNATURE) · business (Business, 0 €/mois, SIGNATURE)
-- capacités (24) : plateforme.conversation, plateforme.ia.auto, plateforme.ia.expert, plateforme.comptes_clients, plateforme.domaine_perso, plateforme.personnalisation_avancee, plateforme.regles, site.essentiel, site.pro, site.signature, site.slides3d, site.domaine_perso, devis.ia, devis.prix_artisan, factures, factures.electronique, inventaire.stock, inventaire.recherche_ia, canaux.email, canaux.whatsapp, canaux.reseaux, relances, export, support.prioritaire
-- grille complète (16 lignes) : Page de conversation à votre marque · Assistant IA · Comptes clients (lien magique, historique) · Personnalisation · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA, sur vos prix · Factures + facture électronique · Relances automatiques · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Crédits chaque mois · Export de vos données · Support prioritaire
+- plans : gratuit (Essai, 0 €/mois, BASE) · essentiel (Essentiel, 29 €/mois, BASE) · studio (Studio, 59 €/mois, STUDIO) · signature (Signature, 99 €/mois, SIGNATURE) · entreprise (Presti pour l’entreprise, 0 €/mois, ENTREPRISE) · business (Business, 0 €/mois, ENTREPRISE)
+- grille complète (41 lignes) : Niveau d’automatisation · La plateforme : page de conversation à votre marque · Réponse aux demandes de vos clients · Comptes clients (lien magique, historique) · Écran « Ma plateforme » : réglages de l’assistant et apparence de votre page · Personnalisation · Relances des conversations (J+2, J+5, J+10) · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA sur vos prix : vous relisez et envoyez · Factures + export XML Factur-X · Devis par lots : un sous-total par corps de métier · Factures d’acompte, situations de travaux et facture de solde · Relances des factures impayées une fois activées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client · Écran « Mes chiffres » : chiffre d’affaires, impayés, devis à relancer, vos fichiers rangés par l’assistant · Alerte e-mail quand une facture reste impayée, automatique une fois activée · Export mensuel du journal des factures à votre comptable, automatique une fois activé · Pipeline des demandes et fiches clients · Chantiers : statuts, tâches, matériaux réservés · Équipe et véhicules affectés aux chantiers · Carte Atelier : chantiers, équipe et alertes (retards, livraisons, stock bas), en temps réel · Devis, factures et relances menés par la conversation · Stock et tarifs pilotés par la conversation · Le CRM piloté par la conversation · Briefing du matin : urgences, retards, ce qui vous attend · Vous confirmez ce qui part chez un client ; journal des actions, annulables · Limites · Pilote automatique : ce que vous choisissez part seul après 10 minutes pour annuler (jamais un prix estimé, jamais un paiement) · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Telegram : votre bot, messages reçus et envoyés depuis Presti · Vos réseaux regroupés : LinkedIn, Facebook, Instagram, TikTok, plateformes de devis (par leurs e-mails de notification) · Un lien et un QR code par réseau vers votre page · Import des prospects de vos publicités (fichier CSV) · Crédits chaque mois · Espace pour vos images (logo, réalisations) · Espace pour les photos de chantier envoyées par vos clients · Export de vos données · Support par écrit
 
-## Bibliothèque — `lib/**/*.ts` (250 fichiers, exports nommés)
+## Bibliothèque — `lib/**/*.ts` (361 fichiers, exports nommés)
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
+- `lib/accesOffre.ts` (7) : Ecran, ECRANS, RefusOffre, AccesOffre, decisionEcran, decisionPourEcran, libelleOffreMinimale
+- `lib/accesOffreServeur.ts` (2) : GardeOffre, exigerCapacite
 - `lib/agents/acquisition/affirmations.ts` (4) : Affirmation, AFFIRMATIONS_APPROUVEES, AFFIRMATIONS_PERMISES, AFFIRMATIONS_RETIREES
 - `lib/agents/acquisition/boiteProspection.ts` (6) : BoiteProspection, ETIQUETTE_FIL, filSeulAutorise, adresseFil, boiteProspection, adresseReponseProspection
 - `lib/agents/acquisition/conformite.ts` (6) : ProspectJuge, EtatMaquette, EntreeJuge, VerdictConformite, jugerMessage, jugerModele
@@ -136,26 +151,69 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/agents/telegram.ts` (12) : COMMANDES, Commande, EVENEMENTS_SORTANTS, MAX_MESSAGES, MOTIF_PAUSE_MAX, CONSIGNE_MIN, CONSIGNE_MAX, estCommande, …
 - `lib/agents/usineDepot.ts` (4) : FichierDepot, tacheDetenue, entree, depot
 - `lib/agents/veilleur.ts` (7) : Couleur, URGENTS, COULEURS, AGENTS_DE_L_USINE, Ligne, creneauDigest, veilleur
-- `lib/ai.ts` (23) : genParams, Artisan, Lead, LeadInsights, analyzeLead, qualifyLead, blocProspect, generateLeadReply, …
-- `lib/ai/antiFabrication.ts` (12) : ProfilCapacites, CapaciteDetectee, normaliser, texteProfil, MOTIFS_CAPACITE, RE_NEGATION, phrases, detecterCapacitesNonDeclarees, …
+- `lib/ai.ts` (27) : genParams, Artisan, Lead, LeadInsights, analyzeLead, qualifyLead, blocProspect, generateLeadReply, …
+- `lib/ai/antiFabrication.ts` (13) : ProfilCapacites, CapaciteDetectee, normaliser, texteProfil, RE_CRENEAU, MOTIFS_CAPACITE, RE_NEGATION, phrases, …
+- `lib/ai/compta.ts` (1) : demanderPlanCompta
 - `lib/ai/exemples.ts` (6) : ExempleDevis, ExemplesArtisan, EXEMPLES_VIDES, PLAFOND_EXEMPLES, chargerExemples, blocExemples
 - `lib/ai/metiers.ts` (9) : MetierId, ProfilMetier, PROFILS_METIER, PROFIL_GENERIQUE, detecterMetier, profilMetier, regleTva, blocMetierReponse, …
 - `lib/ai/outils.ts` (10) : MAX_TOURS_OUTILS, TIMEOUT_OUTILS_MS, ActionOutil, ArtisanOutils, ConversationOutils, ResultatOutils, Executeurs, executeursSupabase, …
 - `lib/ai/playbooks.ts` (8) : Intention, Playbook, MAX_QUESTIONS, PLAYBOOKS, playbookPour, compterQuestions, questionsDejaPosees, blocPlaybook
 - `lib/ai/routage.ts` (5) : SignauxComplexite, RaisonRoutage, Routage, estComplexe, routerModele
 - `lib/aide.ts` (5) : Article, InfoBulle, ARTICLES, INFOBULLES, chercher
+- `lib/aideAutomatique.ts` (27) : PILOTE_DELAI_MIN, PILOTE_PLAFOND_JOUR, OffreAide, OFFRES_AIDE, NOM_OFFRE, offrePremiere, titrePastille, CAPACITE_AIDE, …
+- `lib/aideVideos.ts` (7) : AideVideo, VIDEOS, urlVideo, urlAffiche, videosVisibles, videoPour, dureeTexte
 - `lib/alerteService.ts` (4) : MotifPanne, motifDe, estPanneDeCompte, signalerPanneIA
 - `lib/alertes.ts` (12) : Motif, Alerte, coutIADuMois, estimationDepuisLesCredits, CRONS_ATTENDUS, enregistrerErreur, enregistrerPassage, alertePaiement, …
 - `lib/apports.ts` (7) : COOKIE_APPORT, JOURS_APPORT, CODE, valeurCookie, enteteCookieApport, lireApport, preuveDepuisCookie
+- `lib/apresChantier.ts` (33) : DELAI_AVIS_JOURS, RATTRAPAGE_JOURS, PREAVIS_JOURS, ENTRETIEN_ANS_MAX, MAX_PAR_COMPTE_JOUR, TEXTE_MIN, TEXTE_MAX, LIEN_AVIS_AUTORISE, …
+- `lib/apresChantierTour.ts` (4) : LigneReglages, DependancesApres, MAX_POSES_PAR_PASSAGE, tourApresChantier
+- `lib/assistant/acces.ts` (2) : AccesAssistant, decisionAssistant
+- `lib/assistant/actions-serveur.ts` (8) : ENVOIS_JOUR_MAX, ACTIONS_JOUR_MAX, RELANCE_DELAI_JOURS, DependancesActions, ContexteActions, versCarte, ActionsServeur, actionsDeSession
+- `lib/assistant/actions-tout.ts` (3) : BoiteActions, ligneCommandeDe, actionsTout
+- `lib/assistant/avancement.ts` (7) : TacheAvancement, Correspondance, motsDuTravail, motDans, pieceDeTache, correspondanceAvancement, pctAvancement
+- `lib/assistant/boucle.ts` (14) : Brouillon, EtatTour, ResultatExecution, Executeurs, AppelJournal, ClientModele, ParametresModele, EchangePasse, …
+- `lib/assistant/briefing.ts` (6) : DevisSuivi, EntreeBriefing, DEVIS_SANS_REPONSE_JOURS, IMPAYE_URGENT_JOURS, SectionBriefing, composerBriefing
+- `lib/assistant/cadrage.ts` (27) : PLAFOND_TOURS, ETAPES_MAX, DUREE_TOUR_MS, MESSAGE_MAX, HISTORIQUE_MESSAGES_MAX, HISTORIQUE_CARACTERES_MAX, REFUS_CREDIT, REFUS_PLAFOND, …
+- `lib/assistant/cartes.ts` (26) : STATUTS_ACTION, StatutAction, VALIDITE_CARTE_MS, LigneCarte, AvantApres, MessageCarte, Apercu, CarteAction, …
+- `lib/assistant/confirmation.ts` (13) : FicheAction, NouvelleFiche, MagasinActions, Realisation, Realisateur, LigneJournalAction, DependancesDecision, CodeRefus, …
+- `lib/assistant/crm.ts` (12) : ChantierLu, TacheLue, AffectationLue, MembreLu, VehiculeLu, ReservationLue, MateriauLu, DossiersCrm, …
+- `lib/assistant/donnees.ts` (14) : ARTICLES_MAX, resumerStock, DevisLu, resumerDevis, TableauCompta, resumerFactures, resumerChiffres, LeadLu, …
+- `lib/assistant/executeurs.ts` (3) : COLONNES_CRM, executeursDeSession, journalEnBase
+- `lib/assistant/garde.ts` (2) : GardeAssistant, gardeAssistant
+- `lib/assistant/historique.ts` (5) : TEXTE_ECHANGE_MAX, cleHistorique, signerReponse, signatureValide, lireHistorique
+- `lib/assistant/journal.ts` (7) : ResultatJournal, ObjetJournal, LigneJournal, RESUME_MAX, TEXTE_NON_CONSERVE, resumerEntrees, ligneJournal
+- `lib/assistant/lectures-tout.ts` (3) : texteOffre, refusRoute, lecturesTout
+- `lib/assistant/magasin.ts` (2) : magasinSupabase, actionsDisponibles
+- `lib/assistant/outils-actions.ts` (30) : CategorieAction, Champ, SpecAction, TVA_TAUX, LIGNES_MAX, ROLES_EQUIPE, STATUTS_DEMANDE, STATUTS_CHANTIER_ACTION, …
+- `lib/assistant/outils.ts` (29) : STATUTS_DEVIS, STATUTS_FACTURES, PERIODES_CHIFFRES, STATUTS_CHANTIER, STATUTS_RESERVATION, QUAND_RAPPELS, QuandRappels, StatutDevis, …
+- `lib/assistant/session.ts` (7) : ContexteSession, clientDeSession, Gestionnaire, ReponseRoute, appelerAvec, appeler, erreurDe
+- `lib/assistant/tour.ts` (6) : EvenementTour, DependancesTour, MESSAGE_INTERROMPU, MESSAGE_JOURNAL_INDISPONIBLE, Preparation, preparerTour
 - `lib/audience.ts` (23) : PAGES_MESUREES, CHEMINS_DISCRETS, HOTES_MESURES, MOIS_AUDIENCE, CLE_NE_PAS_COMPTER, CAMPAGNES, cheminMesurable, hoteMesure, …
 - `lib/audienceServeur.ts` (7) : jourParis, minuitParis, reseauIp, empreinteDuJour, PLAFOND_JOUR_AUDIENCE, cleJourAudience, clePlafond
 - `lib/authArtisan.ts` (9) : Session, EchecAuth, ERREUR_MFA, ERREUR_SUSPENDU, ERREUR_CODE, authArtisan, revoquerSessions, estEchec, …
+- `lib/avoirFacture.ts` (2) : ResultatAvoir, creerAvoir
 - `lib/canaux.ts` (5) : devineFournisseur, ENTREPRISE_MAIL, boiteEntrepriseResolue, canalEntreprise, testerImap
+- `lib/canaux/dkim.ts` (7) : ResolveurTxt, couperEmail, balises, canonEntete, canonCorps, clePublique, signaturesDkimValides
+- `lib/canaux/importProspects.ts` (18) : RESEAUX_IMPORT, ReseauImport, estReseauImport, libelleReseauImport, MAX_OCTETS_IMPORT, MAX_LIGNES_IMPORT, separateurDe, lireCsv, …
+- `lib/canaux/leboncoin.ts` (7) : MailNotification, NotificationLeboncoin, lienLeboncoinSur, decoderEntites, authentificationEchouee, lireNotificationLeboncoin, contenuEntrantLeboncoin
+- `lib/canaux/libelles.ts` (12) : LIBELLE_CANAL, CanalLibelle, libelleCanalConversation, LIEN_MESSAGERIE_LEBONCOIN, CANAUX_NOTIFICATION, CanalNotification, estCanalNotification, LIEN_MESSAGERIE, …
+- `lib/canaux/meta.ts` (34) : CanalMeta, CANAUX_META, estCanalMeta, VERSION_GRAPH_DEFAUT, versionGraph, HoteMeta, HOTES_META, verifierSignatureMeta, …
+- `lib/canaux/notifications.ts` (11) : ReseauNotification, RESEAUX_NOTIFICATION, NotificationReseau, surDomaine, domaineExpediteur, verdictAuthentification, signeePar, expediteurDeReseau, …
+- `lib/canaux/rangement.ts` (15) : CanalConversation, Liaison, LeadTrouve, NouveauLead, NouveauMessage, MagasinCanaux, Range, IssueRangement, …
+- `lib/canaux/regles.ts` (9) : CANAUX_CONVERSATION, estCanalConversation, canalOuvert, capaciteCanal, formuleCanal, metaOuvert, CANAL_IMPORT, CANAUX_PILOTABLES, …
+- `lib/canaux/reseaux.ts` (8) : ORIGINES, Origine, LIBELLE_ORIGINE, lireOrigine, lienAvecSource, FicheReseau, RESEAUX_AFFICHES, ficheReseau
+- `lib/canaux/serveur.ts` (12) : IA_PAR_FIL, IA_NOUVEAUX_FILS, NOTIF_FIL_S, NOTIF_ARTISAN_JOUR, magasinCanaux, preparerReponseCanal, LeadEnvoi, IssueEnvoi, …
+- `lib/canaux/telegram.ts` (23) : API_TELEGRAM, LONGUEUR_MAX_TELEGRAM, RE_JETON_TELEGRAM, jetonTelegramValide, botIdDuJeton, estIdLiaison, secretWebhookTelegram, verifierSecretTelegram, …
 - `lib/clientAuth.ts` (7) : COOKIE_SESSION, ClientSession, creerLienMagique, consommerLien, sessionCourante, revoquerSession, cookieOptions
-- `lib/compta-exemple.ts` (1) : LIGNES_EXEMPLE
+- `lib/comparatifConcurrents.ts` (18) : COMPARATIF_DATE, COMPARATIF_DATE_ISO, CritereId, CelluleConcurrent, Concurrent, CRITERES, CONCURRENTS, PRESTI, …
+- `lib/compta-exemple.ts` (3) : LIGNES_EXEMPLE, FICHIERS_DESORDRE, PLAN_IA_EXEMPLE
 - `lib/comptaArtisan.ts` (9) : FichierCompta, FichierRange, Rangement, lignesStockeesValides, rangerFichiers, calculerVue, auditerVue, preparerRelance, …
+- `lib/comptaAssistant.ts` (23) : CATEGORIES_DEPENSES, CategorieDepense, ChampPlan, PlanFeuille, Plan, FeuilleEchantillon, Echantillon, LIMITES_ECHANTILLON, …
+- `lib/comptaAutomatisations.ts` (12) : ALERTE_JOURS_PAR_DEFAUT, ALERTE_JOURS_MIN, ALERTE_JOURS_MAX, Reglages, REGLAGES_PAR_DEFAUT, lireReglages, joursImpaye, facturesASignaler, …
+- `lib/comptaAutomatisationsTour.ts` (1) : tourCompta
 - `lib/comptaClasseur.ts` (1) : lireClasseur
-- `lib/comptaImport.ts` (18) : Sens, ChampCanonique, Statut, Ligne, Rejet, Colonne, Rapport, Options, …
+- `lib/comptaImport.ts` (20) : Sens, ChampCanonique, Statut, Ligne, Rejet, Colonne, Rapport, Options, …
+- `lib/comptaTableau.ts` (21) : Nombre, FacturePresti, DevisPresti, DemandePresti, PeriodeId, PERIODES, PERIODE_PAR_DEFAUT, EntreesCompta, …
 - `lib/comptaTableur.ts` (23) : ColonneJournal, Tri, Filtres, Totaux, RecapMois, RecapCategorie, RecapTiers, libelleStatut, …
 - `lib/comptaXlsx.ts` (8) : Cellule, Feuille, lettre, serieExcel, crc32, zipStocke, ecrireClasseur, classeurCompta
 - `lib/confidentialite/prospection.ts` (3) : SECTION_PROSPECTION, noticeHtml, mentionsHtml
@@ -181,14 +239,57 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/controle/lectures/tickets.ts` (1) : ticketsOuverts
 - `lib/controle/releve.ts` (6) : TAUX, LigneClient, Releve, calculerReleve, bornesDuMois, enEuros
 - `lib/controle/sante.ts` (3) : Niveau, Controle, niveauService
-- `lib/credits.ts` (2) : consumeCredit, rendreCredit
+- `lib/credits.ts` (4) : consumeCredit, rendreCredit, BaseCredits, restituerCredits
 - `lib/crieur/composer.ts` (4) : PHRASES_GABARIT, cleSemaine, horairesSemaine, composerLot
 - `lib/crieur/faits.ts` (2) : Fait, FAITS
 - `lib/crieur/juge.ts` (7) : PHRASE_AIMANT, Canal, PublicationAJuger, FaitPourJuge, ContexteJuge, VerdictJuge, jugerPublication
 - `lib/crieur/pauseProgrammees.ts` (2) : BilanProgrammees, signalerProgrammees
 - `lib/crieur/publora.ts` (4) : suspendrePublication, connexions, creerPublication, programmerPublication
+- `lib/crm/acces.ts` (2) : Acces, decisionAcces
+- `lib/crm/accueil.ts` (17) : EntreeAccueil, ActionLigne, LigneAttente, CleFile, FileAttente, SalleAttente, LIGNES_PAR_FILE, ilYaJours, …
+- `lib/crm/alertes.ts` (16) : TypeAlerte, Gravite, Alerte, LIBELLES_ALERTE, estAujourdhui, chantierVisible, estStockBas, aEncaisser, …
+- `lib/crm/apresOpposition.ts` (2) : empreinteAdresse, clientOppose
+- `lib/crm/argent.ts` (6) : FactureArgent, estSituation, Argent, estAcompte, decisionAcompte, argentDossier
+- `lib/crm/assistantCrm.ts` (28) : TYPES_CONTEXTE, TypeContexte, ContexteBrut, ContexteAssistant, lireContexteBrut, MOT_CONTEXTE, libellePropre, texteContexte, …
+- `lib/crm/assistants.ts` (11) : FactureEmise, facturesEmises, EntreePoste, ElementAssistant, CleAssistant, Assistant, PosteAssistants, ELEMENTS_PAR_ASSISTANT, …
+- `lib/crm/atelier.ts` (49) : TachesA, ChantierA, ReservationA, MateriauA, VehiculeA, MembreA, DemandeA, DonneesAtelier, …
+- `lib/crm/avancementAuto.ts` (9) : TacheAuto, tachesPourPhotoApres, RE_JETON_POINTAGE, POINTAGE_MAX, lireFormulairePointage, VuePointage, libelleNeutre, vuePointage, …
+- `lib/crm/carte.ts` (34) : LIBELLES_TYPE_BATIMENT, normaliser, REGLES_TYPE, deduireType, VarianteExterieur, varianteExterieur, typeDuChantier, PHASES, …
+- `lib/crm/chantier.ts` (13) : LigneDevis, TacheExistante, NouvelleTache, tachesDepuisDevis, tacheAInserer, avancement, Indicateurs, indicateurs, …
+- `lib/crm/chronologie.ts` (9) : FILTRES_CHRONO, FiltreChrono, LIBELLES_FILTRE_CHRONO, Evenement, EntreesChrono, chronologie, filtrer, comptes, …
+- `lib/crm/clients.ts` (16) : DevisC, FactureC, LeadC, ChantierC, ClientCarnet, GroupeClient, NOM_EFFACE, cleEmail, …
+- `lib/crm/commandes.ts` (21) : MANQUE_MIGRATION_COMMANDES, STATUTS_COMMANDE, StatutCommande, LIBELLES_STATUT_COMMANDE, LigneCommande, CommandeA, lignesDe, commandeDeLigne, …
+- `lib/crm/contexteAssistantServeur.ts` (1) : resoudreContexte
+- `lib/crm/effacement.ts` (5) : ChantierE, DevisE, FactureE, choisirEffacementCrm, notesClientAPurger
+- `lib/crm/effacementServeur.ts` (6) : BaseEffacement, tableAbsente, BUCKET_PIECES, LOT_FICHIERS, compterDeChantiers, effacerDossiersChantiers
+- `lib/crm/empreinte.ts` (2) : empreinteClient, idClientPour
+- `lib/crm/etiquettes.ts` (11) : Rect, EntreeEtiquette, Cote, SortieEtiquette, PRIORITES, ECART, MARGE, seCoupent, …
+- `lib/crm/evenements.ts` (3) : Evenement, evenementsScene, libellePaiement
+- `lib/crm/exemple.ts` (12) : JOUR_EXEMPLE, MAINTENANT_EXEMPLE, VUE_EXEMPLE, DONNEES_EXEMPLE, EQUIPE_EXEMPLE, INVENTAIRE_EXEMPLE, ficheChantierExemple, ficheClientExemple, …
+- `lib/crm/geocodage.ts` (3) : requeteChantier, preparerCarte, viderCacheBase
+- `lib/crm/ics.ts` (5) : EvenementIcs, echapper, plier, genererIcs, evenementsAgenda
+- `lib/crm/infrastructure.ts` (74) : Equipe, Stock, Base, BASES, LIBELLES_BASE, LIBELLES_LIEU, Statut, Gabarit, …
+- `lib/crm/pages.ts` (1) : lirePages
+- `lib/crm/pieces.ts` (15) : TYPES_PIECE, TypePiece, LIBELLES_PIECE, TAILLE_MAX_PIECE, MIMES_PIECE, MimePiece, DUREE_LIEN_SIGNE, typeReel, …
+- `lib/crm/pipeline.ts` (33) : ETAPES, Etape, EtapeOuClasse, LIBELLES_ETAPES, Nombre, LeadP, DevisP, FactureP, …
+- `lib/crm/plan.ts` (11) : PIECE_MAX, GENERAL, PIECES, pieceDe, nettoyerPiece, TachePlan, MembrePlan, EtatPiece, …
+- `lib/crm/planBatiment.ts` (13) : Meuble, Gabarit, GABARITS, Sorte, Zone, PlanBatiment, planBatiment, ABREGES, …
+- `lib/crm/planScene.ts` (12) : ECHELLE, HAUT_FOND, HAUT_CLOISON, HAUT_DEVANT, EtatZone, COULEUR_ETAT, LIBELLES_ETAT_ZONE, CibleScene, …
+- `lib/crm/planning.ts` (11) : ChantierP, RappelP, Barre, LignePlanning, Conflit, Planning, lundiDe, periode, …
+- `lib/crm/rappels.ts` (21) : TypeRappel, LIBELLES_RAPPEL, TYPES_RENDEZ_VOUS, RappelLigne, Rappel, ecartJours, ajouterJours, echeancesRapides, …
+- `lib/crm/rappelsTour.ts` (6) : RappelDuMatin, ResumeMatin, resumeDuMatin, texteMatin, DependancesTour, tourRappels
+- `lib/crm/serveur.ts` (17) : PAS_DE_CACHE, json, erreur, INDISPONIBLE, Garde, LIMITE_DEBIT, nonPermise, gardeCrm, …
+- `lib/crm/suivi.ts` (7) : LIBELLES_STATUT_SUIVI, VueSuivi, vueSuivi, CLES_SUIVI, RE_JETON_SUIVI, suiviExpire, pageSuivi
+- `lib/crm/tableau.ts` (4) : ChantierT, MateriauT, TableauCrm, calculerTableauCrm
+- `lib/crm/tempsReel.ts` (12) : TABLES_TEMPS_REEL, TABLES_APRES_0175, TableTempsReel, tablesEcoutees, SOURCES_VUE, HORS_TEMPS_REEL, LIBELLE_TABLE, Abonnement, …
+- `lib/crm/valider.ts` (51) : Resultat, STATUTS_CHANTIER, StatutChantier, LIBELLES_STATUT_CHANTIER, TYPES_BATIMENT, TypeBat, estTypeBat, ROLES_MEMBRE, …
+- `lib/crm/vue.ts` (28) : DevisLigne, FactureLigne, LeadLigne, ChantierLigne, MateriauLigne, DossiersCrm, ChantierListe, DevisSigne, …
 - `lib/devisAuto.ts` (3) : SourceDevis, ResultatDevisAuto, creerDevisBrouillonPourLead
+- `lib/devisEnvoi.ts` (1) : enregistrerEnvoi
+- `lib/devisExpiration.ts` (2) : ResultatExpiration, expirerDevisDepasses
+- `lib/devisMail.ts` (1) : mailDevis
 - `lib/devisPdfData.ts` (3) : mentionsReglement, MENTION_TVA_DEBITS, buildPdfData
+- `lib/devisStatut.ts` (2) : EtatDevis, datesDuStatut
 - `lib/devisTotals.ts` (2) : LigneCalc, computeTotals
 - `lib/direction/apports.ts` (12) : Statut, LigneApport, AvecCanal, RAISON_CANAL, Verdict, TAUX_MIN, TAUX_PLEIN, TAUX_CONTESTE, …
 - `lib/direction/canaux.ts` (4) : Apporteur, lireApporteurs, estCanal, canalParCode
@@ -205,11 +306,20 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/direction/tresorerie.ts` (4) : caDeLAnnee, situerTva, margeDuMois, ventesSites
 - `lib/direction/veilleTresorerie.ts` (2) : alertesTresorerie, veilleTresorerie
 - `lib/email.ts` (3) : EMAIL_ENTREPRISE, sendEmail, notifierEntreprise
+- `lib/envoisPdfServeur.ts` (3) : envoyerDevisServeur, ENVOIS_FACTURES_JOUR, envoyerFactureServeur
+- `lib/envoisServeur.ts` (6) : ReponseEnvoi, leadDuCompte, OptionsEnvoi, cleReclamation, validerPropositionServeur, repondreServeur
+- `lib/essaiGratuit.ts` (16) : estPlanPayant, essaiJours, creditsEssai, normaliserEmail, FaitsEssai, RaisonRefus, DecisionEssai, decisionEssai, …
+- `lib/essaiGratuitServeur.ts` (4) : empreinteEmail, evaluerEssai, marquerEssai, alerteFinEssai
+- `lib/essais.ts` (1) : ouvertPour
 - `lib/facturation.ts` (15) : DATE_CIBS, FIN_TOLERANCE_CGI, BaseMention, mentionFranchise, toleranceCgiEncoreValable, sirenValide, formaterSiren, CategorieOperation, …
-- `lib/factureDepuisDevis.ts` (3) : LigneIn, ResultatFacture, creerFacture
+- `lib/factureDepuisDevis.ts` (6) : LigneIn, ResultatFacture, ParamsFacture, SimulationFacture, creerFacture, simulerFacture
+- `lib/factureEmission.ts` (7) : JETON_NUMERO, DemandeEmission, ResultatEmission, EMISSION_INDISPONIBLE, fonctionAbsente, refusDeLaBase, emettreFacture
+- `lib/facturesTypes.ts` (33) : TYPES_DEVIS, TypeDevis, TYPES_FACTURE, TypeFacture, LIBELLES_FACTURE, LOT_MAX, HORS_LOT, pctTexte, …
+- `lib/facturesTypesServeur.ts` (4) : colonnesLotsPresentes, colonnesFacturesPresentes, INDISPONIBLE_0176, reinitialiserSondes
 - `lib/facturx.ts` (4) : LigneFacture, DonneesFacturX, genererFacturX, controlerAvantEmission
 - `lib/faq.ts` (1) : FAQ
-- `lib/flags.ts` (3) : FLAGS, Flag, actif
+- `lib/flags.ts` (5) : FLAGS, Flag, actif, ESSAI, enEssai
+- `lib/hoteSur.ts` (6) : PORTS_IMAP, MESSAGE_SERVEUR_INJOIGNABLE, adresseInterdite, Resolveur, VerdictHote, verifierServeurImap
 - `lib/imageQualite.ts` (6) : Role, Gravite, Alerte, Analyse, analyserImage, CONSEILS_PHOTO
 - `lib/installation.ts` (4) : peutInstaller, surChangement, installer, estInstallee
 - `lib/inventaire/auth.ts` (3) : AuthInventaire, authInventaire, estRefus
@@ -217,11 +327,12 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/inventaire/liste-depart.ts` (4) : NOTE_ACCES_CONNEXION, FournisseurDepart, LISTE_DEPART, domaineDe
 - `lib/inventaire/observations.ts` (4) : ObservationEntree, nettoyerObservation, enregistrerObservation, listerObservations
 - `lib/inventaire/types.ts` (15) : SourceObservation, TypeFournisseur, TYPES_FOURNISSEUR, SOURCES_OBSERVATION, JOURS_REVERIFICATION, ageLisible, aReverifier, Fournisseur, …
-- `lib/legalArtisan.ts` (16) : ArtisanLegal, Mention, mentionsObligatoires, mentionsManquantes, MENTIONS_EMISSION, OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, …
-- `lib/lignes.ts` (2) : LigneNorm, normalizeLigne
-- `lib/limites.ts` (3) : consommerLimite, cleEmail, limiteAtteinte
+- `lib/legalArtisan.ts` (18) : ArtisanLegal, Mention, mentionsObligatoires, mentionsManquantes, MENTIONS_EMISSION, OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, …
+- `lib/lignes.ts` (4) : LigneNorm, couperTexte, normalizeLigne, tauxTvaLu
+- `lib/limites.ts` (5) : consommerLimite, consommerLimiteStricte, cleEmail, libererLimite, limiteAtteinte
 - `lib/mailLite.ts` (3) : MailLu, sansCitation, lireMail
 - `lib/media.ts` (7) : MEDIA_BUCKET, resizeToBlob, blobToDataUrl, compressPhotoToDataUrl, uploadArtisanMedia, PhotoPreparee, preparerPhoto
+- `lib/mentionAssistant.ts` (2) : mentionAssistant, avecMentionAssistant
 - `lib/models.ts` (4) : Tier, TIERS, tierAllowed, resolveModel
 - `lib/motDePasse.ts` (7) : Force, evaluerMotDePasse, messageAuth, Fuite, verifierFuite, recupererDepuisHibp, messageFuite
 - `lib/natif.ts` (9) : estNatif, plateforme, plugin, partager, partagerFichier, prendrePhoto, scannerCodeBarres, vibrer, …
@@ -266,9 +377,15 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/pilotage/station.ts` (16) : VUES, Vue, SALLES_PANNEAU, LANCEMENT, DUREE_LIEN_APERCU_S, HORS, Domaine, DOMAINE_DE, …
 - `lib/pilotage/tapis.ts` (5) : ETAPES, LIGNES, tapis, lignes, mouvements
 - `lib/pilotage/theme.ts` (17) : CLES_THEME, CLES_EMPLACEMENT, JETONS_PALETTE, ETAPES_TAPIS, Point, Grille, Palette, Forme, …
-- `lib/plans.ts` (16) : PlanId, PlanPayant, Capacite, PLANS, CREDIT_COST, COUT_RECHERCHE, planConf, siteMaxForPlan, …
+- `lib/pilote/executeur.ts` (2) : realisateursPilote, dependancesSupabase
+- `lib/pilote/file.ts` (9) : LigneAuto, ContexteCompte, Issue, EtatConversation, BUDGET_PASSAGE_MS, REPRISE_EN_COURS_MS, DependancesFile, Bilan, …
+- `lib/pilote/regles.ts` (37) : DELAI_ANNULATION_MIN, DELAI_ANNULATION_MS, PLAFOND_AUTO_JOUR, ATTENTE_MAX_MS, LOT_PAR_PASSAGE, TYPES_PILOTE, TypePilote, estTypePilote, …
+- `lib/pilote/serveur.ts` (15) : MiseEnFile, lireReglages, partiesDepuis24h, jetonPlafond, lignesDuDevis, piloterCarte, piloterProposition, lireFile, …
+- `lib/plans.ts` (30) : PlanId, PlanPayant, Capacite, PLANS, ESSAI_JOURS, ESSAI_CREDITS_PLAFOND, CREDIT_COST, COUT_RECHERCHE, …
 - `lib/platStats.ts` (1) : computeResponseDelay
-- `lib/plateformeConfig.ts` (14) : ModeReponse, PlateformeConfig, CONFIG_DEFAUT, personaDe, getPlateformeConfig, motEscalade, heureFrance, dansLaPlage, …
+- `lib/plateformeAcces.ts` (3) : MESSAGE_PUBLIC_SANS_PLATEFORME, CompteOffre, plateformeOuverte
+- `lib/plateformeAccesServeur.ts` (2) : refusSansPlateforme, refusSiSansPlateforme
+- `lib/plateformeConfig.ts` (16) : ModeReponse, PlateformeConfig, CONFIG_DEFAUT, personaDe, TON_TEXTE, tonDeReponse, getPlateformeConfig, motEscalade, …
 - `lib/plateformeStyle.ts` (21) : Densite, Composeur, Schema, PlateformeStyle, STYLE_PLAT_DEFAUT, THEMES_PLAT, ACCENT_DEFAUT, ACCENT_VISIBILITE_MIN, …
 - `lib/prix/artisan.ts` (1) : sourceArtisan
 - `lib/prix/csv.ts` (4) : LigneTarif, Lecture, lirePrix, lireCsv
@@ -277,22 +394,29 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/prix/types.ts` (6) : SourceId, Poste, Fourchette, SourcePrix, libelleSource, sourceLigneValide
 - `lib/pubs/usinePubs.ts` (41) : AGENT, BUCKET, BUCKET_PHOTOS, BAIL_S, ECHECS_MAX, SIGNATURE_LECTURE_S, APERCU_S, PART_STOCKAGE_MAX, …
 - `lib/purgeComptes.ts` (3) : JOURS_DE_GRACE, emailAnonyme, purgerComptes
-- `lib/purgesRgpd.ts` (9) : PLAFOND_LIGNES, PLAFOND_CONVERSATIONS, JOURS_GRACE_JETONS, JOURS_SESSIONS_VERIFIEES, BilanPurges, seuilMois, seuilJours, purgerConversationsSansSuite, …
+- `lib/purgesRgpd.ts` (14) : PLAFOND_LIGNES, PLAFOND_CONVERSATIONS, JOURS_GRACE_JETONS, JOURS_SESSIONS_VERIFIEES, MOIS_IMPORT_SANS_CONTACT, BilanPurges, seuilMois, seuilJours, …
 - `lib/push.ts` (12) : ChargePush, ResultatPush, PLAFOND_PUSH_HEURE, clePubliqueVapid, cheminSur, TAILLE_CHARGE, chargeUtile, SERVICES_PUSH, …
 - `lib/pushClient.ts` (1) : desabonnerCetAppareil
 - `lib/pushNatif.ts` (4) : ChargeNative, ResultatNatif, firebasePret, envoyerPushNatif
+- `lib/qr.ts` (10) : VERSION_MAX, MatriceQR, motsDeDonnees, multGF, diviseurRS, resteRS, masqueInverse, octetsUtf8, …
 - `lib/qualification.ts` (6) : normalize, has, TYPE_CHANTIER, TOURNURES_NEUTRES, metierToType, typeChantier
 - `lib/quotaMedia.ts` (13) : PLAFOND_CONVERSATION, TAILLE_MAX_FICHIER, plafondImages, plafondPhotosClients, formaterOctets, messagePlafondImages, octetsImages, Verdict, …
 - `lib/recherche-fournisseurs.ts` (15) : HtOuTtc, ResultatRecherche, NonVu, SortieRecherche, EntreeRecherche, MAX_RESULTATS, sceller, sceauValide, …
-- `lib/regles.ts` (10) : Maillons, Prereglage, PREREGLAGES, MAILLONS_DEFAUT, normaliserMaillons, phraseRegle, ContexteConversation, Decision, …
-- `lib/reglesServeur.ts` (3) : regleDe, declencherRegles, acompteApresAcceptation
+- `lib/regles.ts` (11) : Maillons, Prereglage, PREREGLAGES, MAILLONS_DEFAUT, normaliserMaillons, phraseRegle, ContexteConversation, Decision, …
+- `lib/reglesServeur.ts` (6) : DependancesRegles, regleDe, declencherRegles, acompteApresAcceptation, ResultatAcompte, acompteALAcceptationDuDevis
 - `lib/relances.ts` (2) : CADENCE_RELANCES, planifierRelances
+- `lib/relancesImpayes.ts` (43) : MAX_RELANCES, JOUR_MIN, JOUR_MAX, ECART_MIN, RATTRAPAGE_JOURS, MAX_PAR_COMPTE_JOUR, TEXTE_MAX, TEXTE_MIN, …
+- `lib/relancesImpayesMagasin.ts` (2) : reglagesDeLigne, magasinSupabase
+- `lib/relancesImpayesTour.ts` (7) : MAX_COMPTES, Compte, EntreeJournalComplete, Magasin, Envoyer, Bilan, tourRelancesImpayes
+- `lib/relancesRegistre.ts` (9) : RELANCE_DELAI_JOURS, CheminRelance, TraceRelance, Historique, ObjetRelance, VerdictRelance, relanceRecente, phraseRefus, …
 - `lib/releveCanal.ts` (2) : Canal, releverCanal
 - `lib/renderPdf.ts` (1) : renderPdfToBuffer
 - `lib/savoir/index.ts` (9) : CLASSES, Classe, Passage, normaliser, decouper, construireIndex, chercherIndex, caviarder, …
 - `lib/savoir/recherche.ts` (25) : PLAFONDS_RECHERCHE, RECHERCHE_WEB_DE, SEUIL_SAVOIR, Classe, EntreeMoteurRecherche, SourceSavoir, SourceWeb, SourcePerplexity, …
 - `lib/secretBox.ts` (4) : chiffrementDisponible, chiffrer, dechiffrer, masque
+- `lib/secretEgal.ts` (2) : secretEgal, bearerEgal
 - `lib/security.ts` (4) : getIp, isBanned, recordAbuse, ipPseudonyme
+- `lib/seoDevis.ts` (10) : BASE, SOURCES, CleSource, MENTIONS_DEVIS, LigneModele, MetierDevis, METIERS_DEVIS, metierParSlug, …
 - `lib/siteAchatPublic.ts` (5) : DependancesAchat, JOURS_BROUILLON_PUBLIC, ouvrirCompteAcheteur, purgerBrouillonsPublics, rattacherCommandesParEmail
 - `lib/siteCommande.ts` (26) : PRIX_SITE_CENTS, PRIX_SITE_TEXTE, DELAI_ANNONCE, DELAI_TEXTE, SITE_A_LA_DEMANDE, ETATS, EtatCommande, TRANSITIONS, …
 - `lib/siteCommandeServeur.ts` (11) : brouillonDe, commandesDe, commandesACompleter, completerDossier, enregistrerBrouillon, poserSessionStripe, poserSessionStripePublique, EntreeCheckoutSite, …
@@ -305,9 +429,9 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/siteRedacteur.ts` (9) : Appel, Commande, ArtisanRow, Section, Modele, ContenuV2, Rapport, Entree, …
 - `lib/siteRetrait.ts` (5) : dateRetrait, commandesEnLigneDe, marquerSuppression, retraitsDus, retirer
 - `lib/siteStyle.ts` (13) : CoupleId, Echelle, Bouton, Rythme, Texture, Motion, SiteStyle, STYLE_DEFAUT, …
-- `lib/sites/searchConsole.ts` (6) : DependancesSearchConsole, CommandeSearchConsole, ResultatJeton, ResultatSoumission, jetonCompteService, soumettreSiteSearchConsole
 - `lib/sitesConstantes.ts` (2) : ETAT_RETIRE, LIBELLE_RETIRE
 - `lib/sitesGeneres.ts` (9) : BUCKET_SITES, PREFIXE_ROUTE, TYPES_MIME, typeMime, cheminObjet, FichierServi, lireFichier, siteDepose, …
+- `lib/sites/searchConsole.ts` (6) : DependancesSearchConsole, CommandeSearchConsole, ResultatJeton, ResultatSoumission, jetonCompteService, soumettreSiteSearchConsole
 - `lib/slug.ts` (3) : slugify, slugBase, randomSuffix
 - `lib/slugRedirect.ts` (1) : artisanParAncienSlug
 - `lib/stationHorsWeb.ts` (3) : hoteLocal, stationHorsWebPourHote, stationHorsWebPourRequete
@@ -335,10 +459,10 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/ville.ts` (2) : NB_COMMUNES, villeDe
 - `lib/zip.ts` (2) : crc32, ZipFlux
 
-## Migrations — `supabase/migrations` (135)
-- dernières : 0133_leads_ville.sql, 0134_neutralisation_boite_personnelle.sql, 0135_score_douleur.sql, 0136_prospects_a_noter.sql, 0137_premier_contact_formulaire_verifie.sql
+## Migrations — `supabase/migrations` (169)
+- dernières : 0178_factures_lignes_source_prix.sql, 0179_factures_sans_insertion_client.sql, 0180_factures_emission_atomique.sql, 0181_relances_impayes_a_valider.sql, 0189_role_lecture_n8n.sql
 
-## Scripts — `scripts/` (449 .mjs, dont 78 suites e2e)
+## Scripts — `scripts/` (551 .mjs, dont 88 suites e2e)
 
-## Orchestre — file : 2 · en cours : 7 · faites : 345 · refusées : 6
+## Orchestre — file : 60 · en cours : 0 · faites : 386 · refusées : 13
 

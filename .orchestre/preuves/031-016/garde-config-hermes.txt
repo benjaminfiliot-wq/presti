@@ -1,0 +1,47 @@
+✓ carte et commentaire de fin de ligne
+✓ liste au retrait de sa clé, éléments en carte
+✓ liste et carte en ligne
+✓ carte vide et # entre guillemets
+✓ liste indentée entre guillemets
+✓ bloc littéral sauté
+✓ listes imbriquées des MCP
+✓ configuration conforme : aucun problème
+✓ deny réduit à git push : les 8 autres entrées exigées sont toutes signalées
+✓ refusé : modèle principal sur freellmapi (l’ancienne garde le laissait passer)
+✓ refusé : modèle principal non Claude (l’ancienne garde le laissait passer)
+✓ refusé : repli en liste au retrait de la clé (l’ancienne garde le laissait passer)
+✓ refusé : repli en liste en ligne (l’ancienne garde le laissait passer)
+✓ refusé : repli en fallback_model (l’ancienne garde le laissait passer)
+✓ refusé : sous-agents sur freellmapi (l’ancienne garde le laissait passer)
+✓ refusé : tâche auxiliaire sur freellmapi (l’ancienne garde le laissait passer)
+✓ refusé : freellmapi dans le profil principal (l’ancienne garde le laissait passer)
+✓ refusé : outil n8n d’écriture ouvert (l’ancienne garde le laissait passer)
+✓ refusé : outil tiers explore_node_resources ouvert (l’ancienne garde le laissait passer)
+✓ refusé : n8n-oracle sans liste include (l’ancienne garde le laissait passer)
+✓ refusé : git push plus interdit (l’ancienne garde le laissait passer)
+✓ refusé : plus de plafond de durée (l’ancienne garde le laissait passer)
+✓ refusé : sessions simultanées permises (l’ancienne garde le laissait passer)
+✓ refusé : MCP cerveau retiré (l’ancienne garde le laissait passer)
+✓ refusé : call_agent ouvert (appelle un agent n8n, outils réels) (l’ancienne garde le laissait passer)
+✓ refusé : mutate_agent ouvert (modifie un agent n8n) (l’ancienne garde le laissait passer)
+✓ refusé : revert_agent ouvert (l’ancienne garde le laissait passer)
+✓ refusé : outil d’un préfixe inconnu ouvert (sync_workflow) (l’ancienne garde le laissait passer)
+✓ refusé : list_credentials ouvert (énumère les identifiants) (l’ancienne garde le laissait passer)
+✓ refusé : deny réduit à git push (commit, vercel, migrations, build retirés) (l’ancienne garde le laissait passer)
+✓ refusé : deny sans « git commit » (l’ancienne garde le laissait passer)
+✓ refusé : deny sans « vercel » (l’ancienne garde le laissait passer)
+✓ refusé : deny sans « appliquer-migration » (l’ancienne garde le laissait passer)
+✓ refusé : deny sans « presti-secrets » (l’ancienne garde le laissait passer)
+✓ refusé : deny sans « file-n8n.jeton » (l’ancienne garde le laissait passer)
+✓ refusé : deny sans « .env.local » (l’ancienne garde le laissait passer)
+✓ refusé : deny sans « npm run build » (l’ancienne garde le laissait passer)
+✓ refusé : deny sans « next build » (l’ancienne garde le laissait passer)
+✓ refusé : profil petites-taches avec un MCP
+✓ refusé : correctif local perdu (credentials)
+✓ refusé : correctif local perdu (tuiSource)
+✓ refusé : correctif local perdu (tuiDist)
+✓ refusé : fichier du correctif illisible
+✓ configuration réelle de Hermes conforme
+
+Toutes les vérifications passent
+garde code 0

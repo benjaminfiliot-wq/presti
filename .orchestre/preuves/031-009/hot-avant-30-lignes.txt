@@ -1,0 +1,30 @@
+---
+type: meta
+title: "hot"
+status: developing
+created: 2026-10-26
+updated: 2026-11-01
+tags:
+  - meta
+  - hot-cache
+---
+
+# Contexte récent (à relire en début de session)
+
+Navigation : [[index|Catalogue]] · [[overview|Vue d'ensemble]] · [[log|Historique]] · [[Système neuronal du cerveau]]
+
+## Dernière mise à jour
+
+01/11/2026, 21 h 40, rangement du soir : [[Journee-2026-11-01]] (avec le rattrapage du 29/10 soir au 31/10). Session du jour :
+[[Session-2026-11-01-Reseau-neuronal-phase-1-4]]. Leçons de la semaine : [[Apprentissage-2026-11-01]].
+
+## Faits récents utiles
+
+- **Cinq chantiers** (cerveau, landing, prospection, assistant, vidéos) ; Benj vise « l'écrasante majorité » finie le 02/11 à 10 h. Décisions verrouillées en ADR : [[Index - Décisions]] · [[Journal-Decisions]].
+- **Chantier 1 (réseau neuronal) en fin de contrôle croisé, pas encore validé par Benj** : écriture par `creer_note` et `relier_notes`, santé du réseau et « à revoir » par `sante_reseau` (MCP `cerveau`). La boucle n8n → Orca → Hermes a tourné seule le 01/11 à 23 h 49. Rien n'est commité dans cerveau ni dans presti. → [[Session-2026-11-01-Reseau-neuronal-phase-1-4]]
+- **Outils** : n8n sur Oracle par un tunnel permanent, Hermes et Orca branchés, et une garde bloque les écritures si l'un d'eux ne répond pas. PowerShell est la porte de secours.
+- **Répartition (01/11 au soir)** : le complexe par Claude Code ; Hermes sur Haiku 5.5 (Sonnet 5.5 si besoin) ; les modèles gratuits de freellmapi seulement pour les petites tâches. Hermes n'emprunte jamais la connexion de Claude Code. Sur freellmapi, il a truqué la tâche 031-004 : un vérificateur doit contrôler le fond. → [[Exécutants et routage des modèles]]
+- **Prospection** : l'e-mail est le seul canal automatique, et les tâches d'envoi et de publication sont en pause. 0 e-mail depuis le 29/10, 316 candidats Harvey vérifiés attendent (tous en 17, le stock s'use). → [[Harvey]] · [[Format d'e-mail froid artisan]]
+- **Aucun angle n'a marché** : 176 e-mails depuis le 11/10, 0 réponse positive. Il faut des messages plus courts (60 à 90 mots) et un nouvel objet. → [[Apprentissage-2026-11-01]]
+- **Chasse aux plaintes** : au-delà d'1 ou 2 passages par jour, elle ne trouve plus rien ; Firecrawl n'a de crédits que pour environ une passe. → [[Chasse aux plaintes publiques - méthode]]
+- **Pubs** : v21 « Inventaire + Tarifs » v2 rendue sans voix ; v10 finale « super médiocre ». Toujours le workflow `pub-10-sur-10` et la référence désignée par Benj. → [[Verdicts de Benj sur les films - historique]] · [[Copier une référence - planche et copie plan par plan]]

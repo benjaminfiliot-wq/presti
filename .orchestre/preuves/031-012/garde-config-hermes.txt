@@ -1,0 +1,6 @@
+témoin : lecture seule, deny git push                      ACCEPTÉ
+témoin : execute_workflow ouvert                           REFUSÉ : outil n8n d'écriture ouvert en permanence : execute_workflow
+call_agent ouvert (appelle un agent n8n, outils réels)     ACCEPTÉ
+mutate_agent ouvert (modifie un agent n8n)                 ACCEPTÉ
+revert_agent ouvert                                        ACCEPTÉ
+deny réduit à git push (commit, vercel, migrations, build retirés) ACCEPTÉ

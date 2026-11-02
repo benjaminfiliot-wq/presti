@@ -1,0 +1,564 @@
+
+######## Sur ce PC, le CLI de Claude Code 2.1.270 voit 6 serveurs MCP
+RESUME: Sur ce PC, le CLI de Claude Code 2.1.270 voit 6 serveurs MCP. En portée user (C:\Users\benja\.claude.json) : motionsites et alexya (HTTP, à authentifier), rea (stdio, en échec au contrôle) et cerveau (stdio local : node.exe C:\Users\benja\Documents\cerveau\src\mcp.mjs, connecté). En portée local, pour le seul dossier presti : n8n, qui pointe vers https://presti.app.n8n.cloud/mcp-server/http (HTTP, connexion OAuth, connecté). S'y ajoute le serveur du greffon plugin:ecc:chrome-devtools (en échec). Il n'y a pas de .mcp.json, donc rien en portée project.
+Sur Oracle, n8n 2.45.6 répond sur 127.0.0.1:5678, mais son accès MCP est éteint (404 « MCP access is disabled ») : Benj doit l'allumer. Son OAuth annonce des adresses en http://localhost:5678, faute de base d'URL réglée. Par un tunnel sur 5679, il enverrait donc vers le port du n8n local du PC. Il faut passer par l'en-tête Bearer, avec le jeton personnel de l'onglet API key, que Benj colle lui-même.
+Le port 5679 est libre, la clé gardien marche avec l'OpenSSH de Windows et sshd autorise la redirection. Un tunnel d'essai a répondu (Test-NetConnection True, healthz 200), puis je l'ai refermé. Je recommande un script PowerShell en boucle lancé caché par une tâche planifiée à part, à l'ouverture de session, sans réveiller le veilleur mis en pause.
+ETAT:
+ - Version et liste : `claude --version` rend « 2.1.270 (Claude Code) ». `claude mcp list` (lancé depuis presti, sortie filtrée des secrets) rend 6 serveurs : « plugin:ecc:chrome-devtools: npx -y chrome-devtools-mcp@latest - ✘ Failed to connect … timed out after 30000ms » ; « motionsites: https://xgdzyqfalbibzelpdpvr.supabase.co/functions/v1/mcp (HTTP) - ! Needs authentication » ; « alexya: https://mcp.alexya.ai/mcp (HTTP) - ! Needs authentication » ; « rea: C:\Program Files\nodejs\node.exe C:\Users\benja\AppData\Roaming\npm\node_modules\rea-agents\scripts\rea.mjs mcp - ✘ Failed to connect … timed out after 30000ms » ; « cerveau: C:\Program Files\nodejs\node.exe C:\Users\benja\Documents\cerveau\src\mcp.mjs - ✔ Connected » ; « n8n: https://presti.app.n8n.cloud/mcp-server/http (HTTP) - ✔ Connected ».
+ - Portée user, dans C:/Users/benja/.claude.json > mcpServers (lu par un script node qui n'affiche ni en-têtes ni variables d'environnement) : motionsites (http), alexya (http), rea (stdio implicite : node.exe + rea.mjs mcp) et cerveau (stdio : node.exe + C:\Users\benja\Documents\cerveau\src\mcp.mjs). Les quatre ont 0 en-tête et 0 variable d'environnement.
+ - Portée local, dans C:/Users/benja/.claude.json > projects["C:/Users/benja/Documents/presti"].mcpServers : un seul serveur, n8n (http, https://presti.app.n8n.cloud/mcp-server/http, 0 en-tête). `claude mcp get n8n` rend « Scope: Local config (private to you in this project) », « Status: ✔ Connected », « Type: http » et « To remove this server, run: claude mcp remove n8n -s local ». Il n'existe donc que dans les sessions ouvertes sur presti.
+ - Le n8n cloud s'authentifie par OAuth, trois preuves. 1) Sa déclaration n'a aucun en-tête. 2) `claude mcp list` écrit deux fois « [mcp-sdk] SEP-2352: stored OAuth credential has no 'issuer' stamp », signe de jetons OAuth stockés. 3) La note vault/inbox/sessions/2026-11-01-12h33-b6e06ae6-avant-compression.md dit que Benj l'a connecté par /mcp.
+ - Portée project : vide. `ls C:/Users/benja/Documents/presti/.mcp.json` rend « No such file or directory ». Il n'y a pas non plus de configuration gérée (« C:/Program Files/ClaudeCode/ » absent).
+ - cerveau est un serveur stdio local en portée user. `claude mcp get cerveau` rend « Scope: User config (available in all your projects) », « Type: stdio », « Command: C:\Program Files\nodejs\node.exe », « Args: C:\Users\benja\Documents\cerveau\src\mcp.mjs » et « ✔ Connected ».
+ - Réglages. C:/Users/benja/.claude/settings.json : permissions.defaultMode = "bypassPermissions", plus 12 refus mcp__ (Vercel buy_*, Supabase create_project et confirm_cost, ElevenLabs agents_delete et *_phone_number). Aucun ne vise n8n ni cerveau. presti/.claude/settings.local.json autorise 2 outils mcp__, ni n8n ni cerveau.
+ - Le port 5679 est libre : `netstat -ano | findstr 5679` ne rend rien (code findstr = 1). Le 5678 est libre aussi, car le n8n Docker local du PC est arrêté. Aucun processus ssh.exe ne tourne (Get-CimInstance Win32_Process) : le tunnel ouvert plus tôt par la session principale est retombé.
+ - SSH depuis le PC : C:\WINDOWS\System32\OpenSSH\ssh.exe (OpenSSH_for_Windows_9.5p2, premier dans le PATH de PowerShell) se connecte en BatchMode avec ~/.ssh/presti-usine-gardien (« ok-openssh-windows », code 0). L'empreinte de 88.96.53.3 est dans ~/.ssh/known_hosts (`ssh-keygen -F` : présente). Il n'y a pas de ~/.ssh/config. Git Bash a son propre ssh (OpenSSH_10.3p1).
+ - Tunnel d'essai (ssh -N … -L 5679:127.0.0.1:5678, lancé par Start-Process puis arrêté) : écoute sur [::1]:5679 ; « Test-NetConnection localhost -Port 5679 -> TcpTestSucceeded=True (adresse testee : ::1) » ; « GET http://127.0.0.1:5679/healthz -> 200 {"status":"ok"} ». Après l'arrêt : « reste-t-il une ecoute sur 5679 ? False ».
+ - Serveur Oracle, en lecture seule par ssh gardien : `sudo -n docker ps` rend « n8n-complet-n8n-1 n8nio/n8n:2.45.6 Up 2 days 127.0.0.1:5678->5678/tcp », plus runners, sandbox-api, sandbox-runner, searxng et freellmapi. `ss -ltnp` rend « LISTEN 127.0.0.1:5678 … docker-proxy ». `curl http://127.0.0.1:5678/healthz` rend {"status":"ok"} [HTTP 200].
+ - L'accès MCP du n8n d'Oracle est ÉTEINT : `curl -H 'Accept: application/json, text/event-stream' http://127.0.0.1:5678/mcp-server/http` rend « HTTP/1.1 404 Not Found » et « {"message":"MCP access is disabled"} ». Par le tunnel, même 404. Le compte propriétaire existe : /rest/settings rend userManagement.showSetupOnFirstLoad = False.
+ - L'OAuth du n8n d'Oracle annonce le port 5678. /.well-known/oauth-authorization-server rend « "issuer":"http://localhost:5678" » et « "authorization_endpoint":"http://localhost:5678/mcp-oauth/authorize" » ; les adresses token et register sont aussi en http://localhost:5678/mcp-oauth/…. /.well-known/oauth-protected-resource/mcp-server/http rend 404 « Unknown protected resource », car le MCP est éteint. Parmi les noms de variables de /opt/n8n-complet/.env et des deux docker-compose (noms seuls, aucune valeur lue), il n'y a ni N8N_HOST, ni N8N_EDITOR_BASE_URL, ni WEBHOOK_URL, ni N8N_DISABLED_MODULES.
+ - Le code de n8n 2.45.6 (dist/modules/mcp, lu dans le conteneur par grep) porte les deux voies d'authentification. mcp-api-key.service.js contient getOrCreateApiKey, rotateMcpServerApiKey, redactApiKey et l'audience « mcp-server-api ». mcp-server-middleware.service.js contient ApiKeyService, Bearer, OAuthAccessToken, oauthTokenVerifier, WWW-Authenticate et resource_metadata. mcp-protected-resource.js bâtit la ressource avec getInstanceBaseUrl() + /mcp-server/http.
+ - Doc n8n (https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/ et https://docs.n8n.io/connect/connect-to-n8n-mcp-server/mcp-client-examples). On l'active par Settings > Instance-level MCP > Enable MCP access (propriétaire ou admin). L'onglet API key donne un jeton personnel, visible en entier tant qu'on reste sur l'onglet, puis masqué ; « Rotate » en refait un et révoque l'ancien. Pour Claude Code, la commande prend `--header "Authorization: Bearer <YOUR_N8N_MCP_TOKEN>"`. Un workflow n'est lisible ou exécutable par MCP que si son accès MCP est activé, mais search_workflows montre un aperçu de tous.
+ - sshd côté Oracle pour gardien (`sudo -n sshd -T -C user=gardien,…`) : allowtcpforwarding yes, permitopen any, disableforwarding no, gatewayports no, clientaliveinterval 0 (le serveur n'envoie aucun battement). authorized_keys : 1 clé, aucune option restrictive.
+ - Tâches planifiées du PC. « Cerveau Presti » (Ready, action `C:\Windows\System32\conhost.exe --headless "C:\Program Files\nodejs\node.exe" …\reindexer.mjs`, dernier lancement le 01/11 à 15:18, résultat 0) prouve que le lancement caché par conhost --headless marche. « Presti veilleur-nuit », « Presti demons », « Presti usine veille » et « Presti surveillant-nuit » sont Disabled depuis la pause de l'écosystème (memoire/ecosysteme-en-pause-1110.md : « ne rien relancer sans sa demande »). Le veilleur gardait autrefois les tunnels 3001 et 11435 (memoire/starnet-feed-mcp-8799.md).
+ - Machine Oracle (`nproc`, `free -g`, `df -h /`) : 4 CPU, 23 Go de mémoire dont 21 disponibles, disque / à 90 % (11 Go libres).
+ETAPES:
+ 1. claude | Avec l'accord explicite de Benj, écrire le script du tunnel hors du dépôt, à côté des scripts de l'usine (presti-ops/usine, non versionné). Les chaînes restent sans accents à cause de PowerShell 5.1. 
+    CMD: Fichier C:\Users\benja\Documents\presti-ops\usine\tunnel-n8n-oracle.ps1 :
+# Tunnel PC localhost:5679 -> Oracle 127.0.0.1:5678 (n8n). Lance cache par la tache 'Tunnel n8n Oracle'.
+$ssh        = "$env:WINDIR\System32\OpenSSH\ssh.exe"
+$cle        = "$env:USERPROFILE\.ssh\presti-usine-gardien"
+$dossier    = 'C:\Users\benja\Documents\presti-ops\usine'
+$journal    = Join-Path $dossier 'tunnel-n8n-oracle.log'
+$journalSsh = Join-Path $dossier 'tunnel-n8n-oracle.ssh.log'
+while ($true) {
+  # un tunnel ecoute deja (ouvert a la main) : on ne double pas
+  if (Get-NetTCPConnection -LocalPort 5679 -State Listen -ErrorAction SilentlyContinue) { Start-Sleep -Seconds 30; continue }
+  Add-Content -Path $journal -Value "$(Get-Date -Format s) ouverture du tunnel"
+  & $ssh -N -T -i $cle -E $journalSsh -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o ConnectTimeout=15 -L 5679:127.0.0.1:5678 gardien@88.96.53.3
+  Add-Content -Path $journal -Value "$(Get-Date -Format s) tunnel coupe (code $LASTEXITCODE), relance dans 15 s"
+  Start-Sleep -Seconds 15
+} 
+    VERIF: PowerShell : $e=$null; [void][System.Management.Automation.Language.Parser]::ParseFile('C:\Users\benja\Documents\presti-ops\usine\tunnel-n8n-oracle.ps1',[ref]$null,[ref]$e); $e.Count doit rendre 0 (aucune erreur de syntaxe).
+ 2. claude | Avec l'accord explicite de Benj (c'est une configuration persistante), créer une tâche planifiée à part, lancée à l'ouverture de session et cachée par conhost --headless comme « Cerveau Presti », puis la démarrer. On ne touche pas aux tâches « Presti * » en pause, et le nom ne porte pas le préfixe Presti pour ne pas s'y confondre. 
+    CMD: $action = New-ScheduledTaskAction -Execute 'C:\Windows\System32\conhost.exe' -Argument '--headless powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Users\benja\Documents\presti-ops\usine\tunnel-n8n-oracle.ps1"' -WorkingDirectory 'C:\Users\benja\Documents\presti-ops\usine'
+$declencheur = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
+$reglages = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -ExecutionTimeLimit ([TimeSpan]::Zero) -MultipleInstances IgnoreNew -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1)
+Register-ScheduledTask -TaskName 'Tunnel n8n Oracle' -Action $action -Trigger $declencheur -Settings $reglages -Description 'Tunnel SSH localhost:5679 vers le n8n Oracle 127.0.0.1:5678, relance en boucle'
+Start-ScheduledTask -TaskName 'Tunnel n8n Oracle' 
+    VERIF: (Get-ScheduledTask -TaskName 'Tunnel n8n Oracle').State doit rendre Running. netstat -ano | findstr 5679 doit montrer [::1]:5679 (et 127.0.0.1:5679) en LISTENING, avec le PID de ssh.exe. Test-NetConnection localhost -Port 5679 doit rendre TcpTestSucceeded : True. (Invoke-WebRequest -UseBasicParsing http://localhost:5679/healthz).Content doit rendre {"status":"ok"}. Après une fermeture puis une réouverture de la session Windows, mêmes résultats.
+ 3. claude | Prouver la relance automatique : couper le seul ssh du tunnel et constater qu'il revient. 
+    CMD: Get-CimInstance Win32_Process -Filter "Name='ssh.exe'" | Where-Object { $_.CommandLine -like '*5679:127.0.0.1:5678*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force } 
+    VERIF: Une vingtaine de secondes plus tard : Test-NetConnection localhost -Port 5679 doit rendre True, et netstat -ano | findstr 5679 un AUTRE PID. Get-Content C:\Users\benja\Documents\presti-ops\usine\tunnel-n8n-oracle.log -Tail 3 doit montrer « tunnel coupe (code …), relance dans 15 s » puis « ouverture du tunnel ».
+ 4. benj | Allumer l'accès MCP du n8n d'Oracle. C'est un réglage n8n réservé au compte propriétaire, éteint aujourd'hui. 
+    CMD: Dans un navigateur sur ce PC : http://localhost:5679, se connecter, puis Settings > Instance-level MCP > « Enable MCP access ». Ne pas utiliser l'onglet OAuth. 
+    VERIF: Par Claude : curl.exe -s -i http://localhost:5679/mcp-server/http ne doit plus rendre « 404 {"message":"MCP access is disabled"} ». Attendu : un 401 avec un en-tête WWW-Authenticate: Bearer.
+ 5. benj | Récupérer le jeton personnel MCP. C'est la seule voie qui marche par le tunnel 5679 : l'OAuth renvoie vers localhost:5678. 
+    CMD: Même page : Connect / Connection details, onglet « API key », copier le jeton. Il n'est visible en entier que tant qu'on reste sur l'onglet ; sinon « Rotate » en crée un neuf et révoque l'ancien. Ne le coller que dans la commande de l'étape suivante. 
+    VERIF: Aucune par Claude (c'est un secret) ; l'étape suivante prouve qu'il marche.
+ 6. benj | Déclarer le n8n d'Oracle dans Claude Code : nom distinct, portée user, transport http, en-tête Bearer. Le CLI met par défaut la portée local, donc --scope user est obligatoire. Le tunnel doit être monté. 
+    CMD: Dans PowerShell :
+claude mcp add --transport http --scope user n8n-oracle http://localhost:5679/mcp-server/http --header "Authorization: Bearer <JETON>"
+Variante qui garde le jeton hors de l'historique PowerShell :
+$jeton = Read-Host 'Jeton MCP du n8n Oracle'; claude mcp add --transport http --scope user n8n-oracle http://localhost:5679/mcp-server/http --header "Authorization: Bearer $jeton"; Remove-Variable jeton 
+    VERIF: claude mcp list doit rendre « n8n-oracle: http://localhost:5679/mcp-server/http (HTTP) - ✔ Connected », et n8n (le cloud) rester « ✔ Connected ». Vérifier par list plutôt que par get, qui peut afficher l'en-tête.
+ 7. claude | Si Benj le décide : poser des refus sur les outils n8n-oracle qui ramènent des données personnelles ou qui détruisent, dans le style des 12 refus mcp__ déjà présents. C'est utile parce que le mode bypassPermissions est actif. 
+    CMD: Dans C:\Users\benja\.claude\settings.json, ajouter à permissions.deny (noms à confirmer sur la vraie liste d'outils après le branchement) : "mcp__n8n-oracle__get_workflow_execution", "mcp__n8n-oracle__search_workflow_executions", "mcp__n8n-oracle__get_data_table_rows", "mcp__n8n-oracle__archive_workflow", "mcp__n8n-oracle__delete_agent", "mcp__n8n-oracle__delete_data_table_column", "mcp__n8n-oracle__install_community_node" 
+    VERIF: node -e "console.log(require('C:/Users/benja/.claude/settings.json').permissions.deny.filter(x=>x.includes('n8n-oracle')))" doit afficher la liste. Dans une session neuve, l'appel d'un outil refusé doit être bloqué.
+ 8. claude | Dans une NOUVELLE session (les outils n'apparaissent qu'à la session suivante), appeler un outil en lecture seule. Pour exécuter un workflow plus tard, il faudra activer son accès MCP dans n8n, workflow par workflow. 
+    CMD: Outil mcp__n8n-oracle__search_workflows (lecture seule). 
+    VERIF: L'outil répond (liste vide ou aperçus) sans erreur d'authentification.
+ 9. claude | Rapporter la leçon au cerveau, par une tâche de périmètre SaaS/… comme le veut la méthode. Contenu : le n8n d'Oracle par le tunnel 5679 se branche avec l'en-tête Bearer ; l'OAuth est inutilisable tant que la base d'URL vaut localhost:5678 ; le tunnel est gardé par la tâche « Tunnel n8n Oracle ». 
+    CMD: Une note dans C:/Users/benja/Documents/SaaS/Produit/, ou une ligne dans le tableau « Où chaque outil tourne » de presti/CLAUDE.md. Aucun jeton dedans. 
+    VERIF: mcp__cerveau__chercher « n8n-oracle Bearer tunnel 5679 » doit rendre la note.
+RISQUES:
+ - L'OAuth ne marchera pas par le tunnel tel qu'il est. La découverte renvoie des adresses en http://localhost:5678, et sur le PC ce port est celui du n8n Docker local, éteint aujourd'hui. L'inscription du client et la page de consentement viseraient donc le mauvais n8n, ou rien. Il ne faut pas lancer /mcp pour n8n-oracle, ni monter le tunnel sur le port local 5678. Pour que l'OAuth marche, il faudrait N8N_EDITOR_BASE_URL=http://localhost:5679 sur le serveur, ce qui veut dire changer la configuration de n8n et recréer le conteneur, avec l'accord de Benj. Déduit, non testé : la même cause cassera les identifiants OAuth des nœuds (Google…) configurés par le tunnel.
+ - Le jeton est stocké en clair. L'en-tête est écrit dans C:\Users\benja\.claude.json (portée user) et, s'il est tapé directement dans la commande, dans l'historique PowerShell. C'est un jeton du compte propriétaire : en cas de fuite, faire « Rotate » dans n8n.
+ - permissions.defaultMode vaut bypassPermissions dans ~/.claude/settings.json. Toute session, dans n'importe quel dossier, pourra donc appeler les outils n8n-oracle (exécuter, modifier, archiver des workflows) sans confirmation, y compris sous l'effet d'un contenu piégé. C'est la raison de l'étape des refus.
+ - Sortie des données : get_workflow_execution, search_workflow_executions et get_data_table_rows ramènent dans le contexte de Claude (Anthropic) les données des exécutions et des tables, donc celles des prospects et clients si les workflows en traitent. Claude n'est pas un service gratuit, mais la donnée quitte Oracle : c'est à Benj de trancher.
+ - Il y aura deux connecteurs n8n dont les outils ne diffèrent que par le préfixe : n8n (cloud, OAuth, portée local presti) et n8n-oracle (portée user). Un agent pourrait créer sur le cloud un workflow qui traite des données personnelles. Il faut écrire la règle dans CLAUDE.md, voire renommer le cloud en n8n-cloud. Aucune référence à mcp__n8n n'apparaît dans presti/CLAUDE.md ni dans .claude/workflows, mais le renommage obligerait à refaire l'OAuth par /mcp.
+ - Le connecteur dépend du PC : n8n-oracle ne marche que PC allumé, session Windows ouverte et tunnel monté. Une session cloud (reprise-cloud) le verra en échec.
+ - L'IP est éphémère (memoire/usine-oracle.md) : si l'instance est recréée, 88.96.53.3 change. Le tunnel échouera alors proprement, grâce à BatchMode et à known_hosts, mais il faudra corriger le script.
+ - La pérennité d'Oracle est incertaine. memoire/usine-oracle.md note que Benj voulait résilier avant le 24/10 et que 4 OCPU/24 Go dépasse l'offre gratuite (2/12). Le 01/11, l'instance tourne en 4 CPU/23 Go avec un disque à 90 % (11 Go libres).
+ - Il ne faut pas réactiver « Presti veilleur-nuit » pour garder le tunnel : il relancerait tout l'écosystème que Benj a mis en pause (memoire/ecosysteme-en-pause-1110.md). D'où la tâche à part.
+ - PowerShell 5.1 lit mal les accents d'un fichier en UTF-8 sans BOM. Il faut garder les chaînes du script sans accents, comme proposé, ou l'enregistrer avec un BOM.
+ - `claude mcp get n8n-oracle` peut afficher l'en-tête en clair : ne pas coller sa sortie dans une conversation.
+NV:
+ - La réponse de /mcp-server/http une fois l'accès MCP allumé : on attend un 401 avec WWW-Authenticate: Bearer resource_metadata=…localhost:5678…, mais ce n'est pas observable aujourd'hui (404 « MCP access is disabled »).
+ - La valeur exacte de la ressource protégée (http://localhost:5678/mcp-server/http) et le refus de Claude Code devant ce décalage de port : déduits du code (getInstanceBaseUrl) et des métadonnées OAuth, pas testés.
+ - La liste exacte des outils du MCP d'Oracle, supposée identique à celle du cloud (search_workflows, get_workflow_execution, get_data_table_rows…) : à relire après le branchement, avant de poser les refus.
+ - Le comportement de la tâche planifiée proposée (lancement caché, relance après une coupure ou après la mise en veille du portable) : elle n'a pas été créée, car c'est une configuration persistante. Seul le tunnel d'essai a été prouvé.
+ - Si Stop-ScheduledTask tue aussi le ssh.exe enfant : d'où l'arrêt explicite par ligne de commande dans le retour arrière.
+ - Que la saisie faite par Read-Host n'entre pas dans l'historique de PowerShell : pas testé ici.
+ - Les connecteurs claude.ai (noms en UUID) et les serveurs de greffons (plugin:apify, plugin:engineering:…, plugin:data:definite en échec) visibles dans cette session de bureau n'apparaissent pas dans `claude mcp list` du CLI. Leur origine, probablement l'application de bureau ou le compte claude.ai, n'a pas été vérifiée.
+ - rea échoue au contrôle du CLI (délai de 30 s dépassé) alors que ses outils sont présents dans cette session : pas creusé.
+ - Le branchement de Hermes et d'Orca au n8n d'Oracle : pas examiné, hors mission.
+ - Le statut du compte Oracle (essai, paiement à l'usage ou gratuit) : pas vérifié.
+ - La recherche de doc par Firecrawl a échoué ; la doc n8n a été lue par WebSearch et WebFetch.
+
+######## Hermes Agent v0.21.5 (build 2026.9.24) lit C:\Users\benja\Ap
+RESUME: Hermes Agent v0.21.5 (build 2026.9.24) lit C:\Users\benja\AppData\Local\hermes\config.yaml et .env. Aucun serveur MCP n'y est déclaré : `hermes mcp list` répond « No MCP servers configured ».
+Le format est documenté et confirmé dans le code. Il y a une clé racine `mcp_servers`. Un serveur stdio prend `command`, `args`, `env` et `cwd`. Un serveur http prend `url` et `headers`, ou `auth: oauth`. On peut y ajouter `trust: untrusted`, `sampling` et `tools.include/exclude`. Les commandes existent : `hermes mcp add/list/test/configure/login/remove`, `hermes mcp serve` (Hermes devient lui-même serveur MCP, en stdio, pour la messagerie seulement) et `hermes acp`.
+Hermes tourne sur claude-opus-5-5 chez Anthropic. Il est connecté par l'abonnement Claude Pro/Max (OAuth, état « ok »), avec la clé d'API en second. Mais un repli gratuit freellmapi/ministral-14b est encore actif, et une clé Gemini traîne dans son .env. Il faut couper les deux avant de brancher quoi que ce soit qui ramène des données de prospects.
+Sur Oracle, n8n 2.45.6 répond (santé 200, tunnel 5679 prouvé), mais son accès MCP est éteint (404 « MCP access is disabled »). Benj doit l'activer et générer un jeton d'accès MCP. Le jeton Bearer est la bonne voie : l'OAuth de n8n renvoie vers localhost:5678, pas vers le port du tunnel.
+Le cerveau se branche en stdio avec la même commande que pour Claude Code (node.exe + mcp.mjs, sans variable).
+Supabase : pas de branchement direct pour l'instant (c'est la production). On passe par des workflows n8n.
+ETAT:
+ - Version : `hermes --version` affiche « Hermes Agent v0.21.5+5778.g0a374d1 (2026.9.24) · upstream 0a374d16 … Update available ». Binaires : C:/Users/benja/AppData/Local/hermes/bin/hermes.exe et hermes-acp.exe (`which hermes hermes-acp`).
+ - Fichiers utilisés : `hermes config path` donne C:\Users\benja\AppData\Local\hermes\config.yaml et `hermes config env-path` donne …\hermes\.env. HERMES_HOME n'est pas définie ; sous Windows, le dossier par défaut est %LOCALAPPDATA%\hermes (hermes-agent/hermes_constants.py:50-56). Il n'y a pas de dossier profiles/.
+ - Aucun MCP actif : `hermes mcp list` répond « No MCP servers configured. ». Dans config.yaml, toutes les lignes qui parlent de MCP sont des commentaires (l.855-862 et l.1604-1660, dont l'exemple `# mcp_servers:` en l.1635). La liste des clés de premier niveau ne contient ni `mcp_servers` ni `mcp`.
+ - Modèle : config.yaml l.80 `default: "claude-opus-5-5"`, l.113 `provider: "anthropic"`, l.117 `base_url: "https://api.anthropic.com"`, l.407 `api_mode: anthropic_messages`. `hermes fallback list` répond « Primary: claude-opus-5-5 (via anthropic) / Fallback chain (1 entry): 1. ministral-14b (via freellmapi) », appelé en cas de limite de débit, d'erreur 5xx ou de coupure.
+ - Fournisseur gratuit encore déclaré : config.yaml l.2393-2400 contient `providers: freellmapi:` (api http://127.0.0.1:3001/v1, key_env FREELLMAPI_KEY, modèles gemini-3-flash-preview, ministral-14b, gpt-oss-120b), et l.2403-2405 `fallback_providers: - provider: freellmapi / model: ministral-14b`. Le commentaire du 04/10 (l.2389-2392) dit « JAMAIS Nous Portal, jamais la connexion de Codex ni de Claude ».
+ - auth.json, noms seulement (node -e … Object.keys) : version, providers, active_provider, updated_at, credential_pool. `providers` est vide (aucun compte Nous Portal ni Codex) et `active_provider` vaut null. credential_pool contient : anthropic n°0 (auth_type oauth, source manual:hermes_pkce, dernier état « ok », jeton qui expire le 2026-11-01T19:32Z avec renouvellement, 0 requête), anthropic n°1 (api_key, source env:ANTHROPIC_API_KEY, jamais utilisée) et gemini n°0 (api_key, source env:GOOGLE_API_KEY, jamais utilisée). Mis à jour le 2026-11-01T11:32Z.
+ - La source `hermes_pkce` est la connexion par abonnement Claude Pro/Max : agent/anthropic_credentials.py:754-767 (« Authorize Hermes with your Claude Pro/Max subscription », https://claude.ai/oauth/authorize). Hermes est donc authentifié chez Anthropic, et seulement là.
+ - Variables actives du .env de Hermes (noms seulement) : ANTHROPIC_API_KEY et GOOGLE_API_KEY (renseignées), plus des réglages TERMINAL_*, BROWSER*, *_DEBUG. FREELLMAPI_KEY est absente du .env et de l'environnement. Aucun jeton de messagerie (Telegram, Slack…).
+ - Autres réglages : `auth.adopt_external_logins: false` (l.2196), `telemetry.shared_metrics.enabled: false`, `gateway.allow_all_users: false`, dossier pairing vide. Deux réglages pointent vers Nous sans compte Nous : `browser.cloud_provider: nous` (l.644) et `stt.provider: nous` (l.1831). `memory.memory_enabled: true` ; 9 fichiers dans sessions/.
+ - Aucun tunnel ouvert au moment du relevé : `netstat -ano` ne montre aucune écoute sur 3001, 5678 ni 5679.
+ - Oracle (ssh gardien, lecture seule) : `sudo -n docker ps` montre n8n-complet-n8n-1 (n8nio/n8n:2.45.6, Up 2 days, 127.0.0.1:5678), runners 2.45.6, sandbox-api et runner 1.12.0, searxng, freellmapi (Up 5 weeks, healthy, 127.0.0.1:3001). `curl …/healthz` donne HTTP 200.
+ - Accès MCP d'Oracle éteint : `curl -i http://127.0.0.1:5678/mcp-server/http` répond `HTTP/1.1 404` avec `{"message":"MCP access is disabled"}`. Test court du tunnel (ouvert environ 25 s puis refermé, port 5679 vérifié fermé ensuite) : `ssh -i ~/.ssh/presti-usine-gardien -L 127.0.0.1:5679:127.0.0.1:5678 gardien@88.96.53.3` donne healthz 200 et la même réponse 404 sur http://127.0.0.1:5679/mcp-server/http.
+ - OAuth de n8n : `/.well-known/oauth-authorization-server` annonce issuer `http://localhost:5678`, authorize `http://localhost:5678/mcp-oauth/authorize`, l'enregistrement dynamique et PKCE S256. Le .env de /opt/n8n-complet (noms seulement) ne règle ni N8N_HOST, ni WEBHOOK_URL, ni N8N_MCP_BASE_URL (variable pourtant lue par dist/modules/mcp/mcp.config.js:43). L'adresse annoncée reste donc localhost:5678, pas le 5679 du tunnel.
+ - Jeton Bearer accepté par n8n 2.45.6 : dist/modules/mcp/mcp-server-middleware.service.js, l.46-50 (jeton OAuth si `meta.isOAuth`, sinon `mcpServerApiKeyService.verifyApiKey(token)`), l.101-109 (préfixe « Bearer » obligatoire), l.114 (`WWW-Authenticate: Bearer realm="n8n MCP Server"`). Le module ne filtre pas l'en-tête Host (aucun allowedHosts trouvé).
+ - Outils MCP présents dans le n8n d'Oracle (grep des déclarations `name:`) : search_workflows, get_workflow_details, search_workflow_executions, get_workflow_execution, execute_workflow, test_workflow, publish_workflow, unpublish_workflow, restore_workflow_version, get_workflow_history, get_workflow_version, get_workflow_versions_diff, search_projects, search_folders, create_folder, update_folder, move_workflows_to_folder, list_workflow_tags, list_credentials, get_data_table_rows, add_data_table_rows, create_data_table, search_data_tables, outils agents et skills…, plus install_community_node (mcp.constants.js). `readOnlyHint: true` figure sur les fichiers get-*, search-*, list-*, validate-*.
+ - Cerveau : C:/Users/benja/.claude.json déclare mcpServers.cerveau en stdio, command `C:\Program Files\nodejs\node.exe`, args `[C:\Users\benja\Documents\cerveau\src\mcp.mjs]`, sans env. Le n8n de Claude Code est le cloud (`https://presti.app.n8n.cloud/mcp-server/http`, sans en-tête, donc OAuth). node.exe existe (`ls`).
+ - cerveau/src/mcp.mjs : 4 outils (chercher, lire, regles_pour, quoi_de_neuf, l.9-30), capacités outils seulement, `initialize` renvoie la version demandée (l.74-77), `ping` géré (l.83). Ses chemins viennent de import.meta.url et os.homedir (config.mjs:7 et 15), pas du dossier courant. Ses embeddings passent par Ollama sur 127.0.0.1:11434 (config.mjs:81).
+ - Hermes transmet par défaut aux serveurs stdio les variables Windows nécessaires : USERPROFILE, APPDATA, LOCALAPPDATA, SYSTEMROOT, TEMP, PATHEXT… (tools/mcp_tool_config.py:118-127). Le SDK MCP Python 2.0.0 est installé (installs/d9c6…/environments/*/venv/Lib/site-packages/mcp-2.0.0.dist-info). La poignée de main envoie LATEST_HANDSHAKE_VERSION et n'accepte qu'une version de HANDSHAKE_PROTOCOL_VERSIONS (mcp/client/session.py:616-630) ; comme le cerveau renvoie la version demandée, c'est compatible à la lecture du code.
+ - Format MCP de Hermes : website/docs/reference/mcp-config-reference.md, l.17-42 (forme), l.44-71 (clés, dont `auth: oauth` l.68 et `trust: untrusted` l.71), l.73-86 (`${VAR}` lu dans .env ; une variable absente dans url ou headers bloque la connexion), l.110-117 (`tools` include/exclude/resources/prompts), l.323-341 (OAuth 2.1 PKCE, jetons dans mcp-tokens/). Le sampling est actif par défaut (features/mcp.md:943-974). Les clés trust, sampling, elicitation et include sont bien lues par le code installé (tools/mcp_tool.py:489, mcp_tool_registration.py:64 et 221, mcp_tool_server_run.py:268-273).
+ - Commandes : `hermes mcp --help` liste {serve, add, remove|rm, list|ls, test, configure|config, login, reauth, picker, catalog, install} (aussi dans hermes_cli/subcommands/mcp.py:21-77). `hermes mcp test` donne le code 0, 1 ou 3, puis « Connected », « Tools discovered: N » et la liste (hermes_cli/mcp_config.py:803-847). `hermes mcp list` n'affiche jamais les en-têtes (l.735-777). `hermes mcp add --auth header` demande le jeton en saisie masquée, le range dans .env sous `MCP_<NOM>_API_KEY` et écrit `Authorization: Bearer ${MCP_<NOM>_API_KEY}` (l.304-341, 563-575). La réécriture de config.yaml conserve les commentaires (hermes_cli/config.py:2080, ruamel). Chaque commande Hermes met 30 à 38 s à démarrer (mesuré avec `time`).
+ - Autres modes : `hermes acp` lance un serveur ACP en stdio pour les éditeurs (website/docs/reference/cli-commands.md:1587-1608). `hermes mcp serve` lance un serveur MCP en stdio seulement, avec 10 outils de messagerie (conversations_list, messages_read, messages_send, permissions_respond…) (features/mcp.md:993-1090). Le catalogue contient `n8n-official` (http + OAuth, URL ${N8N_MCP_SERVER_URL}) et `supabase` (https://mcp.supabase.com/mcp, OAuth) (optional-mcps/*/manifest.yaml).
+ - Tâches annexes : la chaîne « auto » essaie le fournisseur principal, puis OpenRouter, Nous Portal, un point d'accès personnalisé, Anthropic natif et enfin les fournisseurs à clé directe (agent/auxiliary_client.py:3-5). Ces tâches suivent aussi `fallback_providers` (l.4466-4468).
+ - presti-ops/hermes-pc/hermes-usine.ps1 ouvre un tunnel ssh sur 127.0.0.1:3001 et pose FREELLMAPI_KEY (lue dans presti-secrets\freellmapi.txt) pour le processus Hermes (l.7-9, 39-47). Lancer Hermes par ce script rend donc le repli gratuit opérationnel. Les tâches planifiées « Presti usine veille » et « Presti demons » sont désactivées (`Get-ScheduledTask` : Disabled).
+ - Orca 1.4.245 (`orca --version`) : `orca agent launch --agent <id>` lance « a known TUI agent ». Son guide cite codex et claude, et ne mentionne jamais hermes (`orca skills get orca-cli | grep -c -i hermes` donne 0).
+ - Pas de proxy système : ProxyEnable vaut 0, et aucune variable HTTP(S)_PROXY, ALL_PROXY ni NO_PROXY n'est définie. config.yaml.bak date du 29/10 et fait 2393 lignes, contre 2405 pour config.yaml (`wc -l`) : ce n'est pas une copie de l'état actuel.
+ETAPES:
+ 1. claude | Faire une copie datée de config.yaml avant toute modification, après l'accord de Benj. Le .bak du 29/10 ne correspond pas à l'état actuel. 
+    CMD: cp -p "C:/Users/benja/AppData/Local/hermes/config.yaml" "C:/Users/benja/AppData/Local/hermes/config.yaml.2026-11-01-avant-mcp.bak" 
+    VERIF: cmp "C:/Users/benja/AppData/Local/hermes/config.yaml" "C:/Users/benja/AppData/Local/hermes/config.yaml.2026-11-01-avant-mcp.bak" && echo identique ; wc -l sur les deux fichiers doit donner 2405.
+ 2. claude | Couper le repli gratuit avant de brancher n8n ou le cerveau : vider la chaîne de repli, puis commenter le bloc providers.freellmapi. À partir de là, Hermes se lance avec `hermes`, et plus jamais par hermes-usine.ps1. 
+    CMD: hermes fallback clear ; puis, avec l'outil Edit, préfixer de « # » les lignes `providers:` à `"gpt-oss-120b": {}` (config.yaml l.2393-2400) et ajouter la ligne de commentaire « # 01/11/2026 : freellmapi retiré, aucune donnée de prospect vers un modèle gratuit ». 
+    VERIF: hermes fallback list n'affiche plus aucune entrée « via freellmapi ». grep -n -E '^(providers|fallback_providers):' "C:/Users/benja/AppData/Local/hermes/config.yaml" ne rend plus de ligne active `providers:`. hermes mcp list répond toujours (le fichier reste lisible).
+ 3. benj | Fermer les autres sorties possibles : retirer GOOGLE_API_KEY du .env de Hermes (0 requête à ce jour) et choisir la connexion Anthropic utilisée pour les données de prospects : abonnement Pro/Max (OAuth) ou clé d'API (conditions commerciales). 
+    CMD: Ouvrir C:\Users\benja\AppData\Local\hermes\.env dans le Bloc-notes et mettre « # » devant la ligne GOOGLE_API_KEY=… Puis lancer `hermes auth list anthropic`. Si Benj choisit la clé d'API : `hermes auth remove anthropic <index ou label de l'entrée oauth affiché par la liste>`. 
+    VERIF: hermes auth list n'affiche plus de ligne gemini. hermes auth list anthropic ne montre plus que l'entrée api_key (si ce choix est fait).
+ 4. benj | Ouvrir le tunnel, puis activer l'accès MCP dans le n8n d'Oracle (compte propriétaire) : générer le jeton d'accès MCP et cocher « Available in MCP » sur les workflows à exposer. Le jeton ne doit jamais être collé dans le chat. 
+    CMD: Dans un terminal laissé ouvert : ssh -i C:/Users/benja/.ssh/presti-usine-gardien -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -N -L 127.0.0.1:5679:127.0.0.1:5678 gardien@88.96.53.3. Puis, dans le navigateur, http://127.0.0.1:5679 : Settings > Instance-level MCP > activer > Connect > jeton d'accès (Access token) > copier <JETON>. 
+    VERIF: curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:5679/mcp-server/http passe de 404 à 401. curl -s -D - -o /dev/null http://127.0.0.1:5679/mcp-server/http | grep -i www-authenticate affiche `Bearer realm="n8n MCP Server"`.
+ 5. benj | Ranger le jeton dans le .env de Hermes, saisi par Benj lui-même, sans « Bearer » devant. Il n'apparaît jamais dans config.yaml. 
+    CMD: Ajouter à la fin de C:\Users\benja\AppData\Local\hermes\.env la ligne : MCP_N8N_ORACLE_API_KEY=<JETON>. Autre voie, avec saisie masquée et le même nom de variable : hermes mcp add n8n-oracle --url http://127.0.0.1:5679/mcp-server/http --auth header ; Claude complète ensuite trust, sampling et tools comme à l'étape suivante. 
+    VERIF: grep -c '^MCP_N8N_ORACLE_API_KEY=.' "C:/Users/benja/AppData/Local/hermes/.env" doit rendre 1. On compte seulement, on n'affiche jamais la valeur.
+ 6. claude | Ajouter le bloc MCP à la fin de config.yaml, sans aucun secret. Les chemins Windows sont écrits avec des barres obliques : entre guillemets doubles, « \U » serait lu comme un échappement YAML. 
+    CMD: Ajouter en fin de fichier (après une ligne vide), C:/Users/benja/AppData/Local/hermes/config.yaml :
+# 01/11/2026 (Presti) : serveurs MCP de Hermes. Aucun secret ici : le jeton n8n vit dans .env (MCP_N8N_ORACLE_API_KEY).
+# n8n Oracle par le tunnel ssh 127.0.0.1:5679 ; jamais le n8n cloud (aucune donnée personnelle chez lui).
+mcp_servers:
+  n8n-oracle:
+    url: "http://127.0.0.1:5679/mcp-server/http"
+    headers:
+      Authorization: "Bearer ${MCP_N8N_ORACLE_API_KEY}"
+    connect_timeout: 30
+    timeout: 180
+    trust: untrusted        # tout appel qui écrit ou exécute demande l'accord de Benj
+    sampling:
+      enabled: false        # n8n ne peut pas faire tourner le modèle de Hermes
+    tools:
+      include:
+        - search_workflows
+        - get_workflow_details
+        - search_workflow_executions
+        - get_workflow_execution
+        - execute_workflow
+        - search_projects
+        - search_folders
+        - list_workflow_tags
+        - get_workflow_history
+        - get_workflow_version
+        - get_workflow_versions_diff
+      resources: false
+      prompts: false
+  cerveau:
+    command: "C:/Program Files/nodejs/node.exe"
+    args: ["C:/Users/benja/Documents/cerveau/src/mcp.mjs"]
+    connect_timeout: 60
+    timeout: 60
+    sampling:
+      enabled: false
+    elicitation:
+      enabled: false
+    tools:
+      include: [chercher, lire, regles_pour, quoi_de_neuf]
+      resources: false
+      prompts: false
+(`localhost` à la place de 127.0.0.1 marche aussi si le tunnel écoute sur les deux.) 
+    VERIF: hermes mcp list affiche deux lignes : `n8n-oracle  http://127.0.0.1:5679/mcp-ser…  11 selected  ✓ enabled` et `cerveau  C:/Program Files/nodejs/node.exe …  4 selected  ✓ enabled`. Les en-têtes ne s'affichent jamais.
+ 7. claude | Tester la connexion et lister les outils vus par Hermes, avec le tunnel de l'étape 4 ouvert. 
+    CMD: hermes mcp test cerveau ; echo "code $?" ; hermes mcp test n8n-oracle ; echo "code $?". Puis, dans `hermes chat` : /reload-mcp, et une question en lecture seule, par exemple « cherche dans le cerveau : Hermes MCP ». Pour le détail : hermes logs --level debug. 
+    VERIF: Pour cerveau : « Connected (… ms) », « Tools discovered: 4 » (chercher, lire, regles_pour, quoi_de_neuf), code 0. Pour n8n-oracle : « Connected », « Tools discovered: N » avec la liste des outils exposés, code 0. Un code 1 signale un échec de connexion, avec la raison expurgée ; un code 3 signale un nom absent de la config. Dans les journaux : « MCP: registered … tool(s) from 2 server(s) ». Dans la session, les outils s'appellent mcp__cerveau__* et mcp__n8n_oracle__*. Si la poignée de main du cerveau échoue, ajouter `protocol: legacy` à son entrée.
+ 8. claude | Supabase : ne rien brancher en direct pour l'instant. Hermes lit les données à travers des workflows n8n d'Oracle, qui gardent l'identifiant Supabase et ne rendent que les champs nécessaires. Pour un accès direct plus tard, sur décision de Benj, le bloc est prêt mais désactivé. 
+    CMD: Bloc à ajouter sous mcp_servers seulement si Benj le décide :
+  supabase-lecture:
+    url: "https://mcp.supabase.com/mcp?project_ref=gorcdvmueakcncsmrouo&read_only=true&features=database"
+    auth: oauth
+    enabled: false
+    trust: untrusted
+    sampling:
+      enabled: false
+Puis Benj passe `enabled: true`, lance `hermes mcp login supabase-lecture` et approuve lui-même dans le navigateur. 
+    VERIF: hermes mcp test supabase-lecture répond « Connected » et liste les outils base de données, sans outils de compte : `project_ref` les désactive (doc Supabase, guides/ai-tools/mcp, section Configuration options).
+ 9. claude | Consigner le résultat dans le vault : note de session Produit/, carte des outils, et la règle « Hermes sans repli gratuit ». Cela passe par une tâche d'orchestre dont le périmètre est SaaS/… 
+    CMD: node scripts/orchestre.mjs : nouvelle tâche, perimetre `SaaS/Produit/…`, contenu = l'état final relevé par `hermes mcp list` et `hermes fallback list`. 
+    VERIF: Dans le cerveau, `chercher` « Hermes MCP n8n-oracle » rend la nouvelle note.
+RISQUES:
+ - Fuite vers un modèle gratuit, le risque principal. `fallback_providers` (freellmapi/ministral-14b, config.yaml l.2403-2405) prend le relais à la moindre limite, erreur 5xx ou coupure d'Anthropic, et les tâches annexes (compression du contexte, recherche de sessions) le suivent aussi (auxiliary_client.py:4466-4468). Aujourd'hui il dort : pas de tunnel 3001, pas de FREELLMAPI_KEY. Mais il suffit de lancer Hermes par hermes-usine.ps1 pour l'activer. Les résultats n8n et les extraits du cerveau (qui indexe des notes nommant des prospects) partiraient alors vers des offres gratuites, et freellmapi peut même changer de fournisseur en route. C'est contraire à la règle « aucune donnée de prospect ni de client vers un modèle gratuit en ligne ». À couper avant tout branchement (étape 2).
+ - La clé GOOGLE_API_KEY du .env de Hermes (pool gemini) fait partie de la dernière étape de la chaîne « auto » des tâches annexes (fournisseurs à clé directe). D'après le cerveau (ia-gratuite-produit-2910), l'offre gratuite de Gemini est interdite pour un service EEE et des humains peuvent relire les échanges. Rien ne dit que cette clé est payante.
+ - Hermes passe d'abord par l'abonnement Claude Pro/Max (OAuth, priorité 0), avant la clé d'API. Les données de prospects seraient donc traitées sous les conditions grand public, pas sous les conditions commerciales de l'API. C'est aussi contraire à la consigne du 04/10 écrite dans config.yaml l.2389-2392 et dans hermes-usine.ps1 l.3 (« jamais la connexion … de Claude »). Benj doit trancher : garder l'abonnement, ou passer à la clé d'API pour tout ce qui touche des personnes.
+ - Le jeton MCP de n8n agit avec les droits du compte de Benj (propriétaire). Parmi les outils exposés figurent l'exécution, la publication et la suppression de workflows, la lecture de la liste des identifiants et install_community_node. Le bloc proposé limite les outils par `include` et met `trust: untrusted` : chaque appel qui écrit ou exécute demande l'accord de Benj. Mais `readOnlyHint` n'est qu'une indication donnée par le serveur.
+ - Injection d'instructions : les exécutions n8n contiennent des messages écrits par des prospects. Un texte piégé pourrait pousser Hermes à lancer un workflow (par exemple un envoi d'e-mail). Les approbations de `trust: untrusted` sont le garde-fou, et on n'expose que des workflows marqués « Available in MCP ».
+ - Le sampling MCP est actif par défaut : un serveur MCP peut faire tourner le modèle de Hermes. Le bloc proposé le coupe pour n8n-oracle et pour le cerveau ; à reproduire pour tout futur serveur.
+ - Hermes garde ses sessions sur le PC (state.db, sessions/, mémoire automatique active). Tout ce que n8n renvoie y reste stocké, hors d'Oracle. Le cerveau note aussi qu'en octobre les outils fichiers et terminal de Hermes n'étaient pas confinés à un dossier : ils peuvent lire tout le PC, y compris presti-secrets et les .env. Il vaut mieux ne faire renvoyer par les workflows que des champs minimaux.
+ - Piège OAuth de n8n : il annonce `http://localhost:5678`. Par le tunnel 5679, le navigateur serait renvoyé vers le 5678 du PC, c'est-à-dire le n8n Docker local, éteint aujourd'hui : mauvaise instance ou rien du tout. Pour passer en OAuth (entrée de catalogue n8n-official), il faudrait un tunnel sur 5678 avec le n8n local éteint, ou régler N8N_MCP_BASE_URL sur Oracle (réglage du conteneur, donc accord de Benj). Le jeton Bearer évite tout cela.
+ - Le jeton n8n est en clair dans le .env de Hermes, comme les autres clés. En cas de doute, on le révoque dans n8n. S'il manque, la connexion échoue proprement en nommant la variable (mcp-config-reference.md:86).
+ - Ne jamais brancher le n8n cloud (presti.app.n8n.cloud) dans Hermes : il ne doit recevoir aucune donnée personnelle. Seul n8n-oracle est prévu.
+ - White-label : Hermes reste un outil local de Benj. Aucune passerelle de messagerie n'est configurée (aucun jeton de plateforme, `allow_all_users: false`). `hermes mcp serve` exposerait les conversations de Hermes au client MCP qui le lance : ne jamais le relier à une surface vue par un artisan.
+ - Supabase en direct, ce serait la production (leads, devis, factures) dans le contexte du modèle. La documentation Supabase dit « Don't connect to production » ; si on le fait quand même : read_only, project_ref, features=database et approbations.
+ - Disponibilité : si le tunnel est fermé, n8n-oracle échoue au démarrage. Ce n'est pas bloquant, Hermes réessaie plus tard. Mais chaque commande Hermes met déjà 30 à 38 s à démarrer. Selon le cerveau (memoire/usine-oracle.md), Benj comptait résilier Oracle avant le 24/10 ; le serveur répond pourtant le 01/11. Si l'instance est reprise ou résiliée, n8n-oracle disparaît.
+ - Orca est le harness obligatoire, mais Hermes n'y est pas encore rattaché : le guide d'Orca ne cite que codex et claude comme agents.
+NV:
+ - Le chemin exact du menu de n8n 2.45.6 qui active l'accès MCP et donne le jeton d'accès (je n'ai pas ouvert l'interface). Le code confirme seulement McpServerApiKeyService et mcp.settings.controller.
+ - Que l'endpoint, une fois activé, réponde bien 401 avec WWW-Authenticate quand il n'y a pas de jeton : c'est déduit du middleware, pas observé, puisque l'accès est éteint.
+ - La connexion réelle de Hermes au cerveau et à n8n. Aucun `hermes mcp test` n'était possible : rien n'est configuré et l'accès MCP de n8n est éteint. La compatibilité de la poignée de main du cerveau est déduite du code du SDK 2.0.0.
+ - Que les 11 outils de la liste `include` soient tous activés sur cette instance (mcp-tool-availability.js peut en masquer selon les réglages). Leurs noms, eux, sont vérifiés dans le code de 2.45.6.
+ - Si `hermes mcp test` applique le filtre `include` ou liste tous les outils du serveur.
+ - Le comportement de `trust: untrusted` hors session interactive (cron, exécution sans terminal) : refus ou attente ?
+ - Si un `auxiliary.<tâche>.provider: anthropic` explicite empêche toute bascule vers un autre fournisseur en cas d'erreur.
+ - Si GOOGLE_API_KEY est une clé gratuite ou payante, et si l'option d'entraînement « Help improve Claude » du compte Claude de Benj est coupée.
+ - Si l'usage de l'abonnement Claude Pro/Max dans un outil tiers comme Hermes est conforme aux conditions d'Anthropic.
+ - Si Orca 1.4.245 accepte `hermes` comme identifiant d'agent (`orca agent launch --agent hermes`).
+ - Le nom exact de la boîte à outils MCP à passer en `--toolsets` pour restreindre une session Hermes (`mcp-n8n-oracle` d'après la doc, qui ne dit pas comment le tiret est traité).
+ - Si la dépendance `acp` de `hermes acp` est installée (le dossier acp_adapter/ existe, mais je ne l'ai pas lancé).
+ - L'état du compte Oracle (résiliation prévue avant le 24/10 selon le cerveau, alors que le serveur était actif le 01/11).
+ - Si l'index de `hermes auth remove` commence à 0 ou à 1 : utiliser celui que `hermes auth list` affiche.
+
+######## Orca (stablyai/orca, licence MIT, version 1.4.245 sur le PC)
+RESUME: Orca (stablyai/orca, licence MIT, version 1.4.245 sur le PC) est une application de bureau avec un démon local (orcad). Il ouvre des worktrees et des terminaux, et y lance des agents en ligne de commande : Claude Code et Hermes sont installés ici, Codex, OpenCode, Devin et une trentaine d'autres sont au catalogue. Orca ne bloque rien lui-même. Ses « permissions » se résument à un drapeau ajouté au lancement de chaque agent : le réglage actuel est full-access, ce qui donne --dangerously-skip-permissions pour Claude et --yolo pour Hermes. Ses crochets (orca-agent-hook.exe dans ~/.claude/settings.json, plugin orca-status dans Hermes) ne font que rapporter les événements à 127.0.0.1 : prompt, outil, demande d'accord, fin. Ils ne le font que si l'agent tourne dans un volet Orca.
+Sa mémoire, c'est l'index plein texte des sessions d'agents (59 573 messages) et la base d'orchestration (runs, tâches, portes de décision). Son contrôle passe par la lecture, l'attente, l'envoi et la fermeture des terminaux, les workers supervisés, les portes de décision et les automatisations planifiées (un prompt avec un précontrôle shell).
+Orca lance Hermes en mode terminal (`hermes chat --query=… --tui`), pas par ACP : hermes-acp sert aux éditeurs de code.
+Orca n'a ni API HTTP ni webhook : son runtime n'écoute qu'en local (tube nommé et ws://127.0.0.1:6768, protégé par un jeton). Dans le sens Orca → n8n, ce sont les agents qui parlent à n8n : webhook ou MCP du n8n d'Oracle, par le tunnel 5679. Dans le sens n8n → Orca, deux voies. La première : une automatisation Orca dont le précontrôle interroge n8n (tirage, faisable tout de suite sur le PC). La seconde : un runtime Orca installé sur Oracle, que le nœud SSH de n8n pilote (poussée, les données restent sur Oracle).
+Aujourd'hui, aucune session ne tourne sous Orca et il n'existe aucune automatisation. Le tunnel est fermé. Hermes n'a aucun MCP et se replie sur des IA gratuites.
+ETAT:
+ - Orca est prêt : `orca --version` rend 1.4.245, et `orca status --json` rend runtime.state=ready, connectionState=connected, graph.state=ready, pid 11956. Le binaire est C:/Users/benja/AppData/Local/Programs/orca/resources/bin/orca.exe.
+ - Il n'y a qu'un hôte et aucun runtime distant. `orca host list --json` rend un seul hôte local (LAPTOP-6KDEHT8P, win32) et `orca environment list --json` rend environments: [].
+ - Aucune automatisation n'existe. `orca automations list --json` rend automations: [] et `orca automations runs --json` rend runs: []. Côté orchestration, `orca orchestration run-list --json` ne rend que run_legacy_local, créé le 2026-10-30T10:39Z.
+ - Deux dépôts sont enregistrés (`orca repo list --json`) : presti et presti-notice-publication, ajoutés le 01/11 vers 11 h 30. Aucun agent ne tourne sous Orca : `orca worktree ps --json` montre presti/main avec 3 terminaux vivants et agents: []. Cette session non plus n'est pas suivie : `env | grep ORCA` ne trouve aucune variable ORCA_*.
+ - Agents et comptes (`orca account list --json`) : aucun compte géré pour Claude, Codex, OpenCode ou Devin. Pour Codex, une identité OAuth système existe mais Orca répond « Codex CLI not found ». Orca ne lit pas les limites de Claude (status unavailable, failureKind missing-credentials). `claude --version` rend 2.1.270 (Claude Code), et ~/.claude/.credentials.json est présent. Codex est absent du PATH.
+ - Crochets (`orca agent hooks status --json`) : enabled true. claude est installed (~/.claude/settings.json, managedHooksPresent true), hermes est installed (%LOCALAPPDATA%/hermes/config.yaml, managedHooksPresent true), codex est not_installed. Les commandes `orca agent hooks on|off|status` existent dans `orca agent-context --json` (288 commandes) mais pas dans --help.
+ - ~/.claude/settings.json : `orca-agent-hook.exe claude` est branché sur 15 événements, avec un délai de 10 s : UserPromptSubmit l.58, SessionEnd l.78, SessionStart l.100, Stop l.111, StopFailure l.122, SubagentStart l.133, SubagentStop l.144, TeammateIdle l.155, PreToolUse l.167, PostToolUse l.179, PostToolUseFailure l.191, PermissionRequest l.203, PostCompact l.214, Elicitation l.226, ElicitationResult l.238. Orca a aussi pris la statusLine : elle appelle ~/.orca/agent-hooks/claude-statusline.cmd (l.312-314). Les crochets du cerveau restent en place : hook.mjs l.49, capture-session.mjs l.69 et l.89.
+ - Le crochet rapporte et ne décide jamais. ~/.orca/agent-hooks/claude-hook-impl.cmd sort sans rien faire (l.7-13) si ORCA_AGENT_HOOK_PORT, ORCA_AGENT_HOOK_TOKEN ou ORCA_PANE_KEY manque, donc partout hors d'un volet Orca. Sinon, il envoie l'événement en POST vers http://127.0.0.1:<port>/hook/claude (l.14), avec l'en-tête X-Orca-Agent-Hook-Token et un délai d'au plus 1,5 s. orca-agent-hook.exe (306 976 octets, identique à resources/bin/orca-agent-hook.exe) contient bien '/hook/', 'X-Orca-Agent-Hook-Token' et 'ORCA_PANE_KEY'. En revanche, on n'y trouve aucune occurrence de permissionDecision, decision ou hookSpecificOutput.
+ - ~/.orca ne contient que agent-hooks/ : orca-agent-hook.exe, claude-hook.cmd, claude-hook-impl.cmd, claude-statusline.cmd (créés le 30/10 à 11 h 39) et le marqueur claude-statusline.installed (01/11, 11 h 25). L'état d'Orca vit dans %APPDATA%/orca : profiles/local-default/profile-state.db (réglages), ai-vault/session-search.sqlite (index), orchestration.db, agent-hooks/endpoint.cmd et orca-runtime.json. endpoint.cmd définit 6 variables, dont le port et le jeton du crochet (seuls les noms ont été lus). orca-runtime.json déclare deux transports, le tube nommé \\.\pipe\orca-11956-bf91 et ws://127.0.0.1:6768, plus un authToken (non affiché).
+ - Côté Hermes, Orca a installé le plugin orca-status : %LOCALAPPDATA%/hermes/plugins/orca-status/plugin.yaml porte « Managed by Orca » en l.1 et déclare 10 événements (l.7-17). Le plugin est activé dans config.yaml l.63-69 (plugins.enabled: orca-status), et 7 variables ORCA_* sont transmises (l.534-541, client_env_passthrough). __init__.py envoie en POST vers http://127.0.0.1:<port>/hook/hermes le message, la réponse et les arguments et résultats d'outils, tronqués à 8 192 caractères (l.107-140). Il ne fait rien sans volet Orca (l.75-85 et l.115-116).
+ - Comment Orca lance Hermes. Son catalogue (app.asar) contient `hermes: { detectCmd: "hermes", launchCmd: "hermes --tui", promptInjectionMode: "hermes-query" }`. Le fichier app.asar.unpacked/out/shared/hermes-startup-query.js construit `hermes chat --query=<prompt> … --tui` (l.110-117) ; sous Windows, il passe par powershell.exe -EncodedCommand (l.121-125), avec une limite de 24 000 caractères (l.7, l.157). Aucune référence à hermes-acp dans Orca. Hermes ne figure pas dans la liste du chat natif (native-chat-agent-support.js l.12-21 : claude, openclaude, codex, grok, omp, opencode, opencode2, zcode), donc Orca ne l'ouvre qu'en terminal.
+ - Permissions d'Orca, d'après app.asar (région src/shared/tui-agent-permissions.ts). Mode auto : claude reçoit '--permission-mode auto', codex reçoit '--approve-for-me'. Mode YOLO : claude reçoit '--dangerously-skip-permissions', hermes reçoit '--yolo'. La fonction tcr fait correspondre yolo à full-access, auto à auto, et tout le reste à own. Réglages actuels, lus en lecture seule dans profile-state.db (domaine settings) : agentPermissionDefault=full-access, agentPermissionOverrides={}, nativeChatPermissionMode=full-access, experimentalNativeChat=false, defaultTuiAgent=claude, agentStatusHooksEnabled=true, agentWorkspaceTrustEnabled=true, telemetry.optedIn=true, keepComputerAwakeWhileAgentsRun=false.
+ - Claude Code est lui aussi sans garde-fou : ~/.claude/settings.json porte defaultMode=bypassPermissions (l.41) et skipDangerousModePermissionPrompt=true (l.305), avec 35 règles deny (l.4).
+ - La mémoire d'Orca : `orca search --index-status --json` rend enabled, phase current, 1 014 fichiers et 59 573 messages indexés, avec sessionsByAgent claude 911, codex 100, cursor 3 et hermes 0. hermes figure pourtant dans supportedAgents. Le réglage aiVaultSearch vaut enabled true et historyDays null, soit tout l'historique.
+ - Les automatisations d'Orca (`orca skills get orca-cli --reference references/automations.md` et `orca automations create --help`). Ce sont des prompts planifiés : hourly, daily, weekdays, weekly, cron ou RRULE, avec --timezone. --provider choisit l'agent. Chaque exécution crée un nouveau worktree, sauf avec --workspace (espace existant). --precheck lance une commande : code 0 = la tâche part, sinon statut skipped_precheck (60 s par défaut, 600 s au plus : automation-precheck.js l.9-11). `orca automations run <id>` lance à la main sans précontrôle.
+ - orca serve, d'après `orca agent-context --json` : c'est un runtime sans fenêtre, sur le port 6768 par défaut, avec appariement par code orca://pair. `serve service install` sert sous systemd ou launchd. `orca serve service status --json` rend unsupported_platform (« not available on Windows yet »). Le README de github.com/stablyai/orca (lu par WebFetch) ne mentionne ni API HTTP, ni webhook, ni n8n, mais cite Hermes Agent parmi les agents pris en charge.
+ - Serveur Oracle (SSH gardien) : `uname -srm` rend Linux 6.17.0-1020-oracle aarch64, sous Ubuntu 24.04.5 LTS, avec 4 cœurs et 23 Gio de RAM. Le disque / est plein à 90 % (11 Gio libres). orca, claude et hermes y sont absents. `docker ps` montre n8n 2.45.6 (127.0.0.1:5678), runners, sandbox-api, sandbox-runner, searxng et freellmapi (127.0.0.1:3001). `sudo -n -l` donne à gardien (ALL) NOPASSWD: ALL. Orca existe pour cette machine : la release v1.4.245 du 30/10 (api.github.com/repos/stablyai/orca/releases/latest) contient orca-ide_1.4.245_arm64.deb et orca-linux-arm64.AppImage.
+ - n8n d'Oracle, sondé par GET depuis le serveur : /healthz rend 200, /rest/settings 200, /api/v1/workflows 401 et /mcp-server/http 404 (MCP d'instance non activé). Dans le conteneur, WEBHOOK_URL et NODES_EXCLUDE ne sont pas définis, et N8N_DIAGNOSTICS_ENABLED=false (vérifié par un simple test vrai/faux). Services compose : searxng, sandbox-certs, sandbox-api, n8n, runners, sandbox-runner-1. Le n8n cloud déjà branché à Claude Code répond à presti.app.n8n.cloud/mcp-server/http (~/.claude.json, projet presti, sans en-tête).
+ - Le tunnel PC → n8n d'Oracle est fermé en ce moment : `curl http://localhost:5679/healthz` rend 000, et aucun ssh.exe avec redirection ne tourne.
+ - Hermes v0.21.5+5778. `hermes mcp list` rend « No MCP servers configured ». `hermes webhook list` rend « Webhook platform is not enabled » (il faudrait le port 8644, un secret et `hermes gateway run`). `hermes cron list` ne liste aucune tâche. Le modèle par défaut est claude-opus-5-5 chez anthropic. Le repli fallback_providers pointe vers freellmapi/ministral-14b, et le fournisseur freellmapi propose gemini-3-flash-preview, ministral-14b et gpt-oss-120b (config.yaml l.2393-2405). auth.json contient un pool d'identifiants anthropic et gemini. `hermes acp --help` décrit un mode ACP pour éditeurs (VS Code, Zed, JetBrains), et `hermes --help` précise que -z/--oneshot contourne les accords.
+ - Skills. `orca skills list` rend 10 guides : computer-use, jira-tickets, linear-tickets, orca-cli, orca-emulator, orca-emulator-android, orca-jira, orca-linear, orca-per-workspace-env, orchestration. orca-cli et orchestration sont dans ~/.agents/skills, liés dans ~/.claude/skills depuis le 01/11 à 11 h 25. `orca skills install --agent hermes --dry-run` est refusé (« Unknown --agent value "hermes" »). Hermes pourrait les lire par skills.external_dirs, mais cette option est commentée (config.yaml l.1178-1179).
+ETAPES:
+ 1. benj | Régler les permissions des agents dans Orca. Seul l'écran le permet : aucune des 288 commandes de la CLI ne change ce réglage. Sans ce geste, tout agent lancé par Orca ne demande rien. 
+    CMD: Orca → Réglages → Agents → Agent Permissions (libellé exact non vérifié). Défaut : « own ». Surcharge claude : « auto » (Orca ajoutera --permission-mode auto, qui passe devant defaultMode=bypassPermissions de ~/.claude/settings.json l.41). Surcharge hermes : « own » (plus de --yolo). Si le chat natif est un jour activé, passer aussi nativeChatPermissionMode à ask ou auto. 
+    VERIF: Relire profile-state.db (domaine settings) en lecture seule : agentPermissionDefault=own et agentPermissionOverrides={claude:auto, hermes:own}. Après un lancement : powershell -NoProfile -Command "Get-CimInstance Win32_Process | ? { $_.CommandLine -match 'permission-mode|dangerously-skip-permissions|--yolo' } | select ProcessId,CommandLine" doit montrer --permission-mode auto pour Claude, et aucun --yolo ni --dangerously-skip-permissions.
+ 2. claude | Lancer Claude Code dans Orca, en terminal, sur le dépôt presti. Les sessions à tracer partent désormais d'Orca et non de Claude Desktop : celles de Desktop ne sont pas suivies en direct. 
+    CMD: orca agent launch --agent claude --worktree path:C:/Users/benja/Documents/presti --surface terminal --prompt "Lis CLAUDE.md et réponds seulement : prêt" --json 
+    VERIF: Lancer orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 180000 --json, puis orca worktree ps --json : agents[] doit contenir claude avec son paneKey. Le fichier %APPDATA%/orca/agent-hooks/last-status.json doit changer d'heure. orca search --index-status --json doit passer de 911 à 912 sessions claude.
+ 3. benj | Interdire à Hermes le repli vers les IA gratuites avant qu'il touche une donnée de prospect (règle « jamais de donnée personnelle vers une offre gratuite »). 
+    CMD: hermes fallback list, puis hermes fallback clear (ou hermes fallback remove pour l'entrée freellmapi/ministral-14b de config.yaml l.2403-2405). 
+    VERIF: hermes fallback list rend une chaîne vide. grep -n -A3 '^fallback_providers' %LOCALAPPDATA%/hermes/config.yaml ne montre plus freellmapi.
+ 4. claude | Après l'accord de Benj, brancher Hermes sur le cerveau et lui donner les skills d'Orca (orca-cli, orchestration), pour qu'il puisse orchestrer ses workers à travers Orca. 
+    CMD: hermes mcp add cerveau --command "C:/Program Files/nodejs/node.exe" --args C:/Users/benja/Documents/cerveau/src/mcp.mjs. Puis, dans %LOCALAPPDATA%/hermes/config.yaml l.1178-1179, décommenter `external_dirs:` et `- ~/.agents/skills`. Le dossier compte 22 skills ; pour limiter, on peut le remplacer par un dossier qui ne contient que orca-cli et orchestration. 
+    VERIF: hermes mcp list affiche cerveau et hermes mcp test cerveau répond OK. La liste des skills de Hermes (sous-commande à confirmer avec hermes skills --help) contient orca-cli et orchestration.
+ 5. claude | Lancer Hermes dans Orca. Orca exécutera `hermes chat --query=… --tui` en terminal ; le plugin orca-status rapportera les événements. 
+    CMD: orca agent launch --agent hermes --worktree path:C:/Users/benja/Documents/presti --surface terminal --prompt "Réponds seulement : prêt" --json 
+    VERIF: orca terminal read --terminal <handle> --screen --json montre l'écran de Hermes. orca worktree ps --json liste un agent hermes. orca search --index-status --json donne sessionsByAgent.hermes ≥ 1. La ligne de commande du processus ne contient pas --yolo.
+ 6. claude | Rouvrir le tunnel vers le n8n d'Oracle dans un terminal Orca, pour qu'il soit tracé et visible. Mieux : une clé dédiée limitée au port 5678, à créer avec l'accord de Benj, plutôt que la clé gardien (sudo ALL). 
+    CMD: orca terminal create --worktree path:C:/Users/benja/Documents/presti --title tunnel-n8n-oracle --command "ssh -i ~/.ssh/presti-usine-gardien -o BatchMode=yes -o ServerAliveInterval=30 -o ExitOnForwardFailure=yes -N -L 5679:127.0.0.1:5678 gardien@88.96.53.3" --json 
+    VERIF: curl.exe -s -o NUL -w "%{http_code}" http://localhost:5679/healthz doit rendre 200 (il rend 000 aujourd'hui).
+ 7. benj | Activer le MCP d'instance du n8n d'Oracle et choisir les workflows exposés. Ce n'est pas à faire sur le n8n cloud, qui ne doit recevoir aucune donnée personnelle. 
+    CMD: Ouvrir http://localhost:5679 (n8n d'Oracle) → Settings → Instance-level MCP : activer. Ensuite, approuver l'OAuth quand Claude Code ou Hermes le demandent, ou créer un jeton d'accès <JETON>. 
+    VERIF: curl.exe -s -o NUL -w "%{http_code}" http://localhost:5679/mcp-server/http ne doit plus rendre 404 mais 401 sans authentification. Aujourd'hui, la même sonde lancée depuis le serveur rend 404.
+ 8. claude | Ouvrir le sens Orca → n8n par MCP : les agents lancés dans Orca construisent et appellent les workflows du n8n d'Oracle. 
+    CMD: claude mcp add --transport http --scope user n8n-oracle http://localhost:5679/mcp-server/http (puis /mcp pour l'OAuth, fait par Benj, ou --header "Authorization: Bearer <JETON>"). Puis hermes mcp add n8n-oracle --url http://localhost:5679/mcp-server/http --auth oauth. 
+    VERIF: claude mcp list montre n8n-oracle connecté et hermes mcp test n8n-oracle répond OK. Dans une session Claude lancée par Orca, l'outil search_workflows de n8n-oracle répond.
+ 9. claude | Construire dans le n8n d'Oracle, par le MCP n8n-oracle et jamais par le cloud, une file d'attente et deux webhooks : l'échange n8n ↔ Orca par tirage. 
+    CMD: Workflow « orca-file-attente » : un Webhook GET orca/a-faire lit la Data Table orca_taches (statut en_attente) et rend 200 avec la tâche, ou 404 si la file est vide. Workflow « orca-resultat » : un Webhook POST orca/resultat, protégé par une authentification par en-tête (identifiant n8n créé par Benj, valeur <JETON>), écrit le compte rendu et passe la tâche à « fait ». 
+    VERIF: curl.exe -s -o NUL -w "%{http_code}" http://localhost:5679/webhook/orca/a-faire rend 404 quand la file est vide et 200 après une ligne de test. search_workflow_executions sur n8n-oracle montre les exécutions. Rien n'apparaît sur presti.app.n8n.cloud.
+ 10. claude | Ouvrir le sens n8n → Orca par tirage, après validation du principe par Benj. Une automatisation Orca sert seulement de relève : le planning et les règles restent dans n8n. Elle est créée désactivée. 
+    CMD: orca automations create --name n8n-file-attente --trigger "*/15 * * * *" --timezone Europe/Paris --provider claude --workspace path:C:/Users/benja/Documents/presti --precheck "curl.exe -fsS -m 10 -o NUL http://localhost:5679/webhook/orca/a-faire" --precheck-timeout 20 --prompt "Récupère la tâche avec GET http://localhost:5679/webhook/orca/a-faire, exécute-la selon CLAUDE.md, puis POSTe le compte rendu sur http://localhost:5679/webhook/orca/resultat" --disabled --json. Pour Hermes : --provider hermes (non testé). 
+    VERIF: orca automations show <id> --json affiche le précontrôle et le planning. orca automations run <id> --json, puis orca automations runs --id <id> --json : l'exécution doit apparaître avec son worktree. Ensuite, orca automations edit <id> --enabled --json. Avec une file vide, la prochaine exécution prend le statut skipped_precheck. Avec une tâche en attente, une session claude apparaît dans orca worktree ps --json et n8n reçoit le POST orca/resultat.
+ 11. benj | Phase 2, facultative : la voie par poussée où les données restent sur Oracle. Un runtime Orca sur Oracle, que n8n déclenche par son nœud SSH. Il faut l'accord de Benj pour les installations, avec un disque déjà à 90 %. Benj fait lui-même l'appariement et les connexions aux comptes. 
+    CMD: Sur Oracle, sous le compte agents : installer orca-ide_1.4.245_arm64.deb, Claude Code et Hermes. Puis orca-ide serve service install --port 6768 et sudo loginctl enable-linger agents. Benj lance orca-ide account add --agent claude sur le serveur, puis sur le PC orca environment add --name usine --pairing-code <CODE_APPARIEMENT>. Dans n8n : un nœud SSH (clé dédiée, rangée comme identifiant n8n) lance orca-ide automations run <uuid> --json ou orca-ide agent launch --agent hermes --worktree path:/srv/<dossier> --prompt "…" --json. 
+    VERIF: orca-ide serve service status --json rend live. orca environment list --json et orca host list --json (sur le PC) montrent usine, et orca worktree ps --environment usine --json fonctionne. Dans l'exécution n8n, la sortie du nœud SSH contient "ok": true et launch.outcome.handle.
+ 12. claude | Consigner le résultat dans le vault et dans la carte du dépôt, comme le veut la règle « ce qu'on apprend revient dans le vault ». 
+    CMD: Une tâche dans .orchestre/file/, de périmètre SaaS/Produit/… : note de session « Orca harness + n8n » (ce relevé et les choix de Benj). Mettre aussi à jour les lignes Orca et Hermes du tableau « Où chaque outil tourne » de presti/CLAUDE.md. 
+    VERIF: node scripts/orchestre.mjs verifier <id> est vert, et cerveau.quoi_de_neuf 1j liste la note.
+RISQUES:
+ - Les permissions sont au maximum des deux côtés. Orca est réglé sur agentPermissionDefault=full-access, ce qui donne --dangerously-skip-permissions pour Claude et --yolo pour Hermes. ~/.claude/settings.json porte bypassPermissions (l.41) et skipDangerousModePermissionPrompt (l.305). Résultat : un agent lancé aujourd'hui par Orca ne demande rien. Orca trace mais ne bloque jamais : le crochet ne rend qu'un objet vide.
+ - Le repli de Hermes vers freellmapi (ministral-14b, et gemini-3-flash-preview au catalogue) enverrait des données de prospects à des offres gratuites. C'est contraire à la règle (memoire/ecosysteme-presti.md ; memoire-presti/ia-gratuite-produit-2910.md, « Gemini gratuit interdit EEE »). Le pool d'identifiants de Hermes contient aussi gemini.
+ - Une chaîne d'authentification Hermes collée par Benj le 01/11 est recopiée en clair dans vault/inbox/sessions/2026-11-01-12h33-b6e06ae6-avant-compression.md. Elle ressort dans les résultats de cerveau.chercher, et l'index de sessions d'Orca l'a probablement aussi. C'est vraisemblablement un code OAuth à usage unique déjà consommé, donc le risque est faible. Il faut quand même le retirer de la note et de l'index : un geste de Benj, ou une tâche de périmètre SaaS/….
+ - Seules les sessions lancées depuis Orca sont tracées en direct : les variables ORCA_* sont absentes de cette session Claude Desktop, et worktree ps rend agents: []. Les sessions Hermes déclenchées par la passerelle, un webhook ou -z/--oneshot ne sont pas tracées : le plugin écarte un événement sans volet (__init__.py l.75-85). En plus, -z contourne les accords.
+ - Sous Windows, Orca n'a pas de service (serve service est unsupported_platform). Les automatisations ne tournent que si l'application ou un `orca serve` manuel est ouvert, et si le PC est éveillé (keepComputerAwakeWhileAgentsRun=false). Une exécution manquée est perdue au-delà de la marge de grâce. Le tunnel 5679 est fermé aujourd'hui.
+ - Ouvrir un tunnel permanent avec la clé gardien (sudo NOPASSWD: ALL sur l'usine) élargit l'exposition. Mieux vaut une clé dédiée bornée par permitopen="127.0.0.1:5678", sans shell.
+ - Décision « toutes les automatisations dans n8n » : une automatisation Orca est une planification hors de n8n. Elle doit rester une simple relève ; la file, le planning et les règles vivent dans n8n. Benj doit valider ce principe.
+ - Le MCP « n8n » du projet pointe vers le n8n cloud (presti.app.n8n.cloud/mcp-server/http). Il est disponible dans toute session Claude Code, y compris celles lancées par Orca : un agent qui traite un prospect pourrait y envoyer des données personnelles. Il faut nommer distinctement n8n-oracle et réserver le cloud aux tâches sans donnée personnelle.
+ - La télémétrie d'Orca est activée (telemetry.optedIn=true), et l'appariement mobile passe par un relais cloud d'Orca. Leur contenu et le chiffrement de bout en bout ne sont pas vérifiés. À examiner avant d'apparier un téléphone ou de laisser des données de prospects dans les sessions.
+ - Le disque d'Oracle est à 90 % (11 Gio libres) : la phase 2 (paquet orca-ide, Claude Code, environnement Python de Hermes) peut le remplir.
+ - Orca réécrit lui-même ~/.claude/settings.json (15 crochets et la statusLine) et la config de Hermes (« Managed by Orca. Do not edit »). Une mise à jour d'Orca peut les modifier. `orca agent hooks off` les retire. La statusLine actuelle n'affiche rien : le script se contente de rapporter à Orca.
+ - Le précontrôle doit appeler curl.exe et non curl : sous Windows PowerShell 5.1, curl est un alias d'Invoke-WebRequest.
+NV:
+ - Aucun lancement d'agent par Orca n'a été fait (lecture seule). Ni le démarrage réel de Claude ou de Hermes dans un volet, ni l'authentification de la CLI claude dans ce volet ne sont prouvés.
+ - La correspondance full-access = drapeaux YOLO est déduite du code d'app.asar (table YOLO_TUI_AGENT_ARGS et fonction tcr). Elle n'a pas été observée sur un processus vivant.
+ - Je n'ai pas testé si orca automations create accepte --provider hermes.
+ - Je n'ai pas vérifié quel shell exécute le précontrôle sous Windows (PowerShell ou cmd), si sa sortie (4 000 caractères au plus) est transmise au prompt de l'agent, ni si automations run fonctionne sur une automatisation désactivée.
+ - Le chemin /mcp-server/http du MCP d'instance pour un n8n 2.45.6 auto-hébergé est supposé d'après le cloud (il rend 404 aujourd'hui). Le libellé exact de l'écran n8n est aussi à confirmer.
+ - Je ne sais pas si le nœud Execute Command est actif par défaut dans n8n 2.45.6 (NODES_EXCLUDE n'est pas défini, et le défaut n'a pas été vérifié). Le nœud SSH n'a pas été essayé.
+ - Orca sans écran sur Linux arm64 : les paquets existent dans la release v1.4.245, mais rien n'a été installé ni testé, et les dépendances graphiques du .deb sont inconnues.
+ - Le libellé exact du réglage « Agent Permissions » dans l'interface d'Orca n'est pas vérifié.
+ - Je n'ai pas testé si Hermes lit bien ~/.agents/skills par skills.external_dirs (c'est seulement documenté en commentaire de config.yaml, l.1172-1179), ni la sous-commande de liste de ses skills.
+ - Le contenu de la télémétrie d'Orca et le chiffrement du relais mobile ne sont pas vérifiés.
+ - La recherche web sur la documentation d'Orca n'a pas abouti : Firecrawl n'a plus de crédits. Seuls le README (par WebFetch) et l'API publique des releases GitHub ont été lus.
+ - Je n'ai pas cherché pourquoi Orca affiche « No subscription plan — API key billing » pour Claude alors que ~/.claude/.credentials.json existe.
+
+######## Le n8n 2.45.6 d'Oracle contient déjà le serveur MCP d'instan
+RESUME: Le n8n 2.45.6 d'Oracle contient déjà le serveur MCP d'instance (module `mcp`, point d'entrée `/mcp-server/http`). Il contient aussi l'API REST publique (`/api/v1`), qui est déjà active : elle répond 401 sans clé. Le MCP est seulement désactivé : il répond 404 « MCP access is disabled ».
+Rien n'est exposé : n8n n'écoute que sur 127.0.0.1:5678 et le pare-feu n'accepte que le port 22. On garde donc le tunnel SSH (PC 127.0.0.1:5679 → serveur 127.0.0.1:5678). Ce tunnel est fermé en ce moment et rien ne le maintient ouvert.
+Le seul vrai blocage est l'adresse. Sans N8N_EDITOR_BASE_URL, n8n annonce l'émetteur OAuth http://localhost:5678, c'est-à-dire le port du n8n local du PC. Or l'indicateur de ressource et l'audience des jetons OAuth sont comparés à cette adresse : un client qui passe par le tunnel 5679 serait refusé.
+Correctif, dans l'override : N8N_EDITOR_BASE_URL=http://localhost:5679 et WEBHOOK_URL, plus N8N_MCP_MANAGED_BY_ENV et N8N_MCP_ACCESS_ENABLED pour activer le MCP. On ajoute aussi `restart: unless-stopped`. Ensuite, sauvegarde du volume n8n arrêté, puis on recrée le seul conteneur n8n (`up -d --no-deps n8n`), sans toucher au bac à sable.
+Branchements : Claude Code en OAuth (portée user, pour que les worktrees d'Orca le voient), Hermes par jeton Bearer rangé dans son .env, Orca et les scripts par une clé X-N8N-API-KEY. Benj fait lui-même tout geste qui touche un mot de passe ou un jeton.
+Trois préalables de sécurité :
+- couper le repli freellmapi de Hermes avant de lui donner n8n-oracle ;
+- ne jamais coller un jeton dans le chat : la capture de session recopie les messages dans le vault, et un code OAuth pour Hermes y est déjà en clair ;
+- la clé gardien donne root.
+ETAT:
+ - Serveur presti-usine (accès par la clé gardien) : VM.Standard.A1.Flex, 4 OCPU / 24 Go, eu-paris-1, Running. Preuve : métadonnées OCI, curl -H 'Authorization: Bearer Oracle' http://169.254.169.254/opc/v2/instance/. Disque / à 90 % (df -h : 96G, 86G utilisés, 11G libres). En marche depuis 36 jours (uptime).
+ - n8n 2.45.6 : `sudo docker exec n8n-complet-n8n-1 n8n --version` → 2.45.6. La pile /opt/n8n-complet vient de get.n8n.io (en-tête « compose-version: 2 ») et a un override. Services en marche : n8n, runners, sandbox-api, sandbox-runner-1, searxng (`docker compose ps`). Le travail ponctuel sandbox-certs est terminé (Exited (0)). `sudo docker compose config --quiet` → configuration valide.
+ - Rien n'est exposé :
+- seul 127.0.0.1:5678 écoute (`ss -ltnp` → docker-proxy 127.0.0.1:5678) ;
+- l'override contient `ports: !override - "127.0.0.1:5678:5678"` ;
+- `iptables -S INPUT` n'accepte en entrée que tcp/22, lo et les connexions établies (le reste en REJECT) ;
+- depuis le PC, `curl http://88.96.53.3:5678/healthz` → HTTP 000, aucune réponse.
+ - Aucune adresse n'est posée. Le conteneur n8n n'a ni N8N_HOST, ni N8N_PROTOCOL, ni N8N_PORT, ni N8N_EDITOR_BASE_URL, ni WEBHOOK_URL (noms des variables lus par docker inspect). Valeurs non secrètes : N8N_SECURE_COOKIE=false, N8N_DIAGNOSTICS_ENABLED=false, TZ=Europe/Paris. Le journal de démarrage affiche « Editor is now accessible via: http://localhost:5678 ».
+ - Noms de clés du .env (valeurs non lues), 14 au total : N8N_VERSION, N8N_SANDBOX_VERSION, N8N_RUNNERS_AUTH_TOKEN, SANDBOX_API_KEYS, SANDBOX_API_RUNNER_REGISTRATION_TOKEN, SANDBOX_API_RUNNER_API_KEY, N8N_SANDBOX_SERVICE_API_KEY, SEARXNG_SECRET, N8N_INSTANCE_AI_SEARXNG_URL, TZ, GENERIC_TIMEZONE, N8N_SECURE_COOKIE, N8N_DIAGNOSTICS_ENABLED, N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS. Les deux fichiers compose ne contiennent que des références ${VAR}, aucun secret en clair.
+ - Le serveur MCP est présent mais coupé. Le module dist/modules/mcp est dans l'image (mcp.controller.js, RootLevelController('/mcp-server')). `curl -si http://127.0.0.1:5678/mcp-server/http` → `HTTP/1.1 404` `{"message":"MCP access is disabled"}`, et la même réponse passe par le tunnel.
+L'interrupteur est la clé `mcp.access.enabled` de la table settings (mcp.settings.service.js:24). On le pose de deux façons :
+- dans l'interface, PATCH /rest/mcp/settings, portée mcp:manage (mcp.settings.controller.js) ;
+- par N8N_MCP_MANAGED_BY_ENV=true et N8N_MCP_ACCESS_ENABLED=true (@n8n/config instance-settings-loader.config.js:144-150 ; instance-settings-loader/loaders/mcp-settings.loader.js, qui appelle setEnabled).
+Doc officielle docs.n8n.io/hosting/configuration/settings-env-vars/ : disponible depuis 2.20.0, réappliqué à chaque démarrage, et l'interface est alors verrouillée.
+ - Authentification MCP : l'en-tête `Authorization: Bearer` est obligatoire (mcp-server-middleware.service.js:66-115). Sans lui, la réponse est 401 avec `WWW-Authenticate: Bearer realm="n8n MCP Server", resource_metadata=...`. Deux sortes de jetons :
+- le jeton personnel : un JWT d'audience mcp-server-api, affiché en entier une seule fois puis masqué, qu'on change par POST /rest/mcp/api-key/rotate (mcp-api-key.service.js:19-46 et 110-119) ;
+- l'OAuth : enregistrement dynamique /mcp-oauth/register, PKCE S256, puis /mcp-oauth/authorize, /token et /revoke.
+Les outils de construction sont actifs par défaut (endpoints.config.js:212, mcpBuilderEnabled = true).
+ - Le blocage d'adresse est prouvé. `GET /.well-known/oauth-authorization-server` → `"issuer":"http://localhost:5678"`, et toutes les adresses OAuth sont en localhost:5678, y compris vues depuis le PC par un tunnel 5679 (test temporaire, refermé). D'où vient cette adresse :
+- l'émetteur vaut N8N_EDITOR_BASE_URL, sinon WEBHOOK_URL, sinon protocole://hôte:port (backend-services url.service.js:32-45) ;
+- l'URL de ressource vaut N8N_MCP_BASE_URL (ou, à défaut, cette base) + /mcp-server/http (mcp-protected-resource.js, getResourceUrl).
+L'indicateur `resource` envoyé par le client doit correspondre, sinon InvalidResourceIndicatorError (oauth-server.service.js:388-403). L'audience des jetons OAuth doit aussi correspondre (mcp-server-middleware.service.js:46-48). Le port 5678 du PC appartient au n8n local (C:\Users\benja\Documents\n8n\docker-compose.yml:16, "5678:5678").
+ - L'API REST publique est active : `GET /api/v1/workflows` sans clé → `401 {"message":"Unauthorized"}`, sur le serveur comme par le tunnel. N8N_PUBLIC_API_DISABLED n'est pas posée. Doc docs.n8n.io/api/authentication/ : la clé se crée dans Settings > n8n API, s'envoie dans l'en-tête X-N8N-API-KEY, base /api/v1. Hors Enterprise, une clé a tous les droits du compte.
+ - Le compte propriétaire existe : `GET /rest/settings` → userManagement.showSetupOnFirstLoad = False, authenticationMethod = email, authCookie.secure = False.
+ - Aucun redémarrage automatique : `docker inspect` donne la politique `no` aux 6 conteneurs n8n-complet, alors que freellmapi est en `unless-stopped`. Docker démarre bien au boot (`systemctl is-enabled docker` → enabled). Les données sont dans le volume externe n8n_n8n_data (/var/lib/docker/volumes/n8n_n8n_data/_data, 6,4 Mo : database.sqlite et son WAL, config, journaux). L'ancien /opt/n8n/docker-compose.yml vise le même volume (n8n_data) avec `restart: unless-stopped`.
+ - Le tunnel est fermé en ce moment : aucun ssh.exe ne tourne sur le PC et rien n'écoute sur 5679 (Get-CimInstance, Get-NetTCPConnection). Aucune tâche ne le maintient : « Presti usine veille », « Presti demons » et « Presti veilleur-nuit » sont Disabled. Un tunnel de test `ssh -N -L 127.0.0.1:5679:127.0.0.1:5678 gardien@88.96.53.3` fonctionne (healthz → {"status":"ok"}) ; je l'ai refermé et aucun processus ne reste. OpenSSH Windows 9.5p2 accepte la clé gardien (commande distante echo réussie).
+ - SSH : `sshd -T` → allowtcpforwarding yes, permitopen any, gatewayports no. Le compte gardien a `(ALL) NOPASSWD: ALL` (`sudo -n -l`), donc un root complet et pas une lecture seule. Il a une seule clé autorisée, sans restriction (commentaire « presti-gardien-poste »).
+ - Claude Code 2.1.270 : le serveur « n8n » existant pointe sur https://presti.app.n8n.cloud/mcp-server/http, type http. Il est en portée locale du dossier C:/Users/benja/Documents/presti (~/.claude.json) et n'a pas d'en-tête : il passe par OAuth. `claude mcp add` accepte --scope local|user|project, --header et --callback-port.
+ - Hermes 0.21.5 :
+- config.yaml n'a pas de bloc mcp_servers ;
+- `hermes mcp add <nom> --url ... --auth header|oauth` existe (hermes_cli/subcommands/mcp.py:27-36) ;
+- en mode header, le jeton est demandé en saisie masquée et rangé dans le .env de Hermes sous MCP_<NOM>_API_KEY ; config.yaml ne garde que `Authorization: Bearer ${MCP_<NOM>_API_KEY}` (hermes_cli/mcp_config.py:304-341 et 565-572) ;
+- le modèle principal est anthropic/claude-opus-5-5, avec un repli `fallback_providers: freellmapi / ministral-14b` (config.yaml) ;
+- `hermes fallback list|remove|clear` existe.
+ - Orca 1.4.245 : ses automatisations planifiées acceptent `--precheck <commande>` (orca skills get orca-cli --reference references/automations.md). Il a aussi un mode sans fenêtre (`orca serve`) et des environnements appairés. Les agents qu'il lance (claude, codex…) prennent la configuration MCP de Claude Code.
+ - Doc officielle n8n (docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/ et docs.n8n.io/connect/connect-to-n8n-mcp-server/mcp-client-examples.md) :
+- l'activation se fait dans Settings > Instance-level MCP, par le propriétaire ou un admin ;
+- chaque workflow s'expose à part (Available in MCP) ;
+- OAuth est recommandé ; l'autre voie est le jeton de l'onglet « API key » ;
+- commande pour Claude Code : `claude mcp add --transport http n8n https://<domaine>/mcp-server/http`, ou en variante `--header "Authorization: Bearer <TOKEN>"`.
+ETAPES:
+ 1. claude | Sauvegarder l'override, puis le volume de données avec n8n arrêté, pour que la copie de la base SQLite soit cohérente. La sauvegarde contient la clé de chiffrement (fichier config) : elle reste sur le serveur, en root 600. 
+    CMD: ssh -i ~/.ssh/presti-usine-gardien gardien@88.96.53.3 'set -e; cd /opt/n8n-complet; T=$(date +%Y%m%d-%H%M); sudo cp -a docker-compose.override.yml docker-compose.override.yml.avant-mcp-$T; sudo docker compose stop n8n; sudo install -d -m 700 /opt/sauvegardes-n8n; sudo tar czf /opt/sauvegardes-n8n/n8n_data-$T.tgz -C /var/lib/docker/volumes/n8n_n8n_data/_data .; sudo chmod 600 /opt/sauvegardes-n8n/n8n_data-$T.tgz; echo $T' 
+    VERIF: 1. `sudo ls -la /opt/sauvegardes-n8n` : le fichier .tgz existe, n'est pas vide et appartient à root en 600.
+2. `sudo tar tzf /opt/sauvegardes-n8n/n8n_data-<T>.tgz | grep -E '(^|/)(database.sqlite|config)$'` rend 2 lignes.
+3. La copie docker-compose.override.yml.avant-mcp-<T> existe.
+ 2. claude | Remplacer /opt/n8n-complet/docker-compose.override.yml par la même version plus 8 lignes. Ces lignes ajoutent : l'adresse du tunnel, l'activation du MCP par la configuration, la coupure de l'installation de nœuds communautaires par MCP et le redémarrage automatique de n8n. Méthode : écrire le fichier dans le scratchpad, le copier par scp vers /tmp/override-mcp.yml, puis `sudo install -m 644 -o root -g root /tmp/override-mcp.yml /opt/n8n-complet/docker-compose.override.yml && rm /tmp/override-mcp.yml`. Si Benj préfère garder l'interrupteur MCP dans l'interface, retirer les deux lignes N8N_MCP_MANAGED_BY_ENV et N8N_MCP_ACCESS_ENABLED et suivre l'alternative de l'étape 5. 
+    CMD: # Réglages Presti (29/10) : n8n seulement sur 127.0.0.1 (accès par tunnel SSH), reprise des données de la première installation,
+# et clés exigées par le service sandbox 1.12.0 (cf. compose.yaml de n8n-io/n8n-sandbox-service), lues dans .env.
+# Ajout du 01/11 : adresses publiques = celles du tunnel du PC (127.0.0.1:5679 -> 127.0.0.1:5678), serveur MCP d'instance
+# activé par la configuration, installation de nœuds communautaires par MCP coupée, redémarrage automatique de n8n.
+services:
+  n8n:
+    restart: unless-stopped
+    ports: !override
+      - "127.0.0.1:5678:5678"
+    environment:
+      N8N_INSTANCE_AI_SANDBOX_ENABLED: "true"
+      N8N_INSTANCE_AI_SANDBOX_PROVIDER: n8n-sandbox
+      N8N_SANDBOX_SERVICE_URL: http://sandbox-api:8080
+      N8N_EDITOR_BASE_URL: http://localhost:5679
+      WEBHOOK_URL: http://localhost:5679/
+      N8N_MCP_MANAGED_BY_ENV: "true"
+      N8N_MCP_ACCESS_ENABLED: "true"
+      N8N_MCP_COMMUNITY_NODE_DISCOVERY_ENABLED: "false"
+    networks:
+      - default
+      - freellmapi
+  sandbox-api:
+    environment:
+      SANDBOX_API_KEYS: ${SANDBOX_API_KEYS}
+      SANDBOX_API_RUNNER_REGISTRATION_TOKEN: ${SANDBOX_API_RUNNER_REGISTRATION_TOKEN}
+      SANDBOX_API_RUNNER_API_KEY: ${SANDBOX_API_RUNNER_API_KEY}
+  sandbox-runner-1:
+    environment:
+      SANDBOX_RUNNER_API_KEYS: ${SANDBOX_API_RUNNER_API_KEY}
+      SANDBOX_RUNNER_REGISTRATION_TOKEN: ${SANDBOX_API_RUNNER_REGISTRATION_TOKEN}
+volumes:
+  n8n-data:
+    external: true
+    name: n8n_n8n_data
+networks:
+  freellmapi:
+    external: true
+    name: freellmapi_default 
+    VERIF: 1. `cd /opt/n8n-complet && sudo diff -u docker-compose.override.yml.avant-mcp-<T> docker-compose.override.yml` ne montre que les 8 lignes ajoutées (2 de commentaire, restart, 5 variables).
+2. `sudo docker compose config --quiet && echo OK` affiche OK.
+Ne jamais lancer `docker compose config` sans --quiet : la commande affiche en clair les valeurs du .env.
+ 3. claude | Recréer seulement le conteneur n8n, sans toucher au bac à sable, aux exécuteurs ni au volume, puis vérifier sur le serveur. Ne jamais lancer `docker compose down -v` ni `--pull`. Sans --no-deps, compose relancerait sandbox-certs, qui regénère les certificats mTLS. 
+    CMD: ssh -i ~/.ssh/presti-usine-gardien gardien@88.96.53.3 'cd /opt/n8n-complet && sudo docker compose up -d --no-deps n8n && curl -s --retry 30 --retry-delay 2 --retry-all-errors http://127.0.0.1:5678/healthz; echo; sudo docker logs --since 10m n8n-complet-n8n-1 2>&1 | grep -A1 "accessible via"; curl -si http://127.0.0.1:5678/mcp-server/http | tr -d "\r" | grep -iE "^HTTP|^www-authenticate"; curl -s http://127.0.0.1:5678/.well-known/oauth-authorization-server | grep -oE "\"issuer\":\"[^\"]*\""; sudo ss -ltnp | grep 5678; sudo docker inspect -f "{{.HostConfig.RestartPolicy.Name}}" n8n-complet-n8n-1; sudo docker compose ps --format "{{.Service}} {{.State}}"; sudo docker compose logs --since 10m runners | tail -5' 
+    VERIF: 1. healthz → {"status":"ok"}.
+2. Le journal affiche « Editor is now accessible via: http://localhost:5679 ».
+3. /mcp-server/http → `HTTP/1.1 401` avec `WWW-Authenticate: Bearer realm="n8n MCP Server", resource_metadata="http://localhost:5679/.well-known/oauth-protected-resource/mcp-server/http"` (avant : 404 « MCP access is disabled »).
+4. L'émetteur vaut `"issuer":"http://localhost:5679"`.
+5. Seul 127.0.0.1:5678 écoute.
+6. La politique de redémarrage vaut unless-stopped.
+7. Les 5 services sont running.
+8. Le journal de runners ne montre pas d'erreurs de connexion répétées ; sinon lancer `sudo docker compose restart runners`.
+ 4. claude | Avec l'accord de Benj (c'est une configuration persistante, et l'écosystème est en pause depuis le 11/10) : créer un tunnel permanent, caché et lié à 127.0.0.1 seulement, pour que Claude Code, Hermes et Orca trouvent n8n à toute heure. À défaut d'accord, ouvrir un tunnel temporaire le temps de la session : `ssh -N -L 127.0.0.1:5679:127.0.0.1:5678 ...`. 
+    CMD: Fichier C:\Users\benja\Documents\presti-ops\usine\tunnel-n8n-oracle.ps1 :
+# Tunnel permanent PC -> n8n d'Oracle (MCP + API). Aucun secret ici : seulement le chemin de la clé.
+$ssh = Join-Path $env:WINDIR 'System32\OpenSSH\ssh.exe'
+$cle = Join-Path $env:USERPROFILE '.ssh\presti-usine-gardien'
+$journal = Join-Path $env:LOCALAPPDATA 'presti-tunnel-n8n.log'
+while ($true) {
+  Add-Content -Path $journal -Encoding UTF8 -Value ('{0} ouverture du tunnel' -f (Get-Date -Format s))
+  & $ssh -N -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -i $cle -L 127.0.0.1:5679:127.0.0.1:5678 gardien@88.96.53.3
+  Add-Content -Path $journal -Encoding UTF8 -Value ('{0} tunnel fermé (code {1}), nouvel essai dans 20 s' -f (Get-Date -Format s), $LASTEXITCODE)
+  Start-Sleep -Seconds 20
+}
+
+Enregistrement (PowerShell) :
+$a = New-ScheduledTaskAction -Execute "$env:WINDIR\System32\conhost.exe" -Argument '--headless powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Users\benja\Documents\presti-ops\usine\tunnel-n8n-oracle.ps1"'
+$t = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
+$s = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::Zero) -MultipleInstances IgnoreNew -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1)
+Register-ScheduledTask -TaskName 'Presti tunnel n8n Oracle' -Action $a -Trigger $t -Settings $s -Description 'Tunnel SSH 127.0.0.1:5679 -> n8n Oracle 127.0.0.1:5678 (MCP + API)'
+Start-ScheduledTask -TaskName 'Presti tunnel n8n Oracle' 
+    VERIF: 1. `curl.exe -s http://localhost:5679/healthz` → {"status":"ok"}.
+2. `Get-NetTCPConnection -State Listen -LocalPort 5679` : l'adresse locale est 127.0.0.1 uniquement, rien sur 0.0.0.0.
+3. Tuer le processus ssh.exe : le tunnel revient en 20 à 30 s, et le fichier %LOCALAPPDATA%\presti-tunnel-n8n.log garde la trace.
+4. Depuis le PC, `curl.exe -s http://localhost:5679/.well-known/oauth-protected-resource/mcp-server/http` renvoie `"resource":"http://localhost:5679/mcp-server/http"` et `"authorization_servers":["http://localhost:5679"]`.
+ 5. benj | Ouvrir http://localhost:5679 avec ton compte propriétaire, puis Settings > Instance-level MCP. Vérifier que l'accès est actif (« géré par variables d'environnement ») et que la Server URL est http://localhost:5679/mcp-server/http.
+Facultatif : si l'écran le propose, restreindre les adresses de retour OAuth à `http://localhost/callback`. Pour une adresse locale, n8n ignore le port (oauth-server.service.js:215-245), donc cette entrée accepte Claude Code et refuse toute adresse non locale.
+Alternative, si l'étape 2 a été faite sans les variables MCP : cliquer toi-même sur « Enable MCP access ».
+N'exposer aucun workflow pour l'instant : il y en a 0.
+Pourquoi toi : cet écran exige ta session propriétaire, et Claude ne saisit jamais de mot de passe. 
+    CMD: Interface n8n : http://localhost:5679 > Settings > Instance-level MCP (aucune commande) 
+    VERIF: L'écran affiche l'accès MCP actif et l'URL en :5679. Depuis le PC, `curl.exe -s http://localhost:5679/.well-known/oauth-protected-resource/mcp-server/http` renvoie bien le port 5679.
+ 6. claude | Déclarer le n8n d'Oracle dans Claude Code en OAuth : aucun secret n'entre dans la configuration. Portée user, pour que les worktrees qu'Orca crée ailleurs que dans C:/Users/benja/Documents/presti le voient. Le serveur « n8n » (cloud) reste tel quel. 
+    CMD: claude mcp add --transport http --scope user n8n-oracle http://localhost:5679/mcp-server/http 
+    VERIF: `claude mcp list` montre n8n-oracle sur http://localhost:5679/mcp-server/http, en attente d'authentification jusqu'à l'étape 7.
+ 7. benj | Autoriser Claude Code : dans Claude Code, taper `/mcp`, choisir n8n-oracle, puis Authenticate. Le navigateur ouvre http://localhost:5679/mcp-oauth/authorize… : te connecter à n8n, puis Allow.
+Pourquoi toi : le consentement OAuth se donne avec ton compte, et le jeton ne passe jamais par le chat. Chaque client se révoque à part dans « Connected clients ». 
+    CMD: /mcp → n8n-oracle → Authenticate (dans Claude Code) 
+    VERIF: 1. `claude mcp list` → n8n-oracle connecté.
+2. Dans une session, l'outil en lecture `search_workflows` de n8n-oracle répond sans erreur, avec 0 workflow.
+3. Settings > Instance-level MCP > Connected clients liste Claude Code.
+ 8. claude | Avec l'accord de Benj, avant de donner n8n-oracle à Hermes : retirer le repli freellmapi/ministral-14b. Les outils MCP peuvent rendre des données de prospects, et freellmapi les enverrait à des offres gratuites en ligne, ce que la règle du 01/11 interdit. Alternative : un profil Hermes à part (`hermes profile create ...`) qui porte n8n-oracle sans repli, le profil par défaut gardant freellmapi pour les tâches sans données personnelles. 
+    CMD: hermes fallback list
+hermes fallback remove   (choisir l'entrée freellmapi / ministral-14b)
+(ou : hermes fallback clear) 
+    VERIF: `hermes fallback list` ne montre plus freellmapi. `grep -n -A2 '^fallback_providers' C:/Users/benja/AppData/Local/hermes/config.yaml` ne contient plus freellmapi. Une question simple à Hermes répond toujours (fournisseur anthropic).
+ 9. benj | Brancher Hermes par jeton.
+1. Dans n8n : Settings > Instance-level MCP > Connect, onglet « API key ». Copier le jeton personnel : il n'est affiché en entier qu'une fois ; sinon, le régénérer avec le bouton de rotation.
+2. Dans un terminal du PC, lancer la commande ci-dessous et coller le jeton à l'invite masquée « API key / Bearer token », sans le mot Bearer.
+Ne jamais coller ce jeton dans le chat : la capture de session le recopierait dans le vault.
+Pourquoi toi : c'est un secret, et Claude ne manipule ni ne saisit de jeton. 
+    CMD: hermes mcp add n8n-oracle --url http://localhost:5679/mcp-server/http --auth header
+(à l'invite masquée : <JETON>) 
+    VERIF: 1. `hermes mcp test n8n-oracle` → connexion réussie et liste des outils.
+2. `hermes mcp list` montre n8n-oracle.
+3. `grep -c '^MCP_N8N_ORACLE_API_KEY=' C:/Users/benja/AppData/Local/hermes/.env` → 1 (on compte le nom, la valeur n'est pas lue).
+ 10. benj | Créer une clé pour l'API REST, utile aux scripts d'Orca et de Hermes qui ne passent pas par MCP. Dans Settings > n8n API > Create an API key : libellé « pc-orca-hermes », expiration courte (90 jours au plus). Copier la clé, affichée une seule fois, dans le dossier « presti secret », fichier n8n-oracle-api.txt, sur une seule ligne.
+Jamais dans le chat, jamais dans un fichier versionné. Hors Enterprise, cette clé a tous les droits du compte.
+Pourquoi toi : c'est un secret. 
+    CMD: Interface n8n : http://localhost:5679 > Settings > n8n API > Create an API key ; puis fichier n8n-oracle-api.txt dans le dossier « presti secret » 
+    VERIF: Dans ton terminal : `curl.exe -s -o NUL -w "%{http_code}" -H "X-N8N-API-KEY: <JETON>" "http://localhost:5679/api/v1/workflows?limit=1"` → 200. La même commande sans l'en-tête → 401 (déjà vérifié).
+ 11. claude | Pour Orca :
+- toute automatisation qui touche n8n reçoit un precheck sur le tunnel et passe par le MCP n8n-oracle (portée user) ;
+- un script qui a besoin du REST lit n8n-oracle-api.txt dans l'environnement du seul processus fils, comme le font déjà les lanceurs de presti/docs/agents/ia-pc.md. La clé n'apparaît jamais dans un prompt ni dans un journal ;
+- créer l'automatisation désactivée tant que Benj n'a pas validé. 
+    CMD: orca automations create --name "<nom>" --trigger hourly --prompt "<consigne>" --provider claude --repo path:C:/Users/benja/Documents/presti --precheck "curl -sf --max-time 5 http://localhost:5679/healthz" --disabled --json 
+    VERIF: `orca automations show <id> --json` montre le precheck. Avec le tunnel coupé, `orca automations runs --id <id> --json` donne le statut skipped_precheck.
+ 12. claude | Remettre ce qu'on a appris dans la mémoire.
+- Dans presti/CLAUDE.md, mettre à jour le tableau « Où chaque outil tourne » : n8n Oracle avec MCP actif sur http://localhost:5679/mcp-server/http, tunnel permanent, OAuth pour Claude Code, jeton pour Hermes, clé REST.
+- Y écrire la règle : les données personnelles vont dans n8n-oracle seulement, jamais dans « n8n » (cloud).
+- Dans le vault, par une tâche de périmètre SaaS/Produit : la procédure et les pièges (port 5679, adresse de base et audience OAuth, `--no-deps`, `config --quiet`, repli freellmapi).
+- Purger la ligne qui contient le code OAuth de Hermes dans vault/inbox/sessions/2026-11-01-12h33-b6e06ae6-avant-compression.md, et faire filtrer les secrets par la capture de session. 
+    CMD: Édition de C:\Users\benja\Documents\presti\CLAUDE.md (section « Où chaque outil tourne ») et note dans C:\Users\benja\Documents\SaaS\Produit\ (tâche .orchestre de périmètre SaaS/…) 
+    VERIF: `grep -n "n8n-oracle" C:/Users/benja/Documents/presti/CLAUDE.md` trouve la ligne. `chercher("n8n-oracle MCP tunnel 5679")` dans le cerveau rend la nouvelle note. La note de session ne contient plus le code.
+ 13. claude | Facultatif, avec l'accord de Benj, quatre durcissements :
+(a) redémarrage automatique des autres conteneurs, tout de suite et sans les redémarrer, puis la même ligne `restart: unless-stopped` dans l'override pour ces services au prochain `up` complet ;
+(b) une clé SSH réservée au tunnel, sur un compte sans sudo, limitée à la redirection vers 127.0.0.1:5678 (la clé gardien donne root) ;
+(c) neutraliser l'ancien compose, qui vise le même volume ;
+(d) dans les permissions de Claude Code, mettre en « ask » les outils d'écriture de n8n-oracle. 
+    CMD: (a) sudo docker update --restart unless-stopped n8n-complet-runners-1 n8n-complet-sandbox-api-1 n8n-complet-sandbox-runner-1-1 n8n-complet-searxng-1
+(b) authorized_keys du compte tunnel : restrict,port-forwarding,permitopen="127.0.0.1:5678" ssh-ed25519 <CLE-PUBLIQUE> presti-tunnel-n8n
+(c) sudo mv /opt/n8n/docker-compose.yml /opt/n8n/docker-compose.yml.ancien-ne-pas-lancer
+(d) ~/.claude/settings.json : "permissions": {"ask": ["mcp__n8n-oracle__publish_workflow", "mcp__n8n-oracle__execute_workflow", "mcp__n8n-oracle__archive_workflow", "mcp__n8n-oracle__add_data_table_rows"]} 
+    VERIF: (a) `docker inspect -f '{{.HostConfig.RestartPolicy.Name}}'` → unless-stopped pour chacun.
+(b) `ssh -i <clé-tunnel> tunnel@88.96.53.3 true` est refusé faute de shell, mais `-N -L 127.0.0.1:5679:127.0.0.1:5678` fonctionne.
+(c) `ls /opt/n8n` montre le fichier renommé.
+(d) l'appel d'un outil d'écriture demande une confirmation.
+RISQUES:
+ - Fuite vers un modèle gratuit : Hermes a pour repli freellmapi/ministral-14b (config.yaml). Si Anthropic sature ou tombe en panne, les données renvoyées par les outils MCP (get_workflow_execution, get_data_table_rows…) partiraient vers des offres gratuites en ligne, contre la règle du 01/11. Il faut couper ce repli (étape 8) avant de brancher Hermes.
+ - La même règle vaut dans les workflows. Le n8n d'Oracle est relié au réseau freellmapi_default (override) et à freellmapi (session du 29/10). Un nœud IA qui traite des prospects ne doit jamais passer par freellmapi.
+ - Secrets dans le vault : la capture automatique de session recopie mot pour mot les messages de Benj dans vault/inbox/sessions/. La note 2026-11-01-12h33-b6e06ae6-avant-compression.md contient en clair un code d'autorisation OAuth collé pour Hermes ; elle est indexée par le cerveau, donc lisible par tout agent. Les jetons n8n de cette procédure ne doivent jamais passer par le chat.
+ - La clé gardien donne root (`(ALL) NOPASSWD: ALL`), pas une lecture seule, et elle servira au tunnel permanent. Un agent du PC qui lit ~/.ssh tient alors le serveur qui garde les données de prospects. Remède : la clé dédiée de l'étape 13b, et interdire aux agents de lire ~/.ssh (permissions d'Orca et de Claude Code).
+ - Droits larges : le jeton MCP et l'OAuth donnent les droits du propriétaire sur environ 70 outils (publish, execute, archive_workflow, add_data_table_rows, list_credentials…). Une clé REST hors Enterprise a tous les droits du compte (doc n8n). Il faut des expirations courtes et une clé par usage.
+ - L'adresse sera figée : l'émetteur OAuth, l'indicateur de ressource et l'audience des jetons vaudront http://localhost:5679.
+- Changer plus tard le port du tunnel obligera à ré-autoriser tous les clients OAuth.
+- Un client qui tournerait sur le serveur lui-même devra utiliser le jeton Bearer sur http://127.0.0.1:5678 : l'OAuth lui annoncerait localhost:5679, qui n'existe pas là-bas.
+- Ne pas confondre : 5679 est aussi le port interne du courtier des exécuteurs (N8N_RUNNERS_TASK_BROKER_URI http://n8n:5679). Il n'y a pas de conflit.
+ - Disponibilité : aujourd'hui, aucun conteneur n8n-complet ne revient après un redémarrage du serveur (politique `no`). L'étape 2 ne corrige que n8n ; le bac à sable, les exécuteurs et SearXNG attendent l'étape 13a. Le tunnel tombe aussi avec le PC ou la session Windows : d'où le precheck des automatisations Orca.
+ - Webhooks : rien d'Internet ne joint n8n, et c'est voulu. Les déclencheurs poussés par un service extérieur (Telegram, Stripe, Webhook public) ne marcheront donc pas : seuls la planification, l'interrogation régulière et les appels depuis le serveur ou le PC fonctionnent. Ouvrir un chemin public serait une décision de Benj.
+ - Le socle est fragile.
+- L'instance a la forme 4 OCPU / 24 Go (métadonnées OCI), alors que memoire/usine-oracle.md note une limite Always Free de 2/12 et une fin d'essai vers le 24/10. À vérifier dans la console avant de bâtir dessus.
+- Le disque est à 90 % (11 Go libres).
+ - L'ancien /opt/n8n/docker-compose.yml vise le même volume n8n_n8n_data, avec `restart: unless-stopped`. Un `docker compose up` dans ce dossier lancerait un second n8n sur la même base SQLite.
+ - Pendant l'intervention, n8n est coupé une à deux minutes. Trois gestes interdits :
+- `docker compose down -v` ;
+- `--pull` ;
+- `docker compose config` sans --quiet, qui affiche les secrets du .env.
+Un `up` sans --no-deps relancerait sandbox-certs, qui regénère les certificats mTLS.
+ - Deux n8n cohabiteront dans Claude Code : « n8n » (le cloud) et « n8n-oracle ». Un workflow avec des données personnelles construit par erreur sur le cloud violerait la règle du 01/11. Il faut écrire la règle dans CLAUDE.md, et renommer au besoin le connecteur cloud.
+ - Avec la gestion par variables, l'interrupteur MCP et « Auto-expose new workflows » deviennent non modifiables dans l'interface (doc n8n). Chaque workflow devra être exposé à la main (Available in MCP).
+ - Les cookies ne sont pas séparés par port. Le n8n local du PC (5678, lié à toutes les interfaces : C:\Users\benja\Documents\n8n\docker-compose.yml:16) et celui d'Oracle (5679) partagent le cookie n8n-auth de localhost, d'où des déconnexions croisées. Et le n8n local, s'il est démarré, est visible sur le réseau local.
+ - La limite de débit MCP est partagée (X-RateLimit-Limit: 100) : tout le trafic du tunnel arrive par la même passerelle Docker, donc Claude Code, Hermes et Orca se partagent le même compteur.
+ - N8N_MCP_COMMUNITY_NODE_DISCOVERY_ENABLED=false retire aussi la découverte de nœuds communautaires dans search_nodes. L'installation à la main reste possible dans l'interface.
+NV:
+ - Le parcours OAuth complet de Claude Code vers n8n en http://localhost, sans TLS : impossible à tester tant que le MCP est coupé. Le libellé exact affiché par `claude mcp list` n'est pas vérifié non plus.
+ - La connexion de Hermes 0.21.5 en mode header au point d'entrée HTTP de n8n : `hermes mcp test` n'a pas été lancé. Le remplacement de ${MCP_N8N_ORACLE_API_KEY} au moment de l'appel est déduit du code.
+ - Que le conteneur runners se reconnecte seul au courtier quand n8n est recréé.
+ - L'endroit de l'interface où se règle la liste des adresses de retour OAuth : seule l'API GET/PATCH /rest/mcp/oauth/allowed-redirect-uris est attestée. Son verrouillage éventuel par N8N_MCP_MANAGED_BY_ENV n'est pas vérifié.
+ - L'adresse de retour de Claude Code (http://localhost:<port>/callback) : la source est un ensemble d'issues GitHub et une doc tierce, pas la doc officielle d'Anthropic.
+ - Que la portée user partage les jetons OAuth de Claude Code entre les worktrees créés par Orca.
+ - La durée de la fenêtre de la limite de débit MCP : seul le plafond de 100 requêtes est vu.
+ - Que execute_workflow ou test_workflow par MCP, sur un workflow à déclencheur Webhook, s'exécute en interne sans appeler WEBHOOK_URL.
+ - Le statut du compte Oracle (Free Tier ou paiement à l'usage) face à la forme 4/24. La liste de sécurité OCI (le pare-feu côté cloud) n'a pas été lue : seuls iptables et une sonde externe ont été vérifiés.
+ - Le comportement de la tâche planifiée (boucle PowerShell lancée par conhost --headless) : elle n'a pas été créée, donc pas testée.
+ - Où partent les appels de l'« Instance AI » et de la passerelle IA de n8n (vers un service en ligne de n8n ?), et quels identifiants freellmapi le n8n d'Oracle détient.
+ - Que `hermes fallback remove` ou `clear` accepte une chaîne de repli vide sans effet de bord.

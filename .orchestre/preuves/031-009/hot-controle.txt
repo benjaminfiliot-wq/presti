@@ -1,0 +1,2 @@
+md5 du hot.md sans le bloc : 89f19dcb1afb24a0c0d7a39c6606036f  | md5 d avant : 89f19dcb1afb24a0c0d7a39c6606036f IDENTIQUES : seul le bloc a été ajouté
+ligne Réseau dans les 30 premières lignes : 15

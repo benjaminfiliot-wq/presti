@@ -1,4 +1,6 @@
 {
+  "model": "opusplan",
+  "effortLevel": "high",
   "hooks": {
     "PreToolUse": [
       {
@@ -6,7 +8,30 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node scripts/hooks/read-garde.mjs"
+            "command": "node \"${CLAUDE_PROJECT_DIR:-C:/Users/benja/Documents/presti}/scripts/hooks/read-garde.mjs\""
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|mcp__(?!cerveau__|ccd_|terminal__|visualize__|Claude_Browser__|mcp-registry__).+",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-C:/Users/benja/Documents/presti}/scripts/verifier-outils-obligatoires.mjs\"",
+            "timeout": 30,
+            "onFailure": "block",
+            "statusMessage": "Vérification de n8n, Hermes et Orca"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-C:/Users/benja/Documents/presti}/scripts/hooks/garde-agents-orca.mjs\"",
+            "timeout": 15,
+            "statusMessage": "Garde des sessions lancées par Orca"
           }
         ]
       }
@@ -17,7 +42,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node scripts/hooks/contexte-fond.mjs"
+            "command": "node \"${CLAUDE_PROJECT_DIR:-C:/Users/benja/Documents/presti}/scripts/hooks/contexte-fond.mjs\""
           }
         ]
       }

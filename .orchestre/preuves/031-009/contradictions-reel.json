@@ -1,0 +1,779 @@
+{
+ "date": "2026-11-02T08:29:55.854Z",
+ "regles": 147,
+ "regles_par_source": {
+  "memoire-presti": 31,
+  "memoire": 113,
+  "memoire-ops": 3
+ },
+ "regles_trouvees": 147,
+ "passes": {
+  "mémoire×vault": {
+   "regles": 147,
+   "regles_par_source": {
+    "memoire-presti": 31,
+    "memoire": 113,
+    "memoire-ops": 3
+   },
+   "regles_trouvees": 147
+  },
+  "vault×vault": {
+   "adr_acceptees": [
+    "vault/10 Presti/04 Décisions/ADR-001 — Toutes les automatisations dans n8n.md",
+    "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+    "vault/10 Presti/04 Décisions/ADR-003 — Infrastructure auto-hébergée sur Oracle.md",
+    "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+    "vault/10 Presti/04 Décisions/ADR-005 — Prospection e-mail automatique.md",
+    "vault/10 Presti/04 Décisions/ADR-006 — Vidéos et carrousels - validation initiale puis auto.md"
+   ],
+   "sections_comparees_par_adr": {
+    "vault/10 Presti/04 Décisions/ADR-001 — Toutes les automatisations dans n8n.md": 30,
+    "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md": 30,
+    "vault/10 Presti/04 Décisions/ADR-003 — Infrastructure auto-hébergée sur Oracle.md": 28,
+    "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md": 27,
+    "vault/10 Presti/04 Décisions/ADR-005 — Prospection e-mail automatique.md": 27,
+    "vault/10 Presti/04 Décisions/ADR-006 — Vidéos et carrousels - validation initiale puis auto.md": 18
+   },
+   "sections_du_journal_lues": 68,
+   "notes_voisines_lues": 92
+  }
+ },
+ "duree_ms": 958,
+ "seuil": 0.6,
+ "contradictions": [
+  {
+   "id": "faf7cd8dfa7a",
+   "passe": "mémoire×vault",
+   "trouveLe": "2026-11-02T08:29:54.949Z",
+   "p": 0.95,
+   "genre": "chiffre",
+   "sujet": "29/10 - Presti branché sur freellmapi (branche claude/ia-gratuite-18150d, drapeau iaGratuite baissé)",
+   "memoire": "memoire-presti/ia-gratuite-produit-2910.md",
+   "vault": "vault/inbox/sessions/2026-10-29-presti-ia-gratuite-freellmapi.md",
+   "section": "IA gratuite dans Presti (freellmapi) — 29/10 › Ce qu'on a appris (à intégrer au wiki)",
+   "dateMemoire": "2026-10-29T19:35:41.395Z",
+   "dateVault": "2026-11-01T20:52:26.913Z",
+   "regle": {
+    "source": "memoire-presti",
+    "fichier": "memoire-presti/ia-gratuite-produit-2910.md",
+    "section": "ia-gratuite-produit-2910"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/inbox/sessions/2026-10-29-presti-ia-gratuite-freellmapi.md",
+    "section": "IA gratuite dans Presti (freellmapi) — 29/10 › Ce qu'on a appris (à intégrer au wiki)"
+   },
+   "phraseMemoire": "- L'économie est petite (≈ 0,04 € / recherche Pro à froid) : ne pas la survendre.",
+   "phraseVault": "- **Économie honnête : petite** (≈ 0,04 € par recherche Pro à froid, 0,10 € en Expert, `docs/couts-et-solde.md:25`).",
+   "detail": "0.04 euro (mémoire) contre 0.1 euro (vault)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "c6e999492f60",
+   "passe": "mémoire×vault",
+   "trouveLe": "2026-11-02T08:29:54.991Z",
+   "p": 0.95,
+   "genre": "chiffre",
+   "sujet": "26/10 - pub Presti v3 jugée « horrible » (voix lente, aucune dynamique) ; causes mesurées et règles ",
+   "memoire": "memoire-presti/pub-v3-horrible-lenteur-2610.md",
+   "vault": "vault/wiki/concepts/Rythme d'une pub - mots par seconde et dynamisme.md",
+   "section": "Rythme d'une pub — mots par seconde et dynamisme › Ce qu'on sait (avec date et source)",
+   "dateMemoire": "2026-10-26T09:35:04.077Z",
+   "dateVault": "2026-10-26T20:25:36.027Z",
+   "regle": {
+    "source": "memoire-presti",
+    "fichier": "memoire-presti/pub-v3-horrible-lenteur-2610.md",
+    "section": "pub-v3-horrible-lenteur-2610"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/wiki/concepts/Rythme d'une pub - mots par seconde et dynamisme.md",
+    "section": "Rythme d'une pub — mots par seconde et dynamisme › Ce qu'on sait (avec date et source)"
+   },
+   "phraseMemoire": "l'agent de rendu a **ajouté 6 s de silences** ;",
+   "phraseVault": "Causes trouvées : texte écrit sur une version V1 **ralentie 1,5 fois**, **6 s de silences** ajoutés par l'agent de rendu, plans tenus 2 à 3 s.",
+   "detail": "6 seconde (mémoire) contre 3 seconde (vault)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "5cc176ef21d8",
+   "passe": "mémoire×vault",
+   "trouveLe": "2026-11-02T08:29:55.208Z",
+   "p": 0.85,
+   "genre": "chiffre",
+   "sujet": "La vidéo recordVideo de Playwright n'est pas à l'heure du script (en avance de 0,05 à 0,8 s, qui dér",
+   "memoire": "memoire/playwright-video-horloge.md",
+   "vault": "vault/wiki/concepts/Chaîne de rendu - pièges ffmpeg et Playwright.md",
+   "section": "Chaîne de rendu — pièges ffmpeg et Playwright › Pièges mesurés (avec date)",
+   "dateMemoire": "2026-09-15T02:49:05.043Z",
+   "dateVault": "2026-10-26T20:25:36.015Z",
+   "regle": {
+    "source": "memoire",
+    "fichier": "memoire/playwright-video-horloge.md",
+    "section": "playwright-video-horloge"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/wiki/concepts/Chaîne de rendu - pièges ffmpeg et Playwright.md",
+    "section": "Chaîne de rendu — pièges ffmpeg et Playwright › Pièges mesurés (avec date)"
+   },
+   "phraseMemoire": "Des écrans blancs de 300 ms placés à des heures connues ressortent dans la webm entre 0,05 et 0,8 s **plus tôt** que l'heure `Date.now()` du script, et l'écart grandit au fil de l'enregistrement (bureau : -0,06 s au début, -0,73 s à la fin).",
+   "phraseVault": "- La vidéo `recordVideo` n'est pas à l'heure du script : en avance de 0,05 à 0,8 s, et l'écart grandit.",
+   "detail": "0.06 seconde (mémoire) contre 0.8 seconde (vault)",
+   "statut": "à trancher",
+   "vuLe": "2026-11-02T08:29:55.208Z"
+  },
+  {
+   "id": "c4dd2c8f4e4c",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.681Z",
+   "p": 0.8,
+   "genre": "chiffre",
+   "sujet": "ADR-004 — Brevo gratuit pour l'e-mail en masse",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+   "vault": "vault/Decisions/Journal-Decisions.md",
+   "section": "Journal-Decisions › 2026-11-01 — Addendum, cinq chantiers, outils et répartition",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+    "section": "ADR-004 — Brevo gratuit pour l'e-mail en masse › Décision",
+    "ligne": 102,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Decisions/Journal-Decisions.md",
+    "section": "Journal-Decisions › 2026-11-01 — Addendum, cinq chantiers, outils et répartition",
+    "ligne": 27,
+    "cote": "journal"
+   },
+   "phraseMemoire": "- Moins de 9000 e-mails par mois : Brevo gratuit suffit.",
+   "phraseVault": "Brevo gratuit, 300 e-mails par jour",
+   "detail": "9000 mail (ADR) contre 300 mail (journal)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "b08fe5b0e942",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.455Z",
+   "p": 0.77,
+   "genre": "polarité",
+   "sujet": "ADR-001 — Toutes les automatisations dans n8n",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-001 — Toutes les automatisations dans n8n.md",
+   "vault": "vault/10 Presti/04 Décisions/ADR-005 — Prospection e-mail automatique.md",
+   "section": "ADR-005 — Prospection e-mail automatique › Conséquences",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01T17:15:08.251Z",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-001 — Toutes les automatisations dans n8n.md",
+    "section": "ADR-001 — Toutes les automatisations dans n8n › Conséquences",
+    "ligne": 115,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-005 — Prospection e-mail automatique.md",
+    "section": "ADR-005 — Prospection e-mail automatique › Conséquences",
+    "ligne": 86,
+    "cote": "voisine"
+   },
+   "phraseMemoire": "Quand une migration de schéma est nécessaire, on la colle puis on lève le drapeau, jamais l'inverse (addendum §7).",
+   "phraseVault": "on la colle, puis on lève le drapeau (addendum §6 et §7).",
+   "detail": "l'ADR écarte ou interdit, la note maintient (mots communs : coll, leve, drapeau, addendum)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "377c9010bd81",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.479Z",
+   "p": 0.77,
+   "genre": "polarité",
+   "sujet": "ADR-001 — Toutes les automatisations dans n8n",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-001 — Toutes les automatisations dans n8n.md",
+   "vault": "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+   "section": "ADR-004 — Brevo gratuit pour l'e-mail en masse › Conséquences",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01T17:15:08.248Z",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-001 — Toutes les automatisations dans n8n.md",
+    "section": "ADR-001 — Toutes les automatisations dans n8n › Conséquences",
+    "ligne": 123,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+    "section": "ADR-004 — Brevo gratuit pour l'e-mail en masse › Conséquences",
+    "ligne": 120,
+    "cote": "voisine"
+   },
+   "phraseMemoire": "Un déclencheur entrant, comme le Brevo Trigger de [[ADR-004 — Brevo gratuit pour l'e-mail en masse]], demande une adresse publique en HTTPS, qui n'existe pas aujourd'hui.",
+   "phraseVault": "Le Brevo Trigger a besoin d'une adresse publique.",
+   "detail": "l'ADR écarte ou interdit, la note maintient (mots communs : brevo, trigg, adress, publ)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "7978ab4d1bcf",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.527Z",
+   "p": 0.77,
+   "genre": "polarité",
+   "sujet": "ADR-002 — Hermes Agent systématique + Orca harness",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+   "vault": "vault/Produit/Antigravity.md",
+   "section": "Antigravity × Claude Code — la méthode de production (depuis le 2026-09-13)",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-09-13",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+    "section": "ADR-002 — Hermes Agent systématique + Orca harness › Décision",
+    "ligne": 73,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Produit/Antigravity.md",
+    "section": "Antigravity × Claude Code — la méthode de production (depuis le 2026-09-13)",
+    "ligne": 5,
+    "cote": "voisine"
+   },
+   "phraseMemoire": "Tout le reste va dans `.orchestre/file/`, en tâche Markdown à en-tête YAML.",
+   "phraseVault": "Une tâche = un Markdown à en-tête YAML (id, type, objectif, perimetre, interdit, verifier, budget, preuve — tous obligatoires).",
+   "detail": "l'ADR décide, la note écarte ou retire (mots communs : tach, markdown, tete, yaml)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "8eff637fc4e9",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.772Z",
+   "p": 0.77,
+   "genre": "polarité",
+   "sujet": "ADR-005 — Prospection e-mail automatique",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-005 — Prospection e-mail automatique.md",
+   "vault": "vault/Decisions/Journal-Decisions.md",
+   "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-005 — Prospection e-mail automatique.md",
+    "section": "ADR-005 — Prospection e-mail automatique › Conséquences",
+    "ligne": 88,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Decisions/Journal-Decisions.md",
+    "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+    "ligne": 18,
+    "cote": "journal"
+   },
+   "phraseMemoire": "La tâche `presti-envoi-prospection` (Gmail) laisse la place à un workflow n8n qui envoie par Brevo ([[ADR-001 — Toutes les automatisations dans n8n]] ;",
+   "phraseVault": "- E-mail seul canal automatique, chaîne serveur seule à envoyer : plus d'envoi en cliquant dans Gmail, Brevo ou n8n.",
+   "detail": "l'ADR décide, la note écarte ou retire (mots communs : gmail, n8n, envoi, brevo)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "de413766a9c5",
+   "passe": "mémoire×vault",
+   "trouveLe": "2026-11-02T08:29:54.974Z",
+   "p": 0.75,
+   "genre": "chiffre",
+   "sujet": "benj-comptes-non-presti-intouchables",
+   "memoire": "memoire-presti/benj-comptes-non-presti-intouchables.md",
+   "vault": "vault/Produit/Apprentissage-2026-11-01.md",
+   "section": "Apprentissage de la semaine du 26/10 au 01/11/2026 › 1. Posts et vidéos › Mesuré",
+   "dateMemoire": "2026-10-27T19:27:38.641Z",
+   "dateVault": "2026-11-01T19:35:17.839Z",
+   "regle": {
+    "source": "memoire-presti",
+    "fichier": "memoire-presti/benj-comptes-non-presti-intouchables.md",
+    "section": "benj-comptes-non-presti-intouchables"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Produit/Apprentissage-2026-11-01.md",
+    "section": "Apprentissage de la semaine du 26/10 au 01/11/2026 › 1. Posts et vidéos › Mesuré"
+   },
+   "phraseMemoire": "27/10/2026 : Benj autorise la CROISSANCE sur LinkedIn (« ma page perso et Presti sur LinkedIn ») : likes et commentaires seulement, depuis son profil perso et la page Presti si elle existe, via la tâche presti-croissance-reseaux (plafonds LinkedIn : 10 j aime, 3 commentaires, 0 invitation, 0 message",
+   "phraseVault": "Le reel du 26/10 (« L'erreur qui coûte des chantiers », pub v12) avait **1 j'aime et 0 commentaire** au relevé du 27/10 midi.",
+   "detail": "10 jour (mémoire) contre 1 jour (vault)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "60efaf8b1321",
+   "passe": "mémoire×vault",
+   "trouveLe": "2026-11-02T08:29:54.974Z",
+   "p": 0.75,
+   "genre": "chiffre",
+   "sujet": "benj-comptes-non-presti-intouchables",
+   "memoire": "memoire-presti/benj-comptes-non-presti-intouchables.md",
+   "vault": "vault/Produit/Apprentissage-2026-11-01.md",
+   "section": "Apprentissage de la semaine du 26/10 au 01/11/2026 › 1. Posts et vidéos › Mesuré",
+   "dateMemoire": "2026-10-27T19:27:38.641Z",
+   "dateVault": "2026-11-01T19:35:17.839Z",
+   "regle": {
+    "source": "memoire-presti",
+    "fichier": "memoire-presti/benj-comptes-non-presti-intouchables.md",
+    "section": "benj-comptes-non-presti-intouchables"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Produit/Apprentissage-2026-11-01.md",
+    "section": "Apprentissage de la semaine du 26/10 au 01/11/2026 › 1. Posts et vidéos › Mesuré"
+   },
+   "phraseMemoire": "27/10/2026 : Benj autorise la CROISSANCE sur LinkedIn (« ma page perso et Presti sur LinkedIn ») : likes et commentaires seulement, depuis son profil perso et la page Presti si elle existe, via la tâche presti-croissance-reseaux (plafonds LinkedIn : 10 j aime, 3 commentaires, 0 invitation, 0 message",
+   "phraseVault": "Côté croissance, au 29/10 : 1 j'aime sûr reçu sur Facebook, 0 commentaire, 0 abonnement (`CROISSANCE-RESEAUX.md`).",
+   "detail": "10 jour (mémoire) contre 1 jour (vault)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "34f603002f0a",
+   "passe": "mémoire×vault",
+   "trouveLe": "2026-11-02T08:29:54.992Z",
+   "p": 0.75,
+   "genre": "chiffre",
+   "sujet": "26/10 - pub Presti v3 jugée « horrible » (voix lente, aucune dynamique) ; causes mesurées et règles ",
+   "memoire": "memoire-presti/pub-v3-horrible-lenteur-2610.md",
+   "vault": "vault/wiki/concepts/Rythme d'une pub - mots par seconde et dynamisme.md",
+   "section": "Rythme d'une pub — mots par seconde et dynamisme › Ce qu'on sait (avec date et source)",
+   "dateMemoire": "2026-10-26T09:35:04.077Z",
+   "dateVault": "2026-10-26T20:25:36.027Z",
+   "regle": {
+    "source": "memoire-presti",
+    "fichier": "memoire-presti/pub-v3-horrible-lenteur-2610.md",
+    "section": "pub-v3-horrible-lenteur-2610"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/wiki/concepts/Rythme d'une pub - mots par seconde et dynamisme.md",
+    "section": "Rythme d'une pub — mots par seconde et dynamisme › Ce qu'on sait (avec date et source)"
+   },
+   "phraseMemoire": "**Why:** Benj veut le rythme des références TikTok (V1 ≈ 3 mots/s, V3 game_on : un visuel neuf toutes les 0,9 s), pas une version « posée ».",
+   "phraseVault": "Causes trouvées : texte écrit sur une version V1 **ralentie 1,5 fois**, **6 s de silences** ajoutés par l'agent de rendu, plans tenus 2 à 3 s.",
+   "detail": "0.9 seconde (mémoire) contre 6 seconde (vault)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "63e3d0b2eca5",
+   "passe": "mémoire×vault",
+   "trouveLe": "2026-11-02T08:29:54.992Z",
+   "p": 0.75,
+   "genre": "chiffre",
+   "sujet": "26/10 - pub Presti v3 jugée « horrible » (voix lente, aucune dynamique) ; causes mesurées et règles ",
+   "memoire": "memoire-presti/pub-v3-horrible-lenteur-2610.md",
+   "vault": "vault/Produit/Journee-2026-10-26.md",
+   "section": "Journée du 26/10/2026 › Ce qui s'est passé",
+   "dateMemoire": "2026-10-26T09:35:04.077Z",
+   "dateVault": "2026-10-26T20:45:09.727Z",
+   "regle": {
+    "source": "memoire-presti",
+    "fichier": "memoire-presti/pub-v3-horrible-lenteur-2610.md",
+    "section": "pub-v3-horrible-lenteur-2610"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Produit/Journee-2026-10-26.md",
+    "section": "Journée du 26/10/2026 › Ce qui s'est passé"
+   },
+   "phraseMemoire": "voix Fish ≥ 3,3 mots/s (vitesse 1.3, pauses resserrées à 0,12 s sans changer la hauteur) ;",
+   "phraseVault": "Sorties rendues dans `presti/videos/` : v3 (extrait), v4/v4b, v5, v6, v8, v9, v10, v10b, puis le soir v11 (`pub-v11-complete/sortie/presti-pub-v11-9x16.mp4`, 20 h 06, calée sur une vraie voix Fish de 35,91 s) et v11b (`pub-v11b-modeles/sortie/`, 20 h 56).",
+   "detail": "0.12 seconde (mémoire) contre 35.91 seconde (vault)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "31280297fa3b",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.458Z",
+   "p": 0.69,
+   "genre": "polarité",
+   "sujet": "ADR-001 — Toutes les automatisations dans n8n",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-001 — Toutes les automatisations dans n8n.md",
+   "vault": "vault/10 Presti/04 Décisions/ADR-005 — Prospection e-mail automatique.md",
+   "section": "ADR-005 — Prospection e-mail automatique › Conséquences",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01T17:15:08.251Z",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-001 — Toutes les automatisations dans n8n.md",
+    "section": "ADR-001 — Toutes les automatisations dans n8n › Conséquences",
+    "ligne": 115,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-005 — Prospection e-mail automatique.md",
+    "section": "ADR-005 — Prospection e-mail automatique › Conséquences",
+    "ligne": 86,
+    "cote": "voisine"
+   },
+   "phraseMemoire": "Quand une migration de schéma est nécessaire, on la colle puis on lève le drapeau, jamais l'inverse (addendum §7).",
+   "phraseVault": "Une migration de schéma est nécessaire.",
+   "detail": "l'ADR écarte ou interdit, la note maintient (mots communs : migr, schema, necessair)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "e37f473c62fd",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.531Z",
+   "p": 0.69,
+   "genre": "polarité",
+   "sujet": "ADR-002 — Hermes Agent systématique + Orca harness",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+   "vault": "vault/Produit/Antigravity.md",
+   "section": "Antigravity × Claude Code — la méthode de production (depuis le 2026-09-13)",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-09-13",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+    "section": "ADR-002 — Hermes Agent systématique + Orca harness › Décision",
+    "ligne": 73,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Produit/Antigravity.md",
+    "section": "Antigravity × Claude Code — la méthode de production (depuis le 2026-09-13)",
+    "ligne": 7,
+    "cote": "voisine"
+   },
+   "phraseMemoire": "Bloqué = une question à options dans `.orchestre/en-cours/<id>.question.md`, jamais une discussion.",
+   "phraseVault": "Une question d'exécutant bloqué est un fichier `<id>.question.md` à deux ou trois options numérotées ;",
+   "detail": "l'ADR écarte ou interdit, la note maintient (mots communs : bloqu, question, option)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "b8d26f420147",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.532Z",
+   "p": 0.69,
+   "genre": "polarité",
+   "sujet": "ADR-002 — Hermes Agent systématique + Orca harness",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+   "vault": "vault/wiki/concepts/Methode Claude Code x executants.md",
+   "section": "Methode Claude Code x executants › Le système `.orchestre/`",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-10-26T20:25:35.970Z",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+    "section": "ADR-002 — Hermes Agent systématique + Orca harness › Décision",
+    "ligne": 73,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/wiki/concepts/Methode Claude Code x executants.md",
+    "section": "Methode Claude Code x executants › Le système `.orchestre/`",
+    "ligne": 30,
+    "cote": "voisine"
+   },
+   "phraseMemoire": "Tout le reste va dans `.orchestre/file/`, en tâche Markdown à en-tête YAML.",
+   "phraseVault": "- Une tâche = un fichier Markdown à en-tête (identifiant, objectif, périmètre, interdit, commande de vérification, budget, preuve).",
+   "detail": "l'ADR décide, la note écarte ou retire (mots communs : tach, markdown, tete)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "94d68b79aa52",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.535Z",
+   "p": 0.69,
+   "genre": "polarité",
+   "sujet": "ADR-002 — Hermes Agent systématique + Orca harness",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+   "vault": "vault/wiki/concepts/Methode Claude Code x executants.md",
+   "section": "Methode Claude Code x executants › Le système `.orchestre/`",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-10-26T20:25:35.970Z",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+    "section": "ADR-002 — Hermes Agent systématique + Orca harness › Décision",
+    "ligne": 73,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/wiki/concepts/Methode Claude Code x executants.md",
+    "section": "Methode Claude Code x executants › Le système `.orchestre/`",
+    "ligne": 33,
+    "cote": "voisine"
+   },
+   "phraseMemoire": "Bloqué = une question à options dans `.orchestre/en-cours/<id>.question.md`, jamais une discussion.",
+   "phraseVault": "- Une question bloquée devient un fichier à deux ou trois options numérotées ;",
+   "detail": "l'ADR écarte ou interdit, la note maintient (mots communs : bloqu, question, option)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "a9bd677d4bcc",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.536Z",
+   "p": 0.69,
+   "genre": "polarité",
+   "sujet": "ADR-002 — Hermes Agent systématique + Orca harness",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+   "vault": "vault/wiki/concepts/Methode Claude Code x executants.md",
+   "section": "Methode Claude Code x executants",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-10-26T20:25:35.970Z",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+    "section": "ADR-002 — Hermes Agent systématique + Orca harness › Décision",
+    "ligne": 68,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/wiki/concepts/Methode Claude Code x executants.md",
+    "section": "Methode Claude Code x executants",
+    "ligne": 26,
+    "cote": "voisine"
+   },
+   "phraseMemoire": "Pas d'Antigravity, pas de Codex, pas d'autres exécutants.",
+   "phraseVault": "Le dépôt Presti est construit par un duo : Claude Code pense, les exécutants produisent (Antigravity, Codex, Gemini CLI ou Qwen Code).",
+   "detail": "l'ADR écarte ou interdit, la note maintient (mots communs : antigravity, code, executant)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "5c192f06bfb7",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.574Z",
+   "p": 0.69,
+   "genre": "polarité",
+   "sujet": "ADR-002 — Hermes Agent systématique + Orca harness",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+   "vault": "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+   "section": "ADR-004 — Brevo gratuit pour l'e-mail en masse › Conséquences",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01T17:15:08.248Z",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+    "section": "ADR-002 — Hermes Agent systématique + Orca harness › Conséquences",
+    "ligne": 95,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+    "section": "ADR-004 — Brevo gratuit pour l'e-mail en masse › Conséquences",
+    "ligne": 126,
+    "cote": "voisine"
+   },
+   "phraseMemoire": "La notice publique nomme Codex comme prestataire qui classe les réponses (`presti-notice/index.html:22`) ;",
+   "phraseVault": "La liste des prestataires de la notice publique ne contient pas Brevo (`presti-notice/index.html:17-26`).",
+   "detail": "l'ADR décide, la note écarte ou retire (mots communs : notic, publ, prestatair)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "f9556da590d6",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.679Z",
+   "p": 0.69,
+   "genre": "polarité",
+   "sujet": "ADR-004 — Brevo gratuit pour l'e-mail en masse",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+   "vault": "vault/Decisions/Journal-Decisions.md",
+   "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+    "section": "ADR-004 — Brevo gratuit pour l'e-mail en masse › Décision",
+    "ligne": 91,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Decisions/Journal-Decisions.md",
+    "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+    "ligne": 18,
+    "cote": "journal"
+   },
+   "phraseMemoire": "- Intégration n8n native : node Brevo (contacts + envoi) + Brevo Trigger.",
+   "phraseVault": "- E-mail seul canal automatique, chaîne serveur seule à envoyer : plus d'envoi en cliquant dans Gmail, Brevo ou n8n.",
+   "detail": "l'ADR décide, la note écarte ou retire (mots communs : n8n, brevo, envoi)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "d3a11b4bbe51",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.714Z",
+   "p": 0.69,
+   "genre": "polarité",
+   "sujet": "ADR-004 — Brevo gratuit pour l'e-mail en masse",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+   "vault": "vault/10 Presti/04 Décisions/ADR-005 — Prospection e-mail automatique.md",
+   "section": "ADR-005 — Prospection e-mail automatique › Conséquences",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01T17:15:08.251Z",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-004 — Brevo gratuit pour l'e-mail en masse.md",
+    "section": "ADR-004 — Brevo gratuit pour l'e-mail en masse › Conséquences",
+    "ligne": 124,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-005 — Prospection e-mail automatique.md",
+    "section": "ADR-005 — Prospection e-mail automatique › Conséquences",
+    "ligne": 88,
+    "cote": "voisine"
+   },
+   "phraseMemoire": "Créer le compte Brevo, coller la clé dans n8n, poser les enregistrements DNS du domaine d'envoi : Claude Code ne crée aucun compte et ne saisit aucune clé (addendum §7 ;",
+   "phraseVault": "La tâche `presti-envoi-prospection` (Gmail) laisse la place à un workflow n8n qui envoie par Brevo ([[ADR-001 — Toutes les automatisations dans n8n]] ;",
+   "detail": "l'ADR écarte ou interdit, la note maintient (mots communs : brevo, n8n, envoi)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "23051ded62cc",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.377Z",
+   "p": 0.62,
+   "genre": "polarité",
+   "sujet": "ADR-001 — Toutes les automatisations dans n8n",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-001 — Toutes les automatisations dans n8n.md",
+   "vault": "vault/Decisions/Journal-Decisions.md",
+   "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-001 — Toutes les automatisations dans n8n.md",
+    "section": "ADR-001 — Toutes les automatisations dans n8n › Décision",
+    "ligne": 94,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Decisions/Journal-Decisions.md",
+    "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+    "ligne": 18,
+    "cote": "journal"
+   },
+   "phraseMemoire": "n8n est le moteur de toutes les automatisations, sans exception.",
+   "phraseVault": "- E-mail seul canal automatique, chaîne serveur seule à envoyer : plus d'envoi en cliquant dans Gmail, Brevo ou n8n.",
+   "detail": "l'ADR pose une règle sans exception, la note retire ou écarte un geste du même sujet (mot commun rare : n8n)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "e48aff1d5b59",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.520Z",
+   "p": 0.62,
+   "genre": "polarité",
+   "sujet": "ADR-002 — Hermes Agent systématique + Orca harness",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+   "vault": "vault/Decisions/Journal-Decisions.md",
+   "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+    "section": "ADR-002 — Hermes Agent systématique + Orca harness › Décision",
+    "ligne": 72,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Decisions/Journal-Decisions.md",
+    "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+    "ligne": 18,
+    "cote": "journal"
+   },
+   "phraseMemoire": "- n8n reste le moteur de toutes les automatisations ([[ADR-001 — Toutes les automatisations dans n8n]]).",
+   "phraseVault": "- E-mail seul canal automatique, chaîne serveur seule à envoyer : plus d'envoi en cliquant dans Gmail, Brevo ou n8n.",
+   "detail": "l'ADR pose une règle sans exception, la note retire ou écarte un geste du même sujet (mot commun rare : n8n)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "dfee416e62ba",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.559Z",
+   "p": 0.62,
+   "genre": "polarité",
+   "sujet": "ADR-002 — Hermes Agent systématique + Orca harness",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+   "vault": "vault/Decisions/Journal-Decisions.md",
+   "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+    "section": "ADR-002 — Hermes Agent systématique + Orca harness › Conséquences",
+    "ligne": 93,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Decisions/Journal-Decisions.md",
+    "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+    "ligne": 18,
+    "cote": "journal"
+   },
+   "phraseMemoire": "Le crochet bloque toute écriture de Claude Code si le tunnel vers n8n, la configuration de Hermes ou le moteur d'Orca manque (`scripts/verifier-outils-obligatoires.mjs:1-3`).",
+   "phraseVault": "- E-mail seul canal automatique, chaîne serveur seule à envoyer : plus d'envoi en cliquant dans Gmail, Brevo ou n8n.",
+   "detail": "l'ADR pose une règle sans exception, la note retire ou écarte un geste du même sujet (mot commun rare : n8n)",
+   "statut": "à trancher"
+  },
+  {
+   "id": "32bc917703d4",
+   "passe": "vault×vault",
+   "trouveLe": "2026-11-02T08:29:55.560Z",
+   "p": 0.62,
+   "genre": "polarité",
+   "sujet": "ADR-002 — Hermes Agent systématique + Orca harness",
+   "memoire": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+   "vault": "vault/Decisions/Journal-Decisions.md",
+   "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+   "dateMemoire": "2026-11-01",
+   "dateVault": "2026-11-01",
+   "regle": {
+    "source": "vault",
+    "fichier": "vault/10 Presti/04 Décisions/ADR-002 — Hermes Agent systématique + Orca harness.md",
+    "section": "ADR-002 — Hermes Agent systématique + Orca harness › Conséquences",
+    "ligne": 93,
+    "statut": "acceptee",
+    "date": "2026-11-01"
+   },
+   "contre": {
+    "source": "vault",
+    "fichier": "vault/Decisions/Journal-Decisions.md",
+    "section": "Journal-Decisions › 2026-11-01 (soir) — Compléments du rangement",
+    "ligne": 19,
+    "cote": "journal"
+   },
+   "phraseMemoire": "Le crochet bloque toute écriture de Claude Code si le tunnel vers n8n, la configuration de Hermes ou le moteur d'Orca manque (`scripts/verifier-outils-obligatoires.mjs:1-3`).",
+   "phraseVault": "- Hermes n'emprunte jamais la connexion de Claude Code (`auth.adopt_external_logins` reste coupé) : c'est interdit par les conditions d'Anthropic et met le compte en risque.",
+   "detail": "l'ADR pose une règle sans exception, la note retire ou écarte un geste du même sujet (mot commun rare : herm)",
+   "statut": "à trancher"
+  }
+ ]
+}

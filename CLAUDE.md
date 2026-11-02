@@ -1,293 +1,196 @@
-Session cloud : lire d'abord reprise-cloud/LISEZ-MOI-D-ABORD.md
+Session cloud : lire d'abord `reprise-cloud/LISEZ-MOI-D-ABORD.md`.
 
 # Presti — contexte du dépôt
 
 Presti est un SaaS pour artisans français : le prospect écrit sur la page publique de l'artisan,
 l'IA rédige la réponse en moins d'une minute, chiffre un devis, relance, et l'artisan facture —
-sans jamais que le client voie le nom « Presti ». **Par défaut l'IA propose et l'artisan valide**
-(`mode_reponse: 'assistee'`, `lib/plateformeConfig.ts:45` ; `iaDoitRepondre` refuse avec le motif
-`assistee`, l.136) ; l'envoi autonome est vendu à partir de Studio (capacité `plateforme.ia.auto`,
-`lib/plans.ts:44`) et `modeEffectif` rétrograde en « assistée » avec le motif `verrou_offre` en
-dessous. La promesse a été réécrite pour cette raison le 08/09 (`plans/journal-final.md:278`).
+sans jamais que le client voie le nom « Presti ». Deux offres : **Studio prépare et l'artisan valide ;
+Signature envoie seul** (`lib/plans.ts:11-12`). Le mode de réponse par défaut reste « assistée »
+(`lib/plateformeConfig.ts:45`). Détail : `.claude/rules/autonomie-abonnements.md`.
 
-**Le produit est en production**, pas en prototype : `prestiapp.fr` (console sur `qg.prestiapp.fr`),
-33 pages, 87 routes API, 85 migrations, deux crons Vercel, une coque Capacitor dans `mobile/`.
-Le pilotage de l'entreprise se fait depuis **`/controle`**, seul écran de direction ; `/direction`
-est l'ancienne adresse et redirige en permanence (`app/direction/page.tsx`).
-
+**Le produit est en production**, pas en prototype (compté le 01/11/2026) : `prestiapp.fr` (console sur
+`qg.prestiapp.fr`), 53 pages, 224 routes (`app/**/route.ts`, dont 217 sous `app/api/` ; plus une
+`route.tsx`), 168 migrations (dernière `0181`), 57 drapeaux, deux crons Vercel, une coque Capacitor dans
+`mobile/`. Compteurs à jour : `.orchestre/contexte.md`, régénéré depuis le code. Le pilotage se fait depuis
+**`/controle`**, seul écran de direction ; `/direction` y redirige en permanence (`app/direction/page.tsx:13`).
 Propriétaire unique : Benjamin Filiot. Un seul compte fondateur.
 
----
+## Architecture imposée — Presti : les règles non négociables (`.claude/rules/`)
+
+Claude Code charge seul tous les `.md` de `.claude/rules/` à chaque session ; sans `paths`, ils ont la
+même priorité que ce fichier (https://code.claude.com/docs/en/memory). On ne les importe pas ici.
+
+| Fichier | Ce qu'il fixe |
+|---|---|
+| `architecture-outils.md` | Claude Code et Hermes seuls, Orca, n8n pour toute automatisation, Oracle, outils interdits |
+| `autonomie-abonnements.md` | tout automatique par défaut ; vidéos et carrousels : 2-3 validations puis auto ; Studio, Signature |
+| `email-brevo.md` | e-mail en masse par Brevo gratuit : 300/jour, quota vérifié, file du lendemain, seuil de bascule |
+| `migration-production.md` | automatisations remplacées une par une dans n8n ; migration collée PUIS drapeau levé |
+| `securite.md` | secrets, données, comptes, actions irréversibles, interdits des sous-agents |
+
+**Règle n8n-first (NON NÉGOCIABLE, Benj, 02/11)** : automatisation, relance, déclencheur, notification ou logique métier récurrente → n8n
+(par l'API ou le MCP), jamais l'app, qui ne sert qu'à l'interface ; d'abord « quel workflow n8n ? », toute exception justifiée par écrit.
+Le « pourquoi » vit dans le vault : ADR-001 à ADR-008 de `10 Presti/04 Décisions/` (posées les 01 et 02/11/2026).
+Les sous-agents intégrés Explore et Plan ne reçoivent ni ce fichier ni les rules : leur redire la règle utile.
+Le dossier d'ouverture compte : agents, skills et rules ne se chargent que si la session est ouverte sur
+`C:/Users/benja/Documents/presti` ; ouverte ailleurs, les lire à la main (c'est arrivé : `plans/journal-v5.md:10`).
+
+## Le réseau neuronal d'abord (décisions de Benj, 25/10 et 26/10/2026)
+
+Tout ce qu'on fait — session, sous-agent, workflow, skill, plugin, Hermes, Harvey — part du réseau
+neuronal : le vault Obsidian `C:/Users/benja/Documents/SaaS`, lu par les outils MCP `cerveau`
+(`regles_pour` avant une action à risque, `chercher` puis `lire` pour le reste), à défaut le vault lui-même ;
+puis la carte des outils `SaaS/wiki/outils/Carte-des-outils.md` et les skills du métier. Un prompt d'agent
+ou de workflow écrit ici dit quoi y chercher. Ce qu'on apprend en route retourne dans le vault.
+
+## Où vit la mémoire
+
+- **Pourquoi on l'a décidé → le vault** `C:/Users/benja/Documents/SaaS` : `Produit/` (notes de session, la
+  plus récente fait foi), `Decisions/Journal-Decisions.md` (chaque GO/NO-GO daté), `Récap-Projet.md`
+  (la boussole), `Fondateurs/`, `Legal/`, `Prospection/`, `Coentreprise/`. Règle n°4 de « Écrire ici »
+  (`SaaS/CLAUDE.md:52-55`, réécrit le 01/11) : à chaque chantier livré et au moins une fois par jour de travail, une note
+  dans `Produit/`, les décisions dans `Journal-Decisions`, une ligne dans `wiki/hot.md` ; en fin de gros chantier, `Récap-Projet` aussi.
+- **Ce que le code fait → `.orchestre/contexte.md`**, copié dans `SaaS/Produit/Carte-du-code.md`. Jamais à la main.
+- **Mémoire de chantier → `plans/`** : prompts numérotés `001` à `016`, journaux (`journal-v4`, `-v5`,
+  `-final`, `-v15` à `-v18`), audits, cadrage du 01/11 dans `plans/011-cadrage-01-11/`.
+- **`lib/flags.ts` fait foi sur les drapeaux**, jamais un document.
+- Contextes locaux, à lire plutôt que deviner : `lib/ai/README.md` (moteur IA), `lib/inventaire/CONTEXT.md`
+  (vocabulaire de l'inventaire), `mobile/README.md`, `mobile/STORES.md`, `mobile/TESTS.md` (coque native).
+
+## Modèles et effort — « Opus pour penser, Sonnet pour coder »
+
+- Défaut : `opusplan`, effort `high` (`.claude/settings.json:2-3`). `max` seulement à la main (`/effort max`)
+  pour la sécurité, les bugs complexes et les audits, puis on redescend. `ultracode` pour un workflow
+  multi-agents : `/effort ultracode on` dans la session (jamais enregistré), ou le mot dans la demande.
+- Sous-agents : exploration et résumés → `haiku` ; implémentation, tests, itérations → `sonnet` ;
+  architecture, sécurité, argent, migrations, verdicts → `opus`.
+
+## Règles de travail (prompt de lancement du 01/11/2026)
+
+- Cinq chantiers, dans cet ordre, jamais deux en parallèle : 1. réseau neuronal Obsidian ; 2. landing
+  prestiapp.fr ; 3. prospection automatique ; 4. refonte de l'assistant de gestion ; 5. vidéo et carrousels.
+- Chaque chantier : plan, puis « approuvé » de Benj, puis exécution, puis tests verts. Aucun fichier
+  n'est créé avant la validation du plan de la phase.
+- Sur toute la chaîne : mode à blanc avant la production ; chaque sortie de modèle passe un schéma strict ;
+  chaque action est journalisée ; idempotence (un crash ne crée aucun doublon) ; multi-tenant strict par
+  RLS ; aucune donnée inventée n'entre en base.
+- Chaque phase rend un rapport (fichiers modifiés, tests, risques, points à valider) ; chaque chantier
+  finit par un contrôle croisé avec son plan.
 
 <!-- orchestre:debut — bloc tenu à jour par `node scripts/orchestre.mjs contexte` ; ne pas éditer à la main -->
-## Méthode — Claude Code × exécutants (prompt v16 §1)
+## Méthode — Claude Code × Hermes (prompt v16 §1)
 
-1. **Claude Code pense, les exécutants produisent** (antigravity, codex). Claude Code n'écrit lui-même que ce qui exige du jugement : schéma et migrations, tout ce qui touche à l'argent, sécurité et droits, les cerveaux (prompts) et les verdicts. Tout le reste — variantes, contenus, tests, captures, boucles QA — est une tâche déposée dans `.orchestre/file/`.
+1. **Claude Code pense, Hermes produit et orchestre** (exécutants admis : hermes, claude-code ; historiques, plus distribués : antigravity, codex). Claude Code n'écrit lui-même que ce qui exige du jugement : schéma et migrations, tout ce qui touche à l'argent, sécurité et droits, les cerveaux (prompts) et les verdicts. Tout le reste — variantes, contenus, tests, captures, boucles QA — est une tâche déposée dans `.orchestre/file/`.
 2. **Le système vit dans `.orchestre/`** : `file/` (à prendre) → `en-cours/` (verrou `<id>.lock`) → `fait/` ou `refuse/`. Une tâche = un Markdown à en-tête YAML (`id, type, objectif, perimetre, interdit, verifier, budget, preuve` — tous obligatoires) ; `node scripts/orchestre.mjs prochaine --agent=<nom>` la distribue sans chevauchement de périmètre.
 3. **La vérification est mécanique** : `node scripts/orchestre.mjs verifier <id>` exécute la commande `verifier` de la tâche ; son code de sortie fait le verdict, écrit dans `.orchestre/digest.md`. Personne ne relit un diff : on lit le digest.
 4. **Ce que le code fait vit dans `.orchestre/contexte.md`** (régénéré depuis le code, copié dans `../SaaS/Produit/Carte-du-code.md`) ; **pourquoi on l'a décidé vit dans le vault** `../SaaS` (`CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Avant toute tâche : lire ces deux cartes, pas le dépôt. On n'écrit dans le vault que par une tâche dont le périmètre est `SaaS/…`.
 5. **Bloqué = une question à options** : `.orchestre/en-cours/<id>.question.md`, deux ou trois options numérotées ; la réponse arrive en `<id>.reponse.md` (`orchestre.mjs repondre`). Jamais une discussion.
 6. **Poussé n'est pas déployé** : après chaque push sur `main`, `node scripts/deploiement-etat.mjs` (le 13-14/09, 37 déploiements de production en ERROR à la suite, près de quinze heures sans que personne ne le voie) ; avant de pousser une page, `npm run build` en local.
-7. **Quand Antigravity est à sec** : `scripts/executant.mjs` (Gemini CLI ou Qwen Code, gratuits, même contrat de tâche). Un site de démonstration se **génère** (`public/sites-demo/generer.mjs`, kit et direction artistique dans `_kit/`), ses photos viennent de `scripts/photos-demo.mjs` et leur provenance se prouve (`scripts/photos-provenance.mjs`) — une attribution déclarée ne vaut rien.
-8. **Routage des modèles (v16 §1.3)** : jugement (schéma, argent, sécurité, cerveaux, verdicts) → Claude Code ; exploration et résumés de fichiers → sous-agent `haiku` ; volume (pages, variantes, tests, boucles QA) → Antigravity ou `executant.mjs` ; recherche web → Perplexity ; navigation et captures → navigateur d'Antigravity ou Claude in Chrome. Claude Code lit `digest.md` et `contexte.md`, pas le dépôt ; `node scripts/orchestre.mjs budget --tous` dit s'il lit trop.
+7. **Hermes produit par sa file n8n** : `node scripts/hermes-tache-n8n.mjs --prendre --passage=<passage de sa consigne>`, puis `--fini <id>` (briefs en liste blanche dans le script ; sans passage, on ne reçoit qu'une tâche que personne ne porte, sinon `FILE OCCUPEE`) ; ses consignes : `.hermes.md`. Aucun autre exécutant depuis le 01/11 (`.claude/rules/architecture-outils.md`) : ni Antigravity, ni Codex, ni `scripts/executant.mjs` ; un modèle gratuit (freellmapi) pour une petite tâche seulement, jamais avec une donnée de prospect ou de client. Un site de démonstration se **génère** (`public/sites-demo/generer.mjs`, kit et direction artistique dans `_kit/`), ses photos viennent de `scripts/photos-demo.mjs` et leur provenance se prouve (`scripts/photos-provenance.mjs`) — une attribution déclarée ne vaut rien.
+8. **Routage (v16 §1.3, revu le 01/11)** : jugement (schéma, argent, sécurité, cerveaux, verdicts) → Claude Code ; exploration et résumés de fichiers → sous-agent `haiku` ; volume (pages, variantes, tests, boucles QA) → Hermes (Haiku 5.5, Sonnet 5.5 si besoin) ; toute automatisation → n8n ; recherche et extraction web → SearXNG, Firecrawl auto-hébergé, Crawlee, ScrapeGraphAI (Oracle) ; navigation et captures → Claude in Chrome. Claude Code lit `digest.md` et `contexte.md`, pas le dépôt ; `node scripts/orchestre.mjs budget --tous` dit s'il lit trop.
 
 Conventions communes : identifiants et commentaires en français · zéro donnée réelle dans les tests · « une fonctionnalité non finie n'apparaît pas » (drapeau dans `lib/flags.ts`) · on ne touche jamais à `interdit`, même pour aider · aucun chiffre non sourcé, aucun secret dans un fichier versionné · une preuve est une sortie de commande, pas une paraphrase.
 <!-- orchestre:fin -->
 
-## Le cerveau d'abord (décision de Benj, 25/10/2026)
+> Ce bloc est régénéré par `node scripts/orchestre.mjs contexte` : texte en dur dans `blocMethode` (`scripts/orchestre.mjs`),
+> exécutants, exécutants historiques, tête du point 1 et points 6 à 8 dans `.orchestre/orchestre.json` (`executants`,
+> `executantsHistoriques`, `methodeTete`, `methodeSupplement`). Corrigé le 02/11 : il suit `.claude/rules/architecture-outils.md`, qui fait foi.
 
-Tout ce qu'on fait — session, sous-agent, workflow, skill, plugin, exécutant, Harvey — **part du cerveau
-Obsidian** : avant de produire, interroger les outils MCP `cerveau` (`regles_pour` avant une action à
-risque, `chercher` puis `lire` pour le reste) ou, à défaut, lire le vault `C:/Users/benja/Documents/SaaS`.
-Un prompt d'agent ou de workflow écrit ici dit explicitement quoi chercher dans le cerveau. Ce qu'on
-apprend en route (règle, retour d'artisan, format qui marche) retourne dans le vault.
+## Les commandes qui comptent
 
-## 0. Avant tout — le dossier d'ouverture compte
-
-Les 13 agents `presti-*` et les 53 skills de `.claude/` ne sont chargés que si la session Claude Code
-est ouverte **sur `C:/Users/benja/Documents/presti`**. Ouverte ailleurs (par exemple sur
-`Documents/ofm`), il faut les lire à la main depuis le disque — c'est arrivé, c'est écrit dans
-`plans/journal-v5.md:10`.
-
----
-
-## 1. Où vit la mémoire
-
-**Mémoire longue → le vault Obsidian `C:/Users/benja/Documents/SaaS`.**
-C'est le cerveau du projet : `Produit/` (notes de session, la plus récente fait foi sur l'état),
-`Decisions/Journal-Decisions.md` (chaque GO/NO-GO daté), `Récap-Projet.md` (la boussole),
-`Fondateurs/`, `Legal/`, `Prospection/`, `Coentreprise/`.
-Sa règle, écrite dans `SaaS/CLAUDE.md` n°6 : **en fin de gros chantier, mettre à jour
-`Produit/` (une note de session) + `Récap-Projet` + `Journal-Decisions` si une décision a été prise.**
-
-**Mémoire de chantier → `plans/`** : les prompts numérotés `001` à `010`
-(le dernier en date, `010-poste-de-controle.md`, porte les jalons du sprint v11 en **§9**, à partir
-de la l.214 — le tableau du §0, l.15, est l'état des jalons **v9**, à ne pas confondre), les journaux
-`journal-v4.md`, `journal-v5.md`, `journal-final.md`, plus `couverture.md`, `inventaire-produit.md`,
-`etat-application.md` et les sous-dossiers `audit-final/`, `audit-recurrent/`, `direction/`.
-
-⚠️ `plans/journal-final.md` s'arrête au commit `b4e57ff` du 08/09 (14:33) : les dix commits suivants
-de la journée — dont `0083`, `0084`, `0085` et tout le chantier Lighthouse — ne sont journalisés que
-dans le vault. Et `plans/etat-application.md` est daté du 07/09 : ses drapeaux `actionsArtisan` et
-`messagerie` « baissés » sont faux. **`lib/flags.ts` fait foi sur les drapeaux, jamais un document.**
-
-**Contextes locaux** : `lib/ai/README.md` (le moteur IA et ce qui l'enrichit) et
-`lib/inventaire/CONTEXT.md` (le vocabulaire du domaine inventaire).
-`mobile/README.md`, `mobile/STORES.md`, `mobile/TESTS.md` pour la coque native — s'y référer plutôt
-que de deviner.
-
----
-
-## 2. Les commandes qui comptent
-
-`package.json` ne déclare que six scripts : `dev`, `build`, `start`, `lint`, `typecheck`, `prepare`.
+`package.json` ne déclare que cinq scripts : `dev`, `build` (`next build --webpack`), `start`, `typecheck`,
+`prepare`. **`npm run lint` et `npm test` n'existent pas.**
 
 | But | Commande |
 |---|---|
-| **Vérifier** (la vraie commande) | `node scripts/tout-verifier.mjs` |
-| … sans les tests qui consomment des crédits IA | (c'est le défaut) |
-| … avec les tests IA | `node scripts/tout-verifier.mjs --tout` |
-| … sans navigateur, rapide | `node scripts/tout-verifier.mjs --rapide` |
+| **Vérifier** (la vraie commande ; sans tests IA par défaut) | `node scripts/tout-verifier.mjs` |
+| … avec les tests IA / sans navigateur | `node scripts/tout-verifier.mjs --tout` / `--rapide` |
 | Typage | `npm run typecheck` |
-| Build | `npx next build` (voir §6 : interdit aux sous-agents) |
-| Attendre que HEAD soit réellement déployé | `node scripts/attendre-deploiement.mjs` |
-| Poser une migration | `node scripts/appliquer-migration.mjs supabase/migrations/00NN_x.sql` |
+| Build (interdit aux sous-agents : `securite.md`) | `npm run build` |
+| Après un push : attendre que HEAD soit déployé, puis l'état | `node scripts/attendre-deploiement.mjs`, `node scripts/deploiement-etat.mjs` |
+| Poser une migration (`migration-production.md`) | `node scripts/appliquer-migration.mjs supabase/migrations/00NN_x.sql` |
 | Ranger une valeur collée sans son nom dans `.env.local` | `node scripts/ranger-env.mjs` |
 
-⚠️ **La « vraie commande » lance elle-même un `next build`.** La 2ᵉ entrée du tableau `SUITES` est
-`{ nom: 'Build', cmd: 'npx', args: ['next', 'build'] }` (`scripts/tout-verifier.mjs:27`), exécutée
-avec `env: process.env` et **sans `PRESTI_DIST`** (le mot n'apparaît nulle part dans le fichier) :
-elle écrit donc dans `.next`, ce que §6 interdit aux sous-agents. Un sous-agent qui doit lancer le
-lanceur pose `PRESTI_DIST=.next-prod` devant, ou s'en abstient — sinon il rejoue la panne de
-`plans/journal-v5.md:77` (« build cassé par une compilation parallèle d'un sous-agent »).
+Pièges du lanceur `scripts/tout-verifier.mjs` :
+- Il lance lui-même `npm run build` (l.27) sans poser `PRESTI_DIST` : il écrit dans `.next`. Il transmet
+  l'environnement (l.240) : un sous-agent pose `PRESTI_DIST=.next-prod` devant, ou s'en abstient.
+- `SUITES` (l.25) compte 112 suites, dont 8 `cout: 'ia'`, dans l'ordre de déclaration, jamais trié (filtre
+  l.217, boucle l.232) ; une suite IA arrive dès la l.99. Avec `--tout`, un échec bête peut survenir après
+  des appels au modèle.
+- Une suite absente de `SUITES` n'est jouée par personne, ni en local ni par l'audit de nuit. Ce qui est
+  écarté exprès se déclare dans `HORS_LANCEUR` (l.184-215), avec sa raison.
+- `scripts/csp-smoke.mjs` n'assertionne rien : jamais une preuve.
 
-**`npm run lint` est mort** : il appelle `next lint`, mais aucune dépendance eslint n'est installée
-et il n'y a aucun fichier de configuration eslint. Ne pas le citer comme un contrôle.
-**`npm test` n'existe pas.**
-
-`scripts/tout-verifier.mjs` enregistre **77 suites**, grossièrement rangées du moins cher au plus
-cher (typage et build en tête, le gros des suites IA à la fin). Mais **l'ordre est celui de la
-déclaration, jamais trié** — aucun `.sort(` dans le fichier, `l.155-159` ne fait que filtrer et la
-boucle `l.170` suit le tableau : une suite `cout: 'ia'` est déclarée `l.85` (`pilotage-e2e`), devant
-19 suites gratuites ou navigateur. Avec `--tout`, un échec bête peut donc survenir **après** des
-appels au modèle. `scripts/` contient 139 fichiers `.mjs` à la racine (140 en récursif, avec
-`scripts/lib/connexion-test.mjs`), dont 71 `*-e2e.mjs`. **Une suite absente du tableau `SUITES` n'est
-jouée par personne**, ni en local ni par l'audit de nuit ; ce qui est écarté volontairement se
-déclare dans `HORS_LANCEUR` avec sa raison.
-
----
-
-## 3. Carte du dépôt
+## Carte du dépôt (courte ; le détail est dans `.orchestre/contexte.md`)
 
 ```
-app/            33 pages + 87 routes API. Écrans clés :
-                /controle  Poste de contrôle — 7 onglets : Aujourd'hui, Clients & abonnements,
-                           Apports, Messagerie, Comptabilité, Journal, Réglages
-                /p/[slug]  page publique de l'artisan (white-label)
-                /site/[slug] site de l'artisan (white-label)
-                /plateforme, /dashboard, /devis, /factures, /inventaire, /parametres…
-lib/            le cœur métier. ai.ts (moteur IA), email.ts, flags.ts, plans.ts (grille tarifaire,
-                source de vérité), DevisPDF.tsx, + 5 sous-dossiers : ai/ controle/ direction/
-                inventaire/ prix/
-supabase/migrations/  85 migrations numérotées, plus 47 jumeaux _A_COLLER_sql_editor_*.sql
-                destinés au copier-coller (dont 14 en variante _NU).
-                Dernière migration : 0085_purger_compte_test_devis.sql
-scripts/        139 .mjs — suites e2e, sondes, outils de ménage, lanceur tout-verifier.mjs
-plans/          les documents de pilotage : prompts, journaux, audits
-docs/           4 notes datées : couts-et-solde, fournisseurs, registre-traitements, sauvegardes
+app/            53 pages, 224 routes. /controle (poste de contrôle) ; /p/[slug] et /site/[slug] (surfaces
+                white-label de l'artisan) ; /plateforme, /dashboard, /devis, /factures, /inventaire…
+lib/            le cœur métier : ai.ts (moteur IA), email.ts (envoi Resend), flags.ts, plans.ts (offres,
+                source de vérité), plateformeConfig.ts, pilote/, relances.ts…
+supabase/migrations/  168 migrations numérotées + 136 jumeaux _A_COLLER_sql_editor_* (copier-coller)
+scripts/        541 .mjs à la racine (510 suivis par git), dont 86 suites e2e ; tout-verifier.mjs ; orchestre.mjs ; hooks/
+plans/ docs/    pilotage (prompts, journaux, audits) ; notes datées (coûts, fournisseurs, registre, sauvegardes)
 mobile/         coque Capacitor (android/, ios/, codemagic.yaml) + README/STORES/TESTS
-.github/workflows/  android.yml, audit.yml (cron 17 2 * * *, contre la PRODUCTION, zéro appel IA),
-                qualite.yml, sauvegarde.yml, security.yml
-.claude/        agents/ (13) et skills/ (53)
+.github/workflows/  android, audit (contre la PRODUCTION, zéro appel IA), generer-site, qualite, sauvegarde, security
+.claude/        agents/ (13), skills/ (79 entrées, 53 suivies par git), rules/ (5), settings.json (hooks)
 ```
 
-Les **drapeaux** de `lib/flags.ts` (21 au total) cachent ce qui n'est pas fini : entrée de menu
-masquée, route en 404, rien dans le DOM. Trois seulement sont baissés aujourd'hui —
-`inventaireOcr` (l.50), `canauxWhatsapp` (l.68), `canauxReseaux` (l.70).
+Les 57 drapeaux de `lib/flags.ts` (11 baissés le 01/11) cachent ce qui n'est pas fini : menu masqué, route
+en 404, rien dans le DOM. `.env.local.example` ne déclare que 6 variables actives, `lib/` seul en lit au
+moins 48 (relevé du 01/11) : ne pas s'y fier pour monter un environnement.
 
-`.env.local.example` ne déclare que **6** variables actives (`NEXT_PUBLIC_SUPABASE_URL`,
-`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, `RESEND_API_KEY`,
-`CRON_SECRET`), plus `NEXT_PUBLIC_GA_ID` laissée en commentaire ; le code applicatif en lit **43**.
-Ne pas s'y fier pour monter un environnement.
+## Agents (`.claude/agents/`) et skills (`.claude/skills/`)
 
----
+13 agents, quatre pôles de trois et un transverse : audit (`presti-auditeur`, `-audit-attaque`,
+`-audit-conformite`) ; animation (`presti-animateur`, `-anim-accessibilite`, `-anim-marque`) ; gestion
+(`presti-gestion`, `-gestion-donnees`, `-gestion-fiabilite`) ; mails (`presti-mails`, `-mails-delivrabilite`,
+`-mails-cycle`) ; transverse `presti-ai-engineer` (`lib/ai.ts`, prompts, éval).
+Protocole obligatoire : lire `.claude/agents/knowledge/<domaine>.md` et `<domaine>.journal.md` avant la
+mission, vérifier au fichier:ligne pendant, écrire une entrée datée dans le journal après.
 
-## 4. Agents (`.claude/agents/`)
+Skills : 79 entrées sur le disque (53 suivies par git), dont 76 liens vers `.agents/skills` et trois skills
+maison : `presti-verify` (anti-vibecoding, avant tout « c'est bon »), `presti-design` (design system),
+`presti-ai-lab` (évaluer l'IA sans régression, harnais `ai-eval`). ⚠️ `presti-verify/SKILL.md` a vieilli
+(l.19, 33-34) : la production est `prestiapp.fr`, `/api/control/*` est supprimé, la vraie suite est
+`scripts/tout-verifier.mjs`. Son cycle reste bon.
 
-Douze agents en quatre pôles de trois, plus un transverse. Ils partagent une mémoire dans
-`.claude/agents/knowledge/` : `PROTOCOLE.md`, puis par domaine (`audit`, `animation`, `gestion`,
-`mails`) un fichier de base et un journal d'apprentissage.
+## Tests et preuves
 
-| Agent | Rôle |
-|---|---|
-| `presti-auditeur` | chef de file audit : sécurité, conformité, qualité, checklist anti-hack 18 points |
-| `presti-audit-attaque` | offensif / pentest : IDOR, injection, escalade de privilèges |
-| `presti-audit-conformite` | RGPD et légal artisan France : mentions devis/facture, TVA |
-| `presti-animateur` | chef de file animation : motion craft, plans d'animation précis |
-| `presti-anim-accessibilite` | a11y, perf, reduced-motion, contraste WCAG |
-| `presti-anim-marque` | direction artistique, white-label, système d'accent |
-| `presti-gestion` | chef de file supervision : santé de l'app, routes 200, Stripe/Resend, migrations |
-| `presti-gestion-donnees` | métriques du tunnel lien→lead→conversation→devis→facture |
-| `presti-gestion-fiabilite` | coûts IA, quotas, timeouts, idempotence |
-| `presti-mails` | chef de file emails sortants : triage et rédaction |
-| `presti-mails-delivrabilite` | DNS SPF/DKIM/DMARC, réputation, bounces |
-| `presti-mails-cycle` | séquences, relances, copywriting FR artisan |
-| `presti-ai-engineer` | transverse : `lib/ai.ts`, prompts, thinking adaptatif, éval |
+- Anti-vibecoding : aucun « c'est bon » sans le cycle — éditer proprement (typé, aucun secret côté client)
+  → build 0 erreur → typecheck → déployer → vérifier en direct (routes 200, DOM et CSS inspectés,
+  endpoints protégés testés) → nettoyer les données de test.
+- Une suite se joue hors ligne, prouve qu'elle peut rougir (mutation) et entre dans `SUITES`.
+  Jamais deux suites e2e en parallèle contre la production (`securite.md`).
+- Un test vert ne prouve que ce qu'il regarde : lire ses assertions avant de le citer. Audit du 08/09
+  (61 défauts confirmés, 7 graves) : le défaut était presque partout dans ce qui devait surveiller le code.
+- Zéro donnée réelle. Comptes de test créés par l'API admin Supabase, supprimés après ;
+  `scripts/zero-demo-e2e.mjs` garde l'invariant. Les comptes `est_demo` voulus (relecture Apple et Google,
+  `demo-menuisier`, ancien compte partenaire) sont exclus de tous les chiffres ; le script lit leur nombre en base.
+- Les auditeurs sont toujours des sous-agents distincts de celui qui corrige.
 
-**Protocole obligatoire** : lire `knowledge/<domaine>.md` et `<domaine>.journal.md` **avant** la
-mission, vérifier au fichier:ligne pendant, et **écrire une entrée datée dans le journal après**.
+## Règles produit
 
-## Skills du dépôt (`.claude/skills/`)
+- **Anti-fabrication** : l'IA n'invente jamais un fait pour un artisan — ni prix sourcé, ni fournisseur
+  absent de sa liste, ni délai précis intenable, ni créneau. « Un prix qui a l'air sourcé alors qu'il est
+  deviné est pire qu'un prix affiché comme estimé. » Garde-fous dans les prompts de `lib/ai.ts`. Même règle
+  pour la documentation : citer un fichier:ligne ou omettre.
+- **White-label** : le site et la plateforme de l'artisan n'affichent jamais « Presti ». E-mails au nom de
+  l'artisan, son adresse en `Reply-To` (`lib/email.ts:6-11`) ; ni manifeste ni mode « app iOS » sur `/site`
+  et `/p` ; jamais `AppShell` ni `InstallerApp` sur une surface artisan.
 
-53 entrées : 50 liens symboliques vers `.agents/skills`, et **trois skills maison** :
+## Déployer
 
-- **`presti-verify`** — la discipline anti-vibecoding, à charger avant de dire « c'est bon ».
-- **`presti-design`** — le design system (dark cinématique, niveau d'animation codé).
-- **`presti-ai-lab`** — améliorer et **évaluer** l'IA générative sans régression (harnais `ai-eval`).
-
-⚠️ `presti-verify/SKILL.md` a vieilli sur trois points : il envoie vérifier
-`presti-ashen.vercel.app` (la production est `prestiapp.fr`), il cite les routes `/api/control/*`
-qui ont été **supprimées** après la fuite du 07/09, et il présente `scripts/smoke-test.mjs` comme la
-suite de tests — la vraie est `scripts/tout-verifier.mjs`. Le **cycle** de la skill reste bon ;
-ses adresses, non.
-
----
-
-## 5. Règles de travail
-
-**Anti-vibecoding.** On ne devine pas, on vérifie. Aucun « c'est bon » sans avoir bouclé le cycle :
-éditer proprement (typé, pas de secret côté client) → build 0 erreur → typecheck → déployer →
-**vérifier en direct** (routes 200, DOM/CSS inspectés dans le navigateur, endpoints protégés testés)
-→ nettoyer les données de test. La checklist est dans `.claude/skills/presti-verify/SKILL.md`.
-
-**Un test vert ne prouve que ce qu'il regarde.** C'est la leçon dominante de l'audit du 08/09
-(61 défauts confirmés, 7 graves) : presque partout le défaut n'était pas dans le code mais dans ce
-qui était censé le surveiller. `support-e2e` fabriquait ses tickets en base et restait verte pendant
-que le mode support était inatteignable faute d'écran ; `controle-compta-e2e` écrivait sa propre
-constante et testait donc elle-même ; quatre assertions ne pouvaient pas rougir. Avant de citer une
-suite comme preuve, lire ce qu'elle assertionne. `scripts/csp-smoke.mjs` **n'assertionne rien** :
-ne jamais s'en servir comme preuve.
-
-**Anti-fabrication, côté produit.** L'IA ne doit jamais inventer un fait pour le compte d'un
-artisan : ni un prix sourcé, ni un nom de fournisseur absent de la liste de l'artisan, ni un délai
-précis intenable, ni un créneau de rendez-vous. « Un prix qui a l'air sourcé alors qu'il est deviné
-est pire qu'un prix affiché comme estimé : l'artisan le présente à son client. » Les garde-fous sont
-dans les prompts de `lib/ai.ts`. La même règle vaut pour la documentation : citer un fichier:ligne
-ou omettre.
-
-**White-label.** Le site et la plateforme livrés à l'artisan n'affichent **jamais** « Presti » :
-le prospect voit la marque de l'artisan. Concrètement, les emails partent au nom de l'artisan avec
-son adresse en `Reply-To` (`lib/email.ts`), le manifeste d'application et le mode « app iOS » sont
-retirés des segments `/site` et `/p`, et les composants de console (`AppShell`, `InstallerApp`) ne
-sont jamais montés sur une surface artisan.
-
-**Corrections incrémentales.** On fixe et on fait évoluer l'existant, on ne rase jamais pour
-réécrire. Chaque refactor est une suite de pas réversibles, chacun compilable et déployable.
-Quand on choisit de ne pas raser un écran qui fonctionne, on le dit dans le journal.
-
-**Les auditeurs sont toujours des sous-agents distincts de celui qui corrige.** C'est ce qui a fait
-trouver 15 défauts en v4 et 25 en v5.
-
-**Zéro compte de démo laissé en base.** Les comptes de test se créent via l'API admin Supabase et se
-suppriment après. `scripts/zero-demo-e2e.mjs` garde l'invariant en permanence. Quelques comptes
-portent volontairement `est_demo` et sont **exclus de tous les chiffres** : le compte de relecture
-exigé par Apple et Google — qui n'est pas un compte de démonstration — et `demo-menuisier`
-(`supabase/migrations/0068_controle.sql:217`), et depuis le 08/09 l'ancien compte partenaire
-(`0084_sortie_partenaire.sql:55-60`, qui explique pourquoi aux l.46-50). **Le nombre exact est celui que
-`zero-demo-e2e.mjs` lit en base** (l.100, et l.117 pour les comptes internes marqués sans être des
-comptes de test), jamais une constante écrite ici.
-
----
-
-## 6. Interdictions pour les sous-agents
-
-- **Pas de `next build` ni de `next dev`.** Le dossier `.next` est partagé : une compilation
-  parallèle a déjà cassé le build de l'agent principal. Une vérification locale se fait en mode
-  production sur un dossier de build isolé : `PRESTI_DIST=.next-prod` (paramètre lu par
-  `next.config.mjs`), sur un port dédié. **Attention au piège** : `scripts/tout-verifier.mjs`
-  contient lui-même un `next build` (l.27) sans `PRESTI_DIST` — la « vraie commande » de §2 tombe
-  donc sous cette interdiction telle quelle. Voir l'encadré de §2.
-- **Pas de commit, pas de push, pas de migration.** Un push sur `main` déploie en production ;
-  une migration touche la base réelle. Ces gestes reviennent à l'agent principal, après accord.
-- **Pas de suites e2e concurrentes contre la production.** Elles créent et suppriment des comptes,
-  écrivent en base et s'appellent les unes après les autres pour de bonnes raisons ; jouées en
-  parallèle elles se marchent dessus. `HORS_LANCEUR` (18 entrées, `tout-verifier.mjs:131-153`) dit
-  **pourquoi** chaque script est écarté du lanceur ; deux seulement le sont parce qu'ils doivent être
-  joués seuls (`leads-abuse-test.mjs`, `stripe-session-test.mjs`). Les autres le sont pour d'autres
-  raisons : serveur local exigé (`fact-e2e`, `pdf-e2e`), outil de ménage, sonde ponctuelle,
-  bibliothèque partagée, ou `csp-smoke.mjs` qui n'assertionne rien.
-- **Pas de secret en clair.** `scripts/garde-commit.mjs` refuse au pré-commit dix motifs de
-  régression déjà corrigés, dont les clés Stripe live, Anthropic et Supabase.
-
----
-
-## 7. Déployer
-
-Le dépôt n'a qu'une branche : **`main`**, qui suit `origin/main` sur
-`github.com/benjaminfiliot-wq/presti`. **Un push sur `main` déclenche le déploiement Vercel.**
-Le pré-commit husky exécute `npm run typecheck` puis `node scripts/garde-commit.mjs`.
-
-Après un push, ne pas sonder « le dernier déploiement » : juste après le push, le dernier est celui
-d'**avant**, déjà READY. Utiliser `node scripts/attendre-deploiement.mjs`, qui attend le déploiement
-dont le SHA est exactement celui de HEAD.
-
-Deux crons Vercel tournent en production (`vercel.json`) : `/api/cron/relances` à 8 h et
-`/api/canaux/relever` à 7 h. L'audit de nuit (`.github/workflows/audit.yml`) tourne à `17 2 * * *`.
+- Une seule branche, **`main`**, qui suit `origin/main` (`github.com/benjaminfiliot-wq/presti`).
+  **Un push sur `main` déclenche le déploiement Vercel de production.**
+- Pré-commit husky (`.husky/pre-commit`) : `npm run typecheck`, `node scripts/garde-commit.mjs`, puis
+  l'évaluation `lib/ai/cerveaux/urgence/evaluer.mjs`.
+- Après un push, « le dernier déploiement » est celui d'avant, déjà READY : `node scripts/attendre-deploiement.mjs`
+  attend celui dont le SHA est exactement HEAD.
+- Crons Vercel (`vercel.json`) : `/api/cron/relances` (`0 8 * * *`), `/api/canaux/relever` (`0 7 * * *`).
+  Audit de nuit : `.github/workflows/audit.yml:17` (`17 2 * * *`).
 
 ## Poser une migration
 
-Deux voies, et une seule est automatique.
-
-1. **`node scripts/appliquer-migration.mjs supabase/migrations/00NN_x.sql`** — tout ou rien dans une
-   transaction, fichier lu sur le disque (jamais retapé), vérification des objets attendus après
-   coup. Exige `DIRECT_URL` dans `.env.local`.
-2. **Benj colle à la main** le jumeau `_A_COLLER_sql_editor_00NN.sql` dans le SQL Editor Supabase.
-   Ce jumeau est fabriqué par `scripts/sql-nu.mjs` (qui suit l'état du texte caractère par caractère
-   pour ne pas couper un `comment on … is '…'` en deux) et sa parsabilité comme son équivalence au
-   fichier source sont vérifiées par `scripts/migrations-jumelles-e2e.mjs`, au lanceur.
-
-**Règle d'ordre : on colle la migration, PUIS on lève le drapeau.** Jamais l'inverse — un drapeau
-levé sans ses tables fait refuser tout le chemin (fail-closed, voulu), et l'artisan tombe sur un
-écran mort. Le commentaire est en tête de `lib/flags.ts`.
-
-Un fichier que Benj colle lui-même est un livrable : sans test, la panne se découvre chez lui.
+**On colle la migration, PUIS on lève le drapeau** — jamais l'inverse. Les deux voies, les jumeaux testés
+et le remplacement des automatisations par n8n : `.claude/rules/migration-production.md`.

@@ -6,117 +6,122 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-10-05T00:07:18Z
+# Digest — 2026-11-02T11:02:13Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 196 tâche(s) PASS, 226026 ligne(s) · faites par Claude Code : 104 tâche(s) PASS, 91457 ligne(s).
-**État** — file : 2 · en cours : 7 · faites : 345 · refusées : 6
+**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 117 tâche(s) PASS, 99486 ligne(s).
+**État** — file : 60 · en cours : 0 · faites : 386 · refusées : 13
 
-## Attention (1)
+## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
+- 4 question(s) en attente : `028-004` — `node scripts/orchestre.mjs repondre 028-004 <n>`
+- 4 question(s) en attente : `028-008` — `node scripts/orchestre.mjs repondre 028-008 <n>`
+- 4 question(s) en attente : `028-014` — `node scripts/orchestre.mjs repondre 028-014 <n>`
+- 4 question(s) en attente : `reparation-C-juges-perimes` — `node scripts/orchestre.mjs repondre reparation-C-juges-perimes <n>`
+- sauvegarde vieille de 530 h — `node scripts/instantane-quotidien.mjs --pousser`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 026-099 | test | en-cours | claude-code | — | depuis 2026-10-04T23:29:49Z · Écrire scripts/juges-026-envoi-mutations.mjs, qui prouve sur des copies que les huit juges de l'envoi automatique, de l'entrant et de la fabrication (disjoncteurs-qa, jauges-qa, facteur-qa, meta-webhooks-qa, repondeur-qa, rendez-vous-qa, maquette-video-qa, douleurs-qa) échouent chacun sur de vraies fautes avec le critère nommé et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 026-240 | test | en-cours | claude-code | — | depuis 2026-10-04T23:11:42Z · Écrire scripts/juges-026-savoir-mutations.mjs, qui mute sur des copies isolées les quatre juges de la couche Savoir (savoir-socle-qa, savoir-recherche-qa, savoir-lecons-qa, savoir-reflexion-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
-| 026-152 | test | en-cours | claude-code | — | depuis 2026-10-05T00:07:16Z · Écrire scripts/juges-026-lt-mutations.mjs, qui prouve sur des copies que chacun des 16 juges du domaine livraison et trésorerie échoue, sur le critère attendu, face à une vraie faute plantée dans le code PASS, et passe sur l'arbre réel ; code 0 seulement si chaque mutation est prise et chaque témoin passe |
-| 026-101 | test | en-cours | claude-code | — | depuis 2026-10-04T22:52:08Z · Écrire scripts/juges-026-acquisition-mutations.mjs, qui prouve sur des copies que chaque juge du domaine acquisition passe sur l'arbre réel et échoue, sur le critère nommé, pour chacune des mutations imposées par cette fiche, et qui sort en code 0 seulement si toutes échouent |
-| 026-161 | test | en-cours | claude-code | — | depuis 2026-10-04T23:11:35Z · Écrire scripts/juges-026-mutations.mjs, qui prouve sur des copies que les juges qu'aucune fiche de mutations de domaine ne contre-vérifie (agents-llm-qa, ops-acquisition-qa, les deux juges 025 adaptés à Next 16, webhook-muet-qa amendé par 026-108, pont-orchestre-qa et prospects-entrant-qa de 026-142, et juges-026-preuve lui-même) échouent sur une vraie faute avec le critère nommé et passent sur l'arbre intact, puis que chaque juge de la série a au moins une mutation attrapée dans un rapport ; code 0 seulement si tout est pris |
-| 026-186 | feature | en-cours | claude-code | — | depuis 2026-10-04T23:46:55Z · Donner à la carte sa forme de téléphone : un cadre de 358 px en vue d'ensemble ou sur la grille portrait du thème, le pincement dans le cadre seulement, +, − et ⊞ de 44 px, les plaques à partir du zoom ×2, touch-action: none, gesturestart bloqué sous Safari, la perte de contexte rattrapée, et scrollWidth ≤ 390, jusqu'au vert de station-ecran-qa (webkit) et de station-claw3d-qa (contexte) |
-| 026-250 | test | en-cours | claude-code | — | depuis 2026-10-04T23:19:19Z · Écrire scripts/juges-026-postes-mutations.mjs, qui mute sur des copies isolées les quatre juges des postes de l'organigramme du 27/09 (comptable-qa, sav-qa, qualite-sites-qa, vigile-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
+| 029-001 | test | file | codex-1 | — | L'assistant de gestion est vérifié en conditions réelles : la suite assistant-qa passe ses parties L (comptes de test sur la base réelle) et M (vrai modèle), puis aucun compte de test ne reste en base |
+| 026-120 | feature | file | antigravity | — | Remplir le cadre des panneaux de la station : chaque salle cliquée ouvre son panneau (Recettes et Trésorerie, Usine à sites, Atelier des maquettes, Salle de réunion, Salle des envois avec les gestes du fondateur, Standard, Rédaction, Salle des machines ; les quatre autres ouvrent la fiche de leurs agents en attendant 026-164), et chaque agent sa fiche (tâches récentes, coût par tâche, consignes, boîtes, réponses, Pause), lus par la route de la station seulement pendant qu'ils sont ouverts, sourcés, sans aucun bouton d'envoi, à 390 px comme à 1440 px |
+| 026-249 | feature | file | claude-code | — | Écrire le Vigile, titulaire de la salle Sécurité, au contrat de 026-248 — lib/vigile/releve.ts (relevé pur, caviardé, niveaux), lib/vigile/serveur.ts et lib/vigile/sources.ts (les mêmes lectures que la salle Sécurité et le Poste, sans requête recopiée), la route GET /api/agents/vigile (agrégats sans adresse IP, réservée à l'agent vigile, derrière busAgents), scripts/vigile/releve.mjs (relevé quotidien sur l'usine des erreurs des 24 h, des avis npm audit et des fins de support, des avis du conseiller Supabase, des échéances et présences de jetons et clés, des bannissements ; résumé au gabarit ou par Codex ou Ollama local seulement ; un battement et ses événements au bus ; une pause de sécurité sur un agent par la route partagée avec Matt, seulement sur un seuil de gravité de vigile.json, jamais levée, jamais la pause générale, jamais sur Matt, Claude Code ni le pont ; rien d'autre) et les unités presti-vigile (.service et .timer de 6 h 50), jusqu'au vert de scripts/vigile-qa.mjs |
+| 026-156 | feature | file | antigravity | — | Écrire scripts/pack-pub/fabriquer.mjs qui, depuis un dossier de pack, prépare les photos (octets vérifiés, sans métadonnées), refuse une personne sans accord, écrit le manifeste des entrées, instancie et rend les trois films et les trois visuels avec HyperFrames en local, puis appelle textes.mjs, pour produire un sortie/ que pub-locale-qa accepte sur les trois jeux d'essai |
+| 026-096 | feature | file | codex | — | Créer lib/agents/acquisition/repondeur.ts et la route app/api/cron/repondeur : le Répondeur prépare, par les seuls modèles approuvés et sans modèle de langage, la réponse privée à chaque commentaire « SITE » et la réponse à chaque message classé (question tirée de la FAQ, prix, appel, confirmation d'un STOP, accusé d'une demande RGPD, questions à un entrant, suite du Studio pour une marque), par le Gmail de prospection dans le fil avec sa preuve de demande ou dans la conversation Meta, et la seule relance après un lien de maquette resté sans réponse, annoncée comme l'assistant IA de Presti, avec le lien de rendez-vous ou de paiement qui passe la main à Benj, sans jamais négocier, promettre hors de la liste, ni répondre à un cas sensible ou hostile ; le Facteur l'envoie après les juges |
+| 026-091 | test | file | usine-codex-672 | — | Écrire scripts/juges-026-horloge-bus-mutations.mjs, qui prouve sur des copies que chacun des dix juges du domaine horloge et bus échoue sur une vraie faute avec le critère nommé et passe sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
+| 026-157 | feature | file | codex | — | Écrire scripts/pack-pub/exporter.mjs (une ligne packs_pubs payée devient un dossier pack.json local, sans courriel, et signale la voix à produire) et scripts/pack-pub/deposer.mjs (juge local vert d'abord, puis dépôt de sortie/ dans le bucket privé packs-pubs avec une marge de 400 Mo et passage payee → fabriquee) |
+| 026-209 | feature | file | codex | — | C06 — fabrique de vidéos sur l’usine, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
+| 026-084 | feature | file | codex | — | Créer la page de rendez-vous maison (décision R14, 0 €) : lib/agents/acquisition/rendezVous.ts (disponibilités de Benj, créneaux libres de 15 min, validation d'une réservation) et la route app/rendez-vous/[jeton]/route.ts qui sert, sans traçage ni script, une page privée noindex où le prospect choisit un créneau et laisse son numéro, réserve sans double réservation, crée la carte « À appeler » et prévient Benj par une notification sans donnée personnelle, avec la même 404 pour un lien inconnu, mal formé ou expiré |
+| 026-215 | feature | file | codex | — | C12 — veille des tendances et laboratoire des accroches, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
+| 026-224 | feature | file | codex | — | Fish Audio sous garde de licence et quota selon la relecture de complétude du 27/09 |
+| 026-073 | contenu | file | codex | — | Constituer la bibliothèque des douleurs lib/agents/acquisition/douleurs.ts (au moins 40 entrées sur au moins 8 métiers du bâtiment, chacune tirée de ce que des artisans écrivent eux-mêmes en public, avec la citation exacte, sa page source et sa date, les mots-clés, une question « qui appuie là où ça fait mal » et une accroche d'objet, sans aucune donnée personnelle, toutes à approuve false jusqu'à l'approbation unique de Benj) et sa méthode docs/agents/douleurs-methode.md, pour que chaque citation se retrouve mot pour mot sur sa page quand le juge la relit |
 | 023-03 | test | file | claude-code | — | Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 025-10 | test | file | claude-code | — | Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
+| 026-207 | feature | file | codex | — | C04 — garde des lignes et pont avec le Crieur, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
+| 026-235 | feature | file | usine-codex-133 | — | Écrire scripts/savoir/lecons.mjs (candidats depuis les verdicts en échec, les décisions tranchées par Benj, les décisions tranchées du bus et les corrections des fiches, datées, sourcées, caviardées et idempotentes ; lister ; valider et rejeter par Claude Code ou la revue du lundi seulement, jamais sur l'usine ; verifier-source), jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=candidats,validation |
+| 026-208 | feature | file | antigravity | — | C05 — cinq gabarits vidéo et un carrousel HyperFrames, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
+| 026-253 | feature | file | claude-code | — | Adapter scripts/budget-perf.mjs à la sortie de build de Next 16 --webpack (le fichier .next/app-build-manifest.json qu'il lisait a disparu), en gardant la même mesure honnête du poids réellement transféré pour /site/[slug] et /p/[slug], jusqu'au vert de next16-qa --groupe=dependances (N16-1 à N16-7) |
+| 026-006 | feature | file | claude-code | — | Passer presti à Next.js 16 (dernière 16.x), React et React DOM 19.2 et leurs types, avec le script build en next build --webpack pour @serwist/next et sans script next lint, typecheck, build et budget de poids verts, jusqu'au vert de next16-qa --groupe=dependances |
+| 026-047 | feature | file | codex | — | Écrire le veilleur A0 lib/agents/veilleur.ts (agent muet, panne de plus de 2 h, usine Oracle injoignable, disjoncteur, jeton externe à J-7, stockage au-delà de 60 %, argent bloqué, cartes des disjoncteurs du formulaire, du Gmail de prospection et de Meta tenus par la base (technologie en pause, canal arrêté, Gmail bloqué, modèle suspendu, changer de message), de la notice périmée, du bilan et du rappel Vercel Pro, coupe-circuit à 150 € sans recette, lignes d'Attention colorées et ordonnées, digest de 7 h 30 et 18 h 30 heure de Paris, 3 notifications par jour au plus hors urgences) sur les tuyaux de lib/alertes.ts, et ajouter à lib/alertes.ts ses motifs, la surveillance du tic et le digest hebdomadaire en repli seulement |
+| 026-141 | feature | file | codex | — | Brancher la livraison sur l'horloge du bus : la route tic de 026-horloge-bus appelle tourLivraison toutes les 15 min, l'interrupteur de pause du bus arrête retraits et générations distantes, tourLivraison consomme la sortie que le livreur de l'usine a déposée (relue, décodée, copiée dans le bucket sites, commande passée à generee, dossier usine effacé, jamais une tâche d'essai), la tâche livrer_site:<commande> du bus est close par ops_tache_clore quand la commande atteint generee, et le livreur bat à chaque tour |
+| 026-064 | feature | file | usine-codex-114 | — | Créer lib/agents/acquisition/jauges.ts (la liste fermée des jauges de quota : formulaires du jour au plafond du palier, état de chaque technologie de formulaire, e-mails sollicités du jour, réponses privées et messagerie Meta, API Instagram, bibliothèque publicitaire, Publora ; calculerJauges qui rend pour chacune utilisé, plafond, part et état ok, attention à 75 % ou plein à 100 %, et consommerJauge qui refuse un appel au-delà du plafond) et la route de lecture GET /api/controle/jauges réservée à un fondateur, sans aucune donnée de prospect |
+| 026-154 | contenu | file | codex | — | Écrire scripts/pack-pub/textes.mjs qui produit, sans modèle d'IA et à partir des seuls faits du pack, sortie/textes.md (trois variantes d'annonce aux longueurs Meta) et sortie/fiche-10-min.md (lancer la pub pas à pas, catégorie Logement selon docs/pubs/meta-logement.json), et refuse d'écrire la fiche tant que la catégorie n'est pas vérifiée |
+| 026-118 | feature | file | codex | — | Ajouter la route POST /api/pubs/commander, qui ouvre un Checkout Stripe à paiement unique avec facture pour le pack pubs à partir de parametresCheckoutPack, derrière le nouveau drapeau packPub baissé, avec packPubVente baissé aussi |
+| 026-230 | feature | file | codex | — | Écrire scripts/savoir/exporter.mjs (liste fermée de docs/savoir/sources.json, exclusions avant toute ouverture, secrets écartés, classes public, interne et prospects, caviardage, manifestes, sortie hors dépôt), scripts/savoir/envoyer.mjs (deux archives vers le dépôt /srv/presti-savoir/depot de l'usine par ssh, sous l'interrupteur envoi) et scripts/savoir/synchroniser.mjs (les deux à la suite, pour la tâche Windows), jusqu'au vert de scripts/savoir-socle-qa.mjs --partie=export,envoi |
+| 026-082 | feature | file | usine-codex-109 | — | Créer lib/agents/acquisition/maquettesLien.ts (jeton de 43 signes, empreinte SHA-256, expiration à 21 jours, servirMaquette et executerPurge purs), la route app/maquette/[jeton]/[[...fichier]]/route.ts qui sert une page privée noindex, sans traçage ni écriture, avec la capture et la vidéo de 15 à 20 s (lecture par plages pour les téléphones), 404 identique pour un lien inconnu, mal formé ou expiré, et la route app/api/cron/maquettes-purge |
+| 026-153 | feature | file | ag-026-153 | — | Créer le gabarit HyperFrames du pack pubs (trois films 1080×1920 de 15 s avant-apres, chantier et artisan-ville, et un visuel 1080×1080) fait seulement de photos de l'artisan et de textes à marques, et scripts/pack-pub/instancier.mjs qui remplit les marques depuis un pack.json |
+| 026-149 | feature | file | usine-codex-94 | — | Écrire lib/packPubPurge.ts (packsAPurger pur, purgerPacksExpires borné et sans exception) et l'appeler chaque jour depuis la tâche des relances, pour effacer du bucket packs-pubs les fichiers d'un pack livré dont le lien de 30 jours a expiré, comme le promet l'article 3 ter des CGU |
+| 026-074 | feature | file | codex | — | Créer les cinq routes d'écriture du Pilotage (trancher une décision avec reconfirmation quand elle engage, et rendre aux agents une réponse tranchée ; marquer rendu un appel, réservation ou réponse ; mettre un agent en pause sous reconfirmation securite ; transmettre une consigne à l'équipage ; les cinq gestes du fondateur sur l'envoi sous reconfirmation securite), fermées par le drapeau pilotage, gardées par estDirection, journalisées avant d'agir, branchées sur les seules fonctions des propriétaires du bus, de l'acquisition et de la station, et sans aucune route d'envoi |
+| 026-137 | feature | file | usine-codex-93 | — | Écrire lib/packPubLivraison.ts (courriel de livraison pur, lien de 30 jours) et les routes du Poste GET /api/controle/packs (liste, aperçus signés de 600 s) et POST /api/controle/packs/[id] (livrer sous reconfirmation artisan, ou refaire avec une consigne), journal d'abord et état conditionnel |
+| 026-075 | feature | file | usine-codex-89 | — | Écrire scripts/agents/maquette-video.mjs, qui fabrique sur l'usine, à partir du dossier d'une maquette générée, une vidéo verticale de 15 à 20 s qui fait défiler la page d'accueil de haut en bas (capture pleine page par Chromium, panoramique par ffmpeg), en H.264, sans son, de 3 Mo au plus, lisible en continu sur un téléphone, déterministe, sans aucune ressource d'un autre hôte |
+| 026-068 | feature | file | codex | — | Créer GET /api/controle/pilotage?bloc=decider\|appeler\|envois\|entonnoir\|agents\|code (404 tant que le nouveau drapeau pilotage est baissé, garde fondateur, chaque bloc sourcé et lu seulement par les fonctions pilotage_* et la logique de lib/pilotage ; le bloc envois montre les envois des agents en lecture seule, sans texte ni destinataire, par envoisDesAgents de lib/pilotage/envois.ts) et lib/pilotage/blocs.ts, et inscrire le drapeau dans la carte de scripts/fermeture-e2e.mjs |
+| 026-049 | feature | file | usine-codex-66 | — | Créer la route GET /api/agents/tic, fermée par le drapeau busAgents et par CRON_SECRET comme les routes cron, qui enchaîne sous un budget de 25 s les baux expirés, le balayage des commandes payées, la file de l'argent et, une fois par créneau de 5 min, le veilleur A0, puis note son passage tic dans passages_cron et répond 500 si une étape a échoué |
+| 026-056 | feature | file | usine-codex-64 | — | Créer les routes POST /api/agents/usine/entree et /api/agents/usine/depot derrière le drapeau busAgents, gardées par authAgent et exigerTable('taches'), qui ne signent d'URL (lecture 15 min, dépôt) dans le bucket privé usine que pour la tâche que l'agent tient sous bail (ops_tache_detenue), dans les limites de sa capacité lues dans lib/agents/usineLimites.json, et refusent tout dépôt quand le stockage dépasse 60 % ou ne se mesure pas, avec lib/agents/usineDepot.ts, jusqu'au vert de scripts/usine-routes-qa.mjs |
+| 026-046 | feature | file | usine-codex-62 | — | Écrire lib/agents/fileArgent.ts qui met chaque commande de site payée dans la file argent (une fois par commande), traite la file sous un budget de temps avec un registre fermé de gestionnaires idempotents (commande_payee crée la tâche livrer_site puis dépose, sans jamais bloquer l'argent, son entrée pour le livreur de l'usine ; essai_e2e), ne marque un message fait qu'après succès et alerte sur un type inconnu, sans jamais écrire dans Stripe ni dans sites_commandes |
+| 026-059 | feature | file | usine-codex-60 | — | Créer GET /api/controle/tresorerie et la tuile Argent (encaissé du jour, 7 jours et mois, abonnement mensuel récurrent, sites vendus, dépenses, marge, seuil de TVA) calculées uniquement par lib/direction/stripe.ts et lib/direction/tresorerie.ts, montrée en tête de Comptabilité, plus une veille hebdomadaire du seuil de TVA |
+| 026-168 | test | file | claude-code | — | Écrire le juge de la planche station-planche-qa (--partie=planche : il lance lui-même, sur l'usine, l'atelier ~/claw3d-pixel sur 127.0.0.1 avec une liste blanche fermée, capture lui-même la planche des 20 salles et de la salle réservée dans la vraie mise en page à 1440×900, 1280×800 et 390×844, et juge grille entière, palette, licences du lot A, absence de donnée et poids) et le lot p de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
+| 026-035 | feature | file | usine-codex-59 | — | Écrire les écrans de l'achat public derrière siteAchatPublic (page /site/acheter à quatre champs et case CGU, page /site/commander/merci avec renvoi du lien, mode « compléter mon dossier » de /site/commander avec l'étape Vos prestations, paramètre suite sûr de /onboarding) |
+| 026-033 | feature | file | usine-codex-58 | — | Écrire scripts/commande-exporter.mjs, qui transforme une commande payée au dossier complet en dossier source pour generer.mjs --source (commande.json au contrat de 025-03, photos de l'artisan seulement, vérifiées, sans métadonnées, en webp et avif, attributions crédibles) hors de public/, sans afficher aucune donnée personnelle |
+| 026-042 | feature | file | usine-codex-57 | — | Créer les 7 fichiers de routes /api/agents/* du bus (créer, prendre et rendre une tâche, écrire et lire des événements, créer une décision et relire ses décisions tranchées, battement, état) derrière le drapeau busAgents baissé, chacune gardée par authAgent, limitée aux types et tables de l'agent et branchée sur une seule fonction de lib/agents/bus.ts, sans aucune route qui tranche, approuve ou change un interrupteur |
+| 026-031 | feature | file | usine-codex-56 | — | Tenir l'article 3 bis des CGU : dater la suppression du compte sur ses sites en ligne quand la purge réussit et prévenir l'artisan, puis douze mois plus tard envoyer le lien du dossier, passer la commande à retiree, détacher le domaine et purger les fichiers à l'expiration, le tout dans tourLivraison |
+| 026-030 | feature | file | usine-codex-55 | — | Permettre de compléter le dossier d'une commande déjà payée et pas encore générée (GET/PUT /api/site/commander/complement, qui rattache d'abord la commande par l'adresse de la session), et ajouter au dossier la liste des prestations, exigée avant la fabrication par erreursFabrication sans toucher aux règles du paiement |
+| 027-01 | audit | file | antigravity | — | Produire docs/refonte/audit/AUDIT.md (pages, défauts reliés à des fichiers, opportunités, priorités mesurées) et les 12 captures bureau et mobile des 6 pages publiques de prestiapp.fr, jusqu'au vert de scripts/refonte-audit-qa.mjs |
+| 026-255 | feature | file | antigravity | — | Refaire la mise en page du thème Vaisseau pour que la grille tienne dans le cadre de la carte à 1440×900 (au plus 760 px de large), sans toucher au moteur ni aux juges, jusqu'au vert de station-ecran-qa --partie=themes (CE-17) et de station-themes-qa --theme=vaisseau |
+| 027-002 | feature | file | codex | — | Brancher la voix off Fish Audio (compte gratuit de Benj, usage NON commercial assumé par lui le 07/10/2026) dans la chaîne TikTok Brico Travaux, avec le plafond de crédits de la garde existante, puis refaire la voix + musique des vidéos aspirateur v2 (a1, a2) |
+| 027-003 | feature | file | codex | — | Trouver de vraies vidéos du MÊME pistolet nettoyeur sans fil que celui vendu (AliExpress 1005009522003959, variante FR 2 batteries) chez les fournisseurs, vérifier à l'image qu'il s'agit du même modèle, puis produire deux vidéos TikTok nettoyeur (n1, n2) en extraits réels, au niveau des vidéos aspirateur v2 |
+| 027-004 | feature | file | codex | — | Mesurer les ANIMATIONS réelles des maquettes de prospection de l'atelier face à la démo de référence Lestraque (même kit, mêmes scènes, même mouvement au défilement) et corriger les écarts, avec un critère mesuré au juge de l'atelier |
+| 027-005 | feature | file | codex | — | Trouver un nettoyeur haute pression sans fil dont la PROPRE fiche fournisseur (CJdropshipping) contient de vraies vidéos du produit en action, en stock européen avec livraison vers la France, marge nette ≥ 10 €, puis produire deux vidéos TikTok en extraits réels de ces vidéos |
+| 027-006 | feature | file | codex | — | Faire de la maquette de prospection un VRAI SITE complet, prêt à installer chez l'artisan : référencement (SEO) complet, ses informations réelles d'entreprise (mentions légales, contact, SIREN), et un paquet d'installation clair (archive + guide + mise en ligne par Presti sous sous-domaine ou transfert vers son domaine) |
+| 027-007 | feature | file | codex | — | Brancher le message de premier contact « approche différente » VALIDÉ par Benj (gabaritsPremierContactV2) comme message de premier contact des formulaires, avec le lien vers la maquette privée du prospect, en levant la règle « jamais prestiapp.fr avant un oui » pour ce seul lien, sans relâcher aucune autre garde de J3 |
+| 028-004 | feature | file | codex | — | Corriger le BUG DES AGENTS et des REVENUS dans le Poste et la station (agents non affiches ou figes, chiffres de revenus faux ou absents) et deblocker tout ce qui empeche l'ecosysteme d'etre autonome |
+| 028-006 | feature | file | codex | — | Refaire la voix off des vidéos TikTok aspirateur (a1, a2) PLAN PAR PLAN, synchronisée sur les coupes et les sous-titres, avec la musique réglée sur les temps forts, pour une bande-son COHÉRENTE avec l'image |
+| 028-008 | feature | file | codex | — | Construire les OUTILS DE CRÉATION DE VIDÉOS TikTok de l'écosystème (production en chaîne, 30 à 45 s, hook dès la 1re seconde, images réelles, sous-titres mot à mot, voix pluggable, musique calme optionnelle), utilisables par Benj et par l'usine |
+| 028-011 | feature | file | codex | — | Donner à l'écosystème son propre accès navigateur (Chrome piloté par script, profil dédié) pour fabriquer la voix off sur Fish Audio sans Claude, puis publier la vidéo sur TikTok APRÈS validation de Benj, et enchaîner la production |
+| 028-012 | feature | file | antigravity | — | Monter la vidéo TikTok Presti n°1 « Les devis qui dorment » (1080×1920, ≈ 42 s) sur la voix off déjà générée, avec de vraies captures du produit et des diapos 3D animées, sous-titres mot à mot, musique licenciée très basse sous la voix ; la livrer en statut a_valider |
+| 028-014 | feature | file | antigravity | — | Chaîne AUTONOME de vidéos TikTok Presti : jusqu'à 8 vidéos de 30-45 s préparées pendant la nuit, chacune jugée automatiquement contre les vidéos de référence de Benj et la barre qu'il a posée, avec une voix dynamique ; chaque échec du juge relance un tour de correction ; déposées en a_valider |
+| 028-020 | feature | file | codex | — | Entraîner le TROISIÈME modèle maison de l'écosystème Presti : le rédacteur de contenu (scripts TikTok, légendes, commentaires épinglés, réponses de relance), petit modèle ouvert affiné sur les textes validés par Benj, branché au registre des modèles et au relais comme moteur local gratuit |
+| 028-021 | feature | file | codex | — | Nouvelle séquence de prospection PAR ÉTAPES (méthode de Benj du 08/10) : messages courts qui questionnent d'abord (d'où viennent vos clients ? que trouve-t-on sur Google quand on vous cherche ? un chantier vous rapporte combien ?), relances programmées, puis maquette ; respect de toutes les gardes de conformité existantes |
+| 029-002 | test | file | antigravity | — | La qualité des réponses de l'assistant de gestion est mesurée avec le vrai modèle sur les scénarios de plans/016-assistant.md §7 (ai-eval --assistant), et chaque scénario échoué est expliqué |
+| 032-001 | audit | file | claude-code | — | Auditer en attaquant, et en lecture seule, les lots L1 (sécurité S1 à S5 de l'assistant, du pilote, des règles et des relances) et L2 (offre Entreprise) du chantier 4, avant leur mise en production |
+| 032-003 | feature | file | claude-code | — | Construire dans le n8n d'Oracle le workflow presti-detecteurs (lot L3 du chantier 4, règle n8n-first) — les dix détecteurs en lectures Supabase (opérations get et getAll seulement) et nœuds Code, bilan agrégé par détecteur, en simulation, essayé sur des données fictives et non publié |
+| 031-014 | audit | fait | claude-code | PASS | 2026-11-02T11:02:12Z · 0s · 970 l. |
+| 031-010 | feature | fait | claude-code | PASS | 2026-11-02T10:21:12Z · 10s · 0 l. |
+| 031-011 | contenu | fait | claude-code | PASS | 2026-11-02T10:18:38Z · 2s · 0 l. |
+| 031-016 | feature | fait | claude-code | PASS | 2026-11-02T10:15:15Z · 66s · 3843 l. |
+| 031-008 | feature | fait | claude-code | PASS | 2026-11-02T09:35:11Z · 14s · 0 l. |
+| 031-012 | audit | fait | claude-code | PASS | 2026-11-02T09:22:47Z · 87s · 1104 l. |
+| 031-006 | feature | fait | claude-code | PASS | 2026-11-02T09:12:33Z · 1s · 0 l. |
+| 031-013 | feature | fait | claude-code | PASS | 2026-11-02T08:57:23Z · 91s · 2112 l. |
+| 031-009 | feature | fait | claude-code | PASS | 2026-11-02T08:32:54Z · 2s · 0 l. |
+| 031-007 | feature | fait | claude-code | PASS | 2026-11-02T08:18:18Z · 1s · 0 l. |
+| 031-002 | feature | fait | hermes | PASS | 2026-11-01T22:39:06Z · 1s · 0 l. |
+| 031-003 | audit | fait | claude-code | PASS | 2026-11-01T21:23:42Z · 0s · 0 l. |
+| 031-005 | feature | fait | claude-code | PASS | 2026-11-01T21:22:56Z · 1s · 0 l. |
+| 031-001 | contenu | fait | hermes | PASS | 2026-11-01T17:41:21Z · 2s · 0 l. |
+| 026-120 | feature | fait | antigravity | PASS | 2026-10-05T10:52:04Z · 376s · 0 l. |
+| 026-117 | feature | fait | antigravity | PASS | 2026-10-05T10:13:47Z · 276s · 0 l. |
+| 026-099 | test | fait | codex | PASS | 2026-10-05T09:32:23Z · 1266s · 0 l. |
+| 026-999 | contenu | fait | usine-claude-1558 | PASS | 2026-10-05T09:14:59Z · 14s · 640 l. |
+| 026-186 | feature | fait | codex | PASS | 2026-10-05T09:11:07Z · 198s · 0 l. |
+| 026-189 | feature | fait | antigravity | PASS | 2026-10-05T09:07:42Z · 67s · 0 l. |
+| 026-188 | feature | fait | antigravity | PASS | 2026-10-05T09:06:28Z · 84s · 0 l. |
+| 026-187 | feature | fait | antigravity | PASS | 2026-10-05T09:04:52Z · 130s · 0 l. |
+| 026-240 | test | fait | claude-code | PASS | 2026-10-05T08:27:35Z · 789s · 0 l. |
+| 026-216 | feature | fait | antigravity | PASS | 2026-10-05T08:15:26Z · 48s · 0 l. |
+| 026-185 | feature | fait | codex | FAIL | station-themes-qa --theme=station : FAIL — TH-7, TH-8, TH-9, TH-10, TH-11, TH-12 |
+| 026-152 | test | fait | codex | PASS | 2026-10-05T07:54:03Z · 1005s · 0 l. |
+| 026-250 | test | fait | codex | PASS | 2026-10-05T07:37:13Z · 299s · 0 l. |
+| 026-130 | test | fait | codex | PASS | 2026-10-05T07:36:47Z · 203s · 0 l. |
+| 026-228 | test | fait | codex | PASS | 2026-10-05T07:31:08Z · 31s · 0 l. |
 | 026-159 | test | fait | codex | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
 | 026-123 | feature | fait | claude-code | PASS | 2026-10-04T21:50:27Z · 519s · 1760 l. |
 | 026-172 | test | fait | claude-code | EXPIRÉE | bail expiré : claude-code silencieux depuis 131 min |
 | 026-170 | test | fait | claude-code | FAIL | ✅ JA-1 référence 1c87006 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (5823 fichiers), ancêtre de HEAD, sans app/c |
 | 026-094 | feature | fait | codex | PASS | 2026-10-04T21:19:18Z · 129s · 0 l. |
 | 026-179 | feature | fait | codex | PASS | 2026-10-04T20:58:45Z · 313s · 0 l. |
-| 026-130 | test | fait | claude-code | EXPIRÉE | bail expiré : claude-code silencieux depuis 130 min |
 | 026-200 | feature | fait | codex | PASS | 2026-10-04T20:40:29Z · 46s · 0 l. |
-| 026-185 | feature | fait | claude-code | EXPIRÉE | bail expiré : claude-code silencieux depuis 136 min |
 | 026-249 | feature | fait | claude-code | PASS | 2026-10-04T20:10:21Z · 247s · 1850 l. |
 | 026-097 | feature | fait | claude-code | PASS | 2026-10-04T19:56:14Z · 70s · 3225 l. |
 | 026-162 | feature | fait | claude-code | PASS | 2026-10-04T19:33:49Z · 4s · 0 l. |
 | 026-227 | feature | fait | codex | PASS | 2026-10-04T19:07:25Z · 83s · 0 l. |
-| 026-226 | feature | fait | claude-code | PASS | 2026-10-04T18:58:26Z · 87s · 737 l. |
-| 026-247 | feature | fait | claude-code | PASS | 2026-10-04T18:44:43Z · 71s · 1076 l. |
-| 026-201 | feature | fait | codex | PASS | 2026-10-04T18:38:51Z · 57s · 0 l. |
-| 026-245 | feature | fait | codex | PASS | 2026-10-04T18:27:19Z · 14s · 0 l. |
-| 026-178 | feature | fait | claude-code | PASS | 2026-10-04T18:16:47Z · 199s · 1074 l. |
-| 026-243 | feature | fait | claude-code | PASS | 2026-10-04T18:14:08Z · 18s · 1018 l. |
-| 026-136 | feature | fait | claude-code | PASS | 2026-10-04T18:05:49Z · 29s · 822 l. |
-| 026-199 | test | fait | claude-code | PASS | 2026-10-04T17:46:01Z · 145s · 4915 l. |
-| 026-254 | contenu | fait | claude-code | PASS | 2026-10-04T17:38:09Z · 174s · 545 l. |
-| 026-138 | audit | fait | claude-code | PASS | 2026-10-04T17:20:48Z · 5s · 491 l. |
-| 026-138-juge-pages | test | fait | claude-code | PASS | 2026-10-04T17:13:01Z · 68s · 741 l. |
-| 026-150 | test | fait | claude-code | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
-| 026-156 | feature | fait | antigravity | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
-| 026-103 | feature | fait | codex | PASS | 2026-10-04T16:38:31Z · 22s · 0 l. |
-| 026-092 | feature | fait | claude-code | PASS | 2026-10-04T16:24:36Z · 390s · 532 l. |
-| 026-244 | test | fait | claude-code | PASS | 2026-10-04T16:24:33Z · 31s · 0 l. |
-| 026-246 | test | fait | claude-code | PASS | 2026-10-04T16:18:22Z · 43s · 2506 l. |
-| 026-221 | feature | fait | codex | PASS | 2026-10-04T16:13:17Z · 1s · 0 l. |
-| 026-177 | feature | fait | usine-codex-1465 | PASS | 2026-10-04T15:39:40Z · 246s · 695 l. |
-| 026-120 | feature | fait | ag-026-120 | EXPIRÉE | bail expiré : ag-026-120 silencieux depuis 133 min |
-| 026-087 | feature | fait | claude-code | PASS | 2026-10-04T13:49:51Z · 161s · 939 l. |
-| 026-096 | feature | fait | codex | PASS | 2026-10-04T13:26:50Z · 101s · 0 l. |
-| 026-195 | feature | fait | codex | PASS | 2026-10-04T13:16:06Z · 99s · 0 l. |
-| 026-174 | feature | fait | codex | PASS | 2026-10-04T13:02:58Z · 90s · 0 l. |
-| 026-237 | feature | fait | claude-code | PASS | 2026-10-04T13:02:11Z · 115s · 0 l. |
-| 026-083 | feature | fait | claude-code | PASS | 2026-10-04T12:53:56Z · 70s · 0 l. |
-| 026-173 | feature | fait | codex | PASS | 2026-10-04T12:53:17Z · 45s · 0 l. |
-| 026-242 | test | fait | claude-code | PASS | 2026-10-04T12:45:45Z · 81s · 0 l. |
-| 026-171 | test | fait | claude-code | PASS | 2026-10-04T11:36:10Z · 728s · 0 l. |
-| 026-175 | feature | fait | claude-code | PASS | 2026-10-04T11:17:24Z · 55s · 0 l. |
-| 026-134 | feature | fait | claude-code | PASS | 2026-10-04T11:15:52Z · 45s · 0 l. |
-| 026-217 | feature | fait | claude-code | PASS | 2026-10-04T11:14:35Z · 40s · 0 l. |
-| 026-151 | test | fait | codex | DISJONCTÉE | bail expiré : usine-codex-126 silencieux depuis 135 min \| bail expiré : codex-mutations-151 silencieux depuis 2125 min \| decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche |
-| 026-194 | test | fait | claude-code | PASS | 2026-10-04T11:09:44Z · 138s · 0 l. |
-| 026-111 | feature | fait | antigravity | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
-| 026-176 | feature | fait | codex | PASS | 2026-10-04T11:03:54Z · 43s · 0 l. |
-| 026-117 | feature | fait | antigravity | PASS | 2026-10-02T18:21:46Z · 143s · 2092 l. |
-| 026-113 | feature | fait | antigravity | PASS | 2026-10-02T08:48:16Z · 100s · 1491 l. |
-| 026-122 | feature | fait | codex | PASS | 2026-09-30T15:47:04Z · 28s · 0 l. |
-| 026-259 | feature | fait | codex-rearmement-259 | PASS | 2026-09-30T15:30:32Z · 15s · 516 l. |
-| 026-167 | test | fait | codex-reprise-167 | PASS | 2026-09-30T15:26:36Z · 276s · 806 l. |
-| 026-258 | feature | fait | antigravity | PASS | 2026-09-30T10:57:29Z · 3s · 0 l. |
-| 026-257 | feature | fait | codex-relais-compat-0930 | PASS | 2026-09-30T10:52:08Z · 119s · 445 l. |
-| 026-225 | test | fait | codex-relais-0930 | PASS | 2026-09-30T10:23:11Z · 0s · 744 l. |
-| 026-133 | test | fait | codex | PASS | 2026-09-30T08:24:52Z · 617s · 0 l. |
-| 026-091 | test | fait | usine-codex-672 | PASS | 2026-09-30T04:00:24Z · 560s · 1682 l. |
-| 026-145 | feature | fait | usine-codex-506 | PASS | 2026-09-30T01:29:21Z · 35s · 519 l. |
-| 026-239 | feature | fait | usine-codex-503 | PASS | 2026-09-30T01:22:15Z · 41s · 1050 l. |
-| 026-008 | feature | fait | claude-code | PASS | 2026-09-29T21:35:24Z · 444s · 825 l. |
-| 026-166 | feature | fait | claude-code | PASS | 2026-09-29T21:11:44Z · 10s · 7 l. |
-| 026-095 | feature | fait | codex | PASS | 2026-09-29T20:47:05Z · 147s · 0 l. |
-| 026-157 | feature | fait | codex | PASS | 2026-09-29T20:43:52Z · 182s · 0 l. |
-| 026-213 | feature | fait | codex | PASS | 2026-09-29T20:02:17Z · 9s · 0 l. |
-| 026-218 | feature | fait | codex | PASS | 2026-09-29T19:19:13Z · 140s · 0 l. |
-| 026-214 | feature | fait | codex | PASS | 2026-09-29T19:17:34Z · 21s · 0 l. |
-| 026-212 | feature | fait | codex | PASS | 2026-09-29T19:14:45Z · 44s · 0 l. |
-| 026-090 | feature | fait | codex | PASS | 2026-09-29T18:58:19Z · 94s · 0 l. |
-| 026-088 | feature | fait | claude-code | PASS | 2026-09-29T17:57:02Z · 18s · 2310 l. |
-| 026-089 | feature | fait | codex | PASS | 2026-09-29T17:30:22Z · 74s · 0 l. |
-| 026-147 | feature | fait | antigravity | PASS | 2026-09-29T16:33:19Z · 185s · 0 l. |
-| 026-210 | feature | fait | claude-code | PASS | 2026-09-29T16:28:58Z · 12s · 695 l. |
-| 026-085 | feature | fait | claude-code | PASS | 2026-09-29T16:23:22Z · 56s · 1120 l. |
-| 026-209 | feature | fait | codex | PASS | 2026-09-29T15:13:06Z · 24s · 0 l. |
-| 026-236 | feature | fait | codex | PASS | 2026-09-29T15:03:52Z · 109s · 0 l. |
-| 026-084 | feature | fait | codex | PASS | 2026-09-29T14:52:34Z · 70s · 0 l. |
-| 026-144 | feature | fait | antigravity | PASS | 2026-09-29T14:52:29Z · 48s · 0 l. |
-| 026-215 | feature | fait | codex | PASS | 2026-09-29T14:26:12Z · 17s · 0 l. |
-| 026-233 | feature | fait | codex | PASS | 2026-09-29T14:24:37Z · 74s · 0 l. |
-| 026-224 | feature | fait | codex | PASS | 2026-09-29T14:23:56Z · 21s · 0 l. |
-| 026-073 | contenu | fait | codex | PASS | 2026-09-29T13:54:07Z · 27s · 0 l. |
-| 026-207 | feature | fait | claude-code | PASS | 2026-09-29T13:08:19Z · 13s · 0 l. |
-| 026-139 | feature | fait | claude-code | PASS | 2026-09-29T13:07:04Z · 74s · 990 l. |
-| 026-235 | feature | fait | usine-codex-133 | PASS | 2026-09-29T12:28:37Z · 118s · 915 l. |
-| 026-222 | feature | fait | claude-code | PASS | 2026-09-29T12:26:08Z · 1s · 400 l. |
-| 026-208 | feature | fait | antigravity | PASS | 2026-09-29T12:13:49Z · 0s · 0 l. |
-| 026-206 | feature | fait | claude-code | PASS | 2026-09-29T12:13:36Z · 0s · 2334 l. |
-| 026-253 | feature | fait | claude-code | PASS | 2026-09-29T12:08:44Z · 419s · 0 l. |
-| 026-158 | feature | fait | antigravity | PASS | 2026-09-29T11:51:24Z · 425s · 0 l. |
 
-… 260 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 359 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

@@ -1,0 +1,21 @@
+031-016 — workflow n8n hermes-file-taches-v1 (SvVxqrXdpt5sOCTL), par le MCP n8n-oracle, 02/11/2026
+
+validate_node_config : {"valid":true} — Webhook panne, Empreinte du jeton (panne), Panne valide ?, Bloquer la tâche (panne),
+  Signaler la panne (Slack), Répondre ok (panne) : valid true (6 sur 6)
+update_workflow : 33 opérations appliquées (2 textes Slack, 15 nœuds, 15 connexions) ; groupe « Panne » refusé avec le déclencheur,
+  reposé sans lui (14 nœuds) ; alwaysOutputData posé sur Lire la tâche (panne) et Bloquer la tâche (panne)
+relecture du brouillon (get_workflow_details) :
+  Jeton valide (panne) ? → [Panne valide ?] | [Répondre 401 (panne)] ; même empreinte que Jeton valide (fin) ? : true
+  Panne valide ? → [Lire la tâche (panne)] | [Répondre 400 (panne)]
+  Ligne trouvée (panne) ? → [Ligne ouverte (panne) ?] | [Répondre 404 (panne)]
+  Ligne ouverte (panne) ? → [Bloquer la tâche (panne)] | [Répondre 409 (panne)]
+  Tâche bloquée (panne) ? → [Signaler la panne (Slack)] | [Répondre 409 (panne)]
+  Signaler la panne (Slack) : identifiant {"slackApi":{"id":"lR0GZ7FGXI3FCAF8","name":"Slack account 2"}} (existant), onError continueRegularOutput
+  Compte rendu Slack : ={{ ({ hermes: 'Hermes', claude: 'Claude Code' })[$('Webhook faite').first().json.body.executant] ?? 'Agent' }} — {{ tache }} : {{ statut }} — {{ resume }}
+  Compte rendu Slack (abandon) : =File n8n — {{ $json.tache }} : bloque — abandon automatique (plus de 6 h en cours sans compte rendu)
+publish_workflow : {"success":true,"workflowId":"SvVxqrXdpt5sOCTL","activeVersionId":"ee42eb66-7f9a-4ffd-b922-34e944d97232"}
+
+essai en direct, SANS le jeton (refusé avant toute lecture de la table, rien n'est écrit) :
+  POST hermes-tache-panne, sans jeton → 401
+  POST hermes-tache-panne, faux jeton → 401
+  POST route inexistante (témoin : la route panne existe bien) → 404

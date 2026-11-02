@@ -1,0 +1,58 @@
+▶ MUTANTS : chaque garde retirée doit faire rougir son scénario ; garde du cerveau : chargée
+  ✓ tué   M1 → S1 : la tâche en cours est rendue à tout passage (plus de FILE OCCUPEE)
+  ✓ tué   M2 → S1 : plus de « lancement récent » (un passage manuel relance)
+  ✓ tué   M3 → S1b : ni réservation sous verrou, ni verrou du répartiteur
+  ✓ tué   M4 → S1c : pas de rejeu --retry-launch
+  ✓ tué   M5 → S2 : jamais d’abandon (tentatives sans limite)
+  ✓ tué   M6 → S2b : la fin perdue n’est pas rejouée
+  ✓ tué   M7 → S2c : un 404 laisse le fichier de reprise
+  ✓ tué   M8 → S2d : une tâche hors liste dans le fichier n’est pas écartée
+  ✓ tué   M9 → S2e : une tâche figée est relancée sans demander à n8n
+  ✓ tué   M10 → S3a : la prise incertaine n’est pas retrouvée
+  ✓ tué   M11 → S3b : plus de verrou autour de la prise
+  ✓ tué   M12 → S3c : --test perd la vraie tâche prise par erreur
+  ✓ tué   M13 → S3d : --test tourne avec une tâche en cours
+  ✓ tué   M14 → S4a : pas de contrôle de cohérence du fichier
+  ✓ tué   M15 → S4b : identifiant du fichier non vérifié
+  ✓ tué   M16 → S4c : --fini ne compare plus l’id à la tâche prise
+  ✓ tué   M17 → S5a : l’écart bloque ce que « prendre » a rendu sans le regarder
+  ✓ tué   M18 → S5b : ni verrou ni contrôle de ce qui a été pris
+  ✓ tué   M19 → S6 : 401 et 5xx pris pour une file vide
+  ✓ tué   M20 → S6b : pas de budget de 22 s au precheck
+  ✓ tué   M21 → S7 : le precheck ne nettoie plus
+  ✓ tué   M22 → S8 : --fini rend n’importe quel id
+  ✓ tué   M23 → S9a : format du jeton non vérifié
+  ✓ tué   M24 → S9b : PRESTI_N8N_BASE accepté vers tout hôte
+  ✓ tué   M25 → S9c : PRESTI_FILE_JETON_FICHIER suivi partout
+  ✓ tué   M26 → S10 : balisage Slack non neutralisé
+  ✓ tué   M27 → S10 : coupe à 300 AVANT la garde
+  ✓ tué   M28 → S10 : valeur exacte du jeton de la file non masquée
+  ✓ tué   M28b → S10c : suites de la forme d’un jeton non masquées par le client
+  ✓ tué   M29 → S10d : repli muet si la garde manque
+  ✓ tué   M30 → S11 : le répartiteur recopie la sortie d’orca
+  ✓ tué   M31 → S12 : commentaire périmé remis
+  ✓ tué   M32 → S8b : un 409 de n8n pris pour une panne
+  ✓ tué   M33 → S11b : --a-blanc ignoré (l’essai fait un vrai precheck)
+  ✓ tué   M35 → S13a : le répartiteur lance toujours Hermes, quelle que soit la tâche
+  ✓ tué   M36 → S13a : Claude Code lancé avec un autre modèle que claude-sonnet-5-5
+  ✓ tué   M37 → S13a : Claude Code lancé avec un autre effort que high
+  ✓ tué   M38 → S13b : les tâches de Hermes lancent Claude Code
+  ✓ tué   M39 → S13a : la consigne de Claude Code ne dit plus --executant=claude (le client la refuserait)
+  ✓ tué   M40 → S13a : l’onglet de Claude Code est noté sans son exécutant
+  ✓ tué   M41 → S13a : le precheck ne note plus l’exécutant avec la réservation (le répartiteur ne sait plus qui lancer)
+  ✓ tué   M42 → S13d : Hermes prend la tête de file même si elle est réservée à Claude Code
+  ✓ tué   M43 → S13d : une tâche déjà prise par Claude Code est rendue à Hermes (même passage)
+  ✓ tué   M44 → S13e : la course qui fait prendre la tâche de l’autre exécutant la montre quand même
+  ✓ tué   M45 → S13g : la course derrière une tâche inconnue montre la tâche de l’autre exécutant
+  ✓ tué   M46 → S13f : --executant n’importe quoi accepté
+  ✓ tué   M47 → S13f : --a-blanc ne dit plus l’exécutant
+  ✓ tué   M48 → S12 : revoir-notes passe à l’exécutant hermes dans la liste blanche
+  ✓ tué   M49 → S13a : tout est à Hermes par défaut, la liste blanche n’est plus lue
+  ✓ tué   M50 → S13c : une tâche inconnue en tête de file lance Hermes par défaut
+  ✓ tué   M34 → S7b : le nettoyage détaché (production) ne part pas
+OK : tous les mutants sont tués
+~/.presti : inchangé (noms, tailles, dates)
+
+real	1m58.333s
+user	0m0.047s
+sys	0m0.076s

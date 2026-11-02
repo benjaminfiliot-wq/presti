@@ -1,12 +1,18 @@
-# AGENTS.md — règles pour Antigravity (et tout exécutant) dans le dépôt Presti
+# AGENTS.md — dépôt Presti : Claude Code et Hermes, seuls agents depuis le 01/11/2026
+
+Depuis le 01/11/2026, seuls Claude Code et Hermes Agent travaillent dans ce dépôt : ni Antigravity, ni Codex, ni autre
+exécutant (`.claude/rules/architecture-outils.md` ; vault, ADR-002). Hermes lit `.hermes.md`, chargé avant ce fichier, qu'il
+masque (`hermes-agent/agent/prompt_builder.py:1748-1756`) ; Claude Code lit `CLAUDE.md` et `.claude/rules/`. Ce fichier garde
+la boucle de l'orchestre, la même pour les deux ; les tâches passées d'Antigravity et de Codex restent lisibles, aucune
+tâche nouvelle ne leur va.
 
 Presti est un SaaS Next.js + Supabase pour les artisans du bâtiment (plateforme de conversation, devis, factures, site).
 Tu n'explores pas le dépôt : tu lis `.orchestre/contexte.md` (ce que le code fait) et, dans le vault voisin `../SaaS`,
 `CLAUDE.md` puis `Produit/Carte-du-code.md` (pourquoi). Puis tu prends une tâche.
-Règle de Benj (25/10/2026) : tout part du cerveau Obsidian. Si l'outil MCP `cerveau` est branché chez toi,
-interroge-le (`regles_pour`, `chercher`, `lire`) sur le sujet de ta tâche avant de produire ; sinon cherche dans `../SaaS`.
+Règle de Benj (25/10/2026) : tout part du réseau neuronal (le vault, par les outils MCP `cerveau`). S'ils sont branchés chez
+toi, interroge-les (`regles_pour`, `chercher`, `lire`) sur le sujet de ta tâche avant de produire ; sinon cherche dans `../SaaS`.
 
-## La boucle d'un exécutant
+## La boucle d'un exécutant (Hermes ou Claude Code)
 
 1. `node scripts/orchestre.mjs prochaine --agent=<ton-nom>` — la tâche s'affiche en entier, avec ce qu'il faut faire à la fin.
 2. Tu travailles UNIQUEMENT dans `perimetre`. `interdit` reste intact, même pour « aider ». Le `budget` (fichiers, minutes) est une limite, pas une cible. **Interdit absolu, quoi qu'il arrive : `git restore`, `git checkout <fichier>`, `git stash`, `git reset`, `git clean`, et toute suppression hors périmètre** — le 13/09 à 19 h 04, un agent a effacé ainsi trois jours de travail non commité de quatre sessions ; en cas de doute, une question, jamais une action.
@@ -19,16 +25,16 @@ interroge-le (`regles_pour`, `chercher`, `lire`) sur le sujet de ta tâche avant
 Plusieurs agents peuvent tourner en même temps : `prochaine` ne donne jamais deux tâches aux périmètres qui se chevauchent.
 
 <!-- orchestre:debut — bloc tenu à jour par `node scripts/orchestre.mjs contexte` ; ne pas éditer à la main -->
-## Méthode — Claude Code × exécutants (prompt v16 §1)
+## Méthode — Claude Code × Hermes (prompt v16 §1)
 
-1. **Claude Code pense, les exécutants produisent** (antigravity, codex). Claude Code n'écrit lui-même que ce qui exige du jugement : schéma et migrations, tout ce qui touche à l'argent, sécurité et droits, les cerveaux (prompts) et les verdicts. Tout le reste — variantes, contenus, tests, captures, boucles QA — est une tâche déposée dans `.orchestre/file/`.
+1. **Claude Code pense, Hermes produit et orchestre** (exécutants admis : hermes, claude-code ; historiques, plus distribués : antigravity, codex). Claude Code n'écrit lui-même que ce qui exige du jugement : schéma et migrations, tout ce qui touche à l'argent, sécurité et droits, les cerveaux (prompts) et les verdicts. Tout le reste — variantes, contenus, tests, captures, boucles QA — est une tâche déposée dans `.orchestre/file/`.
 2. **Le système vit dans `.orchestre/`** : `file/` (à prendre) → `en-cours/` (verrou `<id>.lock`) → `fait/` ou `refuse/`. Une tâche = un Markdown à en-tête YAML (`id, type, objectif, perimetre, interdit, verifier, budget, preuve` — tous obligatoires) ; `node scripts/orchestre.mjs prochaine --agent=<nom>` la distribue sans chevauchement de périmètre.
 3. **La vérification est mécanique** : `node scripts/orchestre.mjs verifier <id>` exécute la commande `verifier` de la tâche ; son code de sortie fait le verdict, écrit dans `.orchestre/digest.md`. Personne ne relit un diff : on lit le digest.
 4. **Ce que le code fait vit dans `.orchestre/contexte.md`** (régénéré depuis le code, copié dans `../SaaS/Produit/Carte-du-code.md`) ; **pourquoi on l'a décidé vit dans le vault** `../SaaS` (`CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Avant toute tâche : lire ces deux cartes, pas le dépôt. On n'écrit dans le vault que par une tâche dont le périmètre est `SaaS/…`.
 5. **Bloqué = une question à options** : `.orchestre/en-cours/<id>.question.md`, deux ou trois options numérotées ; la réponse arrive en `<id>.reponse.md` (`orchestre.mjs repondre`). Jamais une discussion.
 6. **Poussé n'est pas déployé** : après chaque push sur `main`, `node scripts/deploiement-etat.mjs` (le 13-14/09, 37 déploiements de production en ERROR à la suite, près de quinze heures sans que personne ne le voie) ; avant de pousser une page, `npm run build` en local.
-7. **Quand Antigravity est à sec** : `scripts/executant.mjs` (Gemini CLI ou Qwen Code, gratuits, même contrat de tâche). Un site de démonstration se **génère** (`public/sites-demo/generer.mjs`, kit et direction artistique dans `_kit/`), ses photos viennent de `scripts/photos-demo.mjs` et leur provenance se prouve (`scripts/photos-provenance.mjs`) — une attribution déclarée ne vaut rien.
-8. **Routage des modèles (v16 §1.3)** : jugement (schéma, argent, sécurité, cerveaux, verdicts) → Claude Code ; exploration et résumés de fichiers → sous-agent `haiku` ; volume (pages, variantes, tests, boucles QA) → Antigravity ou `executant.mjs` ; recherche web → Perplexity ; navigation et captures → navigateur d'Antigravity ou Claude in Chrome. Claude Code lit `digest.md` et `contexte.md`, pas le dépôt ; `node scripts/orchestre.mjs budget --tous` dit s'il lit trop.
+7. **Hermes produit par sa file n8n** : `node scripts/hermes-tache-n8n.mjs --prendre --passage=<passage de sa consigne>`, puis `--fini <id>` (briefs en liste blanche dans le script ; sans passage, on ne reçoit qu'une tâche que personne ne porte, sinon `FILE OCCUPEE`) ; ses consignes : `.hermes.md`. Aucun autre exécutant depuis le 01/11 (`.claude/rules/architecture-outils.md`) : ni Antigravity, ni Codex, ni `scripts/executant.mjs` ; un modèle gratuit (freellmapi) pour une petite tâche seulement, jamais avec une donnée de prospect ou de client. Un site de démonstration se **génère** (`public/sites-demo/generer.mjs`, kit et direction artistique dans `_kit/`), ses photos viennent de `scripts/photos-demo.mjs` et leur provenance se prouve (`scripts/photos-provenance.mjs`) — une attribution déclarée ne vaut rien.
+8. **Routage (v16 §1.3, revu le 01/11)** : jugement (schéma, argent, sécurité, cerveaux, verdicts) → Claude Code ; exploration et résumés de fichiers → sous-agent `haiku` ; volume (pages, variantes, tests, boucles QA) → Hermes (Haiku 5.5, Sonnet 5.5 si besoin) ; toute automatisation → n8n ; recherche et extraction web → SearXNG, Firecrawl auto-hébergé, Crawlee, ScrapeGraphAI (Oracle) ; navigation et captures → Claude in Chrome. Claude Code lit `digest.md` et `contexte.md`, pas le dépôt ; `node scripts/orchestre.mjs budget --tous` dit s'il lit trop.
 
 Conventions communes : identifiants et commentaires en français · zéro donnée réelle dans les tests · « une fonctionnalité non finie n'apparaît pas » (drapeau dans `lib/flags.ts`) · on ne touche jamais à `interdit`, même pour aider · aucun chiffre non sourcé, aucun secret dans un fichier versionné · une preuve est une sortie de commande, pas une paraphrase.
 <!-- orchestre:fin -->

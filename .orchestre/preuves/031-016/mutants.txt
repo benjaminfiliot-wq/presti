@@ -1,0 +1,87 @@
+# 1) tous les mutants du banc (node scripts/hermes-file-banc.mjs --mutants), avant le reciblage de M1, M32, M46
+▶ MUTANTS : chaque garde retirée doit faire rougir son scénario ; garde du cerveau : chargée
+  ! M1 impossible à poser : mutant M1 : « if (passage && t.passage && !t.orpheline) { » trouvé 0 fois dans hermes-tache-n8n.mjs (1 attendu)
+  ✓ tué   M2 → S1 : plus de « lancement récent » (un passage manuel relance)
+  ✓ tué   M3 → S1b : ni réservation sous verrou, ni verrou du répartiteur
+  ✓ tué   M4 → S1c : pas de rejeu --retry-launch
+  ✓ tué   M5 → S2 : jamais d’abandon (tentatives sans limite)
+  ✓ tué   M6 → S2b : la fin perdue n’est pas rejouée
+  ✓ tué   M7 → S2c : un 404 laisse le fichier de reprise
+  ✓ tué   M8 → S2d : une tâche hors liste dans le fichier n’est pas écartée
+  ✓ tué   M9 → S2e : une tâche figée est relancée sans demander à n8n
+  ✓ tué   M10 → S3a : la prise incertaine n’est pas retrouvée
+  ✓ tué   M11 → S3b : plus de verrou autour de la prise
+  ✓ tué   M12 → S3c : --test perd la vraie tâche prise par erreur
+  ✓ tué   M13 → S3d : --test tourne avec une tâche en cours
+  ✓ tué   M14 → S4a : pas de contrôle de cohérence du fichier
+  ✓ tué   M15 → S4b : identifiant du fichier non vérifié
+  ✓ tué   M16 → S4c : --fini ne compare plus l’id à la tâche prise
+  ✓ tué   M17 → S5a : l’écart bloque ce que « prendre » a rendu sans le regarder
+  ✓ tué   M18 → S5b : ni verrou ni contrôle de ce qui a été pris
+  ✓ tué   M19 → S6 : 401 et 5xx pris pour une file vide
+  ✓ tué   M20 → S6b : pas de budget de 22 s au precheck
+  ✓ tué   M21 → S7 : le precheck ne nettoie plus
+  ✓ tué   M22 → S8 : --fini rend n’importe quel id
+  ✓ tué   M23 → S9a : format du jeton non vérifié
+  ✓ tué   M24 → S9b : PRESTI_N8N_BASE accepté vers tout hôte
+  ✓ tué   M25 → S9c : PRESTI_FILE_JETON_FICHIER suivi partout
+  ✓ tué   M26 → S10 : balisage Slack non neutralisé
+  ✓ tué   M27 → S10 : coupe à 300 AVANT la garde
+  ✓ tué   M28 → S10 : valeur exacte du jeton de la file non masquée
+  ✓ tué   M28b → S10c : suites de la forme d’un jeton non masquées par le client
+  ✓ tué   M29 → S10d : repli muet si la garde manque
+  ✓ tué   M30 → S11 : le répartiteur recopie la sortie d’orca
+  ✓ tué   M31 → S12 : commentaire périmé remis
+  ! M32 impossible à poser : mutant M32 : «   if (r.statut === 409) return { etat: 'refusee', code: 409  » trouvé 2 fois dans hermes-tache-n8n.mjs (1 attendu)
+  ✓ tué   M33 → S11b : --a-blanc ignoré (l’essai fait un vrai precheck)
+  ✓ tué   M35 → S13a : le répartiteur lance toujours Hermes, quelle que soit la tâche
+  ✓ tué   M36 → S13a : Claude Code relancé en sonnet (verdicts → opus, 031-016 H)
+  ✓ tué   M37 → S13a : Claude Code lancé avec un autre effort que high
+  ✓ tué   M38 → S13b : les tâches de Hermes lancent Claude Code
+  ✓ tué   M39 → S13a : la consigne de Claude Code ne dit plus --executant=claude
+  ✓ tué   M40 → S13a : l’onglet de Claude Code est noté sans son exécutant
+  ✓ tué   M41 → S13a : le precheck ne note plus l’exécutant avec la réservation (le répartiteur ne sait plus qui lancer)
+  ✓ tué   M42 → S13d : Hermes prend la tête de file même si elle est réservée à Claude Code
+  ✓ tué   M43 → S13d : une tâche déjà prise par Claude Code n’est plus dite « AUTRE EXECUTANT » à Hermes
+  ✓ tué   M44 → S13e : la course qui fait prendre la tâche de l’autre exécutant la montre quand même
+  ✓ tué   M45 → S13g : la course derrière une tâche inconnue montre la tâche de l’autre exécutant
+  ✗ SURVIT M46 → S13f : --executant n’importe quoi accepté
+  ✓ tué   M47 → S13f : --a-blanc ne dit plus l’exécutant
+  ✓ tué   M48 → S12 : revoir-notes passe à l’exécutant hermes dans la liste blanche
+  ✓ tué   M49 → S13a : tout est à Hermes par défaut, la liste blanche n’est plus lue
+  ✓ tué   M50 → S13c : une tâche inconnue en tête de file lance Hermes par défaut
+  ✓ tué   M51 → S14 : C : relances sans borne (LANCEMENTS_MAX hors d’atteinte)
+  ✓ tué   M52 → S14 : C : l’onglet du lancement précédent n’est plus fermé avant la relance
+  ✓ tué   M53 → S14 : C : le lancement n’est plus compté pour sa tâche
+  ✓ tué   M54 → S14 : C : la panne n’est plus posée par n8n (la tête reste a_faire)
+  ✓ tué   M55 → S2 : C : une prise ne remet plus le compte à zéro (une tâche reprise passerait en panne)
+  ✓ tué   M56 → S14b : I : un échec de lancement n’est plus noté
+  ✓ tué   M57 → S14b : I : l’état reste « tache » après un échec de lancement
+  ✓ tué   M58 → S15 : D : sans --passage, la tâche portée par un passage est rendue (forme de l’ancien .hermes.md)
+  ✓ tué   M59 → S16 : A : l’exécutant vient de --executant, plus de la réservation
+  ✓ tué   M60 → S16 : A : un passage non réservé est pris pour Hermes
+  ✓ tué   M61 → S17 : F : « fait » sur la revue sans lancer le vérificateur
+  ✓ tué   M62 → S17 : F : le verdict du vérificateur est ignoré
+  ✓ tué   M63 → S18 : B : --forcer n’est plus refusé ni noté
+  ✓ tué   M64 → S19 : H : « faite » n’envoie plus l’exécutant (la ligne Slack ne le nomme plus)
+  ✓ tué   M65 → S12 : A : le commentaire « interdit mécaniquement » revient
+  ✓ tué   M34 → S7b : le nettoyage détaché (production) ne part pas
+ÉCHEC : 3 mutant(s) survivant(s)
+~/.presti : inchangé (noms, tailles, dates)
+code 1
+
+# 2) après reciblage (M1 : condition D réécrite ; M32 : 409 de signalerPanne écrit autrement ; M46 : message exact attendu) et rejeu des mutants de la panne
+# node scripts/hermes-file-banc.mjs --mutants --seul=M1,M32,M46,M51,M52,M53,M54,M56,M57
+▶ MUTANTS : chaque garde retirée doit faire rougir son scénario ; garde du cerveau : chargée
+  ✓ tué   M1 → S1 : la tâche en cours est rendue à tout passage (plus de FILE OCCUPEE)
+  ✓ tué   M32 → S8b : un 409 de n8n pris pour une panne
+  ✓ tué   M46 → S13f : --executant n’importe quoi accepté
+  ✓ tué   M51 → S14 : C : relances sans borne (LANCEMENTS_MAX hors d’atteinte)
+  ✓ tué   M52 → S14 : C : l’onglet du lancement précédent n’est plus fermé avant la relance
+  ✓ tué   M53 → S14 : C : le lancement n’est plus compté pour sa tâche
+  ✓ tué   M54 → S14 : C : la panne n’est plus posée par n8n (la tête reste a_faire)
+  ✓ tué   M56 → S14b : I : un échec de lancement n’est plus noté
+  ✓ tué   M57 → S14b : I : l’état reste « tache » après un échec de lancement
+OK : tous les mutants sont tués
+~/.presti : inchangé (noms, tailles, dates)
+code 0

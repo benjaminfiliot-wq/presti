@@ -1,0 +1,49 @@
+▶ CODE ÉPROUVÉ (C:\Users\benja\Documents\presti\scripts) : chaque scénario doit être vert ; garde du cerveau : chargée
+  ✓ vert  S0 (constat 0) transition : un fichier de reprise de l’ancien format reste lu (tâche prise avant la mise à jour)
+  ✓ vert  S1 (constat 1) la tâche en cours ne revient qu’au Hermes de son passage ; pas de second Hermes
+  ✓ vert  S1b (constat 1) deux répartiteurs au même instant : un seul Hermes
+  ✓ vert  S1c (constat 1) réponse d’orca agent launch perdue : rejouée par --retry-launch, l’onglet est noté
+  ✓ vert  S2 (constat 2) tâche figée : deux reprises au plus, puis « bloque » ; les onglets figés sont fermés
+  ✓ vert  S2b (constat 2) réponse de « faite » perdue : la fin est rejouée, la tâche n’est jamais refaite
+  ✓ vert  S2c (constat 2) « faite » répond 404 : le fichier de reprise est effacé, plus aucune relance
+  ✓ vert  S2d (constat 2) fichier dont la tâche a quitté la liste blanche : écarté, aucun Hermes lancé pour rien
+  ✓ vert  S2e (constat 2) tunnel coupé et tâche figée : PANNE, aucun Hermes relancé sans n8n
+  ✓ vert  S3a (constat 3) réponse de « prendre » perdue : PANNE, puis la même commande retrouve la tâche
+  ✓ vert  S3b (constat 3) deux --prendre simultanés : une seule prise, chaque Hermes retrouve la sienne
+  ✓ vert  S3c (constat 3) --test pendant l’arrivée de la revue : la revue n’est jamais perdue
+  ✓ vert  S3d (constat 3) --test refuse de tourner quand une tâche est en cours sur le PC
+  ✓ vert  S4a (constat 4) fichier de reprise forgé : la revue n’est jamais servie sous un faux nom ni close sans avoir tourné
+  ✓ vert  S4b (constat 4) identifiant forgé avec un saut de ligne : jamais recopié dans ce que lit Hermes
+  ✓ vert  S4c (constat 4) --fini d’un autre id que la tâche prise : refusé, l’autre tâche reste à faire
+  ✓ vert  S5a (constat 5) écart d’une tâche hors liste : si « prendre » rend une tâche permise, elle n’est jamais bloquée
+  ✓ vert  S5b (constat 5) precheck et --prendre simultanés sur [hors liste, permise] : la tâche permise n’est jamais bloquée
+  ✓ vert  S6 (constat 6) jeton refusé, n8n en erreur, tunnel coupé, jeton illisible : PANNE (code 2), jamais « file vide »
+  ✓ vert  S6b (constat 6) n8n lent : le precheck rend sa réponse avant les 30 s d’Orca
+  ✓ vert  S7 (constat 7) nettoyage : seuls les onglets lancés par le répartiteur sont fermés, même file vide
+  ✓ vert  S7b (constat 7) nettoyage par le processus détaché (le chemin de production) : le precheck n’attend pas, l’onglet fini est fermé
+  ✓ vert  S8 (constat 8) un programme qui a le jeton ne fait pas clore par le client une tâche que ce PC n’a pas prise
+  ✓ vert  S8b (constat 8) n8n qui contrôle l’état (031-007) : un 409 est dit clairement et le fichier de reprise est effacé
+  ✓ vert  S8c (constat 8) --verifier-409 distingue un n8n qui contrôle l’état d’un n8n qui ne le fait pas ; --verifier-jeton et --test passent
+  ✓ vert  S9a (constat 9) jeton à saut de ligne intérieur : refusé à la lecture, jamais affiché
+  ✓ vert  S9b (constat 9) PRESTI_N8N_BASE vers un autre hôte : refusé, le jeton ne part pas
+  ✓ vert  S9c (constat 9) PRESTI_FILE_JETON_FICHIER hors de ~/.presti : refusé, le contenu du fichier ne part pas
+  ✓ vert  S10 (constat 10) compte rendu : balisage Slack neutralisé, jeton masqué, garde AVANT la coupe à 300
+  ✓ vert  S10c (constat 10) le client masque seul ce qui a la forme d’un jeton, même sous une garde qui ne masque rien
+  ✓ vert  S10d (constat 10) garde du cerveau introuvable : avertissement et compte rendu retenu, plus de repli muet
+  ✓ vert  S11 (constat 11) le répartiteur n’imprime ni titre d’onglet ni sortie d’orca
+  ✓ vert  S11b (constat 11) lancer --essai : ne lance rien, n’écrit rien, ne touche à aucun onglet
+  ✓ vert  S12 (constat 12) commentaire à jour et liste blanche à quatre entrées connues, chacune avec son exécutant (la mise sous git revient à l’agent principal)
+  ✓ vert  S13a (constat 13) tâche réservée à Claude Code → un onglet Claude Code (modèle, effort, consigne), registre d’onglets, prise et fin
+  ✓ vert  S13b (constat 13) tâche de Hermes → un onglet Hermes comme avant (aucun modèle, aucun --executant), même registre
+  ✓ vert  S13c (constat 13) tâche inconnue → écartée sans lancer personne ; la tâche permise derrière elle lance son vrai exécutant
+  ✓ vert  S13d (constat 13) Hermes ne prend jamais la tâche de Claude Code (ni l’inverse) : rien n’est pris, la tâche reste à faire
+  ✓ vert  S13e (constat 13) course : « prendre » rend la tâche de l’autre exécutant → gardée sans porteur, jamais montrée, relancée pour son vrai exécutant
+  ✓ vert  S13g (constat 13) course derrière une tâche inconnue : « prendre » rend la tâche de l’autre exécutant → gardée sans porteur, jamais bloquée ni montrée
+  ✓ vert  S13f (constat 13) --executant illisible refusé ; --a-blanc et lancer --essai disent le bon exécutant sans rien écrire
+OK : 41 scénarios verts (constats 1 à 13)
+~/.presti : inchangé (noms, tailles, dates)
+
+real	1m2.363s
+user	0m0.015s
+sys	0m0.046s
+code=0

@@ -1,0 +1,50 @@
+---
+type: meta
+title: "hot"
+status: developing
+created: 2026-10-26
+updated: 2026-11-01
+tags:
+  - meta
+  - hot-cache
+---
+
+<!-- sante-reseau:debut -->
+**Santé du réseau neuronal au 2026-11-02** — recopiée chaque soir par `cerveau/scripts/sante-dans-hot.mjs`, ne pas modifier à la main.
+
+Réseau : 912 notes · 181 rattachées à une carte · 0 îlots · 30 isolées · 74 à revoir
+
+- À revoir : 74 dues (règles après 30 j, décisions après 60 j) · la plus ancienne : video-production-method, 124 j
+- Carte - Exploitation, docs et agents — 44 notes · 0 à relier
+- Carte - Outils IA et automatisation — 40 notes · 0 à relier
+- Carte - Produit et plans — 42 notes · 0 à relier
+- Carte - Prospection et relation artisan — 48 notes · 0 à relier
+- Carte - Règles et leçons de Benj — 20 notes · 0 à relier
+- Carte - Vidéo et pubs — 37 notes · 0 à relier
+- Index - Agents — 5 notes · 0 à relier
+- Index - Apprentissages — 4 notes · 2 à relier
+- Index - Automatisations — 0 notes · 0 à relier
+- Index - Décisions — 16 notes · 1 à relier
+- Index - Formats — 4 notes · 0 à relier
+- Index - Garde-fous — 5 notes · 0 à relier
+- Index - ICP — 4 notes · 1 à relier
+- Index - ICP de prospection — 4 notes · 0 à relier
+- Index - Marque — 4 notes · 0 à relier
+- Index - Objections — 4 notes · 0 à relier
+- Index - Offres — 4 notes · 0 à relier
+- Index - Playbooks — 6 notes · 0 à relier
+- Index - Presti — 1 notes · 0 à relier
+- Index - Produit — 11 notes · 5 à relier
+- Index - Prompts — 4 notes · 0 à relier
+- Index - Prospection — 2 notes · 0 à relier
+- Index - Références vidéo — 4 notes · 0 à relier
+- Index - Verdicts — 3 notes · 0 à relier
+- Index - Vidéos — 0 notes · 0 à relier
+- Index - Workflows n8n — 4 notes · 0 à relier
+<!-- sante-reseau:fin -->
+
+# Contexte récent (à relire en début de session)
+
+Navigation : [[index|Catalogue]] · [[overview|Vue d'ensemble]] · [[log|Historique]] · [[Système neuronal du cerveau]]
+
+## Dernière mise à jour

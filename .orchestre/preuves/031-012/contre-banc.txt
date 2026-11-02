@@ -1,0 +1,19 @@
+A1 Hermes, consigne normale : « AUTRE EXECUTANT : la tâche en tête est réservée à claude ; rien n'est pris par hermes » code 1
+A2 le même Hermes ajoute --executant=claude : « TACHE 1 » code 0 ; ligne n8n : en_cours
+DÉFAUT CONFIRMÉ : A — un passage réservé à Hermes reçoit la tâche réservée à Claude Code dès qu’il se déclare « claude » : le client ne recoupe pas --executant avec la réservation du passage
+A3 sans passage du tout, --executant=claude : « TACHE 1 » code 0
+A4 --fini 1 : « TACHE 1 RENDUE (Slack : envoyé) » code 0 ; ligne n8n : fait
+B1 sans --forcer : « REFUS : aucune tâche en cours sur ce PC ; rien n'est rendu (--forcer, pour Claude Code seulement) » ; B2 avec --forcer : « TACHE 1 RENDUE (Slack : envoyé) » ; ligne n8n : fait
+DÉFAUT CONFIRMÉ : B — tout appelant clôt une tâche en cours qu’il ne porte pas en ajoutant --forcer (le 409 de 031-007 ne protège que les lignes a_faire)
+C h+0 : precheck code 0 ; onglets notés et non fermés : 1 ; ligne a_faire
+C h+1 : precheck code 0 ; onglets notés et non fermés : 2 ; ligne a_faire
+C h+2 : precheck code 0 ; onglets notés et non fermés : 3 ; ligne a_faire
+C h+3 : precheck code 0 ; onglets notés et non fermés : 4 ; ligne a_faire
+C h+4 : precheck code 0 ; onglets notés et non fermés : 5 ; ligne a_faire
+C h+5 : precheck code 0 ; onglets notés et non fermés : 6 ; ligne a_faire
+C h+6 : precheck code 0 ; onglets notés et non fermés : 7 ; ligne a_faire
+DÉFAUT CONFIRMÉ : C — 7 lancements en 7 heures pour une seule tâche jamais prise : rien ne borne les relances d’un agent qui ne prend pas (15 min de garde seulement, fermeture au bout de 6 h)
+D1 Hermes du répartiteur : « TACHE 1 » ; D2 autre passage : « FILE OCCUPEE : la tâche 1 est portée par un autre passage depuis 0 min ; rien n'est pris » ; D3 sans passage (forme de .hermes.md:54), 10 min plus tard : « TACHE 1 » code 0
+DÉFAUT CONFIRMÉ : D — un --prendre sans --passage reçoit la tâche portée par un autre passage (hermes-tache-n8n.mjs:629-631) ; .hermes.md:54 enseigne justement cette forme
+
+4 défaut(s) confirmé(s) ; dossier d'état C:\Users\benja\AppData\Local\Temp\audit-031-012-wWQMrv (temporaire)

@@ -1,0 +1,2 @@
+✓ 031-006 : PASS · 1s · 0 ligne(s) produite(s) · preuve : .orchestre/preuves/031-006/verifier.log
+→ bloc terminé : /compact conseillé (et /clear entre deux chantiers)

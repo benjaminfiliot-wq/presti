@@ -51,8 +51,12 @@ const MAX_LIGNES_DIGEST = 100
 const SEUIL_PART_LUE = 60 // au-delà de ce pourcentage, Claude Code lit trop au lieu de faire lire
 const DEFAUTS = {
   projet: null, description: '', pile: '', source: null, vault: null, carteVault: 'Produit/Carte-du-code.md',
-  carte: {}, juges: {}, executants: ['antigravity', 'codex', 'claude-code'], maxMinutes: 30, bailMinutes: null,
-  lectureLibre: ['.orchestre/**', 'plans/**'], methodeSupplement: [],
+  carte: {}, juges: {}, executants: ['hermes', 'claude-code'], maxMinutes: 30, bailMinutes: null,
+  // Exécutants d'avant le 01/11/2026 (décision de Benj : Claude Code et Hermes seuls) : une tâche déjà prise, faite ou refusée
+  // qui en porte un reste lisible et vérifiable ; une tâche nouvelle ne leur va plus (`valider` refuse, `prochaine` ne la
+  // distribue pas). C'étaient les exécutants par défaut avant ce jour : un projet sans la clé garde son historique lisible.
+  executantsHistoriques: ['antigravity', 'codex'],
+  lectureLibre: ['.orchestre/**', 'plans/**'], methodeSupplement: [], methodeTete: null,
 }
 
 // ── petites mains ─────────────────────────────────────────────────────────────────────────────────
@@ -96,9 +100,12 @@ function lireConfig(racine) {
   c.carte = c.carte && typeof c.carte === 'object' ? c.carte : {}
   c.juges = c.juges && typeof c.juges === 'object' ? c.juges : {}
   c.executants = Array.isArray(c.executants) && c.executants.length ? c.executants : DEFAUTS.executants
+  c.executantsHistoriques = (Array.isArray(c.executantsHistoriques) ? c.executantsHistoriques : DEFAUTS.executantsHistoriques)
+    .filter((e) => typeof e === 'string' && e && !c.executants.includes(e))
   c.maxMinutes = Number(c.maxMinutes) > 0 ? Number(c.maxMinutes) : DEFAUTS.maxMinutes
   c.bailMinutes = Number(c.bailMinutes) > 0 ? Number(c.bailMinutes) : null
   c.methodeSupplement = Array.isArray(c.methodeSupplement) ? c.methodeSupplement.filter((s) => typeof s === 'string' && s.trim()) : []
+  c.methodeTete = typeof c.methodeTete === 'string' && c.methodeTete.trim() ? c.methodeTete.trim() : null
   return c
 }
 function ouvrir(racine) {
@@ -194,9 +201,13 @@ function lireTache(fichier) {
   if (entete.interdit !== undefined && !Array.isArray(entete.interdit)) erreurs.push('interdit : attendu une liste [a, b]')
   const b = entete.budget
   if (b !== undefined && (typeof b !== 'object' || typeof b.fichiers !== 'number' || typeof b.minutes !== 'number')) erreurs.push('budget : attendu { fichiers: N, minutes: N }')
-  if (entete.executant !== undefined && !CONFIG.executants.includes(entete.executant)) erreurs.push(`executant « ${entete.executant} » : attendu ${CONFIG.executants.join(' | ')}`)
+  // Un exécutant historique n'est pas une erreur d'en-tête : l'historique (fait/, refuse/, en-cours/) reste lisible et vérifiable.
+  // Le refus d'une tâche NOUVELLE se fait dans `valider` et `prochaine` (executantHistorique).
+  if (entete.executant !== undefined && !CONFIG.executants.includes(entete.executant) && !executantHistorique(entete.executant)) erreurs.push(`executant « ${entete.executant} » : attendu ${CONFIG.executants.join(' | ')}`)
   return { fichier, entete, corps: texte.slice(m[0].length).trim(), erreurs }
 }
+// Exécutant d'avant le 01/11 (CONFIG.executantsHistoriques) : admis pour l'existant, jamais pour une tâche nouvelle.
+function executantHistorique(e) { return e !== undefined && CONFIG.executantsHistoriques.includes(e) }
 
 // ── Chevauchement de périmètres : la partie littérale avant le premier joker ──────────────────────
 const prefixe = (g) => String(g).replace(/\\/g, '/').split(/[*?{]/)[0]
@@ -453,6 +464,9 @@ function prochaine(agent, tacheVoulue = null) {
       ignorees.push(`${f} : en-tête refusé → refuse/ (${t.erreurs[0]})`)
       continue
     }
+    // Exécutant historique (antigravity, codex : plus personne ne travaille sous ce nom depuis le 01/11) : la tâche reste
+    // en file/, intacte, et n'est plus distribuée ; elle repart dès que son `executant` est réattribué.
+    if (executantHistorique(t.entete.executant)) { ignorees.push(`${t.entete.id} : exécutant historique « ${t.entete.executant} », plus distribué — réattribuer (executant: ${CONFIG.executants.join(' | ')})`); continue }
     // Une tâche DISJONCTÉE « n'est plus distribuée » (point 3) : elle ne revient en file/ que par
     // `rejouer --forcer`, jamais reprise automatiquement tant qu'un PASS ne l'a pas blanchie.
     if (estDisjonctee(t.entete.id)) { ignorees.push(`${t.entete.id} : DISJONCTÉE — rejouer ${t.entete.id} --forcer après correction`); continue }
@@ -688,7 +702,7 @@ function digest() {
     ...(budget ? [budget, ''] : []),
     `# Digest — ${maintenant()}`, '',
     `> Généré par \`${CMD} digest\`. Une ligne par tâche, ${MAX_LIGNES_DIGEST} au plus. C'est le seul fichier à lire pour savoir où en est le chantier.`, '',
-    `**Mesure** — déléguées (${CONFIG.executants.filter((e) => e !== 'claude-code').join(', ')}) : ${mesure.deleguees.taches} tâche(s) PASS, ${mesure.deleguees.lignes} ligne(s) · faites par Claude Code : ${mesure['claude-code'].taches} tâche(s) PASS, ${mesure['claude-code'].lignes} ligne(s).${alerte}`,
+    `**Mesure** — déléguées (${CONFIG.executants.filter((e) => e !== 'claude-code').join(', ')}${CONFIG.executantsHistoriques.length ? ` ; historiques : ${CONFIG.executantsHistoriques.join(', ')}` : ''}) : ${mesure.deleguees.taches} tâche(s) PASS, ${mesure.deleguees.lignes} ligne(s) · faites par Claude Code : ${mesure['claude-code'].taches} tâche(s) PASS, ${mesure['claude-code'].lignes} ligne(s).${alerte}`,
     `**État** — file : ${n.file} · en cours : ${n['en-cours']} · faites : ${n.fait} · refusées : ${n.refuse}`,
   ]
   const attention = construireAttention(questions)
@@ -924,11 +938,19 @@ function contexte(silencieux = false) {
 // ── Le bloc « Méthode », identique dans CLAUDE.md et AGENTS.md, tenu à jour ici ──────────────────
 const DEBUT_BLOC = `<!-- orchestre:debut — bloc tenu à jour par \`${CMD} contexte\` ; ne pas éditer à la main -->`
 const FIN_BLOC = '<!-- orchestre:fin -->'
+// Le nom affiché d'un exécutant dans le titre et la tête du bloc (l'identifiant reste celui d'orchestre.json).
+const NOMS_EXECUTANTS = { 'claude-code': 'Claude Code', hermes: 'Hermes', antigravity: 'Antigravity', codex: 'Codex' }
+const nomExecutant = (e) => NOMS_EXECUTANTS[e] || e
 function blocMethode() {
   const executants = CONFIG.executants.filter((e) => e !== 'claude-code')
-  const qui = executants.length ? executants.join(', ') : 'les exécutants'
+  const noms = executants.map(nomExecutant).join(', ')
+  // La tête du point 1 : `methodeTete` d'orchestre.json (Presti : « Claude Code pense, Hermes produit et orchestre », décision du
+  // 01/11), sinon tirée de la liste des exécutants. La parenthèse dit qui est admis, et qui ne l'est plus (historiques).
+  const tete = CONFIG.methodeTete || (executants.length ? `Claude Code pense, ${noms} produi${executants.length > 1 ? 'sent' : 't'}` : 'Claude Code pense, les exécutants produisent')
+  const historiques = CONFIG.executantsHistoriques.length ? ` ; historiques, plus distribués : ${CONFIG.executantsHistoriques.join(', ')}` : ''
+  const titre = executants.length ? ['Claude Code', ...executants.map(nomExecutant)].join(' × ') : 'Claude Code × exécutants'
   const points = [
-    `1. **Claude Code pense, les exécutants produisent** (${qui}). Claude Code n'écrit lui-même que ce qui exige du jugement : schéma et migrations, tout ce qui touche à l'argent, sécurité et droits, les cerveaux (prompts) et les verdicts. Tout le reste — variantes, contenus, tests, captures, boucles QA — est une tâche déposée dans \`.orchestre/file/\`.`,
+    `1. **${tete}** (exécutants admis : ${CONFIG.executants.join(', ')}${historiques}). Claude Code n'écrit lui-même que ce qui exige du jugement : schéma et migrations, tout ce qui touche à l'argent, sécurité et droits, les cerveaux (prompts) et les verdicts. Tout le reste — variantes, contenus, tests, captures, boucles QA — est une tâche déposée dans \`.orchestre/file/\`.`,
     `2. **Le système vit dans \`.orchestre/\`** : \`file/\` (à prendre) → \`en-cours/\` (verrou \`<id>.lock\`) → \`fait/\` ou \`refuse/\`. Une tâche = un Markdown à en-tête YAML (\`id, type, objectif, perimetre, interdit, verifier, budget, preuve\` — tous obligatoires) ; \`${CMD} prochaine --agent=<nom>\` la distribue sans chevauchement de périmètre.`,
     `3. **La vérification est mécanique** : \`${CMD} verifier <id>\` exécute la commande \`verifier\` de la tâche ; son code de sortie fait le verdict, écrit dans \`.orchestre/digest.md\`. Personne ne relit un diff : on lit le digest.`,
     VAULT
@@ -939,7 +961,7 @@ function blocMethode() {
   ]
   const drapeau = CONFIG.carte.drapeaux ? ` (drapeau dans \`${CONFIG.carte.drapeaux}\`)` : ''
   return `${DEBUT_BLOC}
-## Méthode — Claude Code × exécutants (prompt v16 §1)
+## Méthode — ${titre} (prompt v16 §1)
 
 ${points.join('\n')}
 
@@ -1166,6 +1188,9 @@ function valider(fichier) {
   const chemin = existe(path.resolve(process.cwd(), fichier)) ? path.resolve(process.cwd(), fichier) : path.resolve(RACINE, fichier)
   if (!existe(chemin)) { console.error(`✗ ${fichier} introuvable`); process.exit(1) }
   const t = lireTache(chemin)
+  // Une tâche nouvelle (tout fichier hors de en-cours/, fait/ et refuse/) ne va plus à un exécutant historique.
+  const dejaPrise = [D.enCours, D.fait, D.refuse].some((d) => path.relative(path.join(ORCH, d), path.dirname(chemin)) === '')
+  if (executantHistorique(t.entete?.executant) && !dejaPrise) t.erreurs.push(`executant « ${t.entete.executant} » : exécutant historique, refusé pour une tâche nouvelle (attendu ${CONFIG.executants.join(' | ')})`)
   if (t.erreurs.length) { console.log(`✗ ${fichier}\n  ${t.erreurs.join('\n  ')}`); process.exit(1) }
   console.log(`✓ ${fichier} : ${t.entete.id} · ${t.entete.type} · ${t.entete.executant || CONFIG.executants[0]} · périmètre ${t.entete.perimetre.join(', ')} · budget ${t.entete.budget.fichiers} fichiers / ${t.entete.budget.minutes} min`)
 }

@@ -1124,3 +1124,36 @@
 {"id":"026-117","verdict":"PASS","ligne":"","code":0,"date":"2026-10-05T10:13:47Z","duree_s":276,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
 {"id":"026-120","verdict":"FAIL","ligne":"✅ SA-8 une ligne par canal (compteur, santé) et par technologie (envois, échecs, état, motif) ; l’anomalie en --mc-crit ; J1, J3 et « 2e juge » par envoi ; ni «","code":1,"date":"2026-10-05T10:27:45Z","duree_s":622,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
 {"id":"026-120","verdict":"PASS","ligne":"","code":0,"date":"2026-10-05T10:52:04Z","duree_s":376,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
+{"id":"029-001","verdict":"FAIL","ligne":"PASS erreur de base, texte, 21 → indisponible (fail-closed)","code":1,"date":"2026-10-29T12:16:13Z","duree_s":149,"agent":"codex-1","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"029-001","verdict":"FAIL","ligne":"PASS erreur de base, texte, 21 → indisponible (fail-closed)","code":1,"date":"2026-10-29T12:22:13Z","duree_s":176,"agent":"codex-1","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"029-001","verdict":"FAIL","ligne":"PASS erreur de base, texte, 21 → indisponible (fail-closed)","code":1,"date":"2026-10-29T12:27:59Z","duree_s":167,"agent":"codex-1","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"029-001","verdict":"EXPIRÉE","ligne":"bail expiré : codex-1 silencieux depuis 4617 min","code":null,"date":"2026-11-01T17:25:24Z","duree_s":0,"agent":"codex-1","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"031-001","verdict":"PASS","ligne":"","code":0,"date":"2026-11-01T17:41:21Z","duree_s":2,"agent":"?","executant":"hermes","lignes":0,"dossier":"fait"}
+{"id":"031-005","verdict":"PASS","ligne":"","code":0,"date":"2026-11-01T21:22:56Z","duree_s":1,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"031-003","verdict":"PASS","ligne":"","code":0,"date":"2026-11-01T21:23:42Z","duree_s":0,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"031-002","verdict":"PASS","ligne":"","code":0,"date":"2026-11-01T22:39:06Z","duree_s":1,"agent":"?","executant":"hermes","lignes":0,"dossier":"fait"}
+{"id":"031-006","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T00:13:50Z","duree_s":3,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"031-007","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T08:18:18Z","duree_s":1,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"031-009","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T08:31:52Z","duree_s":4,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"031-009","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T08:32:54Z","duree_s":2,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"031-013","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T08:55:44Z","duree_s":53,"agent":"claude-code","executant":"claude-code","lignes":2112,"dossier":"en-cours"}
+{"id":"031-013","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T08:57:23Z","duree_s":91,"agent":"claude-code","executant":"claude-code","lignes":2112,"dossier":"fait"}
+{"id":"031-008","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T09:06:39Z","duree_s":11,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"031-006","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T09:12:33Z","duree_s":1,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"031-012","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T09:20:51Z","duree_s":137,"agent":"claude-code","executant":"claude-code","lignes":1104,"dossier":"en-cours"}
+{"id":"031-012","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T09:22:47Z","duree_s":87,"agent":"claude-code","executant":"claude-code","lignes":1104,"dossier":"fait"}
+{"id":"031-008","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T09:34:54Z","duree_s":14,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"031-008","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T09:35:11Z","duree_s":14,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"031-010","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T09:54:00Z","duree_s":18,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"031-010","verdict":"FAIL","ligne":"87 vérifications passées, 0 en échec","code":1,"date":"2026-11-02T09:55:20Z","duree_s":20,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"031-010","verdict":"FAIL","ligne":"87 vérifications passées, 0 en échec","code":1,"date":"2026-11-02T10:03:25Z","duree_s":33,"agent":"?","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"031-010","verdict":"FAIL","ligne":"87 vérifications passées, 0 en échec","code":1,"date":"2026-11-02T10:04:42Z","duree_s":29,"agent":"?","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"031-010","verdict":"FAIL","ligne":"87 vérifications passées, 0 en échec","code":1,"date":"2026-11-02T10:06:00Z","duree_s":30,"agent":"?","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"031-016","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T10:13:44Z","duree_s":71,"agent":"claude-code","executant":"claude-code","lignes":3843,"dossier":"en-cours"}
+{"id":"031-016","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T10:15:15Z","duree_s":66,"agent":"claude-code","executant":"claude-code","lignes":3843,"dossier":"fait"}
+{"id":"031-011","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T10:18:20Z","duree_s":5,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"031-011","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T10:18:38Z","duree_s":2,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"031-010","verdict":"FAIL","ligne":"87 vérifications passées, 1 en échec","code":1,"date":"2026-11-02T10:20:24Z","duree_s":3,"agent":"?","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"031-010","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T10:21:12Z","duree_s":10,"agent":"?","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"031-014","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T11:02:02Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":970,"dossier":"en-cours"}
+{"id":"031-014","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T11:02:12Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":970,"dossier":"fait"}

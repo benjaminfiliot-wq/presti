@@ -170,6 +170,20 @@ const SUITES = [
   // Temps réel du CRM (migration 0158) : deux comptes de test créés puis supprimés, un client écrit, l'autre reçoit l'évènement,
   // aucune fuite entre comptes. Migration non appliquée : code 2 = « en attente » (jamais un faux vert).
   { nom: 'CRM — temps réel : deux clients, l’un écrit, l’autre reçoit ; isolation entre comptes', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/crm-temps-reel-qa.mjs'], cout: 'navigateur' },
+  // 02/11 (audit du chantier 1) : la configuration de Hermes que garde le crochet des outils obligatoires — modèle et replis,
+  // freellmapi hors du profil qui garde les MCP, outils n8n en lecture seule, plafonds, interdits, correctifs locaux. La partie
+  // « vraie configuration » est sautée sur un poste sans Hermes (GitHub).
+  { nom: 'Garde de Hermes — configuration, replis interdits, outils n8n en lecture seule, correctifs locaux', cmd: 'node', args: ['scripts/config-hermes-e2e.mjs'], cout: 'gratuit' },
+  // 02/11 (contrôle croisé du chantier 1) : le vérificateur de la revue hebdomadaire du réseau neuronal (sections des cinq gestes,
+  // cartes annoncées = lignes du fichier Anki, 5 à 20 cartes à 3 champs, sources trouvées, garde de contenu) sur des revues
+  // fabriquées ; « 7 cartes pour 8 lignes » (la revue du 01/11) doit rougir. Hors ligne, sans IA.
+  { nom: 'Revue hebdomadaire du réseau neuronal — vérificateur du rapport et des cartes Anki (mutants dont 7 cartes pour 8 lignes)', cmd: 'node', args: ['scripts/verifier-revue-e2e.mjs'], cout: 'gratuit' },
+  // 02/11 (audit du chantier 1) : la file n8n de Hermes, hors ligne (faux n8n local, dossier d'état temporaire, faux orca) :
+  // un seul porteur par prise, abandon borné à 2 reprises, prise perdue rattrapée, « faite » contrôlée, pannes distinctes d'une
+  // file vide, onglets fermés sur leur handle, jeton jamais affiché, résumé masqué avant la coupe, balisage Slack neutralisé.
+  // Environ 4 à 5 min.
+  { nom: 'File n8n de Hermes — banc hors ligne (34 scénarios des constats de l’audit)', cmd: 'node', args: ['scripts/hermes-file-banc.mjs'], cout: 'gratuit' },
+  { nom: 'Garde des sessions lancées par Orca (défaut E de 031-012) — ni commit, ni push, ni déploiement, ni migration, ni build partagé ; la session principale jamais bloquée (mutant)', cmd: 'node', args: ['scripts/garde-agents-orca-qa.mjs'], cout: 'gratuit' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },
   { nom: 'Persona : le ton réglé change vraiment la réponse', cmd: 'node', args: ['scripts/persona-e2e.mjs'], cout: 'ia' },
