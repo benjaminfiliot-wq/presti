@@ -1,0 +1,871 @@
+/* Landing v2 (chantier 2, lot 6, tâche 033-003) — « claude.com × mistral.ai » sur l'identité Presti.
+   Préfixe .lp3- (la v2 du 18/10 portait .lp2-, l'accueil actuel .lp-) ; les jetons de .lp (globals.css) restent la base.
+   Palette : nuit chaude (.lp) pour le héros et les moments forts ; deux sections ivoire (encre sombre chaude) ; le corail #D97757 seul
+   accent ; le dégradé corail → ambre → orange deux fois seulement (l'aube du héros, le bandeau final) ; le vert seulement pour « validé ».
+   Mouvement : transform et opacity seulement ; une entrée CSS du produit ; des animations liées au défilement en CSS pur
+   (animation-timeline), sur ordinateur, jamais quand le mouvement réduit est demandé.
+   033-005 (passe 2) : les défauts de la critique 033-004 et le mouvement de la passe 2 sont regroupés en fin de feuille (« Passe 2 »). */
+
+.lp3{
+  --ok:#38CD8C; /* le vert du socle (question 8 du plan, défaut du prompt) : seulement « validé » */
+  --nuit:#09090C; --nuit2:#0F0E13;
+  --ivoire:#F3EEE5; --encre:#1C1814; --encre2:#3B342D; --gris-chaud:#5C554C; --filet-clair:rgba(28,24,20,.14); --corail-sur-clair:#A64B2A;
+  --serif:var(--lp3-serif),'Fraunces',Georgia,'Times New Roman',serif;
+  --ease:cubic-bezier(.23,1,.32,1); --ease-pose:cubic-bezier(.16,1,.3,1); --ease-io:cubic-bezier(.77,0,.175,1);
+  --pad-section:clamp(72px,10.5vw,152px);
+  font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+.lp3 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.lp3 a{text-decoration:none}
+.lp3 :focus-visible{outline:2px solid var(--co2);outline-offset:3px;border-radius:6px}
+.lp3-c{max-width:1200px;margin:0 auto;padding:0 clamp(20px,4vw,40px);position:relative}
+.lp3-evitement{position:absolute;left:12px;top:-60px;z-index:80;padding:10px 16px;border-radius:999px;background:var(--ink);color:var(--nuit);font-weight:600}
+.lp3-evitement:focus{top:12px}
+
+/* ── Typographie ── */
+/* Spécificité : `.lp h1, .lp h2` de globals.css (0,1,1) imposait la grotesque grasse ; préfixer par .lp3 (0,2,0) rend la serif. */
+.lp3 .lp3-h1,.lp3 .lp3-h2,.lp3 .lp3-h3{font-family:var(--serif);font-weight:400;color:inherit;margin:0;text-wrap:balance;font-variation-settings:"opsz" 144,"SOFT" 40}
+.lp3 .lp3-h1{font-size:clamp(2.9rem,1.3rem + 5.2vw,6rem);line-height:1;letter-spacing:-.034em;max-width:22ch;margin:0 auto}
+.lp3 .lp3 .lp3-h1 em{display:block}
+.lp3-h1 em{font-style:italic;color:var(--co2);font-variation-settings:"opsz" 144,"SOFT" 100}
+.lp3 .lp3-h2{font-size:clamp(2.15rem,1.25rem + 3.3vw,3.9rem);line-height:1.04;letter-spacing:-.024em}
+.lp3 .lp3-h2--geant{font-size:clamp(3.6rem,1.6rem + 5.6vw,6.6rem);line-height:.92;letter-spacing:-.04em}
+.lp3 .lp3-h3{font-size:clamp(1.9rem,1.35rem + 1.9vw,3rem);line-height:1.05;letter-spacing:-.02em}
+.lp3 h3{text-wrap:balance}
+.lp3 p{text-wrap:pretty}
+
+/* ── Boutons : pilules ; un seul style plein, vers /signup ── */
+.lp3-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:44px;padding:0 1.35rem;border-radius:999px;border:1px solid transparent;
+  font-family:var(--font-display);font-weight:600;font-size:.98rem;letter-spacing:-.005em;white-space:nowrap;cursor:pointer;background:none;color:var(--ink);
+  transition-property:transform,background-color,border-color,color,box-shadow;transition-duration:110ms,200ms,200ms,200ms,240ms;transition-timing-function:var(--ease)}
+.lp3-btn:active{transform:scale(.97)}
+.lp3-btn svg{width:18px;height:18px}
+.lp3-btn--grand{min-height:54px;padding:0 1.75rem;font-size:1.04rem}
+.lp3-btn--petit{min-height:40px;padding:0 1.05rem;font-size:.92rem}
+.lp3-btn--plein{background:var(--co);color:#1A0F0A;box-shadow:0 10px 30px -12px rgba(217,119,87,.7)}
+.lp3-btn--contour{border-color:rgba(236,234,230,.3);color:var(--ink)}
+.lp3-btn--encre{background:#16120F;color:var(--ivoire)}
+.lp3-btn--contour-encre{border-color:rgba(26,15,10,.42);color:#1A0F0A}
+.lp3-btn--valide{border-color:var(--ok);background:rgba(56,205,140,.12);color:var(--ok)}
+@media (hover:hover) and (pointer:fine){
+  .lp3-btn--plein:hover{background:var(--co2);box-shadow:0 16px 40px -12px rgba(217,119,87,.8)}
+  .lp3-btn--contour:hover{border-color:rgba(236,234,230,.62);background:rgba(255,255,255,.04)}
+  .lp3-btn--encre:hover{background:#000}
+  .lp3-btn--contour-encre:hover{border-color:#1A0F0A;background:rgba(26,15,10,.06)}
+}
+.lp3-boutons{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:clamp(28px,3.4vw,40px)}
+.lp3-boutons--gauche{justify-content:flex-start;align-items:center;gap:14px 28px}
+.lp3-micro{margin:14px 0 0;font-size:.9rem;color:var(--muted);text-align:center}
+.lp3-micro--gauche{text-align:left}
+.lp3-lien{display:inline-flex;align-items:center;gap:.45rem;font-family:var(--font-display);font-weight:600;color:var(--co2);text-decoration:underline;text-decoration-color:rgba(232,148,111,.4);text-underline-offset:5px;transition:text-decoration-color 200ms var(--ease)}
+.lp3-lien svg{width:18px;height:18px;transition:transform 200ms var(--ease)}
+@media (hover:hover) and (pointer:fine){.lp3-lien:hover{text-decoration-color:currentColor}.lp3-lien:hover svg{transform:translateX(3px)}}
+.lp3-suite{margin:clamp(32px,4vw,48px) 0 0}
+
+/* Puce « Exemple » : lisible sans survol, sur toute donnée fictive. */
+.lp3-puce{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;font-family:var(--font-mono);font-size:.7rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink);background:rgba(9,9,12,.78);border:1px solid rgba(255,255,255,.2)}
+.lp3-puce--flottante{position:absolute;top:12px;right:12px;z-index:3}
+
+/* ── En-tête ── */
+.lp3-head{background:rgba(9,9,12,.72);border-bottom-color:rgba(255,255,255,.06)}
+.lp3-nav{max-width:1200px;gap:clamp(12px,2.4vw,32px);padding:.7rem clamp(20px,4vw,40px)}
+.lp3-marque{font-size:1.2rem;gap:.5rem}
+.lp3-marque i{background:none!important;box-shadow:none!important;width:auto!important;height:auto!important}
+.lp3-liens{display:flex;gap:clamp(16px,2.2vw,30px);margin-left:auto}
+.lp3-liens a,.lp3-connexion{color:var(--ink2);font-size:.93rem;font-weight:500;transition:color 200ms var(--ease)}
+@media (hover:hover) and (pointer:fine){.lp3-liens a:hover,.lp3-connexion:hover{color:var(--ink)}}
+.lp3-connexion{padding:.6rem .2rem}
+.lp3-menu{display:none}
+.lp3-tiroir{display:none}
+
+/* ── 1 · Héros ── */
+.lp3-heros{position:relative;isolation:isolate;padding:clamp(48px,5.5vw,80px) 0 0;text-align:center;overflow:clip}
+.lp3-grille-pixels{position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:48px 48px;background-position:center top;
+  -webkit-mask-image:radial-gradient(ellipse 62% 55% at 50% 28%,#000 25%,transparent 78%);mask-image:radial-gradient(ellipse 62% 55% at 50% 28%,#000 25%,transparent 78%)}
+.lp3 .lp3-chapo{text-wrap:balance}
+.lp3-chapo{max-width:40rem;margin:clamp(22px,2.6vw,32px) auto 0;font-size:clamp(1.05rem,.95rem + .4vw,1.24rem);line-height:1.6;color:var(--ink2)}
+.lp3-scene{position:relative;margin-top:clamp(52px,7vw,96px);padding-bottom:clamp(56px,7vw,112px);perspective:1800px}
+.lp3-aube{position:absolute;left:0;bottom:0;width:100%;height:clamp(110px,15vw,216px);z-index:0}
+.lp3-lueur{position:absolute;left:50%;bottom:0;z-index:0;width:min(1320px,140%);height:92%;transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(50% 60% at 50% 100%,rgba(245,179,1,.34),rgba(217,119,87,.28) 40%,rgba(217,119,87,.08) 66%,transparent 80%)}
+.lp3-plateau{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 clamp(16px,4vw,40px);text-align:left;transform-origin:50% 100%;
+  animation:lp3-pose 1.15s var(--ease-pose) .12s both}
+@keyframes lp3-pose{from{transform:translateY(64px) rotateX(12deg) scale(.95);opacity:.001}to{transform:none;opacity:1}}
+.lp3-fenetre{position:relative;margin-right:150px}
+.lp3-fenetre .lp-win{box-shadow:0 60px 140px -40px rgba(0,0,0,.9),0 30px 80px -30px rgba(217,119,87,.45)}
+.lp3 .lp-dbadge{color:var(--co2)} /* « PDF conforme » au corail : le vert est réservé à « validé » (règle du vert) */
+.lp3 .lp-dbadge svg{stroke:currentColor;fill:none}
+.lp3-tel-heros{position:absolute;right:clamp(16px,4vw,40px);top:56px;width:212px;margin:0;z-index:2}
+.lp3-fenetre>.lp3-puce--flottante{top:-12px;left:24px;right:auto} /* posée sur le bord, comme un onglet : jamais cachée par le téléphone */
+.lp3-tel-heros img{display:block;width:100%;height:auto;border-radius:34px;border:7px solid #1B1A22;outline:1px solid rgba(255,255,255,.12);box-shadow:0 40px 90px -30px rgba(0,0,0,.95)}
+.lp3-tel-heros figcaption{margin-top:12px;font-size:.82rem;color:var(--ink2);text-align:center}
+
+/* ── Sections : rythme et fonds ── */
+.lp3-sombre,.lp3-ivoire{padding:var(--pad-section) 0}
+.lp3-ivoire{background:var(--ivoire);color:var(--encre);
+  --ink:var(--encre);--ink2:var(--encre2);--muted:var(--gris-chaud);--line:var(--filet-clair);--co2:var(--corail-sur-clair)}
+.lp3-ivoire ::selection{background:rgba(217,119,87,.25)}
+.lp3-ivoire .lp3-btn--contour{border-color:rgba(28,24,20,.3);color:var(--encre)}
+.lp3-tete{max-width:48rem}
+.lp3-tete>p{margin:20px 0 0;font-size:clamp(1.05rem,.98rem + .3vw,1.2rem);line-height:1.6;color:var(--muted)}
+.lp3-tete--centre{margin:0 auto;text-align:center}
+.lp3-icone{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);color:var(--co2)}
+.lp3-icone svg{width:22px;height:22px}
+
+/* ── 2 · Problème ── */
+.lp3-douleurs{list-style:none;margin:clamp(48px,6vw,88px) 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(28px,4vw,56px)}
+.lp3-douleurs li{position:relative;padding-top:28px}
+.lp3 .lp3-douleurs h3{margin:22px 0 10px;font-family:var(--font-display);font-size:1.22rem;font-weight:600;letter-spacing:-.01em;line-height:1.3;color:var(--ink)}
+.lp3-douleurs p{margin:0;color:var(--muted);line-height:1.6}
+.lp3-chiffre{margin:clamp(64px,9vw,128px) 0 0;padding-top:clamp(32px,4vw,48px);border-top:1px solid var(--line);display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px clamp(28px,5vw,72px);align-items:end}
+.lp3-chiffre-n{grid-row:span 2;font-family:var(--serif);font-weight:300;font-size:clamp(7rem,4rem + 11vw,14rem);line-height:.78;letter-spacing:-.06em;color:var(--co2);font-variation-settings:"opsz" 144,"SOFT" 100;font-variant-numeric:lining-nums}
+.lp3-chiffre-n span{font-size:.42em;letter-spacing:0;margin-left:.04em}
+.lp3-chiffre blockquote{margin:0}
+.lp3-chiffre blockquote p{margin:0;font-family:var(--serif);font-size:clamp(1.3rem,1rem + 1.05vw,2rem);line-height:1.28;letter-spacing:-.01em;color:var(--ink);max-width:30ch;font-variation-settings:"opsz" 72,"SOFT" 50}
+.lp3-chiffre figcaption{font-size:.88rem;color:var(--muted);max-width:52ch}
+
+/* ── 3 · Comment ça marche ── */
+.lp3-etapes{list-style:none;margin:clamp(56px,7vw,104px) 0 0;padding:0;display:grid;gap:clamp(64px,8vw,112px)}
+.lp3-etape{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(32px,6vw,96px);align-items:center}
+.lp3-etape:has(.lp3-ecran--ordi){grid-template-columns:minmax(0,4fr) minmax(0,7fr)}
+.lp3-etape-texte{position:relative;padding-left:76px}
+.lp3-pastille{position:absolute;left:0;top:-6px;display:grid;place-items:center;width:52px;height:52px;border-radius:999px;border:1px solid rgba(217,119,87,.55);background:rgba(217,119,87,.1);color:var(--co2);font-family:var(--font-mono);font-size:1.05rem;
+  transition-property:background-color,border-color,color;transition-duration:240ms;transition-timing-function:var(--ease)}
+.lp3-pastille svg{width:22px;height:22px}
+.lp3-etape.est-valide .lp3-pastille{border-color:var(--ok);background:rgba(56,205,140,.14);color:var(--ok)}
+.lp3 .lp3-etape h3{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,1.2rem + 1.5vw,2.5rem);line-height:1.08;letter-spacing:-.02em;font-variation-settings:"opsz" 96,"SOFT" 40}
+.lp3-etape-texte>p{margin:16px 0 0;font-size:1.06rem;line-height:1.6;color:var(--ink2);max-width:30rem}
+.lp3-saisie{display:flex!important;flex-direction:column;align-items:flex-start;gap:12px;margin:24px 0 0!important;padding:18px 20px;border:1px solid var(--line);border-radius:18px;background:var(--surf);max-width:30rem}
+.lp3-tape{position:relative;display:block;font-size:1.02rem;line-height:1.5;color:var(--ink)}
+.lp3-tape-fantome{visibility:hidden}
+.lp3-tape-vue{position:absolute;inset:0}
+.lp3-curseur{display:inline-block;width:2px;height:1.1em;margin-left:2px;vertical-align:-3px;background:var(--co);animation:lp3-clignote 1s steps(2,start) infinite}
+@keyframes lp3-clignote{to{visibility:hidden}}
+.lp3-valider{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin-top:28px}
+.lp3-valider .lp3-btn{width:auto;flex:none;min-width:148px}
+.lp3-valider-aide{font-size:.92rem;color:var(--muted)}
+.lp3-ecran{position:relative;margin:0;justify-self:center;width:100%}
+.lp3-ecran img{display:block;background:#141319}
+.lp3-ecran--ordi img{width:100%;height:auto;border-radius:16px;border:1px solid rgba(255,255,255,.1);box-shadow:0 50px 120px -40px rgba(0,0,0,.9),0 20px 60px -30px rgba(217,119,87,.3)}
+.lp3-ecran--tel{width:auto}
+.lp3-ecran--tel img{width:min(310px,64vw);aspect-ratio:31/56;height:auto;object-fit:cover;border-radius:38px;border:8px solid #1B1A22;outline:1px solid rgba(255,255,255,.12);box-shadow:0 50px 110px -40px rgba(0,0,0,.95),0 24px 70px -34px rgba(217,119,87,.35)}
+.lp3-etape:nth-child(1) .lp3-ecran img{object-position:50% 88%}
+.lp3-etape:nth-child(3) .lp3-ecran img{object-position:50% 58%}
+.lp3-ecran--tel .lp3-puce--flottante{top:20px;right:20px}
+.lp3-ecran figcaption{margin-top:16px;font-size:.9rem;color:var(--muted);text-align:center}
+
+/* ── 4 · Fonctionnalités : la grille ── */
+.lp3-fonctions{padding-top:calc(var(--pad-section) * .6)}
+.lp3-bento{list-style:none;margin:clamp(48px,6vw,88px) 0 0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}
+.lp3-carte{--pad:clamp(24px,2.6vw,36px);grid-column:span 2;position:relative;display:flex;flex-direction:column;overflow:hidden;padding:var(--pad);border-radius:26px;border:1px solid var(--line);background:linear-gradient(180deg,#16151B,#121116);
+  transition-property:border-color,transform;transition-duration:240ms;transition-timing-function:var(--ease)}
+@media (hover:hover) and (pointer:fine){.lp3-carte:hover{border-color:rgba(217,119,87,.38)}}
+.lp3-carte--crm{grid-column:span 4}
+.lp3-carte--assistant{grid-column:span 6;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,56px);padding-right:0;padding-bottom:0}
+.lp3-carte-texte{display:flex;flex-direction:column;flex:1}
+.lp3-carte--assistant .lp3-carte-texte{padding-bottom:var(--pad)}
+.lp3-carte-haut{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lp3-offre{display:inline-flex;align-items:center;height:26px;padding:0 11px;border-radius:999px;border:1px solid rgba(217,119,87,.42);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.04em;color:var(--co2);white-space:nowrap}
+.lp3 .lp3-carte h3{margin:24px 0 10px;font-family:var(--font-display);font-size:1.38rem;font-weight:600;letter-spacing:-.015em;line-height:1.2;color:var(--ink)}
+.lp3-carte p{margin:0;font-size:.98rem;line-height:1.6;color:var(--ink2)}
+.lp3-carte .lp3-coince{margin-bottom:10px;color:var(--muted);font-size:.93rem}
+.lp3-carte .lp3-gain{display:flex;align-items:flex-start;gap:10px;margin-top:auto;padding-top:22px;font-family:var(--font-display);font-weight:600;color:var(--ink)}
+.lp3-gain svg{flex:none;width:18px;height:18px;margin-top:3px;color:var(--co2)}
+.lp3-carte-image{position:relative;margin:28px calc(var(--pad) * -1) calc(var(--pad) * -1);border-top:1px solid var(--line);overflow:hidden}
+.lp3-carte-image img{display:block;width:100%;height:clamp(220px,21vw,300px);object-fit:cover;transition:transform 600ms var(--ease)}
+.lp3-carte--devis .lp3-carte-image img{height:clamp(260px,26vw,380px)} /* 033-005 (défaut 20) : le total ET la mention « Accepté » entiers */
+.lp3-carte--assistant .lp3-carte-image{margin:0;border-top:0;border-left:1px solid var(--line);border-top-left-radius:18px}
+.lp3-carte--assistant .lp3-carte-image{min-height:340px}
+/* Recadrage de scene-6 : ni l'en-tête de la console (il nomme le fournisseur du modèle, interdit sur une page publique) ni la barre
+   latérale (badge d'offre périmé). On ne garde que la conversation et le devis préparé : x de 18 % à 100 %, y à partir de 12 %.
+   Largeur 100/0,82 = 122 % ; décalage −18 % × 1,22 ; margin-top en % de la LARGEUR : −12 % × 0,625 × 1,22 ≈ −9,1 %. */
+.lp3-carte--assistant .lp3-carte-image img{position:absolute;left:-22%;top:0;margin-top:-9.1%;width:122%;max-width:none;height:auto}
+@media (hover:hover) and (pointer:fine){.lp3-carte:hover .lp3-carte-image img{transform:scale(1.025)}}
+
+/* ── 5 · Pour qui ── */
+.lp3-pourqui-in{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(40px,7vw,120px);align-items:start}
+.lp3-pourqui .lp3-tete{position:sticky;top:120px}
+.lp3-profils{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.lp3-profils li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 24px;padding:26px 0;border-bottom:1px solid var(--line)}
+.lp3 .lp3-profils h3{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(1.4rem,1.1rem + 1vw,2.05rem);line-height:1.12;letter-spacing:-.018em;font-variation-settings:"opsz" 96,"SOFT" 40}
+.lp3-profils h3,.lp3-profils p{grid-column:1}
+.lp3-profils p{margin:0;color:var(--muted)}
+.lp3-vers{grid-column:2;grid-row:1 / span 2;align-self:center;display:inline-flex;align-items:center;gap:6px;min-height:44px;font-family:var(--font-mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--co2)}
+.lp3-vers svg{width:16px;height:16px}
+.lp3-vers--muet{color:var(--muted)}
+.lp3-pourqui .lp3-boutons{margin-top:40px}
+
+/* ── 6 · Presti pour l'entreprise ── */
+.lp3-panneau{position:relative;overflow:hidden;border-radius:32px;border:1px solid rgba(217,119,87,.5);background:linear-gradient(160deg,#1E1C25 0%,#15141A 60%);padding:clamp(36px,6vw,96px);min-height:440px}
+.lp3-panneau::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:36px 36px;background-position:right -1px bottom -1px;
+  -webkit-mask-image:linear-gradient(105deg,transparent 40%,#000 85%);mask-image:linear-gradient(105deg,transparent 40%,#000 85%)}
+/* 12 colonnes de 36 px = 432 px : chaque pixel tombe pile dans une case de la grille du panneau (même pas, même ancrage bas-droite). */
+.lp3-panneau-pixels{position:absolute;right:0;bottom:0;width:432px;height:432px;opacity:.95}
+.lp3-panneau-texte{position:relative;z-index:1;max-width:38rem}
+.lp3-panneau-question{margin:28px 0 0;font-family:var(--serif);font-size:clamp(1.3rem,1.05rem + 1vw,1.95rem);line-height:1.3;letter-spacing:-.01em;color:var(--ink);font-variation-settings:"opsz" 72,"SOFT" 50}
+.lp3-panneau-reponse{margin:18px 0 0;font-size:clamp(1.05rem,.98rem + .3vw,1.2rem);line-height:1.6;color:var(--ink2)}
+
+/* ── 7 · Appel final et questions ── */
+.lp3-bandeau{position:relative;overflow:hidden;isolation:isolate;border-radius:32px;text-align:center;color:#1A0F0A;
+  padding:clamp(56px,8vw,120px) clamp(24px,5vw,72px) clamp(104px,12vw,180px);background:linear-gradient(115deg,#D97757 0%,#E3814E 48%,#EE8B3C 100%)} /* 033-004, défaut 23 : s'arrête à l'ambre, le jaune --hi n'est jamais une surface */
+.lp3-bandeau .lp3-h2{max-width:16ch;margin:0 auto;color:#1A0F0A}
+.lp3-bandeau>p{max-width:34rem;margin:20px auto 0;font-size:clamp(1.05rem,.98rem + .3vw,1.2rem);line-height:1.55;color:#3A2416}
+.lp3-bandeau .lp3-micro{color:#3A2416}
+.lp3-bandeau :focus-visible{outline-color:#1A0F0A}
+.lp3-bandeau-pixels{position:absolute;left:0;bottom:0;z-index:-1;width:100%;height:clamp(64px,10vw,144px)}
+.lp3-bandeau-pixels g{fill:#120C08}
+.lp3-faq{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:24px clamp(32px,6vw,96px);margin-top:clamp(88px,11vw,152px)}
+.lp3-faq .lp3-suite{grid-column:2;margin-top:8px}
+.lp3-faq-liste{border-top:1px solid var(--line)}
+.lp3-question{border-bottom:1px solid var(--line)}
+.lp3-question summary{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:68px;padding:18px 0;list-style:none;cursor:pointer;font-family:var(--font-display);font-size:1.1rem;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
+.lp3-question summary::-webkit-details-marker{display:none}
+.lp3-plus{position:relative;flex:none;width:20px;height:20px}
+.lp3-plus::before,.lp3-plus::after{content:"";position:absolute;left:2px;right:2px;top:9.25px;height:1.5px;border-radius:2px;background:var(--co2);transition:transform 220ms var(--ease)}
+.lp3-plus::after{transform:rotate(90deg)}
+.lp3-question[open] .lp3-plus::after{transform:rotate(0deg)}
+.lp3-question p{margin:0;padding:0 44px 24px 0;max-width:46rem;line-height:1.65;color:var(--ink2)}
+
+/* ── Pied ── */
+.lp3-pied{border-top:1px solid var(--line);padding:48px 0 56px}
+.lp3-pied-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px 32px}
+.lp3-pied nav{display:flex;flex-wrap:wrap;gap:8px 24px}
+.lp3-pied nav a{display:inline-flex;align-items:center;min-height:36px;font-size:.92rem;color:var(--ink2)}
+@media (hover:hover) and (pointer:fine){.lp3-pied nav a:hover{color:var(--ink)}}
+.lp3-pied-note{flex-basis:100%;margin:8px 0 0;font-size:.84rem;color:var(--muted)}
+
+/* ── Mouvement lié au défilement : CSS pur, ordinateur seulement, jamais en mouvement réduit ── */
+@media (min-width:901px) and (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline:view()){
+    .lp3-fenetre{animation:lp3-recul linear both;animation-timeline:view();animation-range:exit 0% exit 100%;transform-origin:50% 0}
+    @keyframes lp3-recul{to{transform:translateY(-24px) rotateX(9deg) scale(.95);opacity:.55}}
+    .lp3-ecran{animation:lp3-monte linear both;animation-timeline:view();animation-range:entry 0% cover 38%}
+    @keyframes lp3-monte{from{transform:translateY(72px) scale(.94);opacity:.25}to{transform:none;opacity:1}}
+    .lp3-chiffre-n{animation:lp3-monte-chiffre linear both;animation-timeline:view();animation-range:entry 0% entry 90%}
+    @keyframes lp3-monte-chiffre{from{transform:translateY(48px);opacity:.6}to{transform:none;opacity:1}}
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .lp3-plateau{animation:none}
+  .lp3-curseur{animation:none}
+  .lp3-carte-image img{transition:none}
+}
+
+/* 033-005 : plus de content-visibility. Sur ordinateur, l'épinglage de « Comment ça marche » et les déclencheurs de GSAP mesurent les
+   sections au pixel près, et une hauteur estimée (1 100 px) les décalait ; au téléphone, les révélations des sections encore « sautées »
+   ne se déclenchaient pas toujours (bandeau final et FAQ restés cachés, mesuré au tour 1), ce que masquait le filet de 4 s retiré. */
+
+
+/* ── Téléphone et tablette ── */
+@media (max-width:900px){
+  .lp3-liens,.lp3-connexion{display:none}
+  .lp3-nav{padding:.55rem 16px;padding-top:calc(.55rem + env(safe-area-inset-top))}
+  .lp3-nav .lp3-btn--petit{margin-left:auto;min-height:44px}
+  .lp3-menu{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:0;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+  .lp3-menu svg{width:22px;height:22px}
+  .lp3-tiroir{display:block;position:fixed;top:0;right:0;bottom:0;z-index:59;width:min(320px,86vw);background:#121116;border-left:1px solid var(--line);
+    padding:calc(76px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));transform:translateX(100%);transition:transform 260ms var(--ease)}
+  .lp3-tiroir[hidden]{display:none}
+  .lp3-tiroir.on{transform:none}
+  .lp3-tiroir nav{display:flex;flex-direction:column}
+  .lp3-tiroir nav a{display:flex;align-items:center;min-height:52px;color:var(--ink);font-family:var(--font-display);font-weight:600;font-size:1.08rem;border-bottom:1px solid var(--line)}
+
+  .lp3-boutons{flex-direction:column;align-items:stretch}
+  .lp3-boutons--gauche{align-items:flex-start}
+  .lp3-boutons--gauche .lp3-btn{align-self:stretch}
+  .lp3-fenetre{margin-right:0}
+  .lp3-tel-heros{display:none}
+  .lp3-douleurs{grid-template-columns:1fr;gap:8px}
+  .lp3-douleurs li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px 16px;padding:24px 0}
+  .lp3-douleurs .lp3-icone{grid-row:span 2}
+  .lp3-douleurs h3{margin:0 0 4px;font-size:1.12rem}
+  .lp3-chiffre{grid-template-columns:1fr}
+  .lp3-chiffre-n{grid-row:auto}
+  .lp3-etape,.lp3-etape:has(.lp3-ecran--ordi){grid-template-columns:1fr;gap:36px}
+  .lp3-etape-texte{padding-left:68px}
+  .lp3-bento{grid-template-columns:1fr}
+  .lp3-carte,.lp3-carte--crm,.lp3-carte--assistant{grid-column:auto}
+  .lp3-carte--assistant{grid-template-columns:1fr;padding:var(--pad);gap:0}
+  .lp3-carte--assistant .lp3-carte-texte{padding-bottom:0}
+  .lp3-carte--assistant .lp3-carte-image{margin:28px calc(var(--pad) * -1) calc(var(--pad) * -1);border-left:0;border-top:1px solid var(--line);border-radius:0}
+  .lp3-carte--assistant .lp3-carte-image{min-height:0;height:clamp(220px,58vw,300px)}
+  .lp3-pourqui-in{grid-template-columns:1fr}
+  .lp3-pourqui .lp3-tete{position:static}
+  .lp3-panneau{min-height:0;padding-bottom:clamp(140px,40vw,220px)}
+  .lp3-panneau-pixels{width:264px;height:264px;opacity:.7}
+  .lp3-panneau::before{background-size:22px 22px}
+  .lp3-faq{grid-template-columns:1fr}
+  .lp3-faq .lp3-suite{grid-column:auto}
+  .lp3-question p{padding-right:0}
+}
+@media (max-width:420px){
+  .lp3-etape-texte{padding-left:0}
+  .lp3-pastille{position:static;margin-bottom:18px}
+  .lp3-profils li{grid-template-columns:1fr}
+  .lp3-vers{grid-column:1;grid-row:auto;min-height:32px}
+}
+
+/* Tour 3 (apple-design) : transparence réduite → barre pleine ; contraste renforcé → filets et contours plus nets. */
+@media (prefers-reduced-transparency:reduce){.lp3-head{background:var(--nuit);backdrop-filter:none;-webkit-backdrop-filter:none}}
+@media (prefers-contrast:more){
+  .lp3{--line:rgba(255,255,255,.28)}
+  .lp3-ivoire{--line:rgba(28,24,20,.4)}
+  .lp3-btn--contour{border-color:currentColor}
+  .lp3-puce{background:#000;border-color:#fff}
+}
+
+
+/* ═══════════════════════════════ Passe 2 (033-005) ═══════════════════════════════
+   Défauts de la critique 033-004 (numéros entre parenthèses) puis le mouvement. Règle commune : transform et opacity seulement, courbes
+   nommées (--ease, --ease-pose, --ease-io), entrées de 400 à 1 000 ms, sorties plus courtes ; tout ce qui cache attend .reveal-armed
+   (posé par Motion.tsx, jamais sans script ni en mouvement réduit). */
+
+/* (3) Le bouton global (globals.css:10-12 : largeur 100 %, marge, fond rouille au survol) ne doit jamais repeindre un bouton de la v2. */
+.lp3 .lp3-btn--valide,.lp3 .lp3-btn--valide:active{background:rgba(56,205,140,.12);border-color:var(--ok);color:var(--ok)}
+.lp3 .lp3-btn--contour{background:transparent}
+@media (hover:hover) and (pointer:fine){
+  .lp3 .lp3-btn--valide:hover{background:rgba(56,205,140,.18);border-color:var(--ok);color:var(--ok)}
+  .lp3 .lp3-btn--contour:hover{background:rgba(255,255,255,.05);border-color:rgba(236,234,230,.62)}
+  .lp3 .lp3-menu:hover{background:rgba(255,255,255,.06)}
+}
+/* (3) L'aide sous « Valider » : les deux phrases dans la même case, la boîte prend la plus longue, rien ne saute au clic. */
+.lp3-valider-aide{display:grid}
+.lp3-valider-aide>span{grid-area:1/1;opacity:0;transition:opacity 220ms var(--ease)}
+.lp3-valider-aide>span.est-vue{opacity:1}
+
+/* (1) Héros, ordinateur : le téléphone se pose à droite de la fenêtre, sur 16 px de son bord seulement ; la colonne des prix reste
+   entière. (8) Sa légende tient sur une pastille sombre, dans le héros. */
+@media (min-width:901px){
+  .lp3-plateau{max-width:1120px}
+  .lp3-fenetre{margin-right:196px}
+  .lp3-tel-heros{top:28px;width:212px}
+  .lp3-scene{padding-bottom:clamp(160px,15vw,212px)}
+}
+.lp3-tel-heros figcaption{margin-top:14px}
+.lp3-tel-heros figcaption span{display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(9,9,12,.88);border:1px solid rgba(255,255,255,.14);color:var(--ink)}
+/* (2) Héros, téléphone : la colonne « Devis chiffré » de la fenêtre revient, sous la conversation (globals.css la cachait sous 640 px). */
+@media (max-width:640px){
+  .lp3 .lp3-fenetre .lp-wingrid{grid-template-columns:1fr}
+  .lp3 .lp3-fenetre .lp-pane.hide-sm{display:block}
+}
+
+/* (12) Barre mobile : la marge héritée du bouton global décalait le menu de 11 px. (13) Tiroir ouvert : la barre passe au-dessus,
+   la croix reste à sa place. */
+.lp3 .lp3-menu{margin:0;align-self:center;width:44px}
+.lp3 .lp3-head.est-ouvert{z-index:61}
+/* (14) 320 px : les grands boutons passent à la ligne au lieu de sortir de leur pilule. */
+@media (max-width:360px){
+  .lp3-btn--grand{white-space:normal;text-wrap:balance;text-align:center;padding:10px 1.1rem;line-height:1.25}
+}
+/* (15) Panneau Entreprise : le bouton à contour a un fond plein, les pixels ne passent plus derrière « démo ». */
+.lp3 .lp3-panneau .lp3-btn--contour{background:#16151B}
+@media (hover:hover) and (pointer:fine){.lp3 .lp3-panneau .lp3-btn--contour:hover{background:#1E1C25}}
+@media (max-width:900px){.lp3-panneau{padding-bottom:clamp(240px,72vw,290px)}}
+
+/* ── Mouvement · Héros ── */
+/* Le titre monte ligne par ligne, l'italique corail en dernier ; puis la sous-phrase, les boutons et la ligne d'essai se lèvent.
+   Tour 3 : un masque (clip-path) cachait les lignes à la première image, et Chrome ne comptait plus le titre comme plus grand élément
+   affiché (le LCP passait à la sous-phrase, mesuré par Lighthouse). Les lignes partent donc d'une opacité de 0,001 — peintes dès la
+   première image, donc comptées — et d'un léger décalage, sans masque. */
+.lp3 .lp3-h1 .lp3-ligne{display:block}
+.lp3 .lp3-h1 .lp3-ligne>span{display:inline-block}
+@media (prefers-reduced-motion:no-preference){
+  .lp3 .lp3-h1 .lp3-ligne>span{animation:lp3-ligne 1s var(--ease-pose) .06s both}
+  .lp3 .lp3-h1 em.lp3-ligne>span{animation-delay:.2s}
+  .lp3-heros-texte>.lp3-chapo,.lp3-heros-texte>.lp3-boutons,.lp3-heros-texte>.lp3-micro{animation:lp3-leve .8s var(--ease-pose) both}
+  .lp3-heros-texte>.lp3-chapo{animation-delay:.36s}
+  .lp3-heros-texte>.lp3-boutons{animation-delay:.46s}
+  .lp3-heros-texte>.lp3-micro{animation-delay:.56s}
+  .lp3-plateau{animation-delay:.42s}
+  /* L'aube se lève : rang par rang, du bas vers le haut (27 paquets de pixels, ordre fixé côté serveur). */
+  .lp3-aube .lp3-rang{animation:lp3-braise .9s var(--ease-pose) both;animation-delay:calc(.5s + var(--i) * 42ms)}
+}
+@keyframes lp3-ligne{from{opacity:.001;transform:translateY(.42em)}to{opacity:1;transform:none}}
+@keyframes lp3-leve{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes lp3-braise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+/* Parallaxe douce : en quittant l'écran, l'aube et la lueur descendent moins vite que la page (décor seulement, jamais le texte). */
+@media (min-width:901px) and (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline:view()){
+    .lp3-aube{animation:lp3-derive linear both;animation-timeline:view();animation-range:exit 0% exit 100%}
+    @keyframes lp3-derive{to{transform:translateY(64px)}}
+    .lp3-lueur{animation:lp3-derive-lueur linear both;animation-timeline:view();animation-range:exit 0% exit 100%}
+    @keyframes lp3-derive-lueur{from{transform:translateX(-50%)}to{transform:translateX(-50%) translateY(96px)}}
+  }
+}
+
+/* ── Mouvement · Problème ── */
+/* Les filets des trois cartes se tracent de gauche à droite, chacun après le précédent (--d, posé par Motion.tsx). */
+.lp3-filet{position:absolute;left:0;right:0;top:0;height:1px;background:var(--line);transform-origin:0 50%}
+.lp.reveal-armed .lp3-douleurs .lp3-filet{transform:scaleX(0);transition:transform 1.1s var(--ease-pose);transition-delay:calc(var(--d,0s) + .1s)}
+.lp.reveal-armed .lp3-douleurs.in .lp3-filet{transform:none}
+/* Le 7× compte jusqu'à sa valeur (compteur .count de Motion.tsx, ordinateur) : chiffres à chasse fixe, rien ne bouge autour. */
+.lp3-chiffre-n .count{font-variant-numeric:lining-nums tabular-nums;display:inline-block;min-width:.62em;text-align:right}
+
+/* ── Mouvement · Comment ça marche, en diapositives (Etapes.tsx) ── */
+.lp3-rail{display:none}
+.lp3-diapos.est-diapo .lp3-rail{position:relative;display:flex;justify-content:space-between;align-items:center;width:min(360px,100%);margin:clamp(40px,5vw,64px) 0 clamp(20px,3vh,36px)}
+.lp3-rail-piste{position:absolute;left:22px;right:22px;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:var(--line);overflow:hidden}
+.lp3-rail-piste i{position:absolute;inset:0;background:linear-gradient(90deg,var(--co),var(--co2));transform-origin:0 50%;transform:scaleX(0)}
+.lp3 .lp3-rail-point{position:relative;z-index:1;display:grid;place-items:center;width:44px;height:44px;margin:0;padding:0;border-radius:999px;border:1px solid rgba(217,119,87,.35);
+  background:var(--bg);color:var(--muted);font-family:var(--font-mono);font-size:.9rem;font-weight:500;cursor:pointer;
+  transition-property:color,border-color,background-color,transform;transition-duration:240ms,240ms,240ms,110ms;transition-timing-function:var(--ease)}
+.lp3 .lp3-rail-point svg{width:18px;height:18px}
+.lp3 .lp3-rail-point.est-passe{color:var(--co2);border-color:var(--co)}
+.lp3 .lp3-rail-point[aria-current="step"]{background:var(--co);border-color:var(--co);color:#1A0F0A}
+.lp3 .lp3-rail-point.est-valide{background:rgba(56,205,140,.14);border-color:var(--ok);color:var(--ok)}
+.lp3 .lp3-rail-point:active{transform:scale(.94)}
+@media (hover:hover) and (pointer:fine){
+  .lp3 .lp3-rail-point:hover{background:var(--surf);border-color:var(--co2);color:var(--ink)}
+  .lp3 .lp3-rail-point[aria-current="step"]:hover{background:var(--co2);color:#1A0F0A}
+  .lp3 .lp3-rail-point.est-valide:hover{background:rgba(56,205,140,.2);color:var(--ok)}
+}
+/* Les trois temps empilés dans une seule case : GSAP fait passer de l'un à l'autre (opacité, translation, légère rotation 3D). */
+.lp3-diapos.est-diapo .lp3-etapes{display:grid;margin-top:0;gap:0}
+.lp3-diapos.est-diapo .lp3-etape,.lp3-diapos.est-diapo .lp3-etape:has(.lp3-ecran--ordi){grid-area:1/1;grid-template-columns:minmax(0,5fr) minmax(0,7fr);perspective:1600px}
+.lp3-diapos.est-diapo .lp3-etape:not(.est-active){pointer-events:none}
+.lp3-diapos.est-diapo .lp3-ecran{animation:none;transform-origin:50% 60%;will-change:transform,opacity}
+/* En diapositives, GSAP mène l'opacité et la translation : la transition de .reveal (0,78 s) ne doit pas traîner derrière le défilement. */
+.lp3-diapos.est-diapo .lp3-etape-texte,.lp3-diapos.est-diapo .lp3-ecran{transition:none}
+.lp3-diapos.est-diapo .lp3-ecran--tel img{width:auto;height:min(540px,58vh)}
+.lp3-diapos.est-diapo .lp3-ecran--ordi{max-width:calc(58vh * 690 / 496 + 2px)}
+/* Capture recadrée sur une zone de l'image source (Recadre, Etapes.tsx) : la boîte a les proportions de la zone. */
+.lp3-recadre{--X:var(--x);--Y:var(--y);--L:var(--l);--H:var(--h);aspect-ratio:var(--L) / var(--H);position:relative;display:block;width:100%;overflow:hidden;border-radius:16px;border:1px solid rgba(255,255,255,.1);background:#141319;
+  box-shadow:0 50px 120px -40px rgba(0,0,0,.9),0 20px 60px -30px rgba(217,119,87,.3)}
+.lp3 .lp3-ecran .lp3-recadre img{position:absolute;max-width:none;height:auto;border:0;border-radius:0;box-shadow:none;
+  width:calc(100% * 1400 / var(--L));left:calc(-100% * var(--X) / var(--L));top:calc(-100% * var(--Y) / var(--H))}
+@media (max-width:900px){.lp3-recadre{--X:var(--xm);--Y:var(--ym);--L:var(--lm);--H:var(--hm)}}
+
+/* ── Mouvement · Fonctionnalités ── */
+/* La lueur corail suit la souris (pointeur fin seulement) : un disque déplacé en transform, jamais un fond repeint. Motion.tsx pose
+   --mx / --my sur la carte (.lp-spot) ; les deux halos d'origine de .lp-spot sont éteints ici. */
+.lp3 .lp3-carte.lp-spot::before,.lp3 .lp3-carte.lp-spot::after{content:none}
+.lp3-lueur-souris{position:absolute;left:0;top:0;z-index:0;width:520px;height:520px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(232,148,111,.17),rgba(217,119,87,.06) 58%,transparent);opacity:0;
+  transform:translate3d(calc(var(--mx,-999px) - 260px),calc(var(--my,-999px) - 260px),0);transition:opacity 320ms var(--ease)}
+.lp3-carte-texte{position:relative;z-index:1}
+.lp3-carte-image{z-index:1}
+@media (hover:hover) and (pointer:fine){.lp3-carte:hover .lp3-lueur-souris{opacity:1}}
+@media (hover:none),(pointer:coarse){.lp3-lueur-souris{display:none}}
+/* Chaque capture se dévoile : un volet de la couleur de la carte se retire vers le haut, l'image se pose (léger travelling avant). */
+.lp3-carte-image::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:#131217;transform-origin:50% 0;transform:scaleY(0)}
+.lp.reveal-armed .lp3-bento .lp3-carte-image::after{transform:scaleY(1);transition:transform 1s var(--ease-io);transition-delay:calc(var(--d,0s) + .28s)}
+.lp.reveal-armed .lp3-bento.in .lp3-carte-image::after{transform:scaleY(0)}
+.lp.reveal-armed .lp3-bento .lp3-carte-image img{scale:1.1;transition:scale 1.3s var(--ease-pose),transform 600ms var(--ease);transition-delay:calc(var(--d,0s) + .28s),0s}
+.lp.reveal-armed .lp3-bento.in .lp3-carte-image img{scale:1}
+
+/* ── Mouvement · Presti pour l'entreprise ── */
+/* La grappe s'allume case par case, depuis le coin du soleil (--i, posé côté serveur), une fois le panneau entré. */
+.lp.reveal-armed .lp3-panneau:not(.in) .lp3-panneau-pixels rect{opacity:0}
+@media (prefers-reduced-motion:no-preference){
+  .lp.reveal-armed .lp3-panneau.in .lp3-panneau-pixels rect{animation:lp3-case .5s var(--ease) both;animation-delay:calc(.35s + var(--i) * 36ms)}
+}
+@keyframes lp3-case{from{opacity:0}}
+
+/* ── Mouvement · Bandeau final ── */
+/* Le dégradé respire très lentement : une nappe de lumière glisse et s'éclaire sur 16 s, aller-retour (aucune pulsation). */
+.lp3-bandeau-souffle{position:absolute;inset:-30% -12%;z-index:-2;pointer-events:none;
+  background:radial-gradient(38% 52% at 30% 38%,rgba(255,220,180,.4),transparent 70%),radial-gradient(34% 48% at 78% 72%,rgba(184,82,46,.3),transparent 70%);opacity:.7}
+@media (prefers-reduced-motion:no-preference){
+  .lp3-bandeau-souffle{animation:lp3-respire 16s ease-in-out infinite alternate}
+}
+@keyframes lp3-respire{from{transform:translate3d(-5%,1%,0) scale(1);opacity:.55}to{transform:translate3d(5%,-2%,0) scale(1.06);opacity:.9}}
+/* L'horizon de pixels monte à l'entrée du bandeau, rang par rang. */
+.lp.reveal-armed .lp3-bandeau .lp3-bandeau-pixels .lp3-rang{opacity:0;transform:translateY(48px);transition:opacity .7s var(--ease-pose),transform .9s var(--ease-pose);transition-delay:calc(.3s + var(--i) * 40ms)}
+.lp.reveal-armed .lp3-bandeau.in .lp3-bandeau-pixels .lp3-rang{opacity:1;transform:none}
+
+/* Mouvement réduit : tout est visible, rien ne bouge (en plus des gardes ci-dessus). */
+@media (prefers-reduced-motion:reduce){
+  .lp3-bandeau-souffle,.lp3-aube,.lp3-lueur,.lp3-aube .lp3-rang{animation:none}
+  .lp3-filet,.lp3-carte-image::after{transform:none!important;transition:none!important}
+  .lp3-carte-image::after{display:none}
+  .lp3-carte-image img{scale:1!important}
+  .lp3-panneau-pixels rect,.lp3-bandeau-pixels .lp3-rang{animation:none!important;transition:none!important}
+}
+
+/* Fenêtre du héros (HeroApp, réutilisée sans la toucher) : l'indicateur « en train d'écrire » passait de display:none à flex et
+   poussait la page de 40 px toutes les 7,2 s — un décalage de mise en page qui déplaçait aussi l'épinglage de la section 3 (tour 2).
+   Il occupe maintenant la case de la réponse, cachée à ce moment-là : la hauteur ne bouge plus. */
+.lp3 .lp3-fenetre .lp-chat{display:grid;grid-template-columns:minmax(0,1fr);align-content:start}
+.lp3 .lp3-fenetre .lp-bub.in{justify-self:start}
+.lp3 .lp3-fenetre .lp-typing,.lp3 .lp3-fenetre .lp-bub.out{grid-area:2/1}
+.lp3 .lp3-fenetre .lp-typing{justify-self:start;align-self:start}
+.lp3 .lp3-fenetre .lp-bub.out{justify-self:end}
+/* Carte Devis au téléphone : plus haute, pour garder le total et la mention « Accepté » entiers (défaut 20). */
+@media (max-width:900px){.lp3-carte--devis .lp3-carte-image img{height:clamp(320px,92vw,400px)}}
+
+
+/* ═══════════════════════════════ Passe 3 (033-009) ═══════════════════════════════
+   « Aucune animation, aucune slide » (Benj, passe 2) : la page explique et montre. Grammaire : claude.com (fenêtres du produit, serif,
+   calme), mistral.ai (blocs de pixels en marches, écrans posés sur des mosaïques chaudes), n8n.io (grille de points, traînée au
+   pointeur). Règles : transform et opacity seulement (le flou des fondus croisés est borné à 10 px), courbes nommées, tout ce qui cache
+   attend .reveal-armed ou .est-joue / .est-pret (posés par script, jamais en mouvement réduit) : sans script, tout est là. */
+
+.lp3{--ease-marche:steps(6,end);--braise:#B85C3C;--ease-claude:cubic-bezier(.25,1,.5,1);--ease-pose-nette:cubic-bezier(.165,.84,.44,1)}
+
+/* ── Héros : la grille de points et la traînée ── */
+.lp3-points{position:absolute;inset:0;z-index:-2;pointer-events:none;
+  background-image:radial-gradient(rgba(236,234,230,.08) 1px,transparent 1.2px);background-size:24px 24px;background-position:center top;
+  -webkit-mask-image:radial-gradient(ellipse 70% 62% at 50% 30%,#000 20%,transparent 80%);mask-image:radial-gradient(ellipse 70% 62% at 50% 30%,#000 20%,transparent 80%)}
+.lp3-trainee{position:absolute;inset:0;z-index:-1;pointer-events:none;
+  -webkit-mask-image:radial-gradient(ellipse 40% 26% at 50% 21%,transparent 55%,#000 92%);mask-image:radial-gradient(ellipse 40% 26% at 50% 21%,transparent 55%,#000 92%)} /* la traînée passe sous le titre sans le traverser (critique, défaut 1) */
+
+/* ── Titres : chaque mot monte derrière son masque, l'un après l'autre (Mots.tsx) ── */
+.lp3-mot{display:inline-block;overflow:clip;overflow-clip-margin:.18em;vertical-align:top;padding-bottom:.06em;margin-bottom:-.06em}
+.lp3-mot>span{display:inline-block}
+.lp.reveal-armed .reveal .lp3-mot>span{transform:translateY(108%) rotate(3deg);opacity:0;transform-origin:0 100%;
+  transition:transform .6s var(--ease-claude),opacity .4s var(--ease-claude);transition-delay:calc(.08s + var(--m,0) * 45ms)}
+.lp.reveal-armed .reveal.in .lp3-mot>span{transform:none;opacity:1}
+
+/* ── 2 · Problème : le titre à gauche, le mur qui se monte à droite ── */
+.lp3-probleme-tete{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(32px,5vw,80px);align-items:end}
+.lp3-chantier{position:relative;display:block;width:100%;aspect-ratio:4/3}
+.lp3-chantier--mur{max-width:440px;justify-self:end}
+.lp3-chantier--outils{max-width:360px;margin-top:clamp(28px,4vw,48px)}
+
+/* ── 3 · Comment ça marche : les trois temps en rangée ── */
+.lp3 .lp3-etapes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,2.4vw,32px);margin-top:clamp(48px,6vw,88px);align-items:start}
+.lp3 .lp3-etape,.lp3 .lp3-etape:has(.lp3-ecran--ordi){display:flex;flex-direction:column;gap:28px;grid-template-columns:none}
+.lp3 .lp3-etape .lp3-ecran{width:100%;justify-self:stretch;animation:none}
+.lp3 .lp3-etape .lp3-ecran>img,.lp3 .lp3-etape .lp3-recadre{width:100%;aspect-ratio:690/496;height:auto;object-fit:cover;border-radius:18px;border:1px solid rgba(255,255,255,.1);outline:0;
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.9),0 18px 50px -30px rgba(217,119,87,.3)}
+.lp3 .lp3-etape .lp3-ecran--tel>img{object-position:50% 70%}
+.lp3 .lp3-etape:nth-child(3) .lp3-ecran>img{object-position:50% 52%}
+.lp3 .lp3-etape .lp3-recadre img{aspect-ratio:auto}
+.lp3 .lp3-etape .lp3-ecran figcaption{text-align:left;margin-top:12px}
+.lp3 .lp3-etape .lp3-ecran .lp3-puce--flottante{top:12px;right:12px}
+.lp3 .lp3-etape-texte{padding-left:64px}
+.lp3 .lp3-etape .lp3-pastille{width:46px;height:46px}
+.lp3 .lp3-etape h3{font-size:clamp(1.45rem,1.1rem + 1vw,2rem)}
+/* La capture se dévoile (un volet de nuit se retire vers le haut), carte après carte. */
+.lp3-etape .lp3-ecran::after{content:"";position:absolute;inset:0;bottom:auto;height:calc(100% - 40px);border-radius:18px;background:var(--nuit);transform-origin:50% 0;transform:scaleY(0);pointer-events:none;z-index:2}
+.lp.reveal-armed .lp3-etapes:not(.in) .lp3-ecran::after{transform:scaleY(1)}
+.lp.reveal-armed .lp3-etapes .lp3-ecran::after{transition:transform 1s var(--ease-io);transition-delay:calc(var(--d,0s) + .2s)}
+
+/* ── 3 · Une journée avec Presti (Journee.tsx) ── */
+.lp3-comment{overflow-x:clip}
+.lp3-journee{margin-top:clamp(96px,12vw,168px)}
+.lp3-jr-tete{max-width:46rem}
+.lp3-surtitre{display:flex;align-items:center;gap:12px;margin:0 0 18px;font-family:var(--font-mono);font-size:.78rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--co2)}
+.lp3-jr-tete>p:last-child{margin:18px 0 0;font-size:1.08rem;line-height:1.6;color:var(--muted)}
+.lp3-jr-scene{position:relative;margin-top:clamp(36px,4vw,56px)}
+/* Carrousel à accrochage : sans script, au téléphone, en mouvement réduit. */
+.lp3-jr-piste{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;padding:4px 2px 12px;border-radius:28px}
+.lp3-jr-piste::-webkit-scrollbar{display:none}
+.lp3-jr-piste:focus-visible{outline:2px solid var(--co2);outline-offset:4px}
+.lp3-jr-diapo{flex:0 0 min(88%,1040px);scroll-snap-align:center;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,64px);align-items:center;
+  padding:clamp(24px,3.4vw,48px);border-radius:28px;border:1px solid var(--line);background:radial-gradient(120% 90% at 85% 100%,rgba(217,119,87,.14),transparent 60%),linear-gradient(180deg,#141319,#100F14)}
+.lp3-jr-heure{margin:0;font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(3.6rem,2rem + 6vw,8rem);line-height:.9;letter-spacing:-.04em;color:var(--co2);font-variant-numeric:lining-nums tabular-nums;font-variation-settings:"opsz" 144,"SOFT" 100}
+.lp3 .lp3-jr-texte h4{margin:20px 0 0;font-family:var(--serif);font-weight:400;font-size:clamp(1.6rem,1.2rem + 1.4vw,2.6rem);line-height:1.08;letter-spacing:-.02em;color:var(--ink);text-wrap:balance;font-variation-settings:"opsz" 96,"SOFT" 40}
+.lp3-jr-texte>p:last-child{margin:16px 0 0;font-size:1.06rem;line-height:1.62;color:var(--ink2);max-width:30rem}
+.lp3-jr-visuel{position:relative;min-height:clamp(300px,34vw,440px);display:grid;place-items:center;border-radius:22px;background:#0C0B0F;border:1px solid rgba(255,255,255,.06);overflow:hidden}
+.lp3-jr-rideau{display:none}
+.lp3-jr-commandes{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;margin-top:22px}
+.lp3-jr-barre{position:relative;display:flex;gap:6px;flex:1 1 220px;max-width:420px}
+.lp3-jr-barre>span{flex:1;height:3px;border-radius:3px;background:var(--line);transition:background-color 240ms var(--ease)}
+.lp3-jr-barre>span.est-passe{background:var(--co)}
+.lp3-jr-barre>i{display:none}
+.lp3-jr-compteur{margin:0;font-family:var(--font-mono);font-size:.84rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.lp3-jr-compteur span{color:var(--ink)}
+.lp3-jr-fleches{display:flex;gap:10px;margin-left:auto}
+.lp3 .lp3-jr-fleche{display:grid;place-items:center;width:48px;height:48px;margin:0;padding:0;border-radius:999px;border:1px solid rgba(236,234,230,.24);background:transparent;color:var(--ink);cursor:pointer;
+  transition-property:transform,background-color,border-color,opacity;transition-duration:110ms,200ms,200ms,200ms;transition-timing-function:var(--ease)}
+.lp3 .lp3-jr-fleche svg{width:20px;height:20px}
+.lp3 .lp3-jr-fleche:active{transform:scale(.94)}
+.lp3 .lp3-jr-fleche:disabled{opacity:.35;cursor:default}
+@media (hover:hover) and (pointer:fine){.lp3 .lp3-jr-fleche:not(:disabled):hover{background:rgba(255,255,255,.06);border-color:rgba(236,234,230,.6)}}
+/* Les éléments de l'écran entrent quand la diapositive devient la courante (jr-a1…a4). Jamais sans script ni en mouvement réduit. */
+@media (prefers-reduced-motion:no-preference){
+  .lp3-journee.est-pret .lp3-jr-diapo [class*="jr-a"]{opacity:0;transform:translateY(12px);transition:opacity .45s var(--ease),transform .6s var(--ease-pose)}
+  .lp3-journee.est-pret .lp3-jr-diapo.est-active [class*="jr-a"]{opacity:1;transform:none}
+  .lp3-journee.est-pret .lp3-jr-diapo.est-active .jr-a1{transition-delay:.25s}
+  .lp3-journee.est-pret .lp3-jr-diapo.est-active .jr-a2{transition-delay:.65s}
+  .lp3-journee.est-pret .lp3-jr-diapo.est-active .jr-a3{transition-delay:1.05s}
+  .lp3-journee.est-pret .lp3-jr-diapo.est-active .jr-a4{transition-delay:1.45s}
+  .lp3-jr-heure{transition:transform .8s var(--ease-pose),opacity .5s var(--ease)}
+  .lp3-journee.est-pret .lp3-jr-diapo:not(.est-active) .lp3-jr-heure{opacity:.4;transform:translateY(16px)}
+}
+/* Ordinateur, mouvement autorisé : la scène est épinglée, les sept diapositives empilées dans un écran plein (GSAP mène). */
+.lp3-journee.est-epingle .lp3-jr-scene{height:100vh;height:100svh;margin-top:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(80px,10vh,104px) 0 clamp(28px,4vh,44px)}
+.lp3-journee.est-epingle .lp3-jr-piste{position:relative;flex:1;display:block;overflow:visible;padding:0;perspective:1800px;max-height:640px}
+.lp3-journee.est-epingle .lp3-jr-diapo{position:absolute;inset:0;transform-origin:50% 55%;will-change:transform,opacity}
+.lp3-journee.est-epingle .lp3-jr-rideau{position:absolute;top:0;bottom:0;left:calc(50% - 50vw);width:100vw;z-index:6;pointer-events:none;display:grid;grid-template-columns:repeat(16,1fr);grid-template-rows:repeat(9,1fr)}
+.lp3-jr-case{display:block;transform:scale(0);margin:-.5px}
+.lp3-journee.est-epingle .lp3-jr-barre>i{display:block;position:absolute;left:0;right:0;bottom:-8px;height:1px;background:var(--co2);transform-origin:0 50%;transform:scaleX(0)}
+.lp3-journee.est-epingle .lp3-jr-commandes{margin-top:22px}
+
+/* Écrans de la journée */
+.jr-ecran{position:relative;width:100%;height:100%;display:grid;place-items:center;padding:28px}
+.jr-carte{position:relative;z-index:1;width:min(100%,380px);padding:22px 24px;border-radius:18px;background:#16151B;border:1px solid rgba(255,255,255,.1);box-shadow:0 40px 80px -40px rgba(0,0,0,.9)}
+.jr-carte--large{width:min(100%,460px)}
+.jr-carte small,.dm-tete small,.dm-doc small{display:block;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.jr-carte ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px}
+.jr-carte li{display:flex;align-items:baseline;gap:12px;font-size:.95rem;color:var(--ink2)}
+.jr-carte li b{min-width:1.4em;font-family:var(--serif);font-size:1.5rem;font-weight:400;color:var(--co2);font-variant-numeric:tabular-nums}
+.jr-titre{display:block;margin-top:6px;font-family:var(--font-display);font-size:1.12rem;font-weight:600;color:var(--ink)}
+.jr-aube{position:absolute;left:0;right:0;bottom:0;opacity:.95}
+.jr-ecran--point .jr-carte{align-self:start;margin-top:4%}
+.jr-tel{width:min(100%,290px);padding:20px 16px 18px;border-radius:30px;border:7px solid #1B1A22;background:#F3EEE5;color:#1C1814;box-shadow:0 40px 90px -40px rgba(0,0,0,.95)}
+.jr-tel-tete{margin:0 0 14px;padding-bottom:12px;border-bottom:1px solid rgba(28,24,20,.12)}
+.jr-tel-tete b{display:block;font-family:var(--font-display);font-size:.98rem}
+.jr-tel-tete small{font-size:.76rem;color:#5C554C}
+.jr-tel .dm-bulle{font-size:.88rem}
+.jr-tel .dm-bulle--in{background:#fff;color:#1C1814;border-color:rgba(28,24,20,.1)}
+.jr-tel-envoi{margin:8px 0 0;text-align:right;font-size:.72rem;color:#5C554C}
+.jr-tel-actions{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.jr-tel .dm-pastille{color:#7A3A20;border-color:rgba(166,75,42,.4);background:rgba(217,119,87,.12)}
+.jr-tel .dm-pastille--minute{color:#6B4610;border-color:rgba(160,104,20,.4);background:rgba(238,139,60,.14)}
+.jr-lignes{gap:8px!important}
+.jr-lignes li{display:grid!important;grid-template-columns:minmax(0,1fr) auto auto;align-items:center!important;gap:10px!important;padding:8px 0;border-bottom:1px solid var(--line);font-size:.9rem!important}
+.jr-lignes li b{font-family:var(--font-mono)!important;font-size:.88rem!important;color:var(--ink)!important;min-width:0!important}
+.jr-total{display:flex;justify-content:space-between;margin:14px 0 0;font-family:var(--font-display);font-weight:600;color:var(--ink)}
+.jr-total b{font-family:var(--font-mono);color:var(--co2)}
+.jr-relances li{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px!important;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.jr-frise{display:flex;justify-content:space-between;margin:16px 0 0;font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+.jr-frise span{padding:4px 8px;border-radius:999px;border:1px solid var(--line)}
+.jr-frise .est-fait{color:var(--ink2)}
+.jr-frise .est-actif{color:#1A0F0A;background:var(--co);border-color:var(--co)}
+.jr-pile{width:min(100%,420px)}
+.jr-note{margin:12px 0 0;font-size:.9rem;color:var(--ink2)}
+.jr-ecran--soir{background:radial-gradient(60% 70% at 50% 110%,rgba(238,139,60,.22),transparent 70%)}
+.jr-ecran--soir .dm-tampon{position:static;margin-top:12px}
+
+/* ── 4 · Fonctionnalités : sept rangées, texte et démonstration (Demonstrations.tsx) ── */
+.lp3-fns{list-style:none;margin:clamp(56px,7vw,112px) 0 0;padding:0;display:grid;gap:clamp(80px,10vw,152px)}
+.lp3-fn{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:center}
+.lp3-fn--inverse{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+.lp3-fn--inverse .lp3-fn-texte{order:2}
+.lp3-fn-num{display:inline-grid;place-items:center;min-width:34px;height:24px;padding:0 8px;border-radius:999px;border:1px solid rgba(217,119,87,.45);color:var(--co2);font-size:.74rem;letter-spacing:.04em}
+.lp3 .lp3-fn-titre{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(1.9rem,1.25rem + 2.2vw,3.2rem);line-height:1.04;letter-spacing:-.024em;color:var(--ink);text-wrap:balance;font-variation-settings:"opsz" 144,"SOFT" 40}
+.lp3-fn-explication{margin:22px 0 0;font-size:clamp(1.04rem,.98rem + .25vw,1.16rem);line-height:1.62;color:var(--ink2);max-width:32rem}
+.lp3-fn-offres{list-style:none;margin:24px 0 0;padding:20px 0 0;border-top:1px solid var(--line);display:grid;gap:12px;max-width:32rem}
+.lp3-fn-offres li{display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;align-items:baseline;font-size:.96rem;line-height:1.55;color:var(--ink2)}
+.lp3-fn-marque{justify-self:start;display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;border:1px solid rgba(236,234,230,.26);font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.lp3-fn-marque--plein{border-color:var(--co);background:rgba(217,119,87,.16);color:var(--co2)}
+.lp3-fn-texte .lp3-offre{margin-top:22px}
+/* La scène : l'écran posé sur sa mosaïque de pixels en marches. */
+.lp3-fn-scene{position:relative;isolation:isolate;overflow:hidden;border-radius:30px;background:#110F0E;border:1px solid rgba(255,255,255,.06);padding:clamp(28px,4.4vw,64px) clamp(20px,4vw,56px);min-height:clamp(380px,36vw,520px);display:grid;place-items:center}
+.lp3-mosaique{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.lp3-fn-ecran{position:relative;width:min(100%,520px)}
+.lp3-fn-ecran>.lp3-puce--flottante{top:-12px;left:20px;right:auto}
+/* Les marches s'allument depuis le coin d'ancrage quand la scène entre (Motion.tsx pose .in). */
+.lp.reveal-armed .lp3-fn-scene:not(.in) .lp3-mosaique rect{opacity:0}
+@media (prefers-reduced-motion:no-preference){
+  .lp.reveal-armed .lp3-fn-scene.in .lp3-mosaique rect{animation:lp3-marche .5s var(--ease-marche) both;animation-delay:calc(.1s + var(--i) * 40ms)}
+}
+@keyframes lp3-marche{from{opacity:0;transform:translateY(.5px)}}
+.lp3-mosaique rect{transform-box:fill-box}
+/* L'écran se pose sur la mosaïque, un peu après les premières marches. */
+.lp.reveal-armed .lp3-fn-scene .lp3-fn-ecran{transition:transform 1s var(--ease-pose) .25s,opacity .6s var(--ease) .25s}
+.lp.reveal-armed .lp3-fn-scene:not(.in) .lp3-fn-ecran{transform:translateY(40px) scale(.96);opacity:0}
+
+/* La fenêtre d'un écran de Presti (demos/scene.tsx) */
+.lp3-demo{position:relative;border-radius:18px;overflow:hidden;background:#141319;border:1px solid rgba(255,255,255,.1);box-shadow:0 50px 110px -40px rgba(0,0,0,.95),0 24px 60px -30px rgba(0,0,0,.6);font-size:.92rem;color:var(--ink2);text-align:left}
+.lp3-demo-barre{display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.07);background:#18171D}
+.lp3-demo-barre .d{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
+.lp3-demo-barre .u{margin-left:10px;font-family:var(--font-mono);font-size:.72rem;color:var(--muted)}
+.lp3-demo-corps{position:relative;padding:18px;min-height:300px;display:flex;flex-direction:column;gap:14px}
+/* Étapes : un élément « d-pas » attend son tour seulement quand la scène joue ; sinon tout est visible (état final). */
+.lp3-demo .d-vu,.lp3-demo .d-pas{transition:opacity .45s var(--ease),transform .6s var(--ease-pose)}
+.lp3-demo.est-joue .d-pas{opacity:0;transform:translateY(10px) scale(.98)}
+.dm-tete{display:flex;align-items:center;gap:12px}
+.dm-tete b{display:block;font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--ink)}
+.dm-tete>div{min-width:0;flex:1}
+.dm-tete small{text-transform:none;letter-spacing:0;font-family:var(--font-body);font-size:.8rem}
+.dm-tete--doc small{text-transform:uppercase;letter-spacing:.08em;font-family:var(--font-mono);font-size:.68rem}
+.dm-avatar{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:50%;background:rgba(217,119,87,.18);color:var(--co2);font-family:var(--font-display);font-weight:600}
+.dm-etat{flex:none;display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;border:1px solid rgba(217,119,87,.45);font-family:var(--font-mono);font-size:.7rem;color:var(--co2);white-space:nowrap}
+.dm-etat.est-ok{border-color:var(--ok);color:var(--ok);background:rgba(56,205,140,.1)}
+.dm-fil{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;align-content:start}
+.dm-bulle{margin:0;max-width:88%;padding:10px 14px;border-radius:16px;line-height:1.5;font-size:.9rem}
+.dm-bulle--in{justify-self:start;background:#1E1C24;border:1px solid rgba(255,255,255,.07);color:var(--ink);border-bottom-left-radius:6px}
+.dm-bulle--out{justify-self:end;background:rgba(217,119,87,.14);border:1px solid rgba(217,119,87,.35);color:var(--ink);border-bottom-right-radius:6px}
+.dm-bulle--out p{margin:0}
+.dm-bulle--moi{background:var(--co);border-color:var(--co);color:#1A0F0A}
+.dm-bulle--petite{font-size:.84rem}
+.dm-signe{display:block;margin-top:6px;font-size:.74rem;color:var(--co2)}
+/* L'indicateur « prépare » occupe la case de la réponse : la hauteur ne bouge jamais (aucun décalage). */
+.dm-fil>.dm-frappe,.dm-fil>.dm-bulle--out{grid-area:2/1}
+.dm-frappe{justify-self:end;align-self:start;display:none;align-items:center;gap:5px;margin:0;padding:10px 14px;border-radius:16px;background:rgba(217,119,87,.1);color:var(--muted);font-size:.8rem}
+.lp3-demo.est-joue .dm-frappe.d-vu{display:inline-flex}
+.dm-frappe i{width:6px;height:6px;border-radius:50%;background:var(--co2);animation:dm-point 1.2s ease-in-out infinite}
+.dm-frappe i:nth-child(2){animation-delay:.2s}.dm-frappe i:nth-child(3){animation-delay:.4s}
+.dm-frappe span{margin-left:6px}
+@keyframes dm-point{0%,100%{opacity:.3}50%{opacity:1}}
+.dm-pied{margin-top:auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)}
+.dm-statut{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.74rem;color:var(--co2)}
+.dm-statut.est-ok{color:var(--ok)}
+.dm-statut svg,.dm-tampon svg{width:14px;height:14px}
+.dm-bouton{display:inline-flex;align-items:center;height:34px;padding:0 14px;border-radius:999px;background:var(--co);color:#1A0F0A;font-family:var(--font-display);font-weight:600;font-size:.84rem;transition:transform .14s var(--ease),opacity .3s var(--ease),background-color .2s var(--ease)}
+.dm-bouton.est-appui{transform:scale(.94);background:var(--co2)}
+.dm-bouton.est-fait{opacity:.45}
+.dm-bouton--petit{height:30px;font-size:.78rem;padding:0 12px}
+.dm-lignes{width:100%;border-collapse:collapse}
+.dm-lignes td{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:middle;color:var(--ink)}
+.dm-lignes td small{display:block;font-size:.74rem;color:var(--muted)}
+.dm-lignes td:nth-child(2){padding:0 10px;text-align:right}
+.dm-montant{font-family:var(--font-mono);font-size:.86rem;text-align:right;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums}
+.dm-source{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.03em;white-space:nowrap;border:1px solid rgba(217,119,87,.4);color:var(--co2)}
+.dm-source--estime{border-color:rgba(238,139,60,.6);color:#F2A462;background:rgba(238,139,60,.1)}
+.dm-total{display:flex;justify-content:space-between;align-items:baseline;padding-top:4px;font-family:var(--font-display);font-weight:600;color:var(--ink)}
+.dm-total b{font-family:var(--font-mono);font-size:1.15rem;color:var(--co2)}
+.dm-note{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.82rem;color:var(--muted)}
+/* Relances : la frise */
+.dm-frise{position:relative;display:flex;justify-content:space-between;align-items:center;margin:8px 4px 4px}
+.dm-frise-piste{position:absolute;left:22px;right:22px;top:50%;height:2px;margin-top:-1px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.dm-frise-piste i{position:absolute;inset:0;background:var(--co);transform-origin:0 50%;transition:transform .7s var(--ease-io)}
+.dm-jalon{position:relative;z-index:1;display:grid;place-items:center;min-width:44px;height:30px;padding:0 8px;border-radius:999px;background:#1E1C24;border:1px solid rgba(217,119,87,.45);font-family:var(--font-mono);font-size:.74rem;color:var(--co2)}
+.dm-jalon--depart{color:var(--ink2);border-color:rgba(255,255,255,.18)}
+.dm-jalon.est-arrete,.dm-carte.est-arrete,.dm-ligne-etat.est-arrete{opacity:.4!important;text-decoration:line-through}
+.dm-cartes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dm-carte{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#18171D}
+.dm-carte b{font-family:var(--font-display);font-size:.92rem;color:var(--ink)}
+.dm-offre{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.dm-pastille{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;border:1px solid rgba(217,119,87,.45);background:rgba(217,119,87,.1);font-family:var(--font-mono);font-size:.68rem;color:var(--co2);white-space:nowrap}
+.dm-pastille--minute{border-color:rgba(238,139,60,.55);background:rgba(238,139,60,.1);color:#F2A462}
+.dm-lien{font-size:.78rem;color:var(--ink2);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(236,234,230,.3)}
+/* Factures : le devis passe derrière, la facture naît devant */
+.dm-pile{position:relative;display:grid;padding-top:18px}
+.dm-doc{grid-area:1/1;position:relative;padding:16px 18px;border-radius:14px;background:#1B1A21;border:1px solid rgba(255,255,255,.09);display:grid;gap:4px;transition:transform .7s var(--ease-pose),opacity .5s var(--ease)}
+.dm-doc b{font-family:var(--font-display);color:var(--ink)}
+.dm-doc .dm-montant{text-align:left;font-size:1.1rem;color:var(--co2)}
+.dm-doc--devis.est-derriere{transform:translate(18px,-18px) scale(.94);opacity:.55}
+.dm-doc--facture{background:#201E26;border-color:rgba(217,119,87,.4);box-shadow:0 24px 50px -24px rgba(0,0,0,.8)}
+.dm-mentions{font-size:.74rem;color:var(--muted)}
+.dm-tampon{position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;border:1px solid var(--ok);background:rgba(56,205,140,.1);color:var(--ok);font-family:var(--font-mono);font-size:.7rem}
+.lp3-demo.est-joue .dm-tampon.d-vu{animation:dm-tampon .5s var(--ease-pose) both}
+@keyframes dm-tampon{from{transform:scale(1.25) rotate(-6deg);opacity:0}}
+.dm-ligne-etat{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px dashed rgba(238,139,60,.45);font-size:.84rem;color:var(--ink2)}
+.dm-ligne-etat .dm-lien{margin-left:auto}
+/* Inventaire */
+.dm-onglets{display:flex;gap:6px}
+.dm-onglets span{padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.1);font-size:.8rem}
+.dm-onglets .est-actif{background:rgba(217,119,87,.16);border-color:var(--co);color:var(--co2)}
+.dm-stock{list-style:none;margin:0;padding:0;display:grid}
+.dm-stock li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid rgba(255,255,255,.07);color:var(--ink);transition:background-color .3s var(--ease)}
+.dm-stock li:nth-child(2){grid-template-columns:minmax(0,1fr) 96px 48px}
+.dm-stock b{font-family:var(--font-mono);font-size:.84rem;text-align:right;font-variant-numeric:tabular-nums}
+.dm-jauge{position:relative;height:6px;border-radius:6px;background:rgba(255,255,255,.08)}
+.dm-jauge i{position:absolute;inset:0;border-radius:6px;background:var(--co);transform-origin:0 50%;transition:transform .55s var(--ease-io)}
+.dm-jauge em{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--ink2)}
+.dm-stock li.est-alerte{background:rgba(238,139,60,.08)}
+.dm-stock li.est-alerte .dm-jauge i{background:#EE8B3C}
+.dm-stock li.est-alerte .dm-qte{color:#F2A462}
+.dm-alerte{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-radius:12px;border:1px solid rgba(238,139,60,.5);background:rgba(238,139,60,.08)}
+.dm-alerte b{font-family:var(--font-display);font-size:.88rem;color:#F2A462}
+/* Assistant */
+.dm-lectures{margin:0;display:flex;gap:6px;flex-wrap:wrap}
+.dm-lectures span{padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.1);font-family:var(--font-mono);font-size:.68rem;color:var(--muted)}
+.dm-carte--brouillon{border-color:rgba(217,119,87,.4)}
+.dm-actions{display:flex;align-items:center;gap:12px;margin-top:4px}
+.dm-saisie{margin-top:auto;display:flex;align-items:center;gap:10px;min-height:44px;padding:8px 8px 8px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:#0F0E13;color:var(--muted);font-size:.86rem}
+.dm-saisie>span:first-child{flex:1;min-width:0;color:var(--ink2)}
+.dm-envoyer{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:9px;background:var(--co);color:#1A0F0A;font-weight:700}
+.dm-curseur{display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-2px;background:var(--co);animation:lp3-clignote 1s steps(2,start) infinite}
+/* CRM */
+.dm-barres{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.dm-barres li{display:grid;grid-template-columns:130px minmax(0,1fr) 84px;align-items:center;gap:12px;font-size:.84rem}
+.dm-barres b{font-family:var(--font-mono);font-size:.84rem;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.dm-barre{position:relative;height:10px;border-radius:10px;background:rgba(255,255,255,.07);overflow:hidden}
+.dm-barre i{position:absolute;inset:0;border-radius:10px;background:var(--co);transform-origin:0 50%;transition:transform .8s var(--ease-io)}
+.dm-barre--ok i{background:var(--ok)}
+.dm-barre--reste i{background:#EE8B3C}
+.dm-marge{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#18171D}
+.dm-marge>span:first-child{flex:1}
+.dm-marge b{font-family:var(--serif);font-size:1.7rem;font-weight:400;color:var(--co2)}
+
+/* Entreprise : la maison se construit dans le coin du panneau. */
+.lp3-chantier--maison{position:absolute;right:clamp(12px,3vw,48px);bottom:0;width:min(440px,44%);pointer-events:none}
+
+/* ── Téléphone et tablette ── */
+@media (max-width:1023px){
+  .lp3 .lp3-etapes{grid-template-columns:1fr;gap:56px}
+  .lp3-fn,.lp3-fn--inverse{grid-template-columns:1fr;gap:28px}
+  .lp3-fn--inverse .lp3-fn-texte{order:0}
+  .lp3-jr-diapo{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+  .lp3-probleme-tete{grid-template-columns:1fr}
+  .lp3-chantier--mur{justify-self:start;max-width:340px}
+  .lp3-chantier--maison{width:min(300px,78%);right:50%;transform:translateX(50%)}
+  .lp3-fn-scene{min-height:0;padding:28px 14px;border-radius:24px}
+  .lp3-jr-diapo{flex-basis:90%;padding:20px}
+  .lp3-jr-visuel{min-height:300px}
+  .lp3-jr-fleches{margin-left:0}
+}
+@media (max-width:480px){
+  .lp3-demo-corps{padding:14px;min-height:0}
+  .dm-cartes{grid-template-columns:1fr}
+  .dm-barres li{grid-template-columns:96px minmax(0,1fr) 72px;gap:8px}
+  .lp3-fn-offres li{grid-template-columns:1fr;gap:6px}
+  .lp3 .lp3-etape-texte{padding-left:0}
+  .lp3 .lp3-etape .lp3-pastille{position:static;margin-bottom:16px}
+}
+
+/* ── Mouvement réduit : tout est visible, rien ne bouge (en plus des gardes ci-dessus) ── */
+@media (prefers-reduced-motion:reduce){
+  .lp3-mot>span{transform:none!important;opacity:1!important;transition:none!important}
+  .lp3-mosaique rect{animation:none!important}
+  .lp3-fn-ecran,.lp3-etape .lp3-ecran::after{transition:none!important}
+  .lp3-etape .lp3-ecran::after{display:none}
+  .lp3-demo .d-pas,.lp3-demo .d-vu,.dm-doc,.dm-jauge i,.dm-barre i,.dm-frise-piste i{transition:none!important}
+  .dm-frappe i,.dm-curseur{animation:none}
+  .lp3-jr-piste{scroll-behavior:auto}
+}
+
+/* Tour 2 (033-009) : écrans de la journée plus grands à l'ordinateur ; au téléphone, les lignes du devis passent sur deux rangs. */
+@media (min-width:1024px){
+  .jr-carte{width:min(100%,440px);padding:26px 28px}
+  .jr-carte--large{width:min(100%,540px)}
+  .jr-carte li{font-size:1.02rem}
+  .jr-tel{width:min(100%,330px)}
+  .jr-tel .dm-bulle{font-size:.95rem}
+  .jr-pile{width:min(100%,480px)}
+  .jr-pile .dm-doc{padding:22px 24px}
+}
+@media (max-width:900px){
+  .lp3-jr-visuel{min-height:0}
+  .jr-ecran{padding:20px 14px}
+  .jr-lignes li{grid-template-columns:minmax(0,1fr) auto!important;row-gap:4px!important}
+  .jr-lignes li>span:first-child{grid-column:1 / -1}
+  .jr-ecran--point{padding-bottom:96px}
+}
+
+/* Fiche de mouvement 033-007 (adaptations 7 et 8) : un point d'état corail clignote sur la ligne en cours des démonstrations qui jouent
+   (1 200 ms, opacité 0,3 → 1 → 0,3) ; dans la journée, la réponse préparée se dévoile de gauche à droite (clip-path), ≈ 300 ms par ligne. */
+.dm-etat::before{content:"";width:6px;height:6px;margin-right:7px;border-radius:50%;background:currentColor;opacity:.9}
+@media (prefers-reduced-motion:no-preference){
+  .lp3-demo.est-joue .dm-etat:not(.est-ok)::before{animation:dm-point 1.2s ease-in-out infinite}
+  .lp3-journee.est-pret .lp3-jr-diapo .jr-revele{clip-path:inset(0 100% 0 0);opacity:1!important;transform:none!important;transition:clip-path 1.5s var(--ease-pose-nette) .3s!important}
+  .lp3-journee.est-pret .lp3-jr-diapo.est-active .jr-revele{clip-path:inset(0 0 0 0)}
+}
+
+/* Tour 4 (033-009) : la critique de design (agent distinct) — défauts 2, 3, 6, 8, 9, 10, 11. */
+.dm-alerte .dm-bouton{height:auto;min-height:30px;padding:6px 12px;white-space:normal;line-height:1.3;text-align:left}
+.jr-lignes .dm-source{justify-self:start}
+.lp3 .lp3-etape .lp3-ecran>.lp3-puce--flottante{top:-11px;left:14px;right:auto}
+.lp3-journee.est-epingle .lp3-jr-barre>i{display:none}
+.lp3 .lp3-fn-titre{max-width:15ch}
+/* Une scène d'artisan à quatre moments de la journée : la carte en haut, la scène visible en bas. */
+.jr-ecran--scene{align-content:start;padding-bottom:0}
+.jr-ecran--scene>.jr-carte,.jr-ecran--scene>.jr-tel{align-self:start;justify-self:end;margin:2% 4% 0 0;width:min(62%,420px)}
+.jr-ecran--scene>.jr-tel{width:min(56%,300px)}
+.jr-scene{position:absolute;left:0;bottom:0;width:72%;opacity:.95;pointer-events:none}
+.jr-ecran--tel.jr-ecran--scene .jr-scene{width:60%;bottom:4%}
+@media (max-width:900px){
+  .lp3-chantier--outils{display:none}
+  .jr-ecran--scene{padding-bottom:42%}
+  .jr-ecran--scene>.jr-carte,.jr-ecran--scene>.jr-tel{justify-self:center;margin:0;width:100%}
+  .jr-scene,.jr-ecran--tel.jr-ecran--scene .jr-scene{width:100%;bottom:0}
+}
+/* axe-core (tour 4) : contraste AA dans les démonstrations — notes en encre secondaire, états « arrêté » moins effacés. */
+.lp3 .dm-note{color:var(--ink2)}
+.lp3 .dm-jalon.est-arrete,.lp3 .dm-carte.est-arrete,.lp3 .dm-ligne-etat.est-arrete{opacity:.72!important}
+.lp3 .dm-source--estime,.lp3 .dm-pastille--minute{color:#F6B587}
+.lp3 .dm-note{color:var(--ink)}
+.lp3 .jr-tel .dm-pastille{color:#7A3A20}
+.lp3 .jr-tel .dm-pastille--minute{color:#6B4610}
+/* app/globals.css:2071 (DemoChiffres) déclare déjà .dm-note à 60 % d'opacité : la v2 la remet à plein (contraste AA). */
+.lp3 .lp3-demo .dm-note{opacity:1;margin-top:0;font-size:.82rem}

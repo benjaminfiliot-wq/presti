@@ -23,10 +23,37 @@ import OffreDetail from '@/app/OffreDetail'
 import { OFFRES, ESSAI_JOURS, PLANS, offreMinimale } from '@/lib/plans'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 import { FAQ } from '@/lib/faq'
+import LandingV2 from '@/app/landing/LandingV2'
+import { SEO as SEO_V2 } from '@/lib/landing/contenu'
 
 // Google Search Console : la balise de vérification n'est posée QUE sur la landing — jamais sur
 // /site ni /p, qui vivent sur le domaine de l'artisan (marque blanche).
-export const metadata: Metadata = process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}
+//
+// 27/10 (SEO « devis ») : le titre et la description de l'ACCUEIL portent enfin la requête visée (« logiciel de devis artisan ») ;
+// le layout racine garde les siens pour les pages sans titre. `absolute` : pas de suffixe « · Presti », le nom est déjà en tête.
+// 02/11 (chantier 2, lot 6) : drapeau `landingV2` levé → la landing v2 et ses métadonnées (title de 53 signes, description de 146,
+// Open Graph, Twitter, canonical, langue). Baissé (défaut, production) : l'accueil actuel, inchangé.
+const IMAGE_V2 = {
+  url: '/landing/presti-partage-v2-1200x630.png', width: 1200, height: 630, type: 'image/png',
+  alt: 'Presti : « Votre gestion d’artisan, simplifiée par l’IA. » Presti prépare vos réponses, vos devis, vos relances et vos factures, à votre nom.',
+}
+const META_V2: Metadata = {
+  title: { absolute: SEO_V2.titre },
+  description: SEO_V2.description,
+  alternates: { canonical: '/', languages: { 'fr-FR': '/' } },
+  // 033-005 (critique 033-004, défaut 4) : la carte de partage de la v2, à sa phrase ; l'image globale (app/opengraph-image.tsx) reste
+  // celle de l'accueil actuel, servie quand le drapeau est baissé.
+  openGraph: { type: 'website', locale: 'fr_FR', url: '/', siteName: 'Presti', title: SEO_V2.titre, description: SEO_V2.description, images: [IMAGE_V2] },
+  twitter: { card: 'summary_large_image', title: SEO_V2.titre, description: SEO_V2.description, images: [IMAGE_V2] },
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
+}
+
+export const metadata: Metadata = actif('landingV2') ? META_V2 : {
+  title: { absolute: 'Presti — Logiciel de devis artisan, réponses préparées par l’IA' },
+  description: 'Devis chiffrés par l’IA sur vos prix, réponse prête en moins d’une minute à chaque demande, relances et factures. Studio : vous validez d’un clic ; Signature : tout part seul.',
+  alternates: { canonical: '/' },
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
+}
 
 /* Icônes SVG (Lucide-style) — jamais d'emoji comme icône. */
 const I = {
@@ -112,6 +139,7 @@ const CHAINE: { heure: string; titre: string; texte: string; visuel: ReactNode }
 ]
 
 export default function Home() {
+  if (actif('landingV2')) return <LandingV2 />
   return (
     <div className="lp">
       <script

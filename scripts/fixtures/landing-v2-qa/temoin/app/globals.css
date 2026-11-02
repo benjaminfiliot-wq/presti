@@ -1,0 +1,7 @@
+/* Témoin de landing-v2-qa : la feuille partagée de la landing, réduite à ses boutons et à ses jetons. Elle ne redéfinit pas --ok. */
+.lp{--co:#D97757;--co2:#E8946F;--bg:#09090C;--surf:#141319;--ink:#ECEAE6;--muted:#8B867D;background:var(--bg);color:var(--ink)}
+.lp-btn{display:inline-flex;padding:.7rem 1.15rem;border-radius:11px;border:1px solid transparent}
+.lp-btn--p{background:var(--co);color:#1a0f0a}
+.lp-btn--g{border-color:var(--muted);color:var(--ink)}
+.lp-btn--lg{padding:.95rem 1.6rem}
+.lp-nav a{color:var(--muted)}

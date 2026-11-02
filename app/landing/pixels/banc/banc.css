@@ -1,0 +1,38 @@
+/* Banc des pixels (033-008) — développement seulement. Fond nuit chaude, Bricolage / Hanken, corail seul accent. */
+.banc{--nuit:#09090C;--surf:#141319;--ivoire:#F3EEE5;--encre:#ECEAE6;--encre2:#C7C2BA;--gris:#8B867D;--co:#D97757;--co2:#E8946F;
+  background:var(--nuit);color:var(--encre);font-family:var(--font-body),system-ui,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+.banc h1,.banc h2,.banc h3{font-family:var(--font-display),system-ui,sans-serif;font-weight:600;margin:0;text-wrap:balance}
+.banc h1{font-size:clamp(2.4rem,6vw,4.6rem);line-height:1.02;letter-spacing:-.03em}
+.banc h2{font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.08;letter-spacing:-.02em;margin-bottom:48px}
+.banc h3{font-size:1.3rem;letter-spacing:-.01em;margin-bottom:8px}
+.banc p{color:var(--encre2);line-height:1.55;text-wrap:pretty;max-width:52ch}
+.banc-sur{font-family:var(--font-mono),monospace;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--co2)!important;margin:0 0 14px}
+.banc-tete{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:18px;padding:14px 28px;
+  background:rgba(9,9,12,.72);backdrop-filter:blur(14px) saturate(160%);border-bottom:1px solid rgba(255,255,255,.06);font-size:.92rem}
+.banc-tete span{color:var(--gris)}
+.banc-tete nav{margin-left:auto;display:flex;gap:18px}
+.banc-tete a{color:var(--encre2);text-decoration:none}
+.banc-tete a:hover{color:var(--co2)}
+.banc-section{position:relative;padding:120px 8vw}
+.banc-traine{min-height:88vh;display:flex;align-items:center;overflow:hidden;
+  /* le papier millimétré de la fiche (adaptation 12) : points de 2 px au pas de la traînée (24 px), centrés sur ses cases */
+  background-image:radial-gradient(circle at 12px 12px,rgba(243,238,229,.07) 1px,transparent 1.5px);background-size:24px 24px}
+.banc-texte{position:relative;max-width:760px}
+.banc-surface{background:var(--surf)}
+.banc-scene{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:56px;align-items:center;min-height:92vh}
+.banc-toile{max-width:860px}
+.banc-toile--etroite{max-width:620px;margin-top:8px}
+.banc-ivoire{background:var(--ivoire);color:#1B1712}
+.banc-ivoire h2{color:#1B1712}
+.banc-ivoire .banc-sur{color:#9A4A2D!important}
+.banc-grille{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}
+.banc-grille figure{margin:0;padding:28px;border:1px solid rgba(255,255,255,.07);border-radius:18px;background:#0D0C11}
+.banc-grille figcaption{margin-top:16px;color:var(--gris);font-size:.92rem}
+.banc-fin{height:60vh}
+@media (max-width:760px){
+  .banc-section{padding:96px 22px}
+  .banc-tete{padding:12px 18px;gap:10px}
+  .banc-tete span,.banc-tete nav{display:none}
+  .banc-scene{grid-template-columns:1fr;gap:20px;min-height:auto;padding:48px 0}
+  .banc-grille{grid-template-columns:1fr;gap:22px}
+}

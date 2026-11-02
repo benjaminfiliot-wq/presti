@@ -1,0 +1,10 @@
+/* Témoin de landing-v2-qa : la feuille PROPRE à la v2. Corail pour l'accent, vert seulement pour l'étape validée. */
+.lp2{--lp2-pas:1}
+.lp2-hero{padding:4rem 0}
+.lp2-win{background:var(--surf);border:1px solid var(--line);border-radius:14px}
+.lp2-exemple{background:var(--accent-tint);color:var(--accent);padding:.1rem .5rem;border-radius:99px}
+.lp2-carte{background:var(--surf);border:1px solid var(--line)}
+.lp2-etape{border:1px solid var(--line);color:var(--muted)}
+.lp2-etape.valide{background:var(--ok-tint);border-color:var(--ok);color:var(--ok)}
+.lp2-etape[data-etat="valide"]::after{content:"";border-color:var(--ok)}
+.lp2-alerte{color:var(--warn)}

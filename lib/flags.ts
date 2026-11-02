@@ -64,6 +64,9 @@ export const FLAGS = {
   aideCentre: true,
   /** 24/09/2026 — la vidéo hero porte une promesse retirée. Elle reviendra une fois refilmée, avec ses textes incrustés listés dans public/demo/hero.textes.json. Sinon : séquence HTML. */
   landingVideo: false,
+  /** 02/11/2026 — la landing v2 du chantier 2 (direction A avec le hero de B, les 7 sections du prompt 4 de Benj), /offres et /comparatif.
+   *  Baissé : la landing actuelle, et ces deux pages en 404 en production. Se lève sur le « oui » de Benj (plan du chantier 2, lot 9). */
+  landingV2: true,
   /** §9 G2 — persona et apparence avancée de la plateforme. Livré (sprint J-1). */
   plateformePersona: true,
   /** Canaux WhatsApp — vendu dans la grille cible, pas construit. Reste caché tant que c'est vrai. */

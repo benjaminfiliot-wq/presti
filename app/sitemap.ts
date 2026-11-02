@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { METIERS_DEVIS, PAGES_DEVIS } from '@/lib/seoDevis'
+import { actif } from '@/lib/flags'
 
 export const revalidate = 3600 // le sitemap se rafraîchit au plus une fois par heure
 
@@ -14,6 +16,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/confidentialite', priority: 0.4 },
     { path: '/contact', priority: 0.6 },
     { path: '/mentions-legales', priority: 0.4 },
+    // 02/11 (chantier 2, lot 6) : /offres et /comparatif, pages secondaires de la landing v2 — dans le plan du site seulement drapeau
+    // levé (baissé, elles répondent 404 en production : un plan du site ne liste jamais une page absente).
+    ...(actif('landingV2') ? [{ path: '/offres', priority: 0.8 }, { path: '/comparatif', priority: 0.6 }] : []),
+    // 27/10 — la rubrique « devis » (lib/seoDevis.ts) : générateur, modèles par métier, guide, logiciel.
+    ...PAGES_DEVIS.map((p) => ({ path: p.path, priority: 0.9 })),
+    ...METIERS_DEVIS.map((m) => ({ path: `/modele-devis/${m.slug}`, priority: 0.7 })),
   ]
   const entries: MetadataRoute.Sitemap = pages.map((p) => ({
     url: `${base}${p.path}`, lastModified: now, changeFrequency: 'monthly', priority: p.priority,

@@ -1,0 +1,13 @@
+/* Témoin de landing-v2-qa : la fondation (jetons) de la console, réduite. Le vert réservé est #38CD8C (question 8). */
+:root{
+  --paper:#0A0C11; --ink:#ECEAE6; --muted:#8B93A2; --faint:#7F8797;
+  --line:rgba(255,255,255,.09);
+  --accent:#D97757; --accent-2:#E8946F; --accent-hover:#C15F3C; --accent-tint:rgba(217,119,87,.14);
+  --ok:#38CD8C; --ok-tint:rgba(56,205,140,.15);
+  --warn:#E4B45A; --warn-tint:rgba(228,180,90,.15);
+  --crit:#F0776A; --crit-tint:rgba(240,119,106,.15);
+  --hi:#F5B301;
+  --green:var(--accent); --live:var(--ok);
+}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink)}

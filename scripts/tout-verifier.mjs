@@ -216,6 +216,7 @@ const SUITES = [
  *  dans cet angle mort. Une suite qui n'est pas ici et pas dans SUITES est un oubli, et l'inventaire
  *  a le droit de le dire. */
 export const HORS_LANCEUR = {
+  'landing-v2-qa.mjs': 'tests de la landing v2 (033-002, les 19 tests du plan du chantier 2) : 84 contrôles sur 85 verts contre la passe 2 (02/11, 21 h 20) ; le seul rouge est un auto-contrôle de la suite (S5.11 : la sonde « répondu en 41 s » attendue dans une scène, trouvée dans HeroApp), à revoir avant de l’inscrire dans SUITES',
   'sauvegarde-qa.mjs': 'sauvegarde de toutes les tables (L9, 032-020) : verte sur Oracle (Linux, fichiers identiques au PC, preuve .orchestre/preuves/032-020/verifier-oracle.log), mais sous Windows un seul contrôle rougit — le processus fils plante à la sortie après --verifier --vivant (« Assertion failed: !(handle->flags & UV_HANDLE_CLOSING) », Node 24.16) ; à jouer sur Oracle, où la sauvegarde tournera (presti-sauvegarde, L8)',
   'crm-stock-e2e.mjs': 'stock de l’atelier = inventaire, de bout en bout : exige une base de TEST dédiée (CRM_E2E_*) et un serveur branché dessus — refuse la production',
   'crm-carte-e2e.mjs': 'carte de l’atelier (validation, retrait de la carte, validation automatique, type de bâtiment), de bout en bout : exige une base de TEST dédiée (CRM_E2E_*, migration 0172) et un serveur branché dessus — refuse la production',

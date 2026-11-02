@@ -1,19 +1,48 @@
 # Presti
 
-> Presti aide les artisans du bâtiment à traiter leurs demandes clients : une réponse est prête en moins d’une minute. Presti propose aussi un site à 300 €, TVA non applicable.
+> Presti est l’assistant de gestion des artisans du bâtiment en France. Presti prépare les réponses aux demandes des clients, les devis chiffrés sur les tarifs de l’artisan, les relances et les factures. Avec l’offre Studio, l’artisan valide d’un clic ; avec l’offre Signature, les réponses et les relances partent seules, s’il le choisit. Les messages aux clients de l’artisan partent sous son nom, et les réponses de ses clients arrivent chez lui.
+
+Faits vérifiables (grille de prestiapp.fr, `lib/plans.ts`, relue le 02/11/2026) :
+
+- Pour qui : artisans du bâtiment, TPE du bâtiment, artisans multi-chantiers ; les architectes et les entreprises à plusieurs collaborateurs passent par « Presti pour l’entreprise ».
+- Deux abonnements mensuels, sans engagement, TVA non applicable (art. 293 B du CGI) : Studio, 59 € par mois (250 crédits) ; Signature, 99 € par mois (600 crédits).
+- Studio : les réponses, les devis, les relances et l’assistant de gestion sont préparés ; l’artisan valide d’un clic avant l’envoi.
+- Signature : les réponses aux demandes et les relances partent seules, si l’artisan le choisit ; s’y ajoutent le CRM (demandes, fiches clients, chantiers) et le Pilote automatique, qui envoie seul une action préparée, type par type, après 10 minutes pendant lesquelles l’artisan peut l’annuler. Jamais un prix estimé ni un paiement sans l’artisan.
+- Presti pour l’entreprise : sur démonstration et sur devis, sans prix public. Presti est intégré à l’organisation et des agents IA sont connectés à ses outils.
+- Essai gratuit, sans carte bancaire, sans engagement : 7 jours en Studio, 21 jours en Signature, une fois par compte.
+- Devis : chiffrés sur les tarifs de l’artisan ; chaque ligne dit d’où vient son prix, et un prix que Presti ne trouve pas chez l’artisan est marqué comme estimé. Presti refuse d’émettre un devis ou une facture à qui il manque une mention obligatoire (SIRET, assurance, adresse…).
+- Fonctions : devis assistés par IA, factures et relances des impayés (une fois activées), CRM clients (Signature), inventaire (stock par lieu, scan, seuils d’alerte, recherche de prix chez les fournisseurs), documents centralisés, assistant de gestion.
+- Relances : les relances d’un devis sans réponse sont préparées à J+2, J+5 et J+10 et s’arrêtent dès que le client répond ou accepte ; celles d’une facture impayée, une fois activées, à J+3, J+10 et J+21, jusqu’au paiement. Avec Studio, l’artisan valide chaque relance ; avec Signature et le Pilote automatique, elle part seule après 10 minutes pour annuler.
+- Une journée avec Presti (exemple) : le matin, le point du jour (demandes qui attendent, devis sans réponse, factures échues, stock bas) ; une demande arrive sur la page de l’artisan, sa réponse est préparée à son nom ; le devis est chiffré sur ses tarifs ; la relance part ; le devis accepté devient facture ; le règlement noté arrête les relances.
+- Données : la base de données et les photos sont hébergées dans l’Union européenne ; le détail de chaque prestataire est dans la politique de confidentialité.
+- 1 crédit = 1 réponse préparée, 1 devis généré par l’IA ou 1 dépôt de fichiers de comptabilité.
+- Seul chiffre cité sur la page d’accueil : répondre dans l’heure donne près de 7 fois plus de chances d’avoir un vrai échange avec le client qu’une réponse plus tardive (Harvard Business Review, « The Short Life of Online Sales Leads », étude sur 2 241 entreprises).
 
 ## Découvrir Presti
 
-- [Accueil](https://prestiapp.fr/) : présentation de l’assistant IA, des réponses aux demandes, des devis, des factures et des abonnements.
-- [Questions fréquentes](https://prestiapp.fr/faq) : fonctionnement de Presti, sécurité des données, essai, tarifs et validation des devis.
-- [Tarifs](https://prestiapp.fr/#tarifs) : formules d’abonnement et crédits.
+- [Accueil](https://prestiapp.fr/) : ce que Presti fait, comment ça marche, pour qui, Presti pour l’entreprise.
+- [Offres](https://prestiapp.fr/offres) : Studio et Signature en détail, prix et essais, et Presti pour l’entreprise.
+- [Comparatif](https://prestiapp.fr/comparatif) : Presti face aux logiciels de devis et factures, critère par critère.
+- [Logiciel de devis artisan](https://prestiapp.fr/logiciel-devis-artisan) : du message du client au devis signé.
+- [Questions fréquentes](https://prestiapp.fr/faq) : fonctionnement, sécurité des données, essai, tarifs, validité des devis.
+
+## Outils gratuits et guides (sans compte)
+
+- [Générateur de devis gratuit](https://prestiapp.fr/generateur-devis) : faire un devis en ligne sans inscription, mentions obligatoires vérifiées en direct, calcul des totaux et de la TVA, PDF ; rien n’est envoyé à un serveur.
+- [Comment faire un devis](https://prestiapp.fr/comment-faire-un-devis) : les mentions obligatoires d’un devis de travaux dans le bâtiment, avec les textes officiels (service-public.fr, arrêté du 24 janvier 2017, Code des assurances), la TVA, devis gratuit ou payant.
+- [Modèles de devis par métier](https://prestiapp.fr/modele-devis) : plombier, électricien, chauffagiste, maçon, peintre, menuisier, couvreur, carreleur ; questions à poser au client, lignes types sans prix, points de vigilance.
+- [Modèle de devis plombier](https://prestiapp.fr/modele-devis/plombier)
+- [Modèle de devis électricien](https://prestiapp.fr/modele-devis/electricien)
+- [Modèle de devis maçon](https://prestiapp.fr/modele-devis/macon)
 
 ## Contacter et utiliser le service
 
-- [Contact](https://prestiapp.fr/contact) : adresser une question à l’équipe Presti.
-- [Commander un site](https://prestiapp.fr/site/commander) : demander un site à 300 € une fois, sans abonnement, TVA non applicable.
+- [Demander une démo entreprise](https://prestiapp.fr/contact?motif=entreprise) : pour les entreprises à plusieurs collaborateurs et les architectes.
+- [Contact](https://prestiapp.fr/contact) : écrire à l’équipe Presti.
+- [Commander un site](https://prestiapp.fr/site/commander) : un site d’artisan à 300 €, payé une fois, sans abonnement, TVA non applicable.
 
 ## Conditions et confidentialité
 
-- [Conditions générales d’utilisation](https://prestiapp.fr/cgu) : conditions applicables au service.
-- [Confidentialité](https://prestiapp.fr/confidentialite) : traitement des données personnelles.
+- [Conditions générales d’utilisation](https://prestiapp.fr/cgu)
+- [Confidentialité](https://prestiapp.fr/confidentialite)
+- [Mentions légales](https://prestiapp.fr/mentions-legales)

@@ -41,8 +41,9 @@ export default function Motion() {
       const stageM = document.querySelector<HTMLElement>('.lp-stage')
       const ioStageM = stageM ? new IntersectionObserver((e) => { stageM.classList.toggle('hors-champ', !(e[0]?.isIntersecting ?? true)) }) : null
       if (stageM) ioStageM?.observe(stageM)
-      const safetyM = setTimeout(() => { lp?.classList.remove('reveal-armed'); showAll() }, 4000)
-      return () => { io.disconnect(); ioStageM?.disconnect(); clearTimeout(safetyM) }
+      // 033-005 : ici, rien ne se charge — l'observateur est posé, chaque révélation a son déclencheur. Le filet de 4 s qui désarmait
+      // tout (et privait de cascade un lecteur encore en haut de page : critique 033-004, défaut 7) n'a plus de raison d'être.
+      return () => { io.disconnect(); ioStageM?.disconnect() }
     }
 
     // Cartes « projecteur » (refonte du 11/10) : un halo corail suit le pointeur sur les cartes .lp-spot.
@@ -56,6 +57,9 @@ export default function Motion() {
     }
     lp?.addEventListener('pointermove', projecteur as EventListener, { passive: true })
 
+    // filet : si GSAP ne se charge pas, après 4 s on DÉSARME (contenu visible sans dépendre d'une transition/rAF) + reveal complet.
+    // 033-005 : annulé dès que les déclencheurs sont posés (fin du bloc asynchrone) ; il ne reste qu'en cas d'échec de chargement.
+    const safety = setTimeout(() => { lp?.classList.remove('reveal-armed'); showAll() }, 4000)
     let annule = false
     let revert: (() => void) | null = null
     const refreshes: ReturnType<typeof setTimeout>[] = []
@@ -90,6 +94,7 @@ export default function Motion() {
       })
       })
       revert = () => ctx.revert()
+      clearTimeout(safety)
       refreshes.push(setTimeout(() => ScrollTrigger.refresh(), 400))
     })()
 
@@ -103,8 +108,6 @@ export default function Motion() {
       ioStage.observe(stage)
     }
 
-    // filet : après 4 s on DÉSARME (contenu visible sans dépendre d'une transition/rAF) + reveal complet
-    const safety = setTimeout(() => { lp?.classList.remove('reveal-armed'); showAll() }, 4000)
     return () => { annule = true; revert?.(); refreshes.forEach(clearTimeout); clearTimeout(safety); ioStage?.disconnect(); lp?.removeEventListener('pointermove', projecteur as EventListener) }
   }, [])
 

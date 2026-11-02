@@ -32,5 +32,19 @@ if (/GPTBot[^]*Disallow:\s*\/\s/.test(robots) || /PerplexityBot[^]*Disallow:\s*\
 // GE-4 rien d'inventé dans llms.txt : pas de chiffre de clients, d'avis ou de note.
 if (/\b\d{2,}\s+(clients|artisans satisfaits|avis)\b|★|\/5\b/.test(llms)) manques.push('GE-4 : chiffre de clients, avis ou note dans llms.txt (interdit : rien d\'inventé)')
 
+// GE-5 (27/10) : llms.txt écrit les prix et les durées d'essai en toutes lettres (c'est ce que les IA de réponse citent) ; ils
+// doivent rester ceux de lib/plans.ts. Le fichier est statique : quand la grille bouge, ce juge rougit au lieu de laisser
+// une IA annoncer un ancien prix.
+const plans = lire('lib/plans.ts')
+for (const id of ['studio', 'signature']) {
+  const m = plans.match(new RegExp(`\\n\\s*${id}: \\{ label: '([^']+)'[^\\n]*?prixMois: (\\d+)`))
+  if (!m) { manques.push(`GE-5 : offre « ${id} » introuvable dans lib/plans.ts`); continue }
+  const [, label, prix] = m
+  if (llms && !new RegExp(`${label} : ${prix} € par mois`).test(llms)) manques.push(`GE-5 : llms.txt ne dit pas « ${label} : ${prix} € par mois » (lib/plans.ts)`)
+}
+const essai = plans.match(/ESSAI_JOURS[^=]*=\s*\{\s*studio:\s*(\d+),\s*signature:\s*(\d+)/)
+if (!essai) manques.push('GE-5 : ESSAI_JOURS introuvable dans lib/plans.ts')
+else if (llms && !new RegExp(`${essai[1]} jours en Studio, ${essai[2]} jours en Signature`).test(llms)) manques.push(`GE-5 : llms.txt ne dit pas « ${essai[1]} jours en Studio, ${essai[2]} jours en Signature » (lib/plans.ts)`)
+
 if (manques.length) { console.log(`geo-presti-qa : FAIL — ${manques.length} manque(s)`); for (const m of manques) console.log('  - ' + m); process.exit(1) }
 console.log('geo-presti-qa : PASS — llms.txt au format llmstxt.org, FAQPage sur l\'accueil depuis la source de /faq, robots d\'IA autorisés, rien d\'inventé')
