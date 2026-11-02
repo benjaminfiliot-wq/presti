@@ -1,0 +1,382 @@
+{
+  "tache": "032-013",
+  "workflow_id": "xPIDCvkp8Gk08A2E",
+  "execution_id": 331,
+  "statut": "success",
+  "mode": "manual (test_workflow, données épinglées ; aucune lecture réelle)",
+  "debut": "2026-11-02T18:28:18.629Z",
+  "fin": "2026-11-02T18:28:18.964Z",
+  "instant": "2026-11-03T07:30:00.000+01:00",
+  "comptes": {
+    "studio_avec_priorites": "00000000-0000-4000-8000-000000000101",
+    "signature_crm": "00000000-0000-4000-8000-000000000102",
+    "studio_muet": "00000000-0000-4000-8000-000000000103"
+  },
+  "pinData": {
+    "Déclencheur 7 h 30": [
+      {
+        "json": {
+          "timestamp": "2026-11-03T07:30:00.000+01:00"
+        }
+      }
+    ],
+    "Lire comptes": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "plan": "studio",
+          "est_demo": false,
+          "suppression_demandee_le": null
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "plan": "signature",
+          "est_demo": false,
+          "suppression_demandee_le": null
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "plan": "studio",
+          "est_demo": false,
+          "suppression_demandee_le": null
+        }
+      }
+    ],
+    "Lire demandes": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000104",
+          "artisan_id": "00000000-0000-4000-8000-000000000101",
+          "statut": "nouveau",
+          "urgence": null,
+          "lu_le": null,
+          "updated_at": "2026-11-02T22:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000105",
+          "artisan_id": "00000000-0000-4000-8000-000000000101",
+          "statut": "repondu",
+          "urgence": null,
+          "lu_le": "2026-10-31T06:30:00+00:00",
+          "updated_at": "2026-10-31T06:30:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-00000000010b",
+          "artisan_id": "00000000-0000-4000-8000-000000000102",
+          "statut": "en_discussion",
+          "urgence": "urgent",
+          "lu_le": "2026-11-02T06:30:00+00:00",
+          "updated_at": "2026-11-03T01:30:00+00:00"
+        }
+      }
+    ],
+    "Lire messages": [
+      {
+        "json": {
+          "lead_id": "00000000-0000-4000-8000-00000000010b",
+          "sens": "in",
+          "etat": null,
+          "sent_at": "2026-11-03T01:30:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "lead_id": "00000000-0000-4000-8000-00000000010b",
+          "sens": "out",
+          "etat": null,
+          "sent_at": "2026-11-03T00:30:00+00:00"
+        }
+      }
+    ],
+    "Lire devis envoyés": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000109",
+          "artisan_id": "00000000-0000-4000-8000-000000000101",
+          "statut": "envoye",
+          "total_ttc": 2400,
+          "envoye_le": "2026-10-27T08:15:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-00000000010a",
+          "artisan_id": "00000000-0000-4000-8000-000000000101",
+          "statut": "envoye",
+          "total_ttc": 900,
+          "envoye_le": "2026-10-31T08:15:00+00:00"
+        }
+      }
+    ],
+    "Lire factures": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000106",
+          "artisan_id": "00000000-0000-4000-8000-000000000101",
+          "statut": "emise",
+          "date_emission": "2026-09-01",
+          "date_echeance": "2026-09-15",
+          "total_ttc": 1250.5,
+          "avoir_de": null
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000107",
+          "artisan_id": "00000000-0000-4000-8000-000000000101",
+          "statut": "emise",
+          "date_emission": "2026-10-10",
+          "date_echeance": "2026-10-25",
+          "total_ttc": 480,
+          "avoir_de": null
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000108",
+          "artisan_id": "00000000-0000-4000-8000-000000000101",
+          "statut": "emise",
+          "date_emission": "2026-10-20",
+          "date_echeance": "2026-11-20",
+          "total_ttc": 300,
+          "avoir_de": null
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000112",
+          "artisan_id": "00000000-0000-4000-8000-000000000102",
+          "statut": "payee",
+          "date_emission": "2026-10-01",
+          "date_echeance": "2026-10-15",
+          "total_ttc": 100,
+          "avoir_de": null
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000114",
+          "artisan_id": "00000000-0000-4000-8000-000000000103",
+          "statut": "payee",
+          "date_emission": "2026-09-01",
+          "date_echeance": "2026-10-01",
+          "total_ttc": 100,
+          "avoir_de": null
+        }
+      }
+    ],
+    "Lire matériaux suivis": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-00000000010e",
+          "artisan_id": "00000000-0000-4000-8000-000000000102",
+          "seuil_alerte": 4
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000110",
+          "artisan_id": "00000000-0000-4000-8000-000000000102",
+          "seuil_alerte": 2
+        }
+      }
+    ],
+    "Lire stock": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-00000000010f",
+          "materiau_id": "00000000-0000-4000-8000-00000000010e",
+          "quantite": 0
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000111",
+          "materiau_id": "00000000-0000-4000-8000-000000000110",
+          "quantite": 5
+        }
+      }
+    ]
+  },
+  "sortie_n8n": {
+    "Point du jour par compte": [
+      {
+        "mode": "simulation",
+        "jour": "2026-11-03",
+        "comptes_lus": 3,
+        "comptes_hors_offre": 0,
+        "comptes_muets": 1,
+        "comptes_muets_crm": 0,
+        "a_ecrire": [
+          {
+            "cle": "point_du_jour:00000000-0000-4000-8000-000000000101:2026-11-03",
+            "artisan_id": "00000000-0000-4000-8000-000000000101",
+            "jour": "2026-11-03",
+            "mode": "simulation",
+            "priorites": [
+              {
+                "rang": 1,
+                "rubrique": "impayes",
+                "nombre": 2,
+                "premier_objet": "00000000-0000-4000-8000-000000000106"
+              },
+              {
+                "rang": 2,
+                "rubrique": "conversations",
+                "nombre": 1,
+                "premier_objet": "00000000-0000-4000-8000-000000000104"
+              },
+              {
+                "rang": 3,
+                "rubrique": "devis_sans_reponse",
+                "nombre": 1,
+                "premier_objet": "00000000-0000-4000-8000-000000000109"
+              }
+            ],
+            "point_du_jour": {
+              "rubriques": [
+                {
+                  "rubrique": "conversations",
+                  "nombre": 1,
+                  "lignes_non_montrees": 0,
+                  "objets": [
+                    "00000000-0000-4000-8000-000000000104"
+                  ]
+                },
+                {
+                  "rubrique": "devis_sans_reponse",
+                  "nombre": 1,
+                  "lignes_non_montrees": 0,
+                  "objets": [
+                    "00000000-0000-4000-8000-000000000109"
+                  ]
+                },
+                {
+                  "rubrique": "impayes",
+                  "nombre": 2,
+                  "lignes_non_montrees": 0,
+                  "objets": [
+                    "00000000-0000-4000-8000-000000000106",
+                    "00000000-0000-4000-8000-000000000107"
+                  ]
+                }
+              ],
+              "urgences": {
+                "nombre": 1,
+                "objets": [
+                  {
+                    "rubrique": "impayes",
+                    "id": "00000000-0000-4000-8000-000000000106"
+                  }
+                ]
+              },
+              "chiffres": {
+                "conversations_en_attente": 1,
+                "devis_sans_reponse": 1,
+                "factures_impayees": 3,
+                "factures_echues": 2,
+                "total_impaye_centimes": 203050,
+                "alertes_de_stock": 0
+              },
+              "rubriques_hors_n8n": [],
+              "rubriques_hors_offre": []
+            }
+          },
+          {
+            "cle": "point_du_jour:00000000-0000-4000-8000-000000000102:2026-11-03",
+            "artisan_id": "00000000-0000-4000-8000-000000000102",
+            "jour": "2026-11-03",
+            "mode": "simulation",
+            "priorites": [
+              {
+                "rang": 1,
+                "rubrique": "conversations",
+                "nombre": 1,
+                "premier_objet": "00000000-0000-4000-8000-00000000010b"
+              },
+              {
+                "rang": 2,
+                "rubrique": "stock_bas",
+                "nombre": 1,
+                "premier_objet": "00000000-0000-4000-8000-00000000010e"
+              }
+            ],
+            "point_du_jour": {
+              "rubriques": [
+                {
+                  "rubrique": "conversations",
+                  "nombre": 1,
+                  "lignes_non_montrees": 0,
+                  "objets": [
+                    "00000000-0000-4000-8000-00000000010b"
+                  ]
+                },
+                {
+                  "rubrique": "stock_bas",
+                  "nombre": 1,
+                  "lignes_non_montrees": 0,
+                  "objets": [
+                    "00000000-0000-4000-8000-00000000010e"
+                  ]
+                }
+              ],
+              "urgences": {
+                "nombre": 2,
+                "objets": [
+                  {
+                    "rubrique": "conversations",
+                    "id": "00000000-0000-4000-8000-00000000010b"
+                  },
+                  {
+                    "rubrique": "stock_bas",
+                    "id": "00000000-0000-4000-8000-00000000010e"
+                  }
+                ]
+              },
+              "chiffres": {
+                "conversations_en_attente": 1,
+                "devis_sans_reponse": 0,
+                "factures_impayees": 0,
+                "factures_echues": 0,
+                "total_impaye_centimes": 0,
+                "alertes_de_stock": 1
+              },
+              "rubriques_hors_n8n": [
+                "chantiers_du_jour",
+                "chantiers_en_retard",
+                "a_facturer"
+              ],
+              "rubriques_hors_offre": []
+            }
+          }
+        ]
+      }
+    ],
+    "Bilan du passage": [
+      {
+        "mode": "simulation",
+        "jour": "2026-11-03",
+        "comptes_lus": 3,
+        "comptes_avec_point_du_jour": 2,
+        "comptes_muets": 1,
+        "comptes_muets_rubriques_hors_n8n": 0,
+        "comptes_hors_offre": 0,
+        "priorites_par_rubrique": {
+          "impayes": 1,
+          "conversations": 2,
+          "devis_sans_reponse": 1,
+          "stock_bas": 1
+        }
+      }
+    ]
+  },
+  "source": "get_workflow_execution 331 (MCP n8n-oracle), nœuds Point du jour par compte et Bilan du passage, recopiés"
+}

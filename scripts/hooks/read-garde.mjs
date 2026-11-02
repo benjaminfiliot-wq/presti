@@ -104,6 +104,9 @@ function principal() {
   const relatif = path.relative(racine, absolu).split(path.sep).join('/')
   if (relatif.startsWith('..') === false && estLibre(relatif, lireLectureLibre(racine))) return 0
 
+  // Une image n'a pas de lignes : le Read la montre en entier, ses octets 0x0A ne comptent pas (captures du 02/11).
+  if (/\.(png|jpe?g|gif|webp|avif|bmp|ico)$/i.test(absolu)) return 0
+
   const lignes = compterLignes(absolu)
   if (lignes <= SEUIL_LIGNES) return 0
 

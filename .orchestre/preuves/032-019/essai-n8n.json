@@ -1,0 +1,575 @@
+{
+  "tache": "032-019",
+  "workflow": "J8pduyxn9seR8Z9t",
+  "outil": "MCP n8n-oracle test_workflow (déclencheur « Déclencheur 6 h 45 »), puis get_workflow_execution",
+  "execution": "335",
+  "statut": "success",
+  "debut": "2026-11-02T18:48:54.760Z",
+  "fin": "2026-11-02T18:48:55.144Z",
+  "jour_de_paris": "2026-11-02",
+  "donnees": "FICTIVES (identifiants 00000000-0000-4000-8000-…), toutes les lectures épinglées : aucune requête n est partie (contextData vide)",
+  "note": "Exécution 334, la veille de celle-ci : « Lire commandes » avait été oubliée dans la pin data ; n8n l a envoyée pour de vrai (GET commandes_fournisseur filtré sur les deux identifiants fictifs, réponse 200, corps []). Même bilan. Rejouée en 335 avec toutes les lectures épinglées.",
+  "bilan_rendu_par_n8n": [
+    {
+      "numero": 1,
+      "detecteur": "facture_echue",
+      "nombre": 2,
+      "montant_total_centimes": 170000,
+      "par_niveau": {
+        "1": 0,
+        "2": 1,
+        "3": 1
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 11,
+      "detecteur": "reponse_impaye",
+      "nombre": 1,
+      "montant_total_centimes": 70000,
+      "par_niveau": {
+        "1": 0,
+        "2": 1,
+        "3": 0
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 2,
+      "detecteur": "chantier_a_facturer",
+      "nombre": 2,
+      "montant_total_centimes": 410000,
+      "par_niveau": {
+        "1": 0,
+        "2": 2,
+        "3": 0
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 3,
+      "detecteur": "devis_signe_sans_acompte",
+      "nombre": 1,
+      "montant_total_centimes": 60000,
+      "par_niveau": {
+        "1": 0,
+        "2": 1,
+        "3": 0
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 4,
+      "detecteur": "devis_sans_reponse",
+      "nombre": 1,
+      "montant_total_centimes": 40000,
+      "par_niveau": {
+        "1": 0,
+        "2": 0,
+        "3": 1
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 8,
+      "detecteur": "devis_bientot_expire",
+      "nombre": 1,
+      "montant_total_centimes": 150000,
+      "par_niveau": {
+        "1": 0,
+        "2": 0,
+        "3": 1
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 5,
+      "detecteur": "facture_jamais_envoyee",
+      "nombre": 0,
+      "montant_total_centimes": 0,
+      "par_niveau": {
+        "1": 0,
+        "2": 0,
+        "3": 0
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 6,
+      "detecteur": "demande_sans_reponse",
+      "nombre": 3,
+      "montant_total_centimes": 0,
+      "par_niveau": {
+        "1": 0,
+        "2": 3,
+        "3": 0
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 7,
+      "detecteur": "demande_sans_devis",
+      "nombre": 1,
+      "montant_total_centimes": 0,
+      "par_niveau": {
+        "1": 0,
+        "2": 1,
+        "3": 0
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 9,
+      "detecteur": "stock_sous_seuil",
+      "nombre": 2,
+      "montant_total_centimes": 0,
+      "par_niveau": {
+        "1": 0,
+        "2": 2,
+        "3": 0
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 10,
+      "detecteur": "demande_avis",
+      "nombre": 1,
+      "montant_total_centimes": 0,
+      "par_niveau": {
+        "1": 0,
+        "2": 1,
+        "3": 0
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 12,
+      "detecteur": "entretien_a_proposer",
+      "nombre": 1,
+      "montant_total_centimes": 0,
+      "par_niveau": {
+        "1": 0,
+        "2": 1,
+        "3": 0
+      },
+      "mode": "simulation"
+    },
+    {
+      "numero": 0,
+      "detecteur": "argent_qui_dort",
+      "nombre": 7,
+      "montant_total_centimes": 840000,
+      "par_niveau": {
+        "1": 0,
+        "2": 4,
+        "3": 3
+      },
+      "mode": "simulation"
+    }
+  ],
+  "pin_data": {
+    "Déclencheur 6 h 45": [
+      {
+        "json": {
+          "timestamp": "2026-11-02T06:45:00.000+01:00"
+        }
+      }
+    ],
+    "Lecture de connexion (regles_automatisation)": [
+      {
+        "json": {
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "prereglage": "equilibre",
+          "maillons": {
+            "devis_auto": false
+          },
+          "actif": true,
+          "maj_le": "2026-11-01T10:00:00+00:00"
+        }
+      }
+    ],
+    "Lire comptes": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "plan": "studio",
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "leads_pause": false
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "plan": "signature",
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "leads_pause": false
+        }
+      }
+    ],
+    "Lire factures": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "devis_id": null,
+          "statut": "emise",
+          "date_echeance": "2026-10-23",
+          "total_ttc": 1200,
+          "avoir_de": null,
+          "payee_le": null,
+          "type_facture": "standard"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "devis_id": null,
+          "statut": "emise",
+          "date_echeance": "2026-10-30",
+          "total_ttc": 500,
+          "avoir_de": null,
+          "payee_le": null,
+          "type_facture": null
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "devis_id": "00000000-0000-4000-8000-000000000202",
+          "statut": "payee",
+          "date_echeance": "2026-09-30",
+          "total_ttc": 900,
+          "avoir_de": null,
+          "payee_le": "2026-09-28",
+          "type_facture": "acompte"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000104",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "devis_id": null,
+          "statut": "emise",
+          "date_echeance": "2026-10-20",
+          "total_ttc": 700,
+          "avoir_de": null,
+          "payee_le": null,
+          "type_facture": "standard"
+        }
+      }
+    ],
+    "Lire devis": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000201",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "statut": "accepte",
+          "date_emission": "2026-10-20",
+          "validite_jours": 90,
+          "acompte_pct": 30,
+          "total_ttc": 2000,
+          "lead_id": null,
+          "accepte_le": "2026-10-25T10:00:00+00:00",
+          "envoye_le": "2026-10-20T09:00:00+00:00",
+          "created_at": "2026-10-20T08:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000202",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "statut": "accepte",
+          "date_emission": "2026-09-01",
+          "validite_jours": 90,
+          "acompte_pct": 0,
+          "total_ttc": 3000,
+          "lead_id": null,
+          "accepte_le": "2026-09-05T10:00:00+00:00",
+          "envoye_le": "2026-09-01T09:00:00+00:00",
+          "created_at": "2026-09-01T08:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000203",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "statut": "envoye",
+          "date_emission": "2026-10-26",
+          "validite_jours": 90,
+          "acompte_pct": 0,
+          "total_ttc": 800,
+          "lead_id": null,
+          "accepte_le": null,
+          "envoye_le": "2026-10-26T09:00:00+00:00",
+          "created_at": "2026-10-26T08:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000204",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "statut": "envoye",
+          "date_emission": "2026-08-09",
+          "validite_jours": 90,
+          "acompte_pct": 0,
+          "total_ttc": 1500,
+          "lead_id": null,
+          "accepte_le": null,
+          "envoye_le": "2026-08-09T09:00:00+00:00",
+          "created_at": "2026-08-09T08:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000205",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "statut": "envoye",
+          "date_emission": "2026-10-26",
+          "validite_jours": 90,
+          "acompte_pct": 0,
+          "total_ttc": 400,
+          "lead_id": null,
+          "accepte_le": null,
+          "envoye_le": "2026-10-26T09:00:00+00:00",
+          "created_at": "2026-10-26T08:00:00+00:00"
+        }
+      }
+    ],
+    "Lire demandes": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000301",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "statut": "nouveau",
+          "urgence": "urgent",
+          "type_chantier": null,
+          "prise_en_main": false,
+          "created_at": "2026-10-30T10:00:00+00:00",
+          "updated_at": "2026-10-30T10:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000302",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "statut": "nouveau",
+          "urgence": null,
+          "type_chantier": null,
+          "prise_en_main": false,
+          "created_at": "2026-11-01T10:00:00+00:00",
+          "updated_at": "2026-11-01T10:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000303",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "statut": "en_discussion",
+          "urgence": null,
+          "type_chantier": "Plomberie",
+          "prise_en_main": false,
+          "created_at": "2026-09-01T10:00:00+00:00",
+          "updated_at": "2026-10-31T18:00:00+00:00"
+        }
+      }
+    ],
+    "Lire chantiers": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000401",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "devis_id": "00000000-0000-4000-8000-000000000202",
+          "statut": "termine",
+          "date_fin_reelle": "2026-10-30",
+          "maj_le": "2026-10-30T17:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000402",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "devis_id": null,
+          "statut": "en_cours",
+          "date_fin_reelle": null,
+          "maj_le": "2026-10-31T17:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000403",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "devis_id": null,
+          "statut": "termine",
+          "date_fin_reelle": "2025-11-20",
+          "maj_le": "2025-11-20T17:00:00+00:00"
+        }
+      }
+    ],
+    "Lire reservations": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000501",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "chantier_id": "00000000-0000-4000-8000-000000000402",
+          "materiau_id": "00000000-0000-4000-8000-000000000601",
+          "quantite": 5,
+          "statut": "reserve"
+        }
+      }
+    ],
+    "Lire materiaux": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000601",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "seuil_alerte": 0
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000602",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "seuil_alerte": 3
+        }
+      }
+    ],
+    "Lire stock": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000701",
+          "materiau_id": "00000000-0000-4000-8000-000000000601",
+          "quantite": 2
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000702",
+          "materiau_id": "00000000-0000-4000-8000-000000000602",
+          "quantite": 1
+        }
+      }
+    ],
+    "Lire relances impayes": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000801",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "facture_id": "00000000-0000-4000-8000-000000000101",
+          "rang": 1,
+          "jour": "2026-10-26",
+          "statut": "envoyee"
+        }
+      }
+    ],
+    "Lire arrets de relance": [
+      {
+        "json": {
+          "facture_id": "00000000-0000-4000-8000-000000000104",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "raison": "reponse_client",
+          "le": "2026-10-31T09:00:00+00:00",
+          "reprise_le": null
+        }
+      }
+    ],
+    "Lire reglages des relances": [
+      {
+        "json": {
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "actif": true,
+          "jours": [
+            3,
+            10,
+            21
+          ]
+        }
+      }
+    ],
+    "Lire reglages de la plateforme": [
+      {
+        "json": {
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "mode_reponse": "assistee"
+        }
+      },
+      {
+        "json": {
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "mode_reponse": "auto"
+        }
+      }
+    ],
+    "Lire tarifs": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000901",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "actif": true
+        }
+      }
+    ],
+    "Lire apres chantier": [
+      {
+        "json": {
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "avis": true,
+          "entretien": true,
+          "actif_depuis": null
+        }
+      }
+    ],
+    "Lire rappels": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000951",
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "chantier_id": "00000000-0000-4000-8000-000000000403",
+          "type": "entretien",
+          "echeance": "2026-10-28",
+          "fait_le": null,
+          "envoye_le": null,
+          "origine": "systeme",
+          "cle": "entretien:00000000-0000-4000-8000-000000000403:1"
+        }
+      }
+    ],
+    "Lire reglages du pilote": [
+      {
+        "json": {
+          "artisan_id": "00000000-0000-4000-8000-000000000002",
+          "actif": true,
+          "types": {
+            "relance_impaye": true,
+            "relance_devis": true
+          }
+        }
+      }
+    ],
+    "Lire cartes refusees": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000971",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "outil": "relancer_devis",
+          "statut": "refusee",
+          "objet_id": "00000000-0000-4000-8000-000000000203",
+          "maj_le": "2026-10-31T08:00:00+00:00"
+        }
+      }
+    ],
+    "Lire commandes": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000061",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "statut": "commandee",
+          "chantier_id": "00000000-0000-4000-8000-000000000499"
+        }
+      }
+    ]
+  }
+}

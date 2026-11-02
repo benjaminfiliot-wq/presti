@@ -1,0 +1,409 @@
+{
+  "outil": "MCP n8n-oracle test_workflow (pin data) puis get_workflow_execution",
+  "workflowId": "2HsfV00lGSX1KGY1",
+  "executionId": "330",
+  "mode": "manual",
+  "statut": "success",
+  "debut": "2026-11-02T18:04:55.950Z",
+  "fin": "2026-11-02T18:04:56.222Z",
+  "pinData": {
+    "Déclencheur 10 h": [
+      {
+        "json": {
+          "timestamp": "2026-11-02T10:00:00.000+01:00",
+          "Readable date": "November 2nd 2026, 10:00:00 am",
+          "Day of week": "Monday",
+          "Timezone": "Europe/Paris (UTC+01:00)"
+        }
+      }
+    ],
+    "Lire comptes": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "plan": "signature",
+          "created_at": "2026-11-01T09:12:00+00:00",
+          "is_founder": false,
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "notifications": {}
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000002",
+          "plan": "studio",
+          "created_at": "2026-11-02T08:00:00+00:00",
+          "is_founder": false,
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "notifications": {}
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "plan": "studio",
+          "created_at": "2026-10-18T22:30:00+00:00",
+          "is_founder": false,
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "notifications": {}
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000004",
+          "plan": "signature",
+          "created_at": "2026-10-03T10:00:00+00:00",
+          "is_founder": false,
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "notifications": {}
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000005",
+          "plan": "studio",
+          "created_at": "2026-10-19T08:00:00+00:00",
+          "is_founder": false,
+          "est_demo": true,
+          "suppression_demandee_le": null,
+          "notifications": {}
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000006",
+          "plan": "signature",
+          "created_at": "2026-11-01T08:00:00+00:00",
+          "is_founder": true,
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "notifications": {}
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000007",
+          "plan": "studio",
+          "created_at": "2026-10-03T08:00:00+00:00",
+          "is_founder": false,
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "notifications": {
+            "suivi": false
+          }
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000008",
+          "plan": "studio",
+          "created_at": "2026-10-18T08:00:00+00:00",
+          "is_founder": false,
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "notifications": {}
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000009",
+          "plan": "studio",
+          "created_at": "2026-10-17T08:00:00+00:00",
+          "is_founder": false,
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "notifications": {}
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000010",
+          "plan": "signature",
+          "created_at": "2026-10-31T08:00:00+00:00",
+          "is_founder": false,
+          "est_demo": false,
+          "suppression_demandee_le": "2026-11-01T10:00:00+00:00",
+          "notifications": {}
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000011",
+          "plan": "studio",
+          "created_at": "2026-11-01T07:00:00+00:00",
+          "is_founder": false,
+          "est_demo": false,
+          "suppression_demandee_le": null,
+          "notifications": {}
+        }
+      }
+    ],
+    "Lire demandes": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000101",
+          "artisan_id": "00000000-0000-4000-8000-000000000001",
+          "canal": "formulaire",
+          "created_at": "2026-11-01T15:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000102",
+          "artisan_id": "00000000-0000-4000-8000-000000000003",
+          "canal": "import",
+          "created_at": "2026-10-20T15:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000103",
+          "artisan_id": "00000000-0000-4000-8000-000000000003",
+          "canal": "formulaire",
+          "created_at": "2026-10-21T15:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000104",
+          "artisan_id": "00000000-0000-4000-8000-000000000005",
+          "canal": "formulaire",
+          "created_at": "2026-10-20T15:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000105",
+          "artisan_id": "00000000-0000-4000-8000-000000000006",
+          "canal": "formulaire",
+          "created_at": "2026-11-01T16:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000106",
+          "artisan_id": "00000000-0000-4000-8000-000000000007",
+          "canal": "formulaire",
+          "created_at": "2026-10-10T16:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000107",
+          "artisan_id": "00000000-0000-4000-8000-000000000008",
+          "canal": "formulaire",
+          "created_at": "2026-10-20T16:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000108",
+          "artisan_id": "00000000-0000-4000-8000-000000000009",
+          "canal": "formulaire",
+          "created_at": "2026-10-20T16:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000109",
+          "artisan_id": "00000000-0000-4000-8000-000000000010",
+          "canal": "formulaire",
+          "created_at": "2026-11-01T09:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000110",
+          "artisan_id": "00000000-0000-4000-8000-000000000011",
+          "canal": "import",
+          "created_at": "2026-11-01T09:00:00+00:00"
+        }
+      }
+    ],
+    "Lire devis": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000201",
+          "artisan_id": "00000000-0000-4000-8000-000000000003",
+          "envoye_le": "2026-10-22T10:00:00+00:00",
+          "accepte_le": null
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000202",
+          "artisan_id": "00000000-0000-4000-8000-000000000005",
+          "envoye_le": "2026-10-22T10:00:00+00:00",
+          "accepte_le": "2026-10-24T10:00:00+00:00"
+        }
+      }
+    ],
+    "Lire factures": [
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000301",
+          "artisan_id": "00000000-0000-4000-8000-000000000003",
+          "statut": "emise",
+          "emise_le": "2026-10-25T10:00:00+00:00",
+          "avoir_de": null
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000302",
+          "artisan_id": "00000000-0000-4000-8000-000000000003",
+          "statut": "emise",
+          "emise_le": "2026-10-26T10:00:00+00:00",
+          "avoir_de": "00000000-0000-4000-8000-000000000301"
+        }
+      },
+      {
+        "json": {
+          "id": "00000000-0000-4000-8000-000000000303",
+          "artisan_id": "00000000-0000-4000-8000-000000000003",
+          "statut": "annulee",
+          "emise_le": "2026-10-27T10:00:00+00:00",
+          "avoir_de": null
+        }
+      }
+    ],
+    "Lire registre du suivi": [
+      {
+        "json": {
+          "cle": "suivi:00000000-0000-4000-8000-000000000008:bilan_j14",
+          "artisan_id": "00000000-0000-4000-8000-000000000008",
+          "etape": "bilan_j14",
+          "envoye_le": "2026-11-01T09:00:00+00:00"
+        }
+      },
+      {
+        "json": {
+          "cle": "suivi:00000000-0000-4000-8000-000000000009:premiers_pas",
+          "artisan_id": "00000000-0000-4000-8000-000000000009",
+          "etape": "premiers_pas",
+          "envoye_le": "2026-10-31T09:00:00+00:00"
+        }
+      }
+    ]
+  },
+  "sortie_n8n": {
+    "Brouillons et bilan": [
+      {
+        "mode": "brouillon",
+        "mention_ia": "non_vise",
+        "jour": "2026-11-02",
+        "bilan": {
+          "par_etape": {
+            "premiers_pas": {
+              "brouillons": 1,
+              "reportes": 0,
+              "silencieux": 2
+            },
+            "bilan_j14": {
+              "brouillons": 1,
+              "reportes": 0,
+              "silencieux": 0
+            },
+            "bilan_j30": {
+              "brouillons": 0,
+              "reportes": 0,
+              "silencieux": 1
+            }
+          },
+          "ecartes": {
+            "demo": 1,
+            "fondateur": 1,
+            "opposition_suivi": 1,
+            "suppression_demandee": 1,
+            "ecart_5_jours": 1,
+            "deja_au_registre": 1
+          },
+          "reportes": []
+        },
+        "brouillons": [
+          {
+            "cle": "suivi:00000000-0000-4000-8000-000000000003:bilan_j14",
+            "artisan_id": "00000000-0000-4000-8000-000000000003",
+            "etape": "bilan_j14",
+            "variante": "comptes",
+            "champs": {
+              "demandes_recues": 1,
+              "devis_envoyes": 1,
+              "devis_acceptes": 0,
+              "factures_emises": 1
+            },
+            "evenements": [
+              {
+                "table": "leads",
+                "id": "00000000-0000-4000-8000-000000000103",
+                "colonne": "created_at",
+                "date": "2026-10-21T15:00:00+00:00"
+              },
+              {
+                "table": "devis",
+                "id": "00000000-0000-4000-8000-000000000201",
+                "colonne": "envoye_le",
+                "date": "2026-10-22T10:00:00+00:00"
+              },
+              {
+                "table": "factures",
+                "id": "00000000-0000-4000-8000-000000000301",
+                "colonne": "emise_le",
+                "date": "2026-10-25T10:00:00+00:00"
+              }
+            ]
+          },
+          {
+            "cle": "suivi:00000000-0000-4000-8000-000000000001:premiers_pas",
+            "artisan_id": "00000000-0000-4000-8000-000000000001",
+            "etape": "premiers_pas",
+            "variante": "premiere_demande",
+            "champs": {},
+            "evenements": [
+              {
+                "table": "leads",
+                "id": "00000000-0000-4000-8000-000000000101",
+                "colonne": "created_at",
+                "date": "2026-11-01T15:00:00+00:00"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Réglages du suivi": [
+      {
+        "jour": "2026-11-02",
+        "mode": "brouillon",
+        "mention_ia": "non_vise",
+        "offres_suivies": [
+          "studio",
+          "signature",
+          "entreprise"
+        ],
+        "etapes": {
+          "premiers_pas": {
+            "du": 0,
+            "au": 3,
+            "evenements_jusqu_a": 2
+          },
+          "bilan_j14": {
+            "du": 14,
+            "au": 16
+          },
+          "bilan_j30": {
+            "du": 30,
+            "au": 32
+          }
+        },
+        "ecart_min_jours": 5,
+        "plafond_par_passage": 10,
+        "inscrits_depuis": "2026-09-29"
+      }
+    ]
+  }
+}

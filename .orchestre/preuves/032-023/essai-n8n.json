@@ -1,0 +1,28 @@
+{
+  "tache": "032-023",
+  "fait_le": "2026-11-02",
+  "methode": "test_workflow (MCP n8n-oracle) sur données ÉPINGLÉES entièrement fictives : tous les nœuds SSH, Slack et le déclencheur sont épinglés ; aucun identifiant SSH n'existe ; aucune connexion, aucun envoi Slack, aucune exécution réelle de la sauvegarde. Les nœuds Code et If s'exécutent pour de vrai dans n8n.",
+  "presti-sauvegarde": {
+    "workflowId": "16Gbnw1jg1JmFbfV",
+    "essais": [
+      { "scenario": "réussite", "executionId": "338", "attendu": "bilan ok, battement, purge, aucune alerte", "constate": "Bilan ok:true (90 tables, 123456 lignes, 12 comptes, 4096 Ko, 61 s) ; Purger exécuté ; Alerte Slack (échec) non exécutée", "statut": "success" },
+      { "scenario": "sauvegarde en échec (code 1)", "executionId": "339", "attendu": "relecture sautée, battement, alerte Slack", "constate": "Bilan ok:false, etape_en_echec:sauvegarde, raison « la sauvegarde a refusé ou échoué (code 1) — ❌ OpenAPI illisible… » ; Alerte Slack (échec) exécutée ; Purger non exécutée", "statut": "success" },
+      { "scenario": "relecture rouge (code 1)", "executionId": "340", "attendu": "alerte Slack, pas de purge", "constate": "Bilan ok:false, etape_en_echec:relecture, raison « la relecture est rouge (code 1) — ❌ table_fictive : 10 dans l'archive, 9 recomptées… » ; Alerte Slack (échec) exécutée ; Purger non exécutée", "statut": "success" },
+      { "scenario": "déjà en cours (verrou, code 75)", "executionId": "341", "attendu": "alerte Slack « verrou »", "constate": "Bilan ok:false, etape_en_echec:sauvegarde, raison « une sauvegarde tournait déjà (verrou) » ; Alerte Slack (échec) exécutée", "statut": "success" }
+    ]
+  },
+  "presti-garde-sauvegarde": {
+    "workflowId": "2uovL6sfTnINC3ka",
+    "essais": [
+      { "scenario": "réussite", "executionId": "342", "attendu": "garde satisfaite, aucune alerte", "constate": "Bilan ok:true, alertes:[] ; archive du jour 2026-11-02T02-40-13-123Z.presti, 3 tables contre 3 ; battement ok de 16,7 h ; Alerte Slack (garde) non exécutée", "statut": "success" },
+      { "scenario": "archive du jour absente", "executionId": "343", "attendu": "alerte « pas d'archive du jour »", "constate": "ok:false, alertes:[« pas d'archive du jour 2026-11-02 (la dernière date du 2026-11-01) »] ; Alerte Slack (garde) exécutée", "statut": "success" },
+      { "scenario": "relecture rouge", "executionId": "344", "attendu": "alerte « relecture rouge »", "constate": "ok:false, alertes:[« la relecture de l'archive du jour est rouge (code 1) — ❌ table_b : 2 dans l'archive, 1 recomptées… »] ; Alerte Slack (garde) exécutée", "statut": "success" },
+      { "scenario": "tables en baisse (2 contre 3)", "executionId": "345", "attendu": "alerte « le nombre de tables baisse »", "constate": "ok:false, alertes:[« le nombre de tables baisse : 2 aujourd'hui, 3 dans l'archive du 2026-11-01 »] ; Alerte Slack (garde) exécutée", "statut": "success" }
+    ]
+  },
+  "limites": [
+    "Le statut « success » est celui de l'exécution de test (le workflow est allé au bout) ; le verdict de chaque scénario est dans « constate », lu dans les données d'exécution (get_workflow_execution, includeData).",
+    "Les nœuds Slack étaient épinglés : le texte réel du message n'a pas été évalué par n8n ; le juge hors ligne vérifie qu'il cite les champs du bilan.",
+    "L'Error Trigger ne part jamais sur un essai manuel : sa branche est prouvée par le graphe (juge, R9 et R10), pas par un essai."
+  ]
+}

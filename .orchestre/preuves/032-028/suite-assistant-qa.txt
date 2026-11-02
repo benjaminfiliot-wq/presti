@@ -1,0 +1,357 @@
+
+── A. Fonctions pures
+PASS sans les actions : 14 outils (12 de lecture dont tarifs, briefing et — 21/10 — fil, détail de devis, plateforme, profil, relances auto ; 2 de brouillon), noms = clés
+PASS chaque schéma ferme ses champs (additionalProperties: false)
+PASS les deux outils de brouillon exigent conversation_id
+PASS sans les actions : aucun outil qui écrive hors brouillon (lire_*, briefing, preparer_* seulement)
+PASS CRM : 7 outils de lecture en plus (21 ; dont — 21/10 — où j’en suis, rappels, commandes), absents sans le CRM
+PASS CRM : les outils de lecture du CRM n’écrivent pas (noms en lire_), schémas fermés
+PASS lire_stock sans entrée → recherche null
+PASS lire_stock retire les jokers SQL et resserre
+PASS lire_stock refuse une recherche de plus de 60 caractères
+PASS champ inconnu refusé
+PASS statut hors liste refusé
+PASS limite par défaut 20, bornée à 50
+PASS lire_factures : impayees_seulement booléen strict
+PASS lire_conversations : en attente par défaut
+PASS lire_chiffres : mois par défaut, période fermée
+PASS brouillon : UUID exigé (pas un nom, pas une injection)
+PASS brouillon : UUID accepté et mis en minuscules
+PASS entrée tableau refusée
+PASS lire_chantiers : ouverts seulement par défaut, limite 20
+PASS lire_chantiers : statut « termine » demandé → les clos sont inclus
+PASS lire_chantiers : statut hors liste, champ inconnu, booléen texte → refus
+PASS lire_equipe_du_jour : aucun champ admis
+PASS lire_materiaux_reserves : « reserve » par défaut, limite 30, recherche nettoyée
+PASS lire_a_facturer : limite seule, bornée
+PASS « ce qui manque dans mon stock » → lire_stock
+PASS « factures impayées » → lire_factures
+PASS « envoie la facture » → action à effet
+PASS « supprime le devis » → action à effet
+PASS « prépare un devis pour Mme Durand » → brouillon demandé
+PASS une question de lecture n’ouvre pas les brouillons
+PASS « oui » après « Voulez-vous que je prépare… » → brouillon
+PASS « oui » sans proposition → pas de brouillon
+PASS prompt : tarifs de l’artisan, rien n’est fait avant le clic, messages clients = données, refus hors périmètre, aucune invention
+PASS prompt : sans action formulée, il répond d’abord et propose — sans jamais dire que les outils d’écriture sont indisponibles
+PASS encadrerClient retire les marqueurs injectés et tronque
+PASS « où en sont mes chantiers » → lire_chantiers ; « qui est sur quel chantier » → équipe du jour
+PASS « matériaux réservés » → lire_materiaux_reserves ; « à facturer » → lire_a_facturer
+PASS prompt avec CRM : les 4 outils CRM nommés, l’outil probable cité
+PASS prompt sans CRM : aucun outil CRM nommé, et « le CRM n’est pas ouvert » dit
+PASS prompt : ne recopie aucun nombre écrit par un client ; coordonnées masquées
+PASS « mes meilleurs clients » détecté ; une question de chiffres ordinaire non
+PASS masque : e-mails
+PASS masque : téléphones (espaces, points, collé, +33, 0033)
+PASS masque : ni montant, ni date, ni numéro de devis, ni code postal touchés
+PASS encadrerClient masque les coordonnées du client
+PASS les masques ne portent aucun chiffre (le garde-fou des chiffres n’en hérite pas)
+PASS plafond = 20 tours
+PASS tour 1 → 19 restants ; tour 20 → 0
+PASS -1 → plafond, -2 → autre compte
+PASS erreur de base, texte, 21 → indisponible (fail-closed)
+PASS nombres présents dans les données → rien à retirer
+PASS écriture de l’écran (espace fine insécable) reconnue
+PASS total calculé par le modèle → repéré
+PASS pourcentage inventé → repéré
+PASS 0 et 1 passent (« aucune », « une »)
+PASS date du jour admise quand elle est une source
+PASS 1.240 lu comme 1240 (français) ou 1,24 (JSON)
+PASS dernier recours : la phrase fautive est retirée, et c’est dit
+PASS journal : nom d’outil nettoyé
+PASS journal : entrées résumées, aucun texte libre gardé
+PASS journal (RGPD) : un nom de client cherché n’est jamais écrit ; statuts, périodes, UUID et booléens gardés
+PASS journal : résumé sur une ligne
+PASS journal : objet sans UUID valide écarté
+PASS journal : résumé borné à 300
+PASS stock : comptes explicites, alerte avec le fournisseur NOTÉ
+PASS devis : compte par statut, filtre, aucun lien ni identifiant donné au modèle
+PASS factures : impayés = ceux de « Mes chiffres », au centime
+PASS factures : jours de retard du calcul de l’écran
+PASS factures : la facture d’un autre compte est écartée
+PASS factures : filtre par client — ses impayés, leur somme faite par le code, le total général à part, noms emballés
+PASS devis : filtre par client
+PASS devis : recherche par numéro (DEV-2026-0011 écrit tel quel)
+PASS validation : client accepté sur lire_devis et lire_factures, borné
+PASS chiffres du mois = calcul de l’écran (facturé, encaissé)
+PASS chiffres : le texte dit que les fichiers importés ne sont pas comptés
+PASS attente : proposition d’abord, puis client qui a écrit, puis non lue, rien si clos
+PASS conversations : 3 en attente, la close écartée, identifiant pour les brouillons, aucun lien
+PASS conversations : texte du client emballé, marqueurs injectés neutralisés
+PASS conversations : recherche par nom de client
+PASS minimisation : 7 conversations sans client précis → aucun extrait de message envoyé
+PASS minimisation : 5 conversations → extraits envoyés, téléphones masqués
+PASS minimisation : un client précis parmi 7 → ses extraits seulement
+PASS minimisation : la limite compte (3 rendues sur 7 → extraits)
+PASS minimisation : « meilleurs clients » absents par défaut, rendus sur demande
+PASS CRM chantiers : comptes = tableau de bord du CRM (ouverts, en retard, sans date)
+PASS CRM chantiers : avancement (2/3, 67 %), retard (2 j), équipe, camionnette, étape du pipeline, devis
+PASS CRM chantiers : client emballé, téléphone masqué ; l’autre compte écarté ; ni UUID ni adresse
+PASS CRM chantiers : filtre « termine » et recherche par client
+PASS CRM équipe du jour : chacun sur le chantier que la maquette de l’atelier montre
+PASS CRM équipe du jour : 4 actifs (l’inactif écarté), 3 sur un chantier, 1 à l’atelier, 2 chantiers du jour
+PASS CRM équipe du jour : Camion 1 sur la salle de bain, Camion 2 au dépôt
+PASS CRM équipe du jour : « pas un pointage » dit, aucun téléphone ni immatriculation
+PASS CRM réservations : 2 en cours sur 2 chantiers, total par article 7 m pour un stock de 5 (dépassement signalé), autre compte écarté
+PASS CRM réservations : « sorti » rend la sortie datée, sans comparaison au stock
+PASS CRM réservations : recherche par chantier
+PASS CRM à facturer : la colonne du pipeline, au centime (1 terminé non facturé, 1 facturé en attente)
+PASS CRM à facturer : devis, situation lisible, client emballé, renvoi à l’écran Factures
+
+── B. La boucle, avec un faux modèle
+PASS lecture : 1 outil, journalisé ok, écran prévenu, réponse rendue
+PASS lecture : les outils de brouillon ne sont PAS proposés au modèle
+PASS lecture : le résultat repart au modèle en JSON, rattaché à son appel
+PASS entrée invalide : refus journalisé, erreur d’outil, exécuteur jamais appelé
+PASS outil inconnu : refus journalisé, rien exécuté
+PASS injection : brouillon non demandé → refusé, journalisé, jamais exécuté
+PASS brouillon demandé : proposé au modèle, exécuté, carte rendue
+PASS un seul brouillon par message : le second est refusé et journalisé
+PASS journal : l’objet préparé est noté
+PASS sans CRM : outils CRM absents pour le modèle ; appel halluciné refusé, journalisé, jamais exécuté
+PASS avec CRM : outils proposés, exécutés, journalisés ok, chiffres sourcés
+PASS garde : les nombres signalés au premier jet restent lisibles pour l’évaluation
+PASS plafond d’étapes : arrêt, puis une conclusion SANS outil
+PASS journal en panne : le tour s’arrête (JournalIndisponible), le résultat ne repart pas au modèle
+PASS chiffre sans source : régénération avec le rappel, puis phrase retirée et dite
+PASS chiffre sans source corrigé par la régénération : rien n’est retiré
+PASS panne du modèle : l’erreur remonte (la route rend le crédit)
+PASS lecture en panne : journalisée « erreur », le modèle le sait (sans rien supposer)
+PASS texte rendu : ni adresse web, ni identifiant technique, ni Markdown
+PASS la boucle applique ce nettoyage à la réponse finale
+PASS nettoyage : la typographie française reste (espace avant « : »)
+PASS historique : commence par l’artisan, rôles alternés et fusionnés, finit par le message
+
+── C. Le déroulé d’un tour (crédit, plafond)
+PASS plafond atteint : 429, message clair, AUCUN débit
+PASS plafond illisible (migration absente) : 503, aucun débit
+PASS crédit épuisé : 402 « Plus de crédit ce mois-ci », tour rendu, modèle jamais appelé
+PASS tour normal : « consulte » puis « fin », rien rendu
+PASS panne du modèle : crédit ET tour rendus, l’écran le lit
+PASS journal en panne : crédit et tour rendus, message dédié
+PASS abandon du client après 3 appels facturés : rien rendu, aucune panne signalée
+PASS panne après 2 appels facturés : crédit gardé, panne signalée, l’écran ne promet pas de remboursement
+PASS panne avant tout appel abouti : crédit et tour rendus
+
+── C2. Historique signé (B3) et crédit rendu d’un coup
+PASS historique : une réponse signée par le serveur est gardée
+PASS historique : réponse fabriquée (sans signature, ou texte changé) écartée
+PASS historique : signature d’une autre conversation ou d’un autre compte refusée
+PASS historique : une NOUVELLE conversation n’a aucune réponse d’assistant crue
+PASS historique : sans secret serveur, rien n’est signé ni cru (fail-closed)
+PASS historique : forme stricte (rôle inconnu, texte non textuel) et bornes conservées
+PASS historique : « oui » après une proposition FABRIQUÉE → pas de brouillon
+PASS crédit : rendu par la fonction SQL rendre_credit, en une instruction, sans lecture
+PASS crédit : fonction absente (0155 pas encore appliquée) → ancien chemin, solde + 3
+[credits] rendre_credit : canceling statement due to statement timeout
+PASS crédit : autre erreur de la fonction → PAS de repli (pas de double restitution)
+PASS crédit : compte inconnu → « introuvable » ; zéro à rendre → aucun appel
+
+── D. Le code
+PASS garde : le drapeau (ou l’essai) est lu AVANT la session, puis l’essai par compte et l’offre dans UNE décision pure
+PASS acces : capacité `assistant` vérifiée par peut(), message de verrou, pas de passe-droit fondateur
+PASS route : crédit débité par consumeCredit et rendu par rendreCredit
+PASS route : plafond par la fonction SQL, PLAFOND_TOURS
+PASS garde + route : le profil se lit sous la RLS (clientDeSession), pas par la clé de service
+PASS exécuteurs : la clé de service n’écrit que la proposition et le journal, ne lit rien
+PASS exécuteurs : stock, factures et chiffres passent par les gestionnaires de l’interface
+PASS exécuteurs : chaque lecture PostgREST est filtrée sur le compte
+PASS exécuteurs : réponse préparée — on n’écrase jamais une proposition en attente
+PASS page : notFound() sans drapeau ni essai, puis retour au tableau de bord si /api/essais refuse ce compte
+PASS menu : l’entrée n’existe que drapeau levé ou compte en essai (réponse de /api/essais)
+PASS page : aucun bleu ni violet, jetons de la console
+PASS drapeau `assistant` levé (15/10, décision de Benj ; ouvert à Studio depuis le 25/10)
+PASS capacité : Studio, Signature et Business ; ni Essai ni l’ancien Essentiel ; offre minimale Studio
+PASS Tarifs : drapeau levé → la grille vend l’assistant dès Studio (lignes déclarées dans lib/plans.ts, cellules calculées depuis la capacité)
+PASS migration 0150 : en-tête qui dit son état d’application, requêtes de contrôle
+PASS migration : RLS sur les deux tables, lecture seule par l’artisan, aucune politique d’écriture permissive
+PASS migration : fonctions révoquées pour anon et authenticated, garde de session 0138 posée
+PASS lanceur : la suite est déclarée dans tout-verifier
+PASS garde + route : le CRM suit la décision des routes /api/crm/* (decisionAcces, essai du compte) et est passé à la boucle
+PASS route (B2) : identifiant neuf tiré par le serveur ; un identifiant fourni doit exister et être au compte (RLS)
+PASS route (B2) : l’identifiant part en premier dans le flux
+PASS route (B3) : historique lu par lireHistorique (signatures vérifiées), réponse signée dans « fin »
+PASS route : meilleurs clients seulement sur demande (cadrage → exécuteurs)
+PASS page (B2) : plus aucun identifiant tiré par l’écran (ni Math.random, ni randomUUID) ; il vient du serveur
+PASS page (B3) : la signature de chaque réponse est gardée et renvoyée
+PASS page (transparence) : « assistant IA (Claude, Anthropic) » écrit à l’écran
+PASS page (journal) : les noms se relisent sous la RLS à l’affichage (leads, devis), filtrés sur le compte
+PASS page : n’importe pas le module serveur des signatures (node:crypto)
+PASS exécuteurs CRM : 11 lectures (8 directes + 3 par lire()), toutes sous la session, toutes filtrées sur le compte
+PASS exécuteurs CRM (minimisation) : ni adresse, ni e-mail, ni téléphone, ni notes, ni immatriculation lus
+PASS exécuteurs CRM : chaque outil revérifie le CRM du compte
+PASS exécuteurs (journal RGPD) : aucun résumé ne nomme le client
+PASS crédits : rendreCredit passe par restituerCredits (rpc rendre_credit), repli seulement si la fonction manque
+PASS migration 0155 : NON APPLIQUÉE dans l’en-tête, essai à sec et contrôles écrits
+PASS migration 0155 : une instruction (credits + p_n), security definer, search_path vide, service seulement
+
+── E. Les actions : catalogue, schémas, validation, règles pures
+PASS 52 actions (28 + 18 le 21/10 + 6 le 29/10), chacune directe ou à confirmer, rien d’autre
+PASS LES actions à confirmer sont exactement celles qui partent chez un client, émettent, encaissent, suppriment ou changent un lot de prix
+PASS toute action au nom évocateur (envoyer, relancer, supprimer, répondre, valider, facture, payée, augmenter) est à confirmer
+PASS les actions du CRM sont les 22 attendues : directes, sauf les 4 envois (fournisseur, avis, entretien) et l’opposition, à confirmer
+PASS outils proposés : 44 sans CRM (14 de lecture/brouillon + 30 actions), 73 avec
+PASS sans CRM, aucune action CRM ; sans les actions, aucune action
+PASS chaque schéma d’action ferme ses champs et a une description
+PASS le dernier outil porte le point de cache (la liste d’outils n’est facturée en plein qu’une fois)
+PASS aucun outil d’action ne prend d’identifiant de compte ni d’adresse e-mail destinataire
+PASS le journal garde les numéros de pièces, pas les textes libres
+PASS journal : les objets des actions sont gardés, un type inconnu écarté
+PASS creer_devis : un client (ou une conversation), un objet, au moins une ligne
+PASS lignes : désignation ou tarif_id, quantité > 0, 40 au plus, champ inconnu refusé
+PASS lignes : tarif_id UUID exigé ; avec un tarif, le prix du modèle est ÉCARTÉ (il vient des tarifs de l’artisan)
+PASS numéros : DEV- pour un devis, FAC- pour une facture, majuscules, rien d’autre
+PASS creer_facture : devis_numero DEV-, type complete par défaut, acompte_pct seulement pour un acompte (1 à 99)
+PASS relances : ton cordial par défaut, deux tons seulement
+PASS augmenter_tarifs : pourcentage de −50 à 100, obligatoire
+PASS tarifs : TVA 0, 5.5, 10 ou 20 ; prix ≥ 0 ; unité par défaut laissée au serveur
+PASS stock : mouvement fermé, quantité ≥ 0, lieu atelier par défaut
+PASS modifier_* : « rien à modifier » refusé ; dates AAAA-MM-JJ ; fin avant début refusée
+PASS creer_chantier : un titre ou un devis ; generer_taches demande un devis
+PASS note : un chantier OU une conversation ; affecter_equipe : au moins un nom
+PASS champ inconnu, entrée non objet, texte trop long, e-mail invalide refusés
+PASS conversation_id : UUID rendu par un outil de lecture, jamais un nom
+PASS pourcentage : « 5 % » écrit par l’artisan → accepté ; 7 inventé → refusé avec un motif lisible
+PASS prix de ligne SANS tarif : doit être dit par l’artisan ; AVEC un tarif, rien à sourcer
+PASS un prix lu dans les tarifs de l’artisan (résultat d’outil) est une source valable ; 0 et 1 passent
+PASS quantité de stock : « 20 boîtes » écrit par l’artisan → accepté ; 25 inventé → refusé
+PASS acompte et remise du devis : seulement ceux de l’artisan
+PASS message au client : un nombre qui ne vient ni de l’artisan ni de ses données est repéré
+PASS trouverUnique : nom exact ; accents et casse ignorés ; un mot unique
+PASS trouverUnique : ambigu → refus qui liste les candidats, aucun choix à la place de l’artisan
+PASS trouverUnique : introuvable → refus qui liste ce que l’on voit
+PASS trouverUnique : texte vide refusé
+PASS indicesARetirer : position (1 = première) ou désignation exacte ; introuvables signalés
+PASS resoudreLignes : prix et unité du TARIF, prix donné gardé, ligne sans prix à 0 € signalée « à chiffrer », tarif inconnu signalé
+PASS relance de facture : numéro, montant, échéance et signature repris des données ; deux tons distincts ; texte brut sans lien
+PASS relance de facture : aucune menace chiffrée ni mention juridique inventée (pas de pénalités, d’indemnité, de huissier)
+PASS relance de devis : numéro, objet, montant, date d’envoi, validité repris des données
+PASS relance : sans client connu → « Bonjour, » ; déterministe
+PASS e-mail du devis : le texte de la carte est celui de la route d’envoi (une seule écriture, lib/devisMail.ts)
+PASS carte : expire après 24 h, une carte déjà traitée ne se reconfirme pas
+PASS briefing : urgences = demande urgente, impayé de 30 jours et plus, stock épuisé
+PASS briefing : devis sans réponse depuis 7 jours seulement (1 sur 3 : le récent et le sans date écartés)
+PASS briefing : chiffres comptés par le code, total impayé repris de Mes chiffres, sections dans l’ordre
+PASS briefing : les actions possibles nomment l’outil et disent « après confirmation » pour ce qui part chez un client
+PASS briefing CRM : chantiers du jour avec leur équipe, chantier en retard de 7 jours et plus = urgence, à facturer
+PASS briefing : rien à signaler quand tout est vide, et le dit sans CRM
+PASS briefing : les nombres du briefing se retrouvent dans la donnée lue (garde-fou des chiffres)
+
+── E2. Relances groupées (L16) : ordre groupé, carte de lot, refus récents, schéma
+PASS L16a ordreGroupe : les 8 ordres groupés (P3:160 compris) le sont, les 6 ordres sur un seul objet non
+PASS L16b MUTANT (le pluriel et les quantifieurs retirés) : le juge VOIT la brèche — « Relance les devis envoyés il y a plus de 5 jours » n’y est plus un ordre groupé
+PASS L16c refusRecents : la carte d’un objet et chaque retenu d’une carte de LOT écartées comptent ; plus de 7 jours, une carte exécutée, un autre outil non ; date illisible : récente (côté sûr)
+PASS L16d MUTANT (les retenus d’une carte de lot oubliés) : le juge VOIT la brèche — un lot écarté y reviendrait en boucle
+PASS L16e nommeDans : un devis écarté n’est repris dans un lot que si l’artisan écrit son numéro
+PASS L16f carte de lot : un titre (3 retenus, 1 exclu), une ligne par retenu, une par exclu AVEC son motif, le critère ; irréversible
+PASS L16g … le texte EXACT de CHAQUE relance est dans la carte (lot.retenus[].message), la première en entier sous les yeux ; « jamais d’office » écrit
+PASS L16h une carte de lot sans retenu, ou de plus de 20, ne se fabrique pas
+PASS L16i relancer_devis : numero seul, numeros seuls (majuscules, sans doublon) ou envoye_depuis_jours seul ; deux formes, aucune, une facture, 21 numéros, des jours non entiers : refus
+PASS L16i bis le modèle ne peut pas écrire lui-même le lot (identifiants des devis) ni l’origine de la carte : champs inconnus, refus — seul le serveur les pose
+PASS L16j le modèle voit la forme lot (numeros, envoye_depuis_jours) et la consigne « UNE seule fois, jamais une fois par devis » ; numero n’est plus obligatoire
+PASS L16k le nombre de jours est un nombre à SOURCER : « plus de 5 jours » écrit par l’artisan → 5 admis, 7 refusé (jamais deviné)
+
+── F. Confirmer, refuser, annuler (orchestrateur avec un magasin en mémoire)
+PASS proposer ne fait rien : la carte reste en attente, le réalisateur n’est pas appelé
+PASS confirmer : exécute, statut « executee », résultat noté, journal « ok »
+PASS double clic : la seconde confirmation est refusée (« deja_traitee »), rien n’est refait
+PASS quatre confirmations simultanées : UNE seule exécute (réclamation atomique)
+PASS carte expirée : refusée, passée à « expiree », rien n’est exécuté
+PASS une action directe ne se confirme pas (« mode »)
+PASS ISOLATION : le compte B ne confirme, n’écarte ni n’annule la carte du compte A (« introuvable »), qui reste intacte
+PASS réalisateur qui refuse → « echec » avec le motif ; pas de nouvelle tentative muette
+PASS réalisateur qui jette → « echec », jamais « en_cours » pour toujours ; action inconnue → echec
+PASS écarter : carte « refusee », rien n’est fait, et elle ne peut plus être confirmée
+PASS annuler : l’inverse du serveur est joué, statut « annulee », annulation vidée
+PASS annuler deux fois : refusé, l’inverse n’est pas rejoué
+PASS annuler : impossible sans inverse, ni sur une carte en attente
+PASS annulation qui échoue : l’action reste « executee » avec le motif, et peut être retentée
+PASS lot de prix : confirmé (inverse gardé) puis annulé
+PASS journal indisponible au moment de confirmer : l’action reste exécutée et tracée dans la table des actions
+PASS magasin en panne : « indisponible », rien n’est exécuté
+
+── G. La boucle avec des actions (faux modèle)
+PASS sans les outils d’action (table 0157 absente), AUCUN outil d’écriture n’est proposé au modèle ; avec, les 30 actions (sans CRM : 24 + 6 du 29/10)
+PASS avec le CRM : les 52 actions
+PASS outils d’action fermés (table absente) : une action hallucinée → refus journalisé, jamais exécutée
+PASS prix inventé (120) → refusé et journalisé, exécuteur non appelé ; prix de l’artisan (99) → exécuté
+PASS le refus repart au modèle comme erreur d’outil, avec le motif
+PASS message au client : un horaire et un prix inventés → refus ; le même message sans eux → proposé
+PASS une carte d’action est rendue avec le tour (l’écran l’affiche), l’outil est journalisé
+PASS plafond de 12 actions par message : les suivantes sont refusées et journalisées
+PASS action CRM sur un compte sans CRM → refus sans exécution
+PASS action avec un champ inconnu (artisan_id) → entrée refusée, rien exécuté
+PASS chiffre inventé dans la réponse finale → régénération SANS outils (tool_choice none)
+PASS actionDemandee : verbes d’action et constats oui ; questions de lecture non
+PASS « oui » (et toute réponse qui commence par « oui ») → action demandée ; un brouillon exige toujours la proposition relue
+PASS actionAEffet : envoi, relance, facture, suppression → carte à confirmer ; création d’un devis non
+PASS prompt d’action : tarifs de l’artisan, cartes à confirmer, « jamais c’est envoyé », 12 actions, numéros de pièces, mention des actions CRM
+PASS prompt sans la table des actions : il le dit, ne promet aucune action
+PASS étapes : 8 appels au modèle par tour au plus
+PASS les 18 phrases de Benj sont des demandes d’action (avant le 29/10, une dizaine passaient à travers)
+PASS les questions de lecture restent des lectures (elles ne déclenchent pas le mode « fait tout seul »)
+PASS faitToutSeul : demandée par l’artisan, PAS une question, un ordre net, ET aucun texte de tiers lu → exécutée ; texte de tiers lu, question, `question` ou `ordre` absent, ou pas demandée → carte
+PASS les 18 phrases de Benj sont des ORDRES (question === false) : leurs actions directes se font, et une action « à confirmer » part d’office quand c’est un ordre net ; « Quels devis dois-je relancer ? » est une question
+PASS prompt (29/10) : « fait tout seul » expliqué, le résultat de l’outil fait foi, outils nouveaux nommés, tableau = fichier Excel
+PASS prompt d’une lecture : les cartes restent la règle pour ce qui part chez un client
+PASS catalogue du 29/10 : 4 directes (recherche, retenir, export, liste d’achat), 2 à confirmer (facture sans devis, suppression d’article), aucune réservée au CRM
+PASS creer_facture_libre : client (ou conversation) obligatoire, au moins une ligne, TVA 0/5,5/10/20
+PASS ajuster_stock : un chantier seulement pour une SORTIE
+PASS retenir_resultat : numéro entier, quantité seulement vers la liste d’achat, « inventaire » par défaut
+PASS exporter_tableau : quoi fermé ; une période seulement pour devis / factures, dans l’ordre
+PASS rechercher_fournisseurs : une requête obligatoire ; supprimer_article : un article
+PASS anti-fabrication : un prix de facture sans devis, une quantité cherchée ou retenue doivent venir de l’artisan
+PASS état du tour : la lecture de SES données (factures) ne marque rien
+PASS état du tour : un résultat qui porte un texte de client ([MESSAGE_CLIENT]) marque le tour
+PASS état du tour : un outil de la liste des textes de tiers marque le tour, même sans marqueur
+PASS injection : texte de client lu PUIS action dans le même tour → au moment d’agir, le mode « fait tout seul » est déjà coupé (carte)
+PASS L16l boucle : « plus de 5 jours » — le lot à 7 jours (nombre deviné) est refusé et journalisé sans atteindre l’exécuteur ; le lot à 5 jours l’atteint, UNE fois
+
+── H. Qui passe : offre Studio et au-dessus, côté serveur
+PASS drapeau baissé → 404 AVANT la session (même avec une session invalide ou le bon compte)
+PASS session invalide → son statut et son code (401 / 403 suspendu, mfa, code requis)
+PASS compte hors essai (tant que le drapeau est baissé) → 404 : il ne sait pas que l’assistant existe
+PASS offre « gratuit » → 403 « offre », message de verrou Studio
+PASS offre « essentiel » → 403 « offre », message de verrou Studio
+PASS offre « null » → 403 « offre », message de verrou Studio
+PASS offre « undefined » → 403 « offre », message de verrou Studio
+PASS offre « pro » → 403 « offre », message de verrou Studio
+PASS offre « inconnu » → 403 « offre », message de verrou Studio
+PASS Studio, Signature et Business → accès
+PASS les DEUX routes passent par la même garde serveur (pas seulement l’interface)
+
+── I. Le code des actions
+PASS la boucle (le modèle) n’importe ni l’orchestrateur de confirmation, ni les actions du serveur, ni le magasin
+PASS confirmerAction n’est appelée que par la route /api/assistant/actions (le clic de l’artisan) et par le pilote automatique, avec ses seuls réalisateurs
+PASS les réalisateurs ne sont jamais passés à executerTour : seuls les outils (directes / propositions) le sont
+PASS fail-closed : une action à confirmer sans proposition, ou une directe avec proposition, fait échouer la construction
+PASS la clé de service n’est jamais utilisée par les actions (tout passe par les routes de l’interface et la session)
+PASS chaque lecture / écriture sous la session est filtrée sur le compte (artisan_id ou id = ctx.uid) — sauf les messages d’une conversation déjà contrôlée
+PASS envois : un seul chemin d’e-mail (envoyerRelance), plafonné par jour ; les devis et messages passent par les routes
+PASS factures : la création passe par creerFacture (mentions, numérotation, TVA, scellement) ; l’encaissement par PATCH /api/factures/[id]
+PASS relances : pas deux fois en moins de 3 jours (journal des actions, puis registre commun des quatre chemins)
+PASS lot de prix : au plus 300 lignes, écriture conditionnée au prix de la carte, inverse gardé
+PASS plafonds : 200 actions par jour et par compte (consommerLimite) ; débit des clics 120 / 10 min
+PASS route /api/assistant : Pro par défaut ; outils d’action TOUJOURS donnés quand la table est là (plus `&& cadrage.actionDemandee`) ; mode « fait tout seul » branché sur l’état du tour
+PASS route /api/assistant/actions : identifiant UUID, décision fermée, 404 si la carte n’est pas au compte
+PASS page : cartes avec Confirmer / Écarter / Annuler appelant /api/assistant/actions ; trois onglets ; exemples de la demande
+PASS page : le texte exact (message) et l’avant/après sont affichés sur la carte avant le clic
+PASS page : aucun identifiant technique ni lien fabriqué ; pas de bleu ni de violet dans la feuille de style
+PASS purge RGPD et export de données incluent assistant_actions
+PASS migration 0157 : NON APPLIQUÉE dans l’en-tête, requêtes de contrôle, marche arrière écrites
+PASS migration 0157 : RLS activée, lecture seule par l’artisan (aucune politique d’écriture permissive), garde de session 0138 posée
+PASS migration 0157 : statuts et modes fermés ; une carte à confirmer exige une expiration ; cascade avec le compte
+PASS migration 0157 : les types d’objets (table des actions ET contrainte du journal) = TYPES_OBJET du code
+PASS migration 0157 : la contrainte du journal rejouée est bien celle que 0150 a créée (même nom)
+PASS drapeau `assistant` levé et ESSAI vidé (0157 appliquée le 15/10, suite --live verte)
+
+── K. La migration 0157 jouée pour de vrai (Postgres embarqué PGlite, rien ne sort de la machine)
+⏸  PGlite introuvable (PGLITE_DIR=<dossier où « npm install @electric-sql/pglite » a été fait>) : 0157 n’est pas rejouée.
+
+(parties L et M non jouées : --live = comptes de test sur la base réelle, --ia = en plus quelques tours avec le vrai modèle)
+
+323 PASS, 0 FAIL
+(node:339833) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/assistant/outils.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

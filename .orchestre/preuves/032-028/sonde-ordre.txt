@@ -1,0 +1,26 @@
+GROUPE  | Relance les devis envoyés il y a plus de 5 jours
+SEUL    | Relance Dupont et Martin
+SEUL    | Relance le devis de Dupont et celui de Martin
+SEUL    | Relance tout le monde
+SEUL    | Relance tout ce qui est en attente
+SEUL    | Relance DEV-2026-0012 et 0013
+GROUPE  | Relance DEV-2026-0012 puis DEV-2026-0013
+SEUL    | relance dupont, martin, durand
+GROUPE  | Tous les devis en attente : relance
+GROUPE  | relance chacun de mes clients
+GROUPE  | relance l'ensemble des devis
+GROUPE  | relance la totalité des devis en attente
+SEUL    | Relancez les gens qui n'ont pas répondu
+GROUPE  | relance tous mes devis
+SEUL    | Relance le devis DEV-2026-0012
+SEUL    | relance le devis de Dupont
+SEUL    | relance Dupont. Et Martin aussi.
+SEUL    | Relance devis 12 et 13
+GROUPE  | relance les 3 devis sans réponse
+GROUPE  | relance les quatre vieux devis sans réponse
+nommeDans DEV-2026-1000 dans "relance DEV-2026-10001": true
+nommeDans 12 dans "devis de plus de 12 jours": true
+(node:33417) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/assistant/cartes.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

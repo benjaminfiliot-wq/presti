@@ -1,0 +1,1089 @@
+{
+ "_": "Doublure PostgREST de scripts/sauvegarde-qa.mjs — données 100 % fictives (domaine .invalid). Le bloc « attendu » est la vérité indépendante : il est écrit à la main, jamais recalculé par le script testé.",
+ "openapi": {
+  "swagger": "2.0",
+  "info": {
+   "title": "standard public schema",
+   "version": "12.2.3"
+  },
+  "host": "doublure.invalid",
+  "basePath": "/",
+  "schemes": [
+   "http"
+  ],
+  "consumes": [
+   "application/json"
+  ],
+  "produces": [
+   "application/json"
+  ],
+  "paths": {
+   "/": {
+    "get": {
+     "tags": [
+      "Introspection"
+     ],
+     "summary": "OpenAPI description (this document)"
+    }
+   },
+   "/factures_lignes": {
+    "get": {
+     "tags": [
+      "factures_lignes"
+     ]
+    },
+    "post": {
+     "tags": [
+      "factures_lignes"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.factures_lignes"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "factures_lignes"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "factures_lignes"
+     ]
+    }
+   },
+   "/factures": {
+    "get": {
+     "tags": [
+      "factures"
+     ]
+    },
+    "post": {
+     "tags": [
+      "factures"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.factures"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "factures"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "factures"
+     ]
+    }
+   },
+   "/devis_lignes": {
+    "get": {
+     "tags": [
+      "devis_lignes"
+     ]
+    },
+    "post": {
+     "tags": [
+      "devis_lignes"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.devis_lignes"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "devis_lignes"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "devis_lignes"
+     ]
+    }
+   },
+   "/devis": {
+    "get": {
+     "tags": [
+      "devis"
+     ]
+    },
+    "post": {
+     "tags": [
+      "devis"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.devis"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "devis"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "devis"
+     ]
+    }
+   },
+   "/messages": {
+    "get": {
+     "tags": [
+      "messages"
+     ]
+    },
+    "post": {
+     "tags": [
+      "messages"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.messages"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "messages"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "messages"
+     ]
+    }
+   },
+   "/leads": {
+    "get": {
+     "tags": [
+      "leads"
+     ]
+    },
+    "post": {
+     "tags": [
+      "leads"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.leads"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "leads"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "leads"
+     ]
+    }
+   },
+   "/clients": {
+    "get": {
+     "tags": [
+      "clients"
+     ]
+    },
+    "post": {
+     "tags": [
+      "clients"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.clients"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "clients"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "clients"
+     ]
+    }
+   },
+   "/assistant_actions": {
+    "get": {
+     "tags": [
+      "assistant_actions"
+     ]
+    },
+    "post": {
+     "tags": [
+      "assistant_actions"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.assistant_actions"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "assistant_actions"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "assistant_actions"
+     ]
+    }
+   },
+   "/categories": {
+    "get": {
+     "tags": [
+      "categories"
+     ]
+    },
+    "post": {
+     "tags": [
+      "categories"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.categories"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "categories"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "categories"
+     ]
+    }
+   },
+   "/limites": {
+    "get": {
+     "tags": [
+      "limites"
+     ]
+    },
+    "post": {
+     "tags": [
+      "limites"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.limites"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "limites"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "limites"
+     ]
+    }
+   },
+   "/noeuds_a": {
+    "get": {
+     "tags": [
+      "noeuds_a"
+     ]
+    },
+    "post": {
+     "tags": [
+      "noeuds_a"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.noeuds_a"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "noeuds_a"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "noeuds_a"
+     ]
+    }
+   },
+   "/noeuds_b": {
+    "get": {
+     "tags": [
+      "noeuds_b"
+     ]
+    },
+    "post": {
+     "tags": [
+      "noeuds_b"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.noeuds_b"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "noeuds_b"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "noeuds_b"
+     ]
+    }
+   },
+   "/journal_sans_cle": {
+    "get": {
+     "tags": [
+      "journal_sans_cle"
+     ]
+    },
+    "post": {
+     "tags": [
+      "journal_sans_cle"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.journal_sans_cle"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "journal_sans_cle"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "journal_sans_cle"
+     ]
+    }
+   },
+   "/artisans": {
+    "get": {
+     "tags": [
+      "artisans"
+     ]
+    },
+    "post": {
+     "tags": [
+      "artisans"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.artisans"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "artisans"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "artisans"
+     ]
+    }
+   },
+   "/codes_connexion": {
+    "get": {
+     "tags": [
+      "codes_connexion"
+     ]
+    },
+    "post": {
+     "tags": [
+      "codes_connexion"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.codes_connexion"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "codes_connexion"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "codes_connexion"
+     ]
+    }
+   },
+   "/sessions_verifiees": {
+    "get": {
+     "tags": [
+      "sessions_verifiees"
+     ]
+    },
+    "post": {
+     "tags": [
+      "sessions_verifiees"
+     ],
+     "parameters": [
+      {
+       "$ref": "#/parameters/body.sessions_verifiees"
+      }
+     ]
+    },
+    "patch": {
+     "tags": [
+      "sessions_verifiees"
+     ]
+    },
+    "delete": {
+     "tags": [
+      "sessions_verifiees"
+     ]
+    }
+   },
+   "/vue_activite": {
+    "get": {
+     "tags": [
+      "vue_activite"
+     ]
+    }
+   },
+   "/rpc/ops_etat": {
+    "post": {
+     "tags": [
+      "(rpc) ops_etat"
+     ]
+    },
+    "get": {
+     "tags": [
+      "(rpc) ops_etat"
+     ]
+    }
+   }
+  },
+  "definitions": {
+   "factures_lignes": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "facture_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `factures.id`.<fk table='factures' column='id'/>"
+     },
+     "libelle": {
+      "type": "string"
+     }
+    }
+   },
+   "factures": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "devis_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `devis.id`.<fk table='devis' column='id'/>"
+     },
+     "artisan_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `artisans.id`.<fk table='artisans' column='id'/>"
+     },
+     "montant": {
+      "type": "number"
+     }
+    }
+   },
+   "devis_lignes": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "devis_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `devis.id`.<fk table='devis' column='id'/>"
+     },
+     "libelle": {
+      "type": "string"
+     }
+    }
+   },
+   "devis": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "lead_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `leads.id`.<fk table='leads' column='id'/>"
+     },
+     "artisan_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `artisans.id`.<fk table='artisans' column='id'/>"
+     }
+    }
+   },
+   "messages": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "lead_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `leads.id`.<fk table='leads' column='id'/>"
+     },
+     "texte": {
+      "type": "string"
+     }
+    }
+   },
+   "leads": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "artisan_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `artisans.id`.<fk table='artisans' column='id'/>"
+     },
+     "client_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `clients.id`.<fk table='clients' column='id'/>"
+     },
+     "message": {
+      "type": "string"
+     }
+    }
+   },
+   "clients": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "artisan_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `artisans.id`.<fk table='artisans' column='id'/>"
+     },
+     "nom": {
+      "type": "string"
+     }
+    }
+   },
+   "assistant_actions": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "artisan_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `artisans.id`.<fk table='artisans' column='id'/>"
+     },
+     "type": {
+      "type": "string"
+     }
+    }
+   },
+   "categories": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "parent_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `categories.id`.<fk table='categories' column='id'/>"
+     },
+     "libelle": {
+      "type": "string"
+     }
+    }
+   },
+   "limites": {
+    "type": "object",
+    "properties": {
+     "cle": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "fenetre": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "compteur": {
+      "type": "integer"
+     }
+    }
+   },
+   "noeuds_a": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "b_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `noeuds_b.id`.<fk table='noeuds_b' column='id'/>"
+     }
+    }
+   },
+   "noeuds_b": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "a_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Foreign Key to `noeuds_a.id`.<fk table='noeuds_a' column='id'/>"
+     }
+    }
+   },
+   "journal_sans_cle": {
+    "type": "object",
+    "properties": {
+     "quand": {
+      "type": "string"
+     },
+     "quoi": {
+      "type": "string"
+     }
+    }
+   },
+   "artisans": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "nom": {
+      "type": "string"
+     },
+     "email": {
+      "type": "string"
+     }
+    }
+   },
+   "codes_connexion": {
+    "type": "object",
+    "properties": {
+     "user_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "hash_code": {
+      "type": "string"
+     }
+    }
+   },
+   "sessions_verifiees": {
+    "type": "object",
+    "properties": {
+     "session_id": {
+      "type": "string",
+      "description": "Note:\nThis is a Primary Key.<pk/>"
+     },
+     "user_id": {
+      "type": "string"
+     }
+    }
+   },
+   "vue_activite": {
+    "type": "object",
+    "properties": {
+     "artisan_id": {
+      "type": "string"
+     },
+     "nb": {
+      "type": "integer"
+     }
+    }
+   }
+  }
+ },
+ "lignes": {
+  "artisans": [
+   {
+    "id": "art-2",
+    "nom": "Atelier Fictif Deux",
+    "email": "deux@exemple.invalid"
+   },
+   {
+    "id": "art-1",
+    "nom": "Atelier Fictif Un",
+    "email": "un@exemple.invalid"
+   }
+  ],
+  "clients": [
+   {
+    "id": "cli-3",
+    "artisan_id": "art-2",
+    "nom": "Client C"
+   },
+   {
+    "id": "cli-1",
+    "artisan_id": "art-1",
+    "nom": "Client A"
+   },
+   {
+    "id": "cli-2",
+    "artisan_id": "art-1",
+    "nom": "Client B"
+   }
+  ],
+  "leads": [
+   {
+    "id": "lead-5",
+    "artisan_id": "art-1",
+    "client_id": "cli-1",
+    "message": "Demande fictive lead-5"
+   },
+   {
+    "id": "lead-2",
+    "artisan_id": "art-2",
+    "client_id": "cli-2",
+    "message": "Demande fictive lead-2"
+   },
+   {
+    "id": "lead-7",
+    "artisan_id": "art-1",
+    "client_id": "cli-3",
+    "message": "Demande fictive lead-7"
+   },
+   {
+    "id": "lead-1",
+    "artisan_id": "art-2",
+    "client_id": "cli-1",
+    "message": "Demande fictive lead-1"
+   },
+   {
+    "id": "lead-4",
+    "artisan_id": "art-1",
+    "client_id": "cli-2",
+    "message": "Demande fictive lead-4"
+   },
+   {
+    "id": "lead-6",
+    "artisan_id": "art-2",
+    "client_id": "cli-3",
+    "message": "Demande fictive lead-6"
+   },
+   {
+    "id": "lead-3",
+    "artisan_id": "art-1",
+    "client_id": "cli-1",
+    "message": "Demande fictive lead-3"
+   }
+  ],
+  "messages": [
+   {
+    "id": "msg-1",
+    "lead_id": "lead-1",
+    "texte": "Message fictif 1"
+   },
+   {
+    "id": "msg-2",
+    "lead_id": "lead-2",
+    "texte": "Message fictif 2"
+   },
+   {
+    "id": "msg-3",
+    "lead_id": "lead-3",
+    "texte": "Message fictif 3"
+   },
+   {
+    "id": "msg-4",
+    "lead_id": "lead-4",
+    "texte": "Message fictif 4"
+   }
+  ],
+  "devis": [
+   {
+    "id": "dev-1",
+    "lead_id": "lead-1",
+    "artisan_id": "art-1"
+   },
+   {
+    "id": "dev-2",
+    "lead_id": "lead-2",
+    "artisan_id": "art-2"
+   }
+  ],
+  "devis_lignes": [
+   {
+    "id": "dl-1",
+    "devis_id": "dev-1",
+    "libelle": "Ligne fictive 1"
+   },
+   {
+    "id": "dl-2",
+    "devis_id": "dev-1",
+    "libelle": "Ligne fictive 2"
+   },
+   {
+    "id": "dl-3",
+    "devis_id": "dev-1",
+    "libelle": "Ligne fictive 3"
+   },
+   {
+    "id": "dl-4",
+    "devis_id": "dev-2",
+    "libelle": "Ligne fictive 4"
+   },
+   {
+    "id": "dl-5",
+    "devis_id": "dev-2",
+    "libelle": "Ligne fictive 5"
+   }
+  ],
+  "factures": [
+   {
+    "id": "fac-1",
+    "devis_id": "dev-1",
+    "artisan_id": "art-1",
+    "montant": 100
+   }
+  ],
+  "factures_lignes": [
+   {
+    "id": "fl-1",
+    "facture_id": "fac-1",
+    "libelle": "Pose fictive"
+   },
+   {
+    "id": "fl-2",
+    "facture_id": "fac-1",
+    "libelle": "Fourniture fictive"
+   }
+  ],
+  "assistant_actions": [
+   {
+    "id": "aa-1",
+    "artisan_id": "art-1",
+    "type": "relance"
+   }
+  ],
+  "categories": [
+   {
+    "id": "cat-2",
+    "parent_id": "cat-1",
+    "libelle": "Fenêtres"
+   },
+   {
+    "id": "cat-1",
+    "parent_id": null,
+    "libelle": "Menuiserie"
+   },
+   {
+    "id": "cat-3",
+    "parent_id": "cat-1",
+    "libelle": "Portes"
+   }
+  ],
+  "limites": [
+   {
+    "cle": "b",
+    "fenetre": "2",
+    "compteur": 1
+   },
+   {
+    "cle": "a",
+    "fenetre": "2",
+    "compteur": 2
+   },
+   {
+    "cle": "a",
+    "fenetre": "1",
+    "compteur": 3
+   },
+   {
+    "cle": "b",
+    "fenetre": "1",
+    "compteur": 4
+   }
+  ],
+  "noeuds_a": [
+   {
+    "id": "na-1",
+    "b_id": "nb-1"
+   }
+  ],
+  "noeuds_b": [
+   {
+    "id": "nb-1",
+    "a_id": "na-1"
+   }
+  ],
+  "journal_sans_cle": [
+   {
+    "quand": "2026-01-01",
+    "quoi": "essai"
+   },
+   {
+    "quand": "2026-01-02",
+    "quoi": "essai"
+   }
+  ],
+  "codes_connexion": [
+   {
+    "user_id": "art-1",
+    "hash_code": "empreinte-fictive"
+   }
+  ],
+  "sessions_verifiees": [
+   {
+    "session_id": "ses-1",
+    "user_id": "art-1"
+   }
+  ],
+  "vue_activite": [
+   {
+    "artisan_id": "art-1",
+    "nb": 4
+   },
+   {
+    "artisan_id": "art-2",
+    "nb": 3
+   }
+  ]
+ },
+ "comptes": [
+  {
+   "id": "art-1",
+   "email": "un@exemple.invalid",
+   "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+   "id": "art-2",
+   "email": "deux@exemple.invalid",
+   "created_at": "2026-01-02T00:00:00Z"
+  }
+ ],
+ "stockage": {
+  "artisan-media": {
+   "art-1": [
+    {
+     "name": "logo.png",
+     "mimetype": "image/png",
+     "contenu_base64": "iVBORw0KGgo="
+    }
+   ]
+  },
+  "lead-media": {}
+ },
+ "attendu": {
+  "sauvegardees": [
+   "artisans",
+   "assistant_actions",
+   "categories",
+   "clients",
+   "devis",
+   "devis_lignes",
+   "factures",
+   "factures_lignes",
+   "journal_sans_cle",
+   "leads",
+   "limites",
+   "messages",
+   "noeuds_a",
+   "noeuds_b"
+  ],
+  "ecartees": [
+   "codes_connexion",
+   "sessions_verifiees",
+   "vue_activite"
+  ],
+  "cles_etrangeres": [
+   [
+    "factures_lignes",
+    "factures"
+   ],
+   [
+    "factures",
+    "devis"
+   ],
+   [
+    "factures",
+    "artisans"
+   ],
+   [
+    "devis_lignes",
+    "devis"
+   ],
+   [
+    "devis",
+    "leads"
+   ],
+   [
+    "devis",
+    "artisans"
+   ],
+   [
+    "messages",
+    "leads"
+   ],
+   [
+    "leads",
+    "artisans"
+   ],
+   [
+    "leads",
+    "clients"
+   ],
+   [
+    "clients",
+    "artisans"
+   ],
+   [
+    "assistant_actions",
+    "artisans"
+   ]
+  ],
+  "auto_references": [
+   "categories"
+  ],
+  "cycles": [
+   "noeuds_a",
+   "noeuds_b"
+  ],
+  "sans_cle_primaire": [
+   "journal_sans_cle"
+  ]
+ }
+}

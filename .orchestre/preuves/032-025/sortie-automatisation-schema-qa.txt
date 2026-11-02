@@ -1,0 +1,268 @@
+
+══ 1. Les trois migrations, lues hors ligne ══
+
+  ✅ 0185 en-tête « NON APPLIQUÉE, préparée le 02/11, attend le go écrit de Benj »
+  ✅ 0185 retour arrière écrit
+  ✅ 0185 evenements_metier : retour arrière la retire
+  ✅ 0185 evenements_metier : créée
+  ✅ 0185 evenements_metier : aucune colonne organization_id
+  ✅ 0185 evenements_metier : colonnes en français (cree_le, ni created_at ni updated_at)
+  ✅ 0185 evenements_metier : RLS activée
+  ✅ 0185 evenements_metier : dans la boucle des gardes
+  ✅ 0185 evenements_metier : anon retiré
+  ✅ 0185 evenements_metier : écritures retirées à authenticated
+  ✅ 0185 evenements_metier : garde_session
+  ✅ 0185 evenements_metier : garde_suspension_ins
+  ✅ 0185 evenements_metier : garde_suspension_maj
+  ✅ 0185 evenements_metier : garde_suspension_sup
+  ✅ 0185 evenements_metier : seules des politiques de lecture de ses lignes
+  ✅ 0185 evenements_metier : l'artisan lit ses lignes
+  ✅ 0185 evenements_metier : rien n'est accordé à anon ni à authenticated
+  ✅ 0185 detecteurs_reglages : retour arrière la retire
+  ✅ 0185 detecteurs_reglages : créée
+  ✅ 0185 detecteurs_reglages : aucune colonne organization_id
+  ✅ 0185 detecteurs_reglages : colonnes en français (cree_le, ni created_at ni updated_at)
+  ✅ 0185 detecteurs_reglages : RLS activée
+  ✅ 0185 detecteurs_reglages : dans la boucle des gardes
+  ✅ 0185 detecteurs_reglages : anon retiré
+  ✅ 0185 detecteurs_reglages : écritures retirées à authenticated
+  ✅ 0185 detecteurs_reglages : garde_session
+  ✅ 0185 detecteurs_reglages : garde_suspension_ins
+  ✅ 0185 detecteurs_reglages : garde_suspension_maj
+  ✅ 0185 detecteurs_reglages : garde_suspension_sup
+  ✅ 0185 detecteurs_reglages : seules des politiques de lecture de ses lignes
+  ✅ 0185 detecteurs_reglages : l'artisan lit ses lignes
+  ✅ 0185 detecteurs_reglages : rien n'est accordé à anon ni à authenticated
+  ✅ 0185 autonomie_reglages : retour arrière la retire
+  ✅ 0185 autonomie_reglages : créée
+  ✅ 0185 autonomie_reglages : aucune colonne organization_id
+  ✅ 0185 autonomie_reglages : colonnes en français (cree_le, ni created_at ni updated_at)
+  ✅ 0185 autonomie_reglages : RLS activée
+  ✅ 0185 autonomie_reglages : dans la boucle des gardes
+  ✅ 0185 autonomie_reglages : anon retiré
+  ✅ 0185 autonomie_reglages : écritures retirées à authenticated
+  ✅ 0185 autonomie_reglages : garde_session
+  ✅ 0185 autonomie_reglages : garde_suspension_ins
+  ✅ 0185 autonomie_reglages : garde_suspension_maj
+  ✅ 0185 autonomie_reglages : garde_suspension_sup
+  ✅ 0185 autonomie_reglages : seules des politiques de lecture de ses lignes
+  ✅ 0185 autonomie_reglages : l'artisan lit ses lignes
+  ✅ 0185 autonomie_reglages : rien n'est accordé à anon ni à authenticated
+  ✅ 0185 passages_detecteurs : retour arrière la retire
+  ✅ 0185 passages_detecteurs : créée
+  ✅ 0185 passages_detecteurs : aucune colonne organization_id
+  ✅ 0185 passages_detecteurs : colonnes en français (cree_le, ni created_at ni updated_at)
+  ✅ 0185 passages_detecteurs : RLS activée
+  ✅ 0185 passages_detecteurs : dans la boucle des gardes
+  ✅ 0185 passages_detecteurs : anon retiré
+  ✅ 0185 passages_detecteurs : écritures retirées à authenticated
+  ✅ 0185 passages_detecteurs : garde_session
+  ✅ 0185 passages_detecteurs : garde_suspension_ins
+  ✅ 0185 passages_detecteurs : garde_suspension_maj
+  ✅ 0185 passages_detecteurs : garde_suspension_sup
+  ✅ 0185 passages_detecteurs : seules des politiques de lecture de ses lignes
+  ✅ 0185 passages_detecteurs : aucune politique, rien pour authenticated
+  ✅ 0185 passages_detecteurs : rien n'est accordé à anon ni à authenticated
+  ✅ 0185 opportunites : retour arrière la retire
+  ✅ 0185 opportunites : créée
+  ✅ 0185 opportunites : aucune colonne organization_id
+  ✅ 0185 opportunites : colonnes en français (cree_le, ni created_at ni updated_at)
+  ✅ 0185 opportunites : RLS activée
+  ✅ 0185 opportunites : dans la boucle des gardes
+  ✅ 0185 opportunites : anon retiré
+  ✅ 0185 opportunites : écritures retirées à authenticated
+  ✅ 0185 opportunites : garde_session
+  ✅ 0185 opportunites : garde_suspension_ins
+  ✅ 0185 opportunites : garde_suspension_maj
+  ✅ 0185 opportunites : garde_suspension_sup
+  ✅ 0185 opportunites : seules des politiques de lecture de ses lignes
+  ✅ 0185 opportunites : l'artisan lit ses lignes
+  ✅ 0185 opportunites : rien n'est accordé à anon ni à authenticated
+  ✅ 0185 opportunites_decisions : retour arrière la retire
+  ✅ 0185 opportunites_decisions : créée
+  ✅ 0185 opportunites_decisions : aucune colonne organization_id
+  ✅ 0185 opportunites_decisions : colonnes en français (cree_le, ni created_at ni updated_at)
+  ✅ 0185 opportunites_decisions : RLS activée
+  ✅ 0185 opportunites_decisions : dans la boucle des gardes
+  ✅ 0185 opportunites_decisions : anon retiré
+  ✅ 0185 opportunites_decisions : écritures retirées à authenticated
+  ✅ 0185 opportunites_decisions : garde_session
+  ✅ 0185 opportunites_decisions : garde_suspension_ins
+  ✅ 0185 opportunites_decisions : garde_suspension_maj
+  ✅ 0185 opportunites_decisions : garde_suspension_sup
+  ✅ 0185 opportunites_decisions : seules des politiques de lecture de ses lignes
+  ✅ 0185 opportunites_decisions : l'artisan lit ses lignes
+  ✅ 0185 opportunites_decisions : rien n'est accordé à anon ni à authenticated
+  ✅ 0185 relances_exclusions : retour arrière la retire
+  ✅ 0185 relances_exclusions : créée
+  ✅ 0185 relances_exclusions : aucune colonne organization_id
+  ✅ 0185 relances_exclusions : colonnes en français (cree_le, ni created_at ni updated_at)
+  ✅ 0185 relances_exclusions : RLS activée
+  ✅ 0185 relances_exclusions : dans la boucle des gardes
+  ✅ 0185 relances_exclusions : anon retiré
+  ✅ 0185 relances_exclusions : écritures retirées à authenticated
+  ✅ 0185 relances_exclusions : garde_session
+  ✅ 0185 relances_exclusions : garde_suspension_ins
+  ✅ 0185 relances_exclusions : garde_suspension_maj
+  ✅ 0185 relances_exclusions : garde_suspension_sup
+  ✅ 0185 relances_exclusions : seules des politiques de lecture de ses lignes
+  ✅ 0185 relances_exclusions : l'artisan lit ses lignes
+  ✅ 0185 relances_exclusions : rien n'est accordé à anon ni à authenticated
+  ✅ 0185 aucune colonne organization_id dans le fichier
+  ✅ 0185 aucune fonction en security definer
+  ✅ 0185 chaque fonction a un search_path vide
+  ✅ 0185 rien pour n8n_lecture (0189 reste inutilisé par n8n, plan §0.1)
+  ✅ 0185 aucun grant à anon
+  ✅ 0186 en-tête « NON APPLIQUÉE, préparée le 02/11, attend le go écrit de Benj »
+  ✅ 0186 retour arrière écrit
+  ✅ 0186 sms_envois : retour arrière la retire
+  ✅ 0186 sms_envois : créée
+  ✅ 0186 sms_envois : aucune colonne organization_id
+  ✅ 0186 sms_envois : colonnes en français (cree_le, ni created_at ni updated_at)
+  ✅ 0186 sms_envois : RLS activée
+  ✅ 0186 sms_envois : dans la boucle des gardes
+  ✅ 0186 sms_envois : anon retiré
+  ✅ 0186 sms_envois : écritures retirées à authenticated
+  ✅ 0186 sms_envois : garde_session
+  ✅ 0186 sms_envois : garde_suspension_ins
+  ✅ 0186 sms_envois : garde_suspension_maj
+  ✅ 0186 sms_envois : garde_suspension_sup
+  ✅ 0186 sms_envois : seules des politiques de lecture de ses lignes
+  ✅ 0186 sms_envois : l'artisan lit ses lignes
+  ✅ 0186 sms_envois : rien n'est accordé à anon ni à authenticated
+  ✅ 0186 sms_oppositions : retour arrière la retire
+  ✅ 0186 sms_oppositions : créée
+  ✅ 0186 sms_oppositions : aucune colonne organization_id
+  ✅ 0186 sms_oppositions : colonnes en français (cree_le, ni created_at ni updated_at)
+  ✅ 0186 sms_oppositions : RLS activée
+  ✅ 0186 sms_oppositions : dans la boucle des gardes
+  ✅ 0186 sms_oppositions : anon retiré
+  ✅ 0186 sms_oppositions : écritures retirées à authenticated
+  ✅ 0186 sms_oppositions : garde_session
+  ✅ 0186 sms_oppositions : garde_suspension_ins
+  ✅ 0186 sms_oppositions : garde_suspension_maj
+  ✅ 0186 sms_oppositions : garde_suspension_sup
+  ✅ 0186 sms_oppositions : seules des politiques de lecture de ses lignes
+  ✅ 0186 sms_oppositions : l'artisan lit ses lignes
+  ✅ 0186 sms_oppositions : rien n'est accordé à anon ni à authenticated
+  ✅ 0186 sms_expediteurs : retour arrière la retire
+  ✅ 0186 sms_expediteurs : créée
+  ✅ 0186 sms_expediteurs : aucune colonne organization_id
+  ✅ 0186 sms_expediteurs : colonnes en français (cree_le, ni created_at ni updated_at)
+  ✅ 0186 sms_expediteurs : RLS activée
+  ✅ 0186 sms_expediteurs : dans la boucle des gardes
+  ✅ 0186 sms_expediteurs : anon retiré
+  ✅ 0186 sms_expediteurs : écritures retirées à authenticated
+  ✅ 0186 sms_expediteurs : garde_session
+  ✅ 0186 sms_expediteurs : garde_suspension_ins
+  ✅ 0186 sms_expediteurs : garde_suspension_maj
+  ✅ 0186 sms_expediteurs : garde_suspension_sup
+  ✅ 0186 sms_expediteurs : seules des politiques de lecture de ses lignes
+  ✅ 0186 sms_expediteurs : l'artisan lit ses lignes
+  ✅ 0186 sms_expediteurs : rien n'est accordé à anon ni à authenticated
+  ✅ 0186 aucune colonne organization_id dans le fichier
+  ✅ 0186 aucune fonction en security definer
+  ✅ 0186 chaque fonction a un search_path vide
+  ✅ 0186 rien pour n8n_lecture (0189 reste inutilisé par n8n, plan §0.1)
+  ✅ 0186 aucun grant à anon
+  ✅ 0187 en-tête « NON APPLIQUÉE, préparée le 02/11, attend le go écrit de Benj »
+  ✅ 0187 retour arrière écrit
+  ✅ 0187 aucune colonne organization_id dans le fichier
+  ✅ 0187 aucune fonction en security definer
+  ✅ 0187 chaque fonction a un search_path vide
+  ✅ 0187 rien pour n8n_lecture (0189 reste inutilisé par n8n, plan §0.1)
+  ✅ 0187 aucun grant à anon
+  ✅ 0185 evenements_metier : unique par (artisan_id, cle)
+  ✅ 0185 evenements_metier : faits sans texte libre
+  ✅ 0185 opportunites : faits sans texte libre
+  ✅ 0185 faits_sans_texte : une chaîne n’est qu’un code, un uuid ou une date
+  ✅ 0185 opportunites : montant_centimes en entier
+  ✅ 0185 opportunites : index unique partiel des ouvertes sur (artisan_id, cle)
+  ✅ 0185 opportunites : l’index exclut exactement les statuts fermés
+  ✅ 0185 opportunites : une opportunité ne naît que detectee
+  ✅ 0185 opportunites : la date de création est imposée à la naissance
+  ✅ 0185 opportunites : on ne part que validé, programmé ou en rejeu d’un échec
+  ✅ 0185 opportunites : aucun statut fermé ne se rouvre
+  ✅ 0185 opportunites : programmee exige le niveau 3 et sa ligne de pilote en attente
+  ✅ 0185 opportunites : aucun départ sans carte confirmée ni ligne réclamée (statut réel lu)
+  ✅ 0185 opportunites : le déclencheur du cycle est posé
+  ✅ 0185 multi-locataire : l’objet visé est du même artisan
+  ✅ 0185 opportunites_decisions : journal non réécrit
+  ✅ 0185 passages_detecteurs : unique par cle
+  ✅ 0185 relances_exclusions : une exclusion en cours par client
+  ✅ 0185 relances_exclusions : une exclusion en cours par conversation
+  ✅ 0185 relances_exclusions : index sur artisan_id (cascade de suppression du compte)
+  ✅ 0185 relances_impayes_arrets.motif : colonne nullable et liste fermée
+  ✅ 0186 sms_envois : unique par (artisan_id, cle)
+  ✅ 0186 sms_envois : le texte passe sms_texte_conforme
+  ✅ 0186 sms_texte_conforme : STOP obligatoire, mot entier
+  ✅ 0186 sms_texte_conforme : ni lien, ni montant, ni menace, ni Presti
+  ✅ 0186 sms_texte_conforme : GSM-7 pur (alphabet de base seul)
+  ✅ 0186 sms_envois : les segments sont calculés, pas déclarés
+  ✅ 0186 sms_envois : l’interrupteur sms_arret est lu en base
+  ✅ 0186 sms_envois : la date de création est imposée (plafonds non contournables)
+  ✅ 0186 clients.tel_source : le navigateur ne l’écrit pas
+  ✅ 0186 sms_oppositions : une opposition ne se modifie pas
+  ✅ 0186 sms_expediteurs : un nom changé redevient à valider
+  ✅ 0186 sms_envois : à blanc par défaut
+  ✅ 0186 sms_envois : coût en entier
+  ✅ 0186 sms_envois : plafonds 10 par artisan et 100 par jour
+  ✅ 0186 sms_envois : un envoi incertain n’est jamais renvoyé
+  ✅ 0186 sms_expediteurs : jamais « Presti »
+  ✅ 0186 sms_oppositions : unique par (artisan_id, numero_empreinte), empreinte seule
+  ✅ 0186 aucun numéro ni nom de client dans sms_envois
+  ✅ 0186 clients.tel_source et tel_source_le
+  ✅ 0186 sms_arret semé ACTIF (SMS arrêtés)
+  ✅ 0186 la contrainte des interrupteurs connaît sms_arret
+  ✅ 0187 factures.envoyee_le ajoutée, nullable
+  ✅ 0187 seule une facture scellée porte une date d’envoi
+  ✅ 0187 ne touche ni la RLS ni les droits des factures
+
+══ 2. Les jumeaux « à coller » portent exactement le SQL de leur migration ══
+
+  ✅ _A_COLLER_sql_editor_0185_NU.sql existe
+  ✅ _A_COLLER_sql_editor_0185_NU.sql : même SQL que 0185_automatisation.sql
+  ✅ _A_COLLER_sql_editor_0185_NU.sql : porte un contrôle après collage
+  ✅ _A_COLLER_sql_editor_0186_NU.sql existe
+  ✅ _A_COLLER_sql_editor_0186_NU.sql : même SQL que 0186_sms_clients.sql
+  ✅ _A_COLLER_sql_editor_0186_NU.sql : porte un contrôle après collage
+  ✅ _A_COLLER_sql_editor_0187_NU.sql existe
+  ✅ _A_COLLER_sql_editor_0187_NU.sql : même SQL que 0187_factures_envoyee_le.sql
+  ✅ _A_COLLER_sql_editor_0187_NU.sql : porte un contrôle après collage
+
+══ 3. Les mutants rougissent (une suite qui ne sait pas rougir ne prouve rien) ══
+
+  ✅ mutant « RLS retirée sur opportunites » rougit « 0185 opportunites : RLS activée »
+  ✅ mutant « RLS retirée sur sms_envois » rougit « 0186 sms_envois : RLS activée »
+  ✅ mutant « opportunites sortie de la boucle des gardes » rougit « 0185 opportunites : garde_session »
+  ✅ mutant « garde de suspension en mise à jour retirée » rougit « 0186 sms_envois : garde_suspension_maj »
+  ✅ mutant « garde de session affaiblie (permissive) » rougit « 0185 evenements_metier : garde_session »
+  ✅ mutant « anon non retiré » rougit « 0186 sms_oppositions : anon retiré »
+  ✅ mutant « écritures laissées à authenticated » rougit « 0185 relances_exclusions : écritures retirées à authenticated »
+  ✅ mutant « politique d’écriture ouverte au navigateur » rougit « 0186 sms_envois : seules des politiques de lecture de ses lignes »
+  ✅ mutant « lecture ouverte à tous » rougit « 0185 opportunites : seules des politiques de lecture de ses lignes »
+  ✅ mutant « index unique des opportunités ouvertes retiré » rougit « 0185 opportunites : index unique partiel des ouvertes sur (artisan_id, cle) »
+  ✅ mutant « index unique élargi : a_valider compté comme fermé » rougit « 0185 opportunites : l’index exclut exactement les statuts fermés »
+  ✅ mutant « clé unique des événements retirée » rougit « 0185 evenements_metier : unique par (artisan_id, cle) »
+  ✅ mutant « clé unique des SMS retirée » rougit « 0186 sms_envois : unique par (artisan_id, cle) »
+  ✅ mutant « colonne organization_id ajoutée » rougit « 0185 evenements_metier : aucune colonne organization_id »
+  ✅ mutant « montant en numeric » rougit « 0185 opportunites : montant_centimes en entier »
+  ✅ mutant « faits en texte libre » rougit « 0185 evenements_metier : faits sans texte libre »
+  ✅ mutant « départ direct depuis a_valider » rougit « 0185 opportunites : on ne part que validé, programmé ou en rejeu d’un échec »
+  ✅ mutant « une opportunité naît a_valider » rougit « 0185 opportunites : une opportunité ne naît que detectee »
+  ✅ mutant « programmee sans niveau 3 » rougit « 0185 opportunites : programmee exige le niveau 3 et sa ligne de pilote en attente »
+  ✅ mutant « STOP retiré » rougit « 0186 sms_texte_conforme : STOP obligatoire, mot entier »
+  ✅ mutant « GSM-7 non exigé » rougit « 0186 sms_texte_conforme : GSM-7 pur (alphabet de base seul) »
+  ✅ mutant « segments déclarés par l’appelant » rougit « 0186 sms_envois : les segments sont calculés, pas déclarés »
+  ✅ mutant « interrupteur sms_arret non lu » rougit « 0186 sms_envois : l’interrupteur sms_arret est lu en base »
+  ✅ mutant « tel_source écrit par le navigateur » rougit « 0186 clients.tel_source : le navigateur ne l’écrit pas »
+  ✅ mutant « un envoi incertain renvoyé » rougit « 0186 sms_envois : un envoi incertain n’est jamais renvoyé »
+  ✅ mutant « fonction en security definer » rougit « 0185 aucune fonction en security definer »
+  ✅ mutant « en-tête NON APPLIQUÉE retiré » rougit « 0187 en-tête « NON APPLIQUÉE, préparée le 02/11, attend le go écrit de Benj » »
+  ✅ mutant « retour arrière d’une table oublié » rougit « 0186 sms_envois : retour arrière la retire »
+  ✅ mutant « droit accordé à n8n_lecture » rougit « 0185 rien pour n8n_lecture (0189 reste inutilisé par n8n, plan §0.1) »
+
+⏸  Partie PGlite non jouée : PGLITE_DIR n’est pas posé (la partie statique et les mutants ci-dessus font le verdict).
+
+✅ 254 réussis, 0 échoués
+

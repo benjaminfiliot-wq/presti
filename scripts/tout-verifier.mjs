@@ -194,6 +194,15 @@ const SUITES = [
   { nom: 'Sécurité de l’assistant et du pilote (§3.2) — gestes jamais d’office, question ≠ ordre, prix sourcés en « tout auto », escalade au départ (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/securite-assistant-0211-qa.mjs'], cout: 'gratuit' },
   { nom: 'Registre commun des relances (S4) — assistant, pilote, CRM, impayés, conversation : jamais deux relances en 3 jours, lecture en erreur = refus (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/relances-registre-qa.mjs'], cout: 'gratuit' },
   { nom: 'Détecteurs n8n (L3, 032-003, juge réécrit par 032-012, audité par 032-016) — gabarit HTTP exact, plafonds par offre par propriété, empreintes des nœuds Code, bac à sable enfant (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/detecteurs-n8n-qa.mjs'], cout: 'gratuit' },
+  // 02/11 au soir (chantier 4, n8n-first) : les juges des workflows n8n, sur leurs exports, hors ligne ; chacun prouve qu'il rougit (mutants).
+  { nom: 'Garde commune des workflows n8n (L12, 032-019) — inactif, aucun secret, branche d’erreur, colonnes permises (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/n8n-specs-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Suivi des artisans dans n8n (L17, 032-014) — aucun message sans événement réel, une fois par étape, écart de 5 jours (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/suivi-artisan-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Briefing du matin dans n8n (L15, 032-013) — mêmes priorités que composerBriefing, jour vide sans envoi (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/briefing-n8n-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Sauvegarde planifiée et sa garde dans n8n (L8, 032-023) — inactifs, 3 h 40 et 4 h Europe/Paris, commande exacte, alerte en échec seulement (mutants)', cmd: 'node', args: ['scripts/sauvegarde-n8n-qa.mjs'], cout: 'gratuit' },
+  // 02/11 au soir (chantier 4, L7 et L6a) : les SMS à blanc (rien ne sort, STOP obligatoire, plages, plafonds) et les migrations
+  // 0185 à 0187 préparées mais NON appliquées (RLS, gardes, anon retiré, unicités), lues hors ligne.
+  { nom: 'SMS à blanc (L7, 032-024) — rien ne sort, STOP obligatoire, plages et jours fériés, plafonds, tarif inconnu = pas de réel (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/sms-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Schéma de l’automatisation 0185 à 0187, non appliqué (L6a, 032-025) — RLS, gardes de session, anon retiré, unicités (mutants)', cmd: 'node', args: ['scripts/automatisation-schema-qa.mjs'], cout: 'gratuit' },
   { nom: 'Garde des sessions lancées par Orca (défaut E de 031-012) — ni commit, ni push, ni déploiement, ni migration, ni build partagé ; la session principale jamais bloquée (mutant)', cmd: 'node', args: ['scripts/garde-agents-orca-qa.mjs'], cout: 'gratuit' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },
@@ -207,6 +216,7 @@ const SUITES = [
  *  dans cet angle mort. Une suite qui n'est pas ici et pas dans SUITES est un oubli, et l'inventaire
  *  a le droit de le dire. */
 export const HORS_LANCEUR = {
+  'sauvegarde-qa.mjs': 'sauvegarde de toutes les tables (L9, 032-020) : verte sur Oracle (Linux, fichiers identiques au PC, preuve .orchestre/preuves/032-020/verifier-oracle.log), mais sous Windows un seul contrôle rougit — le processus fils plante à la sortie après --verifier --vivant (« Assertion failed: !(handle->flags & UV_HANDLE_CLOSING) », Node 24.16) ; à jouer sur Oracle, où la sauvegarde tournera (presti-sauvegarde, L8)',
   'crm-stock-e2e.mjs': 'stock de l’atelier = inventaire, de bout en bout : exige une base de TEST dédiée (CRM_E2E_*) et un serveur branché dessus — refuse la production',
   'crm-carte-e2e.mjs': 'carte de l’atelier (validation, retrait de la carte, validation automatique, type de bâtiment), de bout en bout : exige une base de TEST dédiée (CRM_E2E_*, migration 0172) et un serveur branché dessus — refuse la production',
   'fact-e2e.mjs': 'exige un serveur local (BASE=localhost:3100 en dur) — l’audit tourne contre la production',

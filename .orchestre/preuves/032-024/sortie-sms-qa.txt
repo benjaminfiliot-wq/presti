@@ -1,0 +1,253 @@
+SMS-QA — adaptateur SMS à blanc (032-024)
+
+— 1. drapeau baissé = rien du tout
+PASS 1a drapeau baissé : refus porte 1
+PASS 1b aucune lecture, aucun appel fournisseur
+PASS 1c même en réel : rien
+PASS 1d sans aucune dépendance : le vrai drapeau est baissé
+PASS 1e lib/flags.ts : smsClients est false
+
+— 2. à blanc : simulé, estimation calculée par le code, rien ne sort
+PASS 2a état simulé
+PASS 2b un segment, GSM-7
+PASS 2c tarif null → coût « inconnu », jamais 0
+PASS 2d expéditeur validé et numéro E.164
+PASS 2e le fournisseur n'est pas appelé, `fetch` jamais touché
+PASS 2f à blanc, rien n'est écrit
+PASS 2g tarif connu (valeur de test) → coût = segments × prix, calculé par le code
+
+— 3. type hors liste fermée
+PASS 3a la liste est exactement rappel_rdv, devis_pret, rappel_paiement
+PASS 3b « promo » refusé
+PASS 3b « prospection » refusé
+PASS 3b « relance_commerciale » refusé
+PASS 3b «  » refusé
+PASS 3b « undefined » refusé
+PASS 3b « 42 » refusé
+PASS 3c « rappel_rdv » passe à blanc
+PASS 3c « devis_pret » passe à blanc
+PASS 3c « rappel_paiement » passe à blanc
+
+— 4. pause générale, interrupteur sms_arret, doute
+PASS 4a pause active
+PASS 4b lecture de la pause qui lève
+PASS 4c sms_arret posé
+PASS 4d sms_arret illisible
+PASS 4e sms_arret absent = doute
+PASS 4f sms_arret qui rend autre chose que false = arrêt
+
+— 5. offre (peut(plan, 'assistant')) et geste de l'artisan
+PASS 5a plan gratuit : refusé
+PASS 5b plan inconnu : refusé
+PASS 5c sans geste de l'artisan : refusé même en Signature
+PASS 5d Studio avec geste : passe
+
+— 6. mobile de métropole, en E.164
+PASS 6a accepté : 07 35 46 00 01
+PASS 6a accepté : 0735460001
+PASS 6a accepté : +33 7 35 46 00 01
+PASS 6a accepté : 0033 7 35 46 00 01
+PASS 6a accepté : +33 (0)7 35 46 00 01
+PASS 6a accepté : 07.35.46.00.01
+PASS 6a accepté : 06 12 34 56 78
+PASS 6b refusé : 01 23 45 67 89
+PASS 6b refusé : 04 91 00 00 00
+PASS 6b refusé : 09 12 34 56 78
+PASS 6b refusé : 08 05 12 34 56
+PASS 6b refusé : 0700 00 00 00
+PASS 6b refusé : 06 90 12 34 56
+PASS 6b refusé : 06 94 12 34 56
+PASS 6b refusé : 06 39 12 34 56
+PASS 6b refusé : +44 7911 123456
+PASS 6b refusé : +1 202 555 0100
+PASS 6b refusé : 0735460
+PASS 6b refusé : 
+PASS 6b refusé : abc
+PASS 6b refusé : null
+PASS 6b refusé : undefined
+PASS 6c un fixe est refusé à la porte 3
+
+— 7. numéro donné pour ce chantier (tel_source)
+PASS 7a « import_csv » refusé
+PASS 7a « achete » refusé
+PASS 7a «  » refusé
+PASS 7a « null » refusé
+PASS 7a « undefined » refusé
+PASS 7b « donne_pour_chantier » passe
+
+— 8. expéditeur = le nom de l'artisan, jamais « Presti »
+PASS 8a « Presti » refusé
+PASS 8a « Presti Menuiserie » refusé
+PASS 8a « PRESTI » refusé
+PASS 8a « P r e s t i » refusé
+PASS 8a « Ma Presti Bois » refusé
+PASS 8a « prestí » refusé
+PASS 8b nom vide
+PASS 8c trop court
+PASS 8d que des chiffres
+PASS 8e accents retirés, 11 caractères au plus, alphanumérique
+PASS 8f l'expéditeur rendu est celui de l'artisan
+
+— 9. GSM-7 pur et segments
+PASS 9a le texte type est en GSM-7, 1 segment
+PASS 9b « ç » minuscule fait basculer en UCS-2
+PASS 9c « ê », « ô », « œ », emoji : UCS-2
+PASS 9d « é è ù à ì ò Ç » sont dans la table
+PASS 9e 160 septets = 1 segment, 161 = 2
+PASS 9f 306 = 2 segments, 307 = 3 (chaînés à 153)
+PASS 9g UCS-2 : 70 = 1 segment, 71 = 2
+PASS 9h l'extension compte double (« { » = 2 septets) et n'est pas « pur »
+PASS 9i versGsm7 ramène « français ê œ » à l'alphabet
+PASS 9j un texte en « ç » est refusé à la porte 5
+PASS 9k plus d'un segment : refusé
+
+— 10. pas de lien — et le lien `sms:` de l'étape 0
+PASS 10a refusé : Voir https://exemple.test/x STOP
+PASS 10a refusé : Voir www.exemple.test STOP
+PASS 10a refusé : Voir exemple.fr STOP
+PASS 10a refusé : Voir bit.ly/abc STOP
+PASS 10a refusé : Voir ma-page.com STOP
+PASS 10b lien sms: RFC 5724 : sms:+E164?body=…
+PASS 10c le lien ne laisse passer ni espace ni saut de ligne bruts
+PASS 10d numéro non mobile : pas de lien
+PASS 10e sans STOP : pas de lien
+PASS 10f avec un lien dans le texte : pas de lien sms:
+
+— 11. ni montant ni menace
+PASS 11a montant refusé : Votre facture de 120 euros est due. STOP
+PASS 11a montant refusé : Reste 120€ à payer. STOP
+PASS 11a montant refusé : Total 45 EUR. STOP
+PASS 11a montant refusé : Merci de régler. € STOP
+PASS 11b menace refusée : Sans règlement, un huissier sera saisi. STOP
+PASS 11b menace refusée : Mise en demeure de payer. STOP
+PASS 11b menace refusée : Dernière chance de payer. STOP
+PASS 11b menace refusée : Poursuites engagées. STOP
+PASS 11c un rappel courtois, sans montant, passe
+
+— 12. plage : lundi-samedi, 8 h-20 h Paris, hors fériés
+PASS 12a mardi 10 h
+PASS 12b samedi 8 h 00 : ouvert
+PASS 12c samedi 7 h 59 : fermé
+PASS 12d samedi 19 h 59 : ouvert, 20 h 00 : fermé
+PASS 12e dimanche : fermé
+PASS 12f 11 novembre (mercredi) : férié
+PASS 12g 14 juillet 2026, Noël, 1er mai, 15 août (samedi) : fériés
+PASS 12h lundi de Pâques 2026 (6 avr.), Ascension (14 mai), lundi de Pentecôte (25 mai)
+PASS 12i Pâques calculé : 2026 → 5 avril, 2027 → 28 mars, 2028 → 16 avril
+PASS 12j heure d'été : 06 h 30 UTC en juillet = 8 h 30 à Paris → ouvert
+PASS 12k heure d'hiver : 06 h 30 UTC en janvier = 7 h 30 à Paris → fermé
+PASS 12l minuit passé à Paris (23 h 30 UTC) : fermé, pas de « 24 h »
+PASS 12m date invalide : fermé
+
+— 13. idempotence, plafonds, disjoncteur, « incertain » jamais renvoyé
+PASS 13a premier envoi réel (factice) : envoyé
+PASS 13b même clé : refusé, un seul appel fournisseur
+PASS 13c le message part avec le nom de l'artisan et sa clé
+PASS 13d incertain : état incertain rendu
+PASS 13e incertain : jamais renvoyé (même avec un fournisseur sain)
+PASS 13d leve : état incertain rendu
+PASS 13e leve : jamais renvoyé (même avec un fournisseur sain)
+PASS 13f une clé « en_cours » (crash après réservation) n'est pas renvoyée
+PASS 13g refus net du fournisseur : refusé, tracé
+PASS 13h 10 SMS par artisan et par jour, le 11e est refusé
+PASS 13i un autre artisan n'est pas bloqué par le premier
+PASS 13j 100 SMS en tout par jour
+PASS 13k 8 € HT par jour au plus (valeurs de test)
+PASS 13l compteurs illisibles : fail-closed
+PASS 13m compteur absurde (NaN) : fail-closed
+PASS 13n idempotence illisible : fail-closed
+PASS 13o réservation impossible : rien ne part
+PASS 13p disjoncteur ouvert : refusé
+PASS 13q disjoncteur illisible : fail-closed
+PASS 13r disjoncteur absent : fail-closed
+PASS 13t deux demandes simultanées, même clé : un seul envoi
+(node:3920331) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/sms/envoyer.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS 13s délai dépassé : incertain, clé gardée
+
+— 14. un SMS sans STOP est refusé
+PASS 14a refusé : « Bonjour, rappel de votre rendez-vous demain à 14h. »
+PASS 14a refusé : « Rappel de rendez-vous. STOPPE ou pas »
+PASS 14a refusé : « Rappel. Arrêtez les SMS »
+PASS 14a refusé : «  »
+PASS 14a refusé : «     »
+PASS 14b « Stop » et « stop » comptent, « STOPPE » non
+PASS 14c le refus est à la porte 5, avant toute écriture
+PASS 14d en réel aussi : le fournisseur n'est pas appelé
+
+— 15. tarif null = pas d'envoi réel
+PASS 15a SMS_COUT_APPROUVE vaut null
+PASS 15b tous les tarifs du dépôt sont null (aucun prix inventé)
+PASS 15c estimerCout : tarif null → inconnu
+PASS 15d réel avec les VRAIS défauts (coût non approuvé) : refusé, rien ne part
+PASS 15e coût approuvé mais tarif null : refusé
+PASS 15f tarif sourcé mais coût non approuvé : refusé
+PASS 15g tarif supérieur au coût approuvé : refusé
+PASS 15h coût approuvé NaN / négatif / chaîne : refusé
+PASS 15i réel sans fournisseur : refusé
+
+— 16. hors plage = refusé
+PASS 16a 2026-11-08T09:00:00Z → dimanche
+PASS 16a 2026-11-11T09:00:00Z → ferie
+PASS 16a 2026-11-03T06:59:00Z → hors_horaire
+PASS 16a 2026-11-03T19:00:00Z → hors_horaire
+PASS 16a 2026-04-06T08:00:00Z → ferie
+
+— 17. opposition = refusé
+PASS 17a numéro opposé : refusé à la porte 3
+PASS 17b quelle que soit la façon de l'écrire
+PASS 17c en réel aussi : rien ne part
+PASS 17d opposition illisible : fail-closed
+PASS 17e sans magasin : fail-closed
+PASS 17f réponse qui n'est pas exactement false : refusé
+PASS 17g un autre numéro n'est pas touché
+
+— 18. le code : Sweego jamais appelé, aucun réseau, aucun secret
+PASS 18a sweego : forme non vérifiée, donc fermé
+PASS 18b sweego : la clé n'est jamais écrite en dur, le fetch est injecté
+PASS 18c aucun autre fichier n'importe Sweego
+PASS 18d aucun autre fichier n'appelle le réseau
+PASS 18e aucun secret en clair
+PASS 18f aucun numéro réel : seule la plage de fiction 07 35 46 apparaît dans les sources
+
+Suite réelle : 172 verts, 0 rouges
+
+— Mutants (une copie de lib/sms/ par mutation ; il faut au moins un rouge)
+PASS mutant « STOP retiré » tué par : 10e sans STOP : pas de lien | 14a refusé : « Bonjour, rappel de votre rendez-vous demain à 14h. » | 14a refusé : « Rappel de rendez-vous. STOPPE ou pas »
+PASS mutant « plage ouverte (toute heure) » tué par : 12c samedi 7 h 59 : fermé | 12d samedi 19 h 59 : ouvert, 20 h 00 : fermé | 12k heure d'hiver : 06 h 30 UTC en janvier = 7 h 30 à Paris → fermé
+PASS mutant « dimanche permis » tué par : 12e dimanche : fermé | 16a 2026-11-08T09:00:00Z → dimanche
+PASS mutant « fériés ignorés » tué par : 12f 11 novembre (mercredi) : férié | 12g 14 juillet 2026, Noël, 1er mai, 15 août (samedi) : fériés | 12h lundi de Pâques 2026 (6 avr.), Ascension (14 mai), lundi de Pentecôte (25 mai)
+PASS mutant « lundi de Pâques oublié » tué par : 12h lundi de Pâques 2026 (6 avr.), Ascension (14 mai), lundi de Pentecôte (25 mai) | 16a 2026-04-06T08:00:00Z → ferie
+PASS mutant « heure de Paris remplacée par UTC+1 en dur » tué par : 12j heure d'été : 06 h 30 UTC en juillet = 8 h 30 à Paris → ouvert
+PASS mutant « plafond par artisan ignoré » tué par : 13h 10 SMS par artisan et par jour, le 11e est refusé
+PASS mutant « plafond total ignoré » tué par : 13j 100 SMS en tout par jour
+PASS mutant « plafond ouvert quand le compteur est illisible » tué par : 13l compteurs illisibles : fail-closed
+PASS mutant « expéditeur « Presti » accepté » tué par : 8a « Presti » refusé | 8a « Presti Menuiserie » refusé | 8a « PRESTI » refusé
+PASS mutant « tarif null n'arrête plus le réel » tué par : 15d réel avec les VRAIS défauts (coût non approuvé) : refusé, rien ne part | 15e coût approuvé mais tarif null : refusé | 15f tarif sourcé mais coût non approuvé : refusé
+PASS mutant « opposition ignorée » tué par : 17a numéro opposé : refusé à la porte 3 | 17b quelle que soit la façon de l'écrire | 17c en réel aussi : rien ne part
+PASS mutant « envoi « incertain » renvoyé » tué par : 13e incertain : jamais renvoyé (même avec un fournisseur sain) | 13e leve : jamais renvoyé (même avec un fournisseur sain) | 13f une clé « en_cours » (crash après réservation) n'est pas renvoyée
+PASS mutant « réservation atomique ignorée » tué par : 13t deux demandes simultanées, même clé : un seul envoi
+PASS mutant « drapeau ignoré » tué par : 1a drapeau baissé : refus porte 1 | 1b aucune lecture, aucun appel fournisseur | 1d sans aucune dépendance : le vrai drapeau est baissé
+PASS mutant « à blanc qui sort » tué par : 2a état simulé | 2b un segment, GSM-7 | 2c tarif null → coût « inconnu », jamais 0
+PASS mutant « geste de l'artisan ignoré » tué par : 5c sans geste de l'artisan : refusé même en Signature
+PASS mutant « GSM-7 « pur » laxiste » tué par : 9h l'extension compte double (« { » = 2 septets) et n'est pas « pur » | 9j un texte en « ç » est refusé à la porte 5
+PASS mutant « lien permis » tué par : 10a refusé : Voir https://exemple.test/x STOP | 10a refusé : Voir www.exemple.test STOP | 10a refusé : Voir exemple.fr STOP
+PASS mutant « montant permis » tué par : 11a montant refusé : Votre facture de 120 euros est due. STOP | 11a montant refusé : Reste 120€ à payer. STOP | 11a montant refusé : Total 45 EUR. STOP
+PASS mutant « menace permise » tué par : 11b menace refusée : Sans règlement, un huissier sera saisi. STOP | 11b menace refusée : Mise en demeure de payer. STOP | 11b menace refusée : Dernière chance de payer. STOP
+PASS mutant « segments : 160 septets comptés pour 2 » tué par : 9e 160 septets = 1 segment, 161 = 2
+PASS mutant « numéro fixe accepté » tué par : 6b refusé : 01 23 45 67 89 | 6b refusé : 04 91 00 00 00 | 6b refusé : 09 12 34 56 78
+PASS mutant « outre-mer accepté » tué par : 6b refusé : 06 90 12 34 56 | 6b refusé : 06 94 12 34 56 | 6b refusé : 06 39 12 34 56
+PASS mutant « numéro non donné pour le chantier accepté » tué par : 7a « import_csv » refusé | 7a « achete » refusé | 7a «  » refusé
+PASS mutant « pause générale ignorée » tué par : 4a pause active
+PASS mutant « disjoncteur absent = ouvert » tué par : 13r disjoncteur absent : fail-closed
+PASS mutant « exception du fournisseur prise pour un échec rejouable » tué par : 13e leve : jamais renvoyé (même avec un fournisseur sain)
+PASS mutant « sweego ouvert sans forme vérifiée » tué par : 18a sweego : forme non vérifiée, donc fermé
+PASS mutant « lien sms: sans contrôle du texte » tué par : 10e sans STOP : pas de lien | 10f avec un lien dans le texte : pas de lien sms:
+
+Mutants : 30/30 tués
+
+Appels réseau tentés pendant la suite : 0
+
+SMS-QA : TOUT VERT (172 assertions, 30 mutants tués)

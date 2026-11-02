@@ -1,0 +1,386 @@
+{
+  "id": "2uovL6sfTnINC3ka",
+  "name": "presti-garde-sauvegarde",
+  "active": false,
+  "versionId": "f68c4b7e-2b62-4908-a02d-22f9bfe037c1",
+  "nodeCount": 12,
+  "createdAt": "2026-11-02T19:20:22.151Z",
+  "updatedAt": "2026-11-02T19:20:25.216Z",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "Europe/Paris",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "executionTimeout": 600
+  },
+  "description": "Chantier 4, lot L8 (tâche 032-023) : garde de la sauvegarde à 4 h (Europe/Paris) : archive du jour, relecture, tables non en baisse, battement ; alerte Slack #presti-auto en cas d'écart. Inactif jusqu'au « go » de Benj.",
+  "isArchived": false,
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-02T19:30:00Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 032-023) ; export reconstitué des paramètres rendus par le MCP (mêmes identifiants, même code), jamais publié",
+  "connections": {
+    "Déclencheur 4 h": {
+      "main": [
+        [
+          {
+            "node": "Réglages de la garde",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Réglages de la garde": {
+      "main": [
+        [
+          {
+            "node": "Lire les manifestes récents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les manifestes récents": {
+      "main": [
+        [
+          {
+            "node": "Relire la dernière archive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Relire la dernière archive": {
+      "main": [
+        [
+          {
+            "node": "Lire le battement de la sauvegarde",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le battement de la sauvegarde": {
+      "main": [
+        [
+          {
+            "node": "Bilan de la garde",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bilan de la garde": {
+      "main": [
+        [
+          {
+            "node": "Écrire le battement de la garde",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Écrire le battement de la garde": {
+      "main": [
+        [
+          {
+            "node": "Garde satisfaite ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Garde satisfaite ?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Alerte Slack (garde)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Échec du workflow": {
+      "main": [
+        [
+          {
+            "node": "Alerte Slack (erreur du workflow)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "61130351-228f-4f59-8e25-b9250aac8807",
+      "name": "Déclencheur 4 h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1,
+              "triggerAtHour": 4,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6334d724-4420-40ef-b899-34827ae4516a",
+      "name": "Réglages de la garde",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Réglages de presti-garde-sauvegarde (brief : plans/011-cadrage-01-11/briefs/c4-n8n-sauvegarde.md). Rien n'est écrit.\n// Le jour est celui de Paris ; le battement de la sauvegarde ne doit pas dater de plus de 26 h (plan, §4.3).\nconst maintenant = new Date();\nconst jour = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(maintenant);\nreturn [{ json: { jour, maintenant_ms: maintenant.getTime(), dossier: '/home/usine/sauvegardes-presti', battement_max_h: 26 } }];"
+      }
+    },
+    {
+      "id": "5fc47413-c498-4c1b-a977-c0ad52537718",
+      "name": "Lire les manifestes récents",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "resource": "command",
+        "operation": "execute",
+        "authentication": "privateKey",
+        "command": "for f in $(ls -1 *.presti | sort | tail -n 3); do echo \"== $f\"; head -n 1 \"$f\"; done",
+        "cwd": "/home/usine/sauvegardes-presti"
+      },
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "762d7163-a8ea-4ba2-8f00-041af79ad184",
+      "name": "Relire la dernière archive",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "resource": "command",
+        "operation": "execute",
+        "authentication": "privateKey",
+        "command": "timeout -k 10 120 node scripts/sauvegarde.mjs --verifier --dernier --dossier /home/usine/sauvegardes-presti",
+        "cwd": "/home/usine/Documents/presti"
+      },
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "be2a7703-76e4-47c3-9f30-5b69cab8ec7a",
+      "name": "Lire le battement de la sauvegarde",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "resource": "command",
+        "operation": "execute",
+        "authentication": "privateKey",
+        "command": "cat /home/usine/sauvegardes-presti/battement-sauvegarde.txt",
+        "cwd": "/home/usine/sauvegardes-presti"
+      },
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "d10a0721-db18-4279-908d-25499c0fb854",
+      "name": "Bilan de la garde",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Bilan de la garde : une archive DU JOUR existe, elle se relit, elle compte au moins autant de tables que la précédente,\n// et la sauvegarde a laissé un battement de moins de 26 h. Tout écart est une alerte ; rien n'est corrigé ici.\nconst reg = $('Réglages de la garde').first().json;\nconst lire = (nom) => { try { return $(nom).first().json; } catch (e) { return null; } };\nconst manifestes = lire('Lire les manifestes récents');\nconst relecture = lire('Relire la dernière archive');\nconst battement = lire('Lire le battement de la sauvegarde');\nconst net = (t) => String(t).replace(/[A-Za-z0-9_+\\/=-]{32,}/g, '…').replace(/\\s+/g, ' ').trim().slice(0, 200);\nconst jourDe = (nom) => {\n  const m = nom.match(/^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})-(\\d{2})-(\\d{2})-(\\d{3})Z\\.presti$/);\n  if (!m) return null;\n  return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6], +m[7])));\n};\nconst alertes = [];\n// 1. Les archives et leurs manifestes (première ligne de chaque fichier).\nconst archives = [];\nif (manifestes === null || typeof manifestes.code !== 'number') {\n  alertes.push('le dossier des sauvegardes n\\'a pas pu être lu (connexion SSH)');\n} else {\n  const lignes = String(manifestes.stdout ?? '').split('\\n');\n  for (let i = 0; i < lignes.length; i++) {\n    if (!lignes[i].startsWith('== ')) continue;\n    const nom = lignes[i].slice(3).trim();\n    let tables = null;\n    try {\n      const man = JSON.parse(lignes[i + 1] ?? '');\n      if (man && man.lignes && typeof man.lignes === 'object') tables = Object.keys(man.lignes).length;\n    } catch (e) { tables = null; }\n    archives.push({ nom, jour: jourDe(nom), tables });\n  }\n}\narchives.sort((a, b) => (a.nom < b.nom ? -1 : 1));\nconst duJour = archives.filter((a) => a.jour === reg.jour).pop() ?? null;\nconst precedente = archives.filter((a) => a.jour !== null && a.jour < reg.jour).pop() ?? null;\nif (manifestes !== null && typeof manifestes.code === 'number' && archives.length === 0) {\n  alertes.push('aucune archive dans le dossier des sauvegardes');\n} else if (archives.length > 0 && duJour === null) {\n  const derniere = archives[archives.length - 1];\n  alertes.push('pas d\\'archive du jour ' + reg.jour + ' (la dernière date du ' + (derniere.jour ?? 'jour illisible') + ')');\n}\n// 2. La relecture porte sur l'archive du jour et sort verte.\nlet relecturePortee = null;\nif (duJour !== null) {\n  const sortie = relecture === null ? '' : String(relecture.stdout ?? '');\n  const verif = sortie.match(/▶ Vérification de (\\S+)/);\n  relecturePortee = verif ? verif[1].split('/').pop() : null;\n  if (relecture === null || relecture.code !== 0 || !sortie.includes('archive relue, comptes égaux')) {\n    const detail = relecture === null ? '' : net(String(relecture.stderr ?? '') || sortie.split('\\n').filter((l) => l.includes('❌')).slice(0, 2).join(' ') || (typeof relecture.error === 'string' ? relecture.error : ''));\n    alertes.push('la relecture de l\\'archive du jour est rouge (code ' + (relecture && typeof relecture.code === 'number' ? relecture.code : 'inconnu') + ')' + (detail ? ' — ' + detail : ''));\n  } else if (relecturePortee !== duJour.nom) {\n    alertes.push('la relecture n\\'a pas porté sur l\\'archive du jour (' + duJour.nom + ')');\n  }\n  // 3. Le nombre de tables ne baisse pas.\n  if (duJour.tables === null) {\n    alertes.push('le manifeste de l\\'archive du jour est illisible ou sans comptes par table');\n  } else if (precedente !== null && precedente.tables !== null && duJour.tables < precedente.tables) {\n    alertes.push('le nombre de tables baisse : ' + duJour.tables + ' aujourd\\'hui, ' + precedente.tables + ' dans l\\'archive du ' + precedente.jour);\n  }\n}\n// 4. Le battement de la sauvegarde.\nlet ageH = null;\nlet etatBattement = null;\nconst bm = battement === null ? null : String(battement.stdout ?? '').trim().match(/^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z) (ok|echec)$/);\nif (battement === null || battement.code !== 0 || !bm) {\n  alertes.push('le battement de la sauvegarde manque ou est illisible');\n} else {\n  etatBattement = bm[2];\n  ageH = Math.round(((reg.maintenant_ms - Date.parse(bm[1])) / 3600000) * 10) / 10;\n  if (!(ageH <= reg.battement_max_h)) alertes.push('le battement de la sauvegarde date de plus de ' + reg.battement_max_h + ' h (' + ageH + ' h)');\n}\nconst ok = alertes.length === 0;\nreturn [{ json: {\n  ok,\n  jour: reg.jour,\n  alertes,\n  archive_du_jour: duJour ? duJour.nom : null,\n  tables: duJour ? duJour.tables : null,\n  archive_precedente: precedente ? precedente.nom : null,\n  tables_precedente: precedente ? precedente.tables : null,\n  battement_sauvegarde: etatBattement,\n  battement_age_h: ageH,\n} }];"
+      }
+    },
+    {
+      "id": "0e189f63-7063-4c22-9f44-6fbafc5fbf5d",
+      "name": "Écrire le battement de la garde",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        0
+      ],
+      "parameters": {
+        "resource": "command",
+        "operation": "execute",
+        "authentication": "privateKey",
+        "command": "=mkdir -p /home/usine/sauvegardes-presti && printf '%s %s\\n' \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" \"{{ $('Bilan de la garde').first().json.ok ? 'ok' : 'echec' }}\" > /home/usine/sauvegardes-presti/battement-garde.txt",
+        "cwd": "/home/usine/Documents/presti"
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "c79187f7-aba9-4898-b868-f140f05c340a",
+      "name": "Garde satisfaite ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Bilan de la garde').first().json.ok }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "a320f88e-e8a8-4105-80b2-58c4e37e4100",
+      "name": "Alerte Slack (garde)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1792,
+        120
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "accessToken",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti-auto"
+        },
+        "messageType": "text",
+        "text": "={{ ':rotating_light: presti-garde-sauvegarde du ' + $('Bilan de la garde').first().json.jour + ' : ' + $('Bilan de la garde').first().json.alertes.join(' ; ') + '. Brief : plans/011-cadrage-01-11/briefs/c4-n8n-sauvegarde.md' }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "ef5ca587-f686-4de5-8f9a-6cf43b2ba9d4",
+      "credentials": {
+        "slackApi": {
+          "id": "lR0GZ7FGXI3FCAF8",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "id": "1c9bda15-23ef-4ca6-ae76-e4674258e81c",
+      "name": "Échec du workflow",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        480
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "d8f8c2f1-bb72-4807-85e8-aa7dda0e88e5",
+      "name": "Alerte Slack (erreur du workflow)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        480
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "accessToken",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti-auto"
+        },
+        "messageType": "text",
+        "text": "={{ ':rotating_light: presti-garde-sauvegarde : le workflow a échoué au nœud « ' + ($json.execution && $json.execution.lastNodeExecuted ? $json.execution.lastNodeExecuted : 'inconnu') + ' » (exécution ' + ($json.execution && $json.execution.id ? $json.execution.id : 'inconnue') + '). Brief : plans/011-cadrage-01-11/briefs/c4-n8n-sauvegarde.md' }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "7364d052-0897-4a1d-b8fb-9762ce167821",
+      "credentials": {
+        "slackApi": {
+          "id": "lR0GZ7FGXI3FCAF8",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "id": "997893df-216d-435c-ae7f-9246bc5d48c2",
+      "name": "Sticky Note ab731a9f",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -420
+      ],
+      "parameters": {
+        "content": "## presti-garde-sauvegarde — inactif\nTous les jours à 4 h (Europe/Paris) : vérifie qu'une archive du jour existe, qu'elle se relit, que son manifeste compte au moins autant de tables que la précédente et que le battement de la sauvegarde a moins de 26 h. Écrit son propre battement. Slack #presti-auto en cas d'écart seulement.\nLivré INACTIF : aucun identifiant SSH créé (à poser par Benj). Brief : plans/011-cadrage-01-11/briefs/c4-n8n-sauvegarde.md",
+        "width": 900,
+        "height": 240
+      }
+    }
+  ],
+  "nodeGroups": []
+}

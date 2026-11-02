@@ -1,0 +1,719 @@
+{
+  "id": "2HsfV00lGSX1KGY1",
+  "name": "presti-suivi-artisan",
+  "active": false,
+  "isArchived": false,
+  "versionId": "8cd9a2dc-8f91-4c96-bb54-e54c2c6586e8",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 15,
+  "createdAt": "2026-11-02T18:03:23.677Z",
+  "updatedAt": "2026-11-02T18:03:43.090Z",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "Europe/Paris",
+    "saveDataSuccessExecution": "none"
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "Chantier 4, lot L17 (tâche 032-014) : suivi des artisans (premiers pas J0-J+2, bilans J+14 et J+30) en brouillon, lectures GET seulement, aucun envoi. Inactif jusqu'au « go » de Benj.",
+  "canExecute": true,
+  "connections": {
+    "Déclencheur 10 h": {
+      "main": [
+        [
+          {
+            "node": "Réglages du suivi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Réglages du suivi": {
+      "main": [
+        [
+          {
+            "node": "Lire comptes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire comptes": {
+      "main": [
+        [
+          {
+            "node": "Lire demandes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire demandes": {
+      "main": [
+        [
+          {
+            "node": "Lire devis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire devis": {
+      "main": [
+        [
+          {
+            "node": "Lire factures",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire factures": {
+      "main": [
+        [
+          {
+            "node": "Lire registre du suivi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire registre du suivi": {
+      "main": [
+        [
+          {
+            "node": "Départ du suivi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Départ du suivi": {
+      "main": [
+        [
+          {
+            "node": "Étape premiers pas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Étape premiers pas": {
+      "main": [
+        [
+          {
+            "node": "Étape bilan J+14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Étape bilan J+14": {
+      "main": [
+        [
+          {
+            "node": "Étape bilan J+30",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Étape bilan J+30": {
+      "main": [
+        [
+          {
+            "node": "Garde du suivi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Garde du suivi": {
+      "main": [
+        [
+          {
+            "node": "Textes du suivi (brouillons)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Textes du suivi (brouillons)": {
+      "main": [
+        [
+          {
+            "node": "Brouillons et bilan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "129f3e68-f5d4-470b-9e0b-d8c33875d901",
+      "name": "Sticky Note 46af8ced",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -320
+      ],
+      "parameters": {
+        "content": "## presti-suivi-artisan — en brouillon\nInactif. Lectures GET seulement (select= limité), aucun nœud d'envoi, aucune écriture, aucun modèle.\nLe registre des envois (suivi_artisan_envois) n'existe pas encore : tant qu'il manque, la lecture échoue et rien ne sort.\nTextes à valider par Benj avant tout envoi. Brief : plans/011-cadrage-01-11/briefs/c4-n8n-suivi-artisan.md",
+        "width": 900,
+        "height": 220
+      }
+    },
+    {
+      "id": "91e6700a-97a1-4559-aece-05b9566802b7",
+      "name": "Déclencheur 10 h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1,
+              "triggerAtHour": 10,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "904cd800-0e16-44cf-a2a4-c72de30c2c7c",
+      "name": "Réglages du suivi",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Réglages du suivi des artisans (brief : plans/011-cadrage-01-11/briefs/c4-n8n-suivi-artisan.md). Mode brouillon : rien ne part.\n// Jours comptés au jour de Paris. Fenêtres, heure, écart et plafond : défauts du lot, à valider par Benj.\nconst jour = $now.setZone('Europe/Paris').toISODate();\nconst decaler = (j, n) => new Date(Date.parse(j + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);\nreturn [{ json: {\n  jour,\n  mode: 'brouillon',\n  mention_ia: 'non_vise',\n  offres_suivies: ['studio', 'signature', 'entreprise'],\n  etapes: {\n    premiers_pas: { du: 0, au: 3, evenements_jusqu_a: 2 },\n    bilan_j14: { du: 14, au: 16 },\n    bilan_j30: { du: 30, au: 32 }\n  },\n  ecart_min_jours: 5,\n  plafond_par_passage: 10,\n  inscrits_depuis: decaler(jour, -34)\n} }];"
+      }
+    },
+    {
+      "id": "4c8b326b-b0dd-41c8-8287-a6c2e595e307",
+      "name": "Lire comptes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,plan,created_at,is_founder,est_demo,suppression_demandee_le,notifications"
+            },
+            {
+              "name": "plan",
+              "value": "in.(studio,signature,entreprise)"
+            },
+            {
+              "name": "est_demo",
+              "value": "is.false"
+            },
+            {
+              "name": "is_founder",
+              "value": "is.false"
+            },
+            {
+              "name": "suppression_demandee_le",
+              "value": "is.null"
+            },
+            {
+              "name": "created_at",
+              "value": "={{ 'gte.' + $('Réglages du suivi').first().json.inscrits_depuis }}"
+            },
+            {
+              "name": "order",
+              "value": "id"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "pagination": {
+            "pagination": {
+              "paginationMode": "updateAParameterInEachRequest",
+              "parameters": {
+                "parameters": [
+                  {
+                    "type": "qs",
+                    "name": "offset",
+                    "value": "={{ $pageCount * 1000 }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+              "limitPagesFetched": true,
+              "maxRequests": 50
+            }
+          }
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "a44c0114-f1c3-4371-b9c5-7fe9fb94fa5a",
+      "name": "Lire demandes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,artisan_id,canal,created_at"
+            },
+            {
+              "name": "artisan_id",
+              "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+            },
+            {
+              "name": "order",
+              "value": "id"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "pagination": {
+            "pagination": {
+              "paginationMode": "updateAParameterInEachRequest",
+              "parameters": {
+                "parameters": [
+                  {
+                    "type": "qs",
+                    "name": "offset",
+                    "value": "={{ $pageCount * 1000 }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+              "limitPagesFetched": true,
+              "maxRequests": 50
+            }
+          }
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "d7b2b063-1032-4ef1-8b77-11b677bc831e",
+      "name": "Lire devis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/devis",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,artisan_id,envoye_le,accepte_le"
+            },
+            {
+              "name": "artisan_id",
+              "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+            },
+            {
+              "name": "order",
+              "value": "id"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "pagination": {
+            "pagination": {
+              "paginationMode": "updateAParameterInEachRequest",
+              "parameters": {
+                "parameters": [
+                  {
+                    "type": "qs",
+                    "name": "offset",
+                    "value": "={{ $pageCount * 1000 }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+              "limitPagesFetched": true,
+              "maxRequests": 50
+            }
+          }
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "71fa0e16-b963-4197-a300-4ecf88857096",
+      "name": "Lire factures",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/factures",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,artisan_id,statut,emise_le,avoir_de"
+            },
+            {
+              "name": "artisan_id",
+              "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+            },
+            {
+              "name": "order",
+              "value": "id"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "pagination": {
+            "pagination": {
+              "paginationMode": "updateAParameterInEachRequest",
+              "parameters": {
+                "parameters": [
+                  {
+                    "type": "qs",
+                    "name": "offset",
+                    "value": "={{ $pageCount * 1000 }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+              "limitPagesFetched": true,
+              "maxRequests": 50
+            }
+          }
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "f1b8c8af-267f-4bdf-be8a-990874b597ee",
+      "name": "Lire registre du suivi",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1344,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/suivi_artisan_envois",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "cle,artisan_id,etape,envoye_le"
+            },
+            {
+              "name": "artisan_id",
+              "value": "={{ 'in.(' + ($('Lire comptes').all().map(i => i.json.id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+            },
+            {
+              "name": "order",
+              "value": "cle"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "pagination": {
+            "pagination": {
+              "paginationMode": "updateAParameterInEachRequest",
+              "parameters": {
+                "parameters": [
+                  {
+                    "type": "qs",
+                    "name": "offset",
+                    "value": "={{ $pageCount * 1000 }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+              "limitPagesFetched": true,
+              "maxRequests": 50
+            }
+          }
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "8fd3d329-0c74-43f1-8524-decae40a0329",
+      "name": "Départ du suivi",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Départ du suivi : les comptes lus, écartés DANS LE CODE aussi (la requête filtre déjà) : démo, fondateur, suppression demandée,\n// offre hors du suivi, opposition au suivi (notifications.suivi === false ; absent = activé, comme notificationActive,\n// lib/notificationsTypes.ts:16-18). Une colonne absente ou illisible écarte le compte (refus par défaut).\nconst R = $('Réglages du suivi').first().json;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst ecartes = {};\nconst ecarter = (motif) => { ecartes[motif] = (ecartes[motif] || 0) + 1; };\nconst comptes = [];\nconst vus = new Set();\nfor (const a of lignes('Lire comptes')) {\n  if (typeof a.id !== 'string' || vus.has(a.id)) continue;\n  vus.add(a.id);\n  if (a.est_demo !== false) { ecarter('demo'); continue; }\n  if (a.is_founder !== false) { ecarter('fondateur'); continue; }\n  if (a.suppression_demandee_le !== null) { ecarter('suppression_demandee'); continue; }\n  if (!R.offres_suivies.includes(a.plan)) { ecarter('hors_offre'); continue; }\n  const n = a.notifications;\n  if (n !== null && n !== undefined && (typeof n !== 'object' || n.suivi === false)) { ecarter('opposition_suivi'); continue; }\n  const inscription = jourParis(a.created_at);\n  if (!inscription) { ecarter('inscription_illisible'); continue; }\n  const age = ecart(R.jour, inscription);\n  if (age < 0) { ecarter('inscription_illisible'); continue; }\n  comptes.push({ artisan_id: a.id, inscription, age });\n}\nreturn [{ json: { comptes, ecartes, candidats: [], silencieux: {} } }];"
+      }
+    },
+    {
+      "id": "6d061307-5062-4984-9da4-22a9e484b00d",
+      "name": "Étape premiers pas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Étape premiers_pas (J0 à J+2) : au plus un message, né de la PREMIÈRE réussite réelle des premiers jours (première demande reçue,\n// premier devis envoyé ou accepté, première facture émise). L'inscription seule ne fait rien écrire (le premier contact passe par\n// « Découvrir »). Une demande importée (canal 'import', lib/canaux/regles.ts:34) n'est pas une demande reçue ; ni un avoir ni une\n// facture annulée ne sont une facture émise.\nconst R = $('Réglages du suivi').first().json;\nconst E = R.etapes.premiers_pas;\nconst etat = $input.first().json;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst dansLaFenetre = etat.comptes.filter((c) => c.age >= E.du && c.age <= E.au);\nconst parCompte = new Map(dansLaFenetre.map((c) => [c.artisan_id, c]));\nconst reussites = new Map();\nconst ajouter = (artisanId, table, id, colonne, date, ordre, variante) => {\n  const c = parCompte.get(artisanId);\n  if (!c || typeof id !== 'string') return;\n  const j = jourParis(date);\n  if (!j) return;\n  const d = ecart(j, c.inscription);\n  if (d < 0 || d > E.evenements_jusqu_a || d > c.age) return;\n  const l = reussites.get(artisanId) || [];\n  l.push({ t: Date.parse(date), ordre, variante, evenement: { table, id, colonne, date } });\n  reussites.set(artisanId, l);\n};\nfor (const l of lignes('Lire demandes')) if (l.canal !== 'import') ajouter(l.artisan_id, 'leads', l.id, 'created_at', l.created_at, 0, 'premiere_demande');\nfor (const l of lignes('Lire devis')) {\n  if (l.envoye_le) ajouter(l.artisan_id, 'devis', l.id, 'envoye_le', l.envoye_le, 1, 'premier_devis_envoye');\n  if (l.accepte_le) ajouter(l.artisan_id, 'devis', l.id, 'accepte_le', l.accepte_le, 2, 'premier_devis_accepte');\n}\nfor (const l of lignes('Lire factures')) {\n  if (l.emise_le && (l.statut === 'emise' || l.statut === 'payee') && l.avoir_de === null) ajouter(l.artisan_id, 'factures', l.id, 'emise_le', l.emise_le, 3, 'premiere_facture');\n}\nconst candidats = [];\nlet silencieux = 0;\nfor (const c of dansLaFenetre) {\n  const l = reussites.get(c.artisan_id);\n  if (!l || !l.length) { silencieux += 1; continue; }\n  l.sort((a, b) => a.t - b.t || a.ordre - b.ordre || (a.evenement.id < b.evenement.id ? -1 : a.evenement.id > b.evenement.id ? 1 : 0));\n  const premiere = l[0];\n  candidats.push({ cle: 'suivi:' + c.artisan_id + ':premiers_pas', artisan_id: c.artisan_id, etape: 'premiers_pas', variante: premiere.variante,\n    champs: {}, evenements: [premiere.evenement], reste: E.au - c.age, inscription: c.inscription });\n}\nconst s = Object.assign({}, etat.silencieux);\ns.premiers_pas = silencieux;\nreturn [{ json: { comptes: etat.comptes, ecartes: etat.ecartes, candidats: etat.candidats.concat(candidats), silencieux: s } }];"
+      }
+    },
+    {
+      "id": "b52387ab-f168-4f9c-99e7-9a7f5547f97e",
+      "name": "Étape bilan J+14",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Étape bilan_j14 : les comptes réels depuis l'inscription (demandes reçues, devis envoyés, devis acceptés, factures émises). Une demande\n// importée (canal 'import', lib/canaux/regles.ts:34) n'est pas une demande reçue ; ni un avoir ni une facture annulée ne sont une\n// facture émise. Sans aucun événement, aucun message : le compte est compté « silencieux ».\nconst ETAPE = 'bilan_j14';\nconst R = $('Réglages du suivi').first().json;\nconst E = R.etapes[ETAPE];\nconst etat = $input.first().json;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst dansLaFenetre = etat.comptes.filter((c) => c.age >= E.du && c.age <= E.au);\nconst parCompte = new Map(dansLaFenetre.map((c) => [c.artisan_id, { c, champs: { demandes_recues: 0, devis_envoyes: 0, devis_acceptes: 0, factures_emises: 0 }, evenements: [] }]));\nconst compter = (artisanId, champ, table, id, colonne, date) => {\n  const x = parCompte.get(artisanId);\n  if (!x || typeof id !== 'string') return;\n  const j = jourParis(date);\n  if (!j) return;\n  const d = ecart(j, x.c.inscription);\n  if (d < 0 || d > x.c.age) return;\n  x.champs[champ] += 1;\n  x.evenements.push({ table, id, colonne, date });\n};\nfor (const l of lignes('Lire demandes')) if (l.canal !== 'import') compter(l.artisan_id, 'demandes_recues', 'leads', l.id, 'created_at', l.created_at);\nfor (const l of lignes('Lire devis')) {\n  if (l.envoye_le) compter(l.artisan_id, 'devis_envoyes', 'devis', l.id, 'envoye_le', l.envoye_le);\n  if (l.accepte_le) compter(l.artisan_id, 'devis_acceptes', 'devis', l.id, 'accepte_le', l.accepte_le);\n}\nfor (const l of lignes('Lire factures')) {\n  if (l.emise_le && (l.statut === 'emise' || l.statut === 'payee') && l.avoir_de === null) compter(l.artisan_id, 'factures_emises', 'factures', l.id, 'emise_le', l.emise_le);\n}\nconst candidats = [];\nlet silencieux = 0;\nfor (const x of parCompte.values()) {\n  if (!x.evenements.length) { silencieux += 1; continue; }\n  candidats.push({ cle: 'suivi:' + x.c.artisan_id + ':' + ETAPE, artisan_id: x.c.artisan_id, etape: ETAPE, variante: 'comptes',\n    champs: x.champs, evenements: x.evenements, reste: E.au - x.c.age, inscription: x.c.inscription });\n}\nconst s = Object.assign({}, etat.silencieux);\ns[ETAPE] = silencieux;\nreturn [{ json: { comptes: etat.comptes, ecartes: etat.ecartes, candidats: etat.candidats.concat(candidats), silencieux: s } }];"
+      }
+    },
+    {
+      "id": "7b885ae5-a2ba-4462-861b-57072d974d26",
+      "name": "Étape bilan J+30",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Étape bilan_j30 : les comptes réels depuis l'inscription (demandes reçues, devis envoyés, devis acceptés, factures émises). Une demande\n// importée (canal 'import', lib/canaux/regles.ts:34) n'est pas une demande reçue ; ni un avoir ni une facture annulée ne sont une\n// facture émise. Sans aucun événement, aucun message : le compte est compté « silencieux ».\nconst ETAPE = 'bilan_j30';\nconst R = $('Réglages du suivi').first().json;\nconst E = R.etapes[ETAPE];\nconst etat = $input.first().json;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst dansLaFenetre = etat.comptes.filter((c) => c.age >= E.du && c.age <= E.au);\nconst parCompte = new Map(dansLaFenetre.map((c) => [c.artisan_id, { c, champs: { demandes_recues: 0, devis_envoyes: 0, devis_acceptes: 0, factures_emises: 0 }, evenements: [] }]));\nconst compter = (artisanId, champ, table, id, colonne, date) => {\n  const x = parCompte.get(artisanId);\n  if (!x || typeof id !== 'string') return;\n  const j = jourParis(date);\n  if (!j) return;\n  const d = ecart(j, x.c.inscription);\n  if (d < 0 || d > x.c.age) return;\n  x.champs[champ] += 1;\n  x.evenements.push({ table, id, colonne, date });\n};\nfor (const l of lignes('Lire demandes')) if (l.canal !== 'import') compter(l.artisan_id, 'demandes_recues', 'leads', l.id, 'created_at', l.created_at);\nfor (const l of lignes('Lire devis')) {\n  if (l.envoye_le) compter(l.artisan_id, 'devis_envoyes', 'devis', l.id, 'envoye_le', l.envoye_le);\n  if (l.accepte_le) compter(l.artisan_id, 'devis_acceptes', 'devis', l.id, 'accepte_le', l.accepte_le);\n}\nfor (const l of lignes('Lire factures')) {\n  if (l.emise_le && (l.statut === 'emise' || l.statut === 'payee') && l.avoir_de === null) compter(l.artisan_id, 'factures_emises', 'factures', l.id, 'emise_le', l.emise_le);\n}\nconst candidats = [];\nlet silencieux = 0;\nfor (const x of parCompte.values()) {\n  if (!x.evenements.length) { silencieux += 1; continue; }\n  candidats.push({ cle: 'suivi:' + x.c.artisan_id + ':' + ETAPE, artisan_id: x.c.artisan_id, etape: ETAPE, variante: 'comptes',\n    champs: x.champs, evenements: x.evenements, reste: E.au - x.c.age, inscription: x.c.inscription });\n}\nconst s = Object.assign({}, etat.silencieux);\ns[ETAPE] = silencieux;\nreturn [{ json: { comptes: etat.comptes, ecartes: etat.ecartes, candidats: etat.candidats.concat(candidats), silencieux: s } }];"
+      }
+    },
+    {
+      "id": "9b3e1e2b-4d01-4bf1-a558-8d2ba6b3c7c3",
+      "name": "Garde du suivi",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2464,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Garde du suivi : une clé déjà au registre ne revient pas ; jamais un e-mail du suivi à un artisan moins de 5 jours après le précédent\n// (memoire-presti/un-message-par-artisan-avant-5-jours.md) ; au plus un brouillon par artisan et par passage ; au-delà du plafond, reporté :\n// la fenêtre la plus proche de sa fin passe en tête, au passage suivant (même principe que .claude/rules/email-brevo.md:18).\n// Une date illisible au registre compte comme un envoi du jour (refus par défaut). Si le registre ne se lit pas, le passage s'arrête avant.\nconst R = $('Réglages du suivi').first().json;\nconst etat = $input.first().json;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourParis = (v) => {\n  if (typeof v !== 'string' || v.length < 10) return null;\n  const d = new Date(v);\n  if (Number.isNaN(d.getTime())) return null;\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;\n  return p.year + '-' + p.month + '-' + p.day;\n};\nconst ecart = (a, b) => Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86400000);\nconst cles = new Set();\nconst dernier = new Map();\nfor (const r of lignes('Lire registre du suivi')) {\n  if (typeof r.cle === 'string') cles.add(r.cle);\n  if (typeof r.artisan_id !== 'string') continue;\n  const j = jourParis(r.envoye_le) || R.jour;\n  if (!dernier.has(r.artisan_id) || j > dernier.get(r.artisan_id)) dernier.set(r.artisan_id, j);\n}\nconst ecartes = Object.assign({}, etat.ecartes);\nconst ecarter = (motif) => { ecartes[motif] = (ecartes[motif] || 0) + 1; };\nconst tries = etat.candidats.slice().sort((a, b) => a.reste - b.reste || (a.inscription < b.inscription ? -1 : a.inscription > b.inscription ? 1 : 0)\n  || (a.artisan_id < b.artisan_id ? -1 : a.artisan_id > b.artisan_id ? 1 : 0) || (a.cle < b.cle ? -1 : a.cle > b.cle ? 1 : 0));\nconst brouillons = [];\nconst reportes = [];\nconst servis = new Set();\nfor (const c of tries) {\n  if (cles.has(c.cle)) { ecarter('deja_au_registre'); continue; }\n  const d = dernier.get(c.artisan_id);\n  if (d !== undefined && ecart(R.jour, d) < R.ecart_min_jours) { ecarter('ecart_5_jours'); continue; }\n  if (servis.has(c.artisan_id)) { ecarter('un_par_passage'); continue; }\n  servis.add(c.artisan_id);\n  if (brouillons.length >= R.plafond_par_passage) { reportes.push({ cle: c.cle, artisan_id: c.artisan_id, etape: c.etape }); continue; }\n  brouillons.push({ cle: c.cle, artisan_id: c.artisan_id, etape: c.etape, variante: c.variante, champs: c.champs, evenements: c.evenements });\n}\nreturn [{ json: { brouillons, reportes, ecartes, silencieux: etat.silencieux } }];"
+      }
+    },
+    {
+      "id": "f437cb5e-85f3-43b6-b2c1-1138e9692bc1",
+      "name": "Textes du suivi (brouillons)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2688,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Textes du suivi (brouillons) : des textes FIXES, aucun appel à un modèle. Ce sont des e-mails de Presti à ses artisans (Reply-To\n// contact@prestiapp.fr, lib/email.ts:6-9) : ils ne portent pas la mention d'IA (plan du chantier 4, §0 bis, mention : non visé).\n// Aucun chiffre écrit : les nombres viennent des champs comptés, entre accolades. Chaque texte attend la validation de Benj.\n// Les mêmes textes, mot pour mot : plans/011-cadrage-01-11/briefs/c4-n8n-suivi-artisan.md (« Les textes »).\nconst PIED = 'Pour ne plus recevoir ces e-mails de suivi, répondez « stop » à ce message.\\n\\nPresti';\nconst TEXTES = {\n  premiers_pas: {\n    premiere_demande: {\n      statut: 'brouillon',\n      objet: 'Une première demande : la suite',\n      corps: 'Bonjour,\\n\\nUne première demande est arrivée sur votre page. Vous retrouvez l’échange dans Messages, et le devis se prépare depuis la même conversation.\\n\\nUne question en route ? Répondez simplement à cet e-mail.\\n\\n' + PIED\n    },\n    premier_devis_envoye: {\n      statut: 'brouillon',\n      objet: 'Votre premier devis est parti : la suite',\n      corps: 'Bonjour,\\n\\nVotre premier devis est parti. Quand votre client l’accepte, ouvrez le devis et cliquez « Créer la facture » : les lignes sont reprises, la numérotation suit.\\n\\nUne question en route ? Répondez simplement à cet e-mail.\\n\\n' + PIED\n    },\n    premier_devis_accepte: {\n      statut: 'brouillon',\n      objet: 'Après le devis accepté : la facture',\n      corps: 'Bonjour,\\n\\nLa suite d’un devis accepté, c’est la facture : ouvrez le devis et cliquez « Créer la facture ». Les lignes sont reprises, la numérotation suit.\\n\\nUne question en route ? Répondez simplement à cet e-mail.\\n\\n' + PIED\n    },\n    premiere_facture: {\n      statut: 'brouillon',\n      objet: 'Votre première facture : la suite',\n      corps: 'Bonjour,\\n\\nVotre première facture est émise. Vous suivez son paiement dans Factures, avec ce qui est réglé et ce qui reste à encaisser.\\n\\nUne question en route ? Répondez simplement à cet e-mail.\\n\\n' + PIED\n    }\n  },\n  bilan_j14: {\n    comptes: {\n      statut: 'brouillon',\n      objet: 'Vos premières semaines sur Presti',\n      corps: 'Bonjour,\\n\\nVoici ce qui s’est passé sur votre compte depuis votre inscription :\\n\\nDemandes reçues : {demandes_recues}\\nDevis envoyés : {devis_envoyes}\\nDevis acceptés : {devis_acceptes}\\nFactures émises : {factures_emises}\\n\\nUne idée, une question, quelque chose qui vous manque ? Répondez simplement à cet e-mail.\\n\\n' + PIED\n    }\n  },\n  bilan_j30: {\n    comptes: {\n      statut: 'brouillon',\n      objet: 'Votre premier mois sur Presti',\n      corps: 'Bonjour,\\n\\nVoici ce qui s’est passé sur votre compte depuis votre inscription :\\n\\nDemandes reçues : {demandes_recues}\\nDevis envoyés : {devis_envoyes}\\nDevis acceptés : {devis_acceptes}\\nFactures émises : {factures_emises}\\n\\nUne idée, une question, quelque chose qui vous manque ? Répondez simplement à cet e-mail.\\n\\n' + PIED\n    }\n  }\n};\nconst etat = $input.first().json;\nfor (const b of etat.brouillons) {\n  const t = TEXTES[b.etape] && TEXTES[b.etape][b.variante];\n  if (!t || t.statut !== 'brouillon') throw new Error('texte absent ou non brouillon : ' + b.etape + '.' + b.variante);\n  const attendus = (t.objet + '\\n' + t.corps).match(/\\{[a-z_]+\\}/g) || [];\n  for (const a of attendus) if (!Object.prototype.hasOwnProperty.call(b.champs, a.slice(1, -1))) throw new Error('champ manquant ' + a + ' pour ' + b.cle);\n}\nreturn [{ json: { brouillons: etat.brouillons, reportes: etat.reportes, ecartes: etat.ecartes, silencieux: etat.silencieux, textes: TEXTES } }];"
+      }
+    },
+    {
+      "id": "d1dc0371-e84f-465a-9871-2456d833694e",
+      "name": "Brouillons et bilan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2912,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Brouillons et bilan : la seule sortie. Les brouillons (identifiants, étape, variante, comptes, événements : jamais un nom, une adresse,\n// un e-mail ni un texte) et un bilan agrégé par étape. Rien n'est envoyé, rien n'est écrit : l'envoi viendra après la validation des textes.\nconst R = $('Réglages du suivi').first().json;\nconst etat = $input.first().json;\nconst par_etape = {};\nfor (const e of Object.keys(R.etapes)) {\n  par_etape[e] = {\n    brouillons: etat.brouillons.filter((b) => b.etape === e).length,\n    reportes: etat.reportes.filter((b) => b.etape === e).length,\n    silencieux: etat.silencieux[e] || 0\n  };\n}\nreturn [{ json: {\n  mode: R.mode,\n  mention_ia: R.mention_ia,\n  jour: R.jour,\n  bilan: { par_etape, ecartes: etat.ecartes, reportes: etat.reportes.map((r) => r.cle) },\n  brouillons: etat.brouillons\n} }];"
+      }
+    }
+  ],
+  "nodeGroups": [
+    {
+      "id": "3efdd898-6201-47ff-8ce0-8294cfc00d43",
+      "name": "Lectures (GET, select= limité)",
+      "nodeNames": [
+        "Lire comptes",
+        "Lire demandes",
+        "Lire devis",
+        "Lire factures",
+        "Lire registre du suivi"
+      ],
+      "description": "Cinq lectures GET sur l'API du projet, colonnes permises seulement ; le registre manque encore : sa lecture échoue, rien ne sort."
+    },
+    {
+      "id": "b7ad1a50-7190-4cf0-9f75-cbe366383208",
+      "name": "Étapes du suivi",
+      "nodeNames": [
+        "Départ du suivi",
+        "Étape premiers pas",
+        "Étape bilan J+14",
+        "Étape bilan J+30"
+      ],
+      "description": "Écarts (démo, fondateur, suppression, opposition), puis premiers pas J0-J+2, bilans J+14 et J+30, nés d'événements réels."
+    },
+    {
+      "id": "6c569d78-dcd9-4f84-abf9-098d60497361",
+      "name": "Garde, textes, sortie",
+      "nodeNames": [
+        "Garde du suivi",
+        "Textes du suivi (brouillons)",
+        "Brouillons et bilan"
+      ],
+      "description": "Registre, cinq jours d'écart, un par passage, plafond ; textes fixes en brouillon ; bilan. Aucun envoi."
+    }
+  ],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-02T18:05:36.522Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 032-014)"
+}

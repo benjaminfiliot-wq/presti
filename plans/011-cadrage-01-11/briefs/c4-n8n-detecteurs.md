@@ -1,4 +1,4 @@
-# Brief — workflow n8n `presti-detecteurs` (chantier 4, lot L3 n8n, tâche 032-003)
+# Brief — workflow n8n `presti-detecteurs` (chantier 4, lot L3 n8n, tâche 032-003 ; lot L12, tâche 032-019)
 
 Écrit le 02/11/2026 par Claude Code. Sources : tâche `.orchestre/en-cours/032-003.md` ; plan du chantier 4
 (`plans/011-cadrage-01-11/chantier-4-assistant-plan.md`) §0.1, §0 bis « Ce que n8n lit », §9, §13, §16 ; prompt de Benj
@@ -37,21 +37,24 @@ trois tables s'y ajoutent (`relances_impayes_arrets`, `relances_impayes_reglages
 
 | Table | Colonnes lues | Filtres de la requête | Source des colonnes |
 |---|---|---|---|
-| `artisans` | `id`, `plan`, `est_demo`, `suppression_demandee_le` | `plan=in.(studio,signature,entreprise)`, `est_demo=is.false`, `suppression_demandee_le=is.null` | `0001_artisans.sql:5`, `:12` ; `0068_controle.sql:127` ; `0052_parametres.sql:26` |
+| `artisans` | `id`, `plan`, `est_demo`, `suppression_demandee_le`, `leads_pause` (L12) | `plan=in.(studio,signature,entreprise)`, `est_demo=is.false`, `suppression_demandee_le=is.null` | `0001_artisans.sql:5`, `:12` ; `0068_controle.sql:127` ; `0052_parametres.sql:26` |
 | `factures` | `id`, `artisan_id`, `devis_id`, `statut`, `date_echeance`, `total_ttc`, `avoir_de`, `payee_le`, `type_facture` | compte | `0006_factures.sql:11`, `:12`, `:13`, `:17`, `:19`, `:25` ; `0041_facturation_electronique.sql:20` ; `0140_compta_automatisations.sql:18` ; `0176_types_devis_factures.sql:44` |
 | `devis` | `id`, `artisan_id`, `statut`, `date_emission`, `validite_jours`, `acompte_pct`, `total_ttc`, `lead_id`, `accepte_le`, `envoye_le`, `created_at` | compte | `0002_devis.sql:37`, `:38`, `:42`, `:43`, `:44`, `:46`, `:50`, `:51` ; `0033_devis_conversation.sql:3`, `:4` ; `0055_verrou_credits_stripe.sql:35` |
-| `leads` | `id`, `artisan_id`, `statut`, `urgence`, `type_chantier`, `created_at` | compte | `0010_hardening.sql:7`, `:8`, `:10`, `:11` ; `0026_lead_qualif.sql:4`, `:5` |
+| `leads` | `id`, `artisan_id`, `statut`, `urgence`, `type_chantier`, `prise_en_main` (L12), `created_at`, `updated_at` (L12) | compte | `0010_hardening.sql:7`, `:8`, `:10`, `:11` ; `0026_lead_qualif.sql:4`, `:5` |
 | `chantiers` | `id`, `artisan_id`, `devis_id`, `statut`, `date_fin_reelle`, `maj_le` | compte | `0141_crm_atelier.sql:62`, `:63`, `:64`, `:70`, `:74`, `:78` |
 | `chantier_materiaux` | `id`, `artisan_id`, `chantier_id`, `materiau_id`, `quantite`, `statut` | compte, `statut=eq.reserve` | `0141_crm_atelier.sql:122`-`:126`, `:128` |
 | `materiaux` | `id`, `artisan_id`, `seuil_alerte` | compte | `0040_inventaire.sql:8`, `:9`, `:19` |
 | `stock` | `id`, `materiau_id`, `quantite` | `materiau_id=in.(…)` des matériaux lus | `0040_inventaire.sql:36`, `:37`, `:39` |
 | `commandes_fournisseur` | `id`, `artisan_id`, `statut`, `chantier_id` | compte, `statut=eq.commandee` | `0158_crm_commandes_temps_reel.sql:30`, `:31`, `:36`, `:40` |
-| `relances_impayes` | `id`, `artisan_id`, `facture_id`, `rang`, `statut` | compte | `0159_relances_impayes.sql:42`-`:45`, `:48` ; statut `a_valider` : `0181_relances_impayes_a_valider.sql` |
-| `relances_impayes_arrets` | `facture_id`, `artisan_id`, `raison`, `reprise_le` | compte | `0159_relances_impayes.sql:60`, `:61`, `:62`, `:65` |
+| `relances_impayes` | `id`, `artisan_id`, `facture_id`, `rang`, `jour` (L12), `statut` | compte | `0159_relances_impayes.sql:42`-`:45`, `:48` ; statut `a_valider` : `0181_relances_impayes_a_valider.sql` |
+| `relances_impayes_arrets` | `facture_id`, `artisan_id`, `raison`, `le` (L12), `reprise_le` | compte | `0159_relances_impayes.sql:60`, `:61`, `:62`, `:65` |
 | `relances_impayes_reglages` | `artisan_id`, `actif`, `jours` | compte | `0159_relances_impayes.sql:25`, `:26`, `:27` |
 | `plateforme_config` | `artisan_id`, `mode_reponse` | compte | `0032_plateforme_config.sql:5`, `:6` |
 | `prix_artisan` | `id`, `artisan_id`, `actif` | compte, `actif=is.true` | `0038_prix_artisan.sql:9`, `:10`, `:21` |
-| `crm_apres_chantier` | `artisan_id`, `avis` | compte | `0165_crm_apres_chantier.sql:20`, `:21` |
+| `crm_apres_chantier` | `artisan_id`, `avis`, `entretien` (L12), `actif_depuis` (L12) | compte | `0165_crm_apres_chantier.sql:20`, `:21` ; L12 : `0189_role_lecture_n8n.sql:52` |
+| `crm_rappels` (L12) | `id`, `artisan_id`, `chantier_id`, `type`, `echeance`, `fait_le`, `envoye_le`, `origine`, `cle` — jamais `texte` ni `client_cle` | compte, `type=in.(demande_avis,entretien)` | `0162_crm_rappels.sql:22-38`, `0165:32` ; `0189:50` |
+| `pilote_reglages` (L12) | `artisan_id`, `actif`, `types` | compte | `0174_pilote_automatique.sql:21-25` |
+| `assistant_actions` (L12) | `id`, `artisan_id`, `outil`, `statut`, `objet_id`, `maj_le` — jamais `titre`, `entrees`, `apercu` | compte, `statut=eq.refusee`, `maj_le=gte.<J-7>` | `0157_assistant_actions.sql:31-50` ; `0189:54` |
 | `regles_automatisation` (nœud Supabase) | toutes (le nœud n'en choisit pas) : `artisan_id`, `prereglage`, `maillons`, `actif`, `maj_le` | limite 1 | `0050_pilotage.sql:47`-`:52` ; aucune donnée personnelle ; rien n'en descend |
 
 Écartés exprès : `devis.objet`, `factures.objet`, `chantiers.titre`, `commandes_fournisseur.lignes` (des textes), `relances_impayes.destinataire`
@@ -70,7 +73,9 @@ trois tables s'y ajoutent (`relances_impayes_arrets`, `relances_impayes_reglages
 | 7 | `demande_sans_devis:<lead>:brouillon` | demande `nouveau`, `repondu` ou `en_cours`, qualifiée (`urgence` ou `type_chantier`), sans devis lié, compte avec au moins un tarif actif | devis lié ; demande gagnée ou perdue ; aucun tarif | — | `creer_devis` · **2, jamais 3** |
 | 8 | `devis_bientot_expire:<devis>:expire` | devis `envoye` dont il reste de 1 à 7 jours de validité | accepté, refusé, expiré | TTC | `relancer_devis` · 3 |
 | 9 | `stock_chantier:<chantier>:stock` (CRM) ou `stock_bas:<matériau>:stock` (sans CRM) | CRM : réservation `reserve` d'un chantier ouvert, dont le reste (somme du stock) est sous la quantité réservée ou au seuil, sans commande `commandee` sur ce chantier (`lib/crm/alertes.ts:109-125`) ; sans CRM : matériau au seuil (`seuil_alerte` > 0, reste ≤ seuil) | stock remonté ; commande passée | — | `preparer_liste_achat` · 2 |
-| 10 | `demande_avis:<chantier>:avis` | capacité `crm`, après-chantier « avis » coché, chantier `termine` depuis 2 à 16 jours (`DELAI_AVIS_JOURS` et `RATTRAPAGE_JOURS`, `lib/apresChantier.ts:23-24`) | hors fenêtre ; avis non coché | — | `demander_avis` · 2 |
+| 10 | `demande_avis:<chantier>:avis` | capacité `crm`, après-chantier « avis » coché, chantier `termine` à sa date de fin RÉELLE (aucun repli sur `maj_le`), depuis au moins 2 jours, fini au plus 14 jours avant l'activation (`actif_depuis`, sinon ce jour) — comme `propositions` (`lib/apresChantier.ts:135-149`) (L12, M7) | rappel `avis:<chantier>` fait ou envoyé ; avis non coché | — | `demander_avis` · 2 |
+| 11 | `reponse_impaye:<facture>:r<AAAAMMJJ de l'arrêt>` (L12) | arrêt `raison=reponse_client`, `reprise_le` vide (`0159:59-66`), facture du même compte `emise`, ni payée ni avoir, montant > 0 ; jamais `messages` | reprise ; arrêt par l'artisan ; payée, annulée, avoir | TTC | `relancer_facture` · **2 partout** (la carte demande le motif, L13) |
+| 12 | `entretien_a_proposer:<chantier>:e<n>` (L12) | rappel `crm_rappels` `type=entretien`, `origine=systeme`, clé `entretien:<chantier>:<n>`, `echeance` ≤ ce jour, ni `fait_le` ni `envoye_le` ; capacité `crm`, « entretien » coché, chantier du même compte `termine` ; jamais `texte` | échéance à venir ; fait ou envoyé ; rappel de l'artisan ; réglage décoché | — | `envoyer_rappel_entretien` · **2 partout** |
 
 ## Le niveau proposé (copie figée des capacités)
 
@@ -158,3 +163,31 @@ workflow n'a pas changé. Preuve : `.orchestre/preuves/032-012/resume.md` (49 mu
 - **Proposé à Benj (geste sur le serveur, non fait)** : couper le réseau sortant de `runners` (réseau Docker `internal: true` partagé
   avec `n8n` seulement) ; les lectures HTTP des détecteurs passent par le processus principal de n8n, pas par `runners`, et n'en
   dépendent pas. À essayer sur une copie du compose, avec un retour arrière écrit.
+
+## Lot L12 (032-019, 02/11 au soir) : ce qui a changé dans le workflow, le juge, et la garde commune
+
+Preuve : `.orchestre/preuves/032-019/resume.md` ; export `.orchestre/preuves/032-019/presti-detecteurs.workflow.json` (41 nœuds, inactif) ;
+essai `essai-n8n.json` (exécution 335, données fictives, toutes les lectures épinglées). Le juge relit désormais cet export.
+
+- **Détecteurs 11 et 12** (tableau plus haut) ; **clés refusées** (rang 8) : une carte `assistant_actions` `refusee` des 7 derniers jours
+  sur le même outil et le même objet fait taire le constat (nœud « Niveau proposé selon l offre »).
+- **M1** filtres exacts (noms et valeurs, dans l'ordre) pour les 18 lectures ; **M2** toute jointure par `(compte, identifiant)` ;
+  **M3** niveau 3 seulement si le pilote est activé ET le type de l'outil activé (`pilote_reglages`), sans `leads_pause`, et pour le n° 6
+  une demande non prise en main ; chaque niveau 3 porte `reserve: 'pilote'` : **n8n n'envoie jamais sur son propre niveau**, l'app
+  redécide (plafond de 20 par jour, drapeau, escalade, contenu tiers : `decisionPilote`, `lib/pilote/regles.ts:251-271`) ;
+  **M4** n° 6 sur `nouveau`, `en_discussion` (depuis `updated_at`) et vide ; n° 7 sur `nouveau`, `en_discussion`, `repondu` et vide ;
+  **M5** le n° 8 remplace le n° 4 sur un même devis, et une ligne « argent qui dort » (numéro 0) compte chaque pièce une fois, à son plus
+  haut montant ; **M6** `ECART_MIN` (2 jours) après la dernière relance ; **M7** n° 10 comme `propositions` ; **M8** n° 6 borné à 10 jours
+  (`CADENCE_RELANCES`, `lib/relances.ts:38`), n° 8 compte le dernier jour de validité ; **M10** `alwaysOutputData` sur les 18 lectures ;
+  **M11** liste blanche exacte des clés d'un constat ; **M12** « Preuve de connexion » exige une ligne aux colonnes exactes de
+  `regles_automatisation` ; branche d'erreur **Error Trigger → « Message d échec »** (rang 26), sans donnée ni texte d'erreur.
+- **Pas fait, et pourquoi** : **M9** (couverture par matériau commandé) exige une vue `commande_lignes(materiau_id)` sans texte, donc une
+  migration (« go » de Benj) ; le seuil unique « devis sans réponse » (J+3 ici, 7 jours dans `lib/assistant/briefing.ts:35`) est à trancher
+  par Benj ; l'**envoi** de l'alerte d'échec (#presti-auto, Telegram) attend l'identifiant Telegram (absent de n8n le 02/11) et le « go ».
+- **Juge** : 19 empreintes réépinglées par l'auteur du lot (nouvel audit par un agent distinct avant toute publication) ; graphe entier
+  vérifié (032-016, moyen 4) ; un essai qui laisse une lecture non épinglée rougit (l'exécution 334 en avait laissé une partir pour de vrai).
+- **Garde commune** `scripts/n8n-specs-qa.mjs` (R1 à R7 : inactif, aucun secret, branche d'erreur, pied déclaré par chaque nœud d'envoi,
+  lectures GET seulement et types en liste blanche, identifiants nommés, colonnes et hôte) : à lancer sur tout export de Presti, dont ceux
+  de 032-013 et 032-014 (`node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/n8n-specs-qa.mjs <export.json>`).
+  Un nœud d'envoi déclare son pied dans ses notes : `pied: mention | PIED_AUTOMATIQUE | PIED_APRES | aucun` ; une lecture faite au moment
+  d'envoyer, qui lit l'adresse du destinataire, le déclare : `lecture-pour-envoi: <nœud d'envoi>`.

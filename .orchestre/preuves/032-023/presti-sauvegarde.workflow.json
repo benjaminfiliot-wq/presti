@@ -1,0 +1,475 @@
+{
+  "id": "16Gbnw1jg1JmFbfV",
+  "name": "presti-sauvegarde",
+  "active": false,
+  "versionId": "90fa1b61-ef1d-477f-ab09-1c7c79c3deae",
+  "nodeCount": 14,
+  "createdAt": "2026-11-02T19:19:41.062Z",
+  "updatedAt": "2026-11-02T19:19:51.500Z",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "Europe/Paris",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "executionTimeout": 1200
+  },
+  "description": "Chantier 4, lot L8 (tâche 032-023) : sauvegarde complète à 3 h 40 (Europe/Paris) par SSH, relecture, battement, purge à 14 jours ; alerte Slack #presti-auto en cas d'échec. Inactif jusqu'au « go » de Benj.",
+  "isArchived": false,
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-02T19:30:00Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 032-023) ; export reconstitué des paramètres rendus par le MCP (mêmes identifiants, même code), jamais publié",
+  "connections": {
+    "Déclencheur 3 h 40": {
+      "main": [
+        [
+          {
+            "node": "Réglages de la sauvegarde",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Réglages de la sauvegarde": {
+      "main": [
+        [
+          {
+            "node": "Lancer la sauvegarde",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lancer la sauvegarde": {
+      "main": [
+        [
+          {
+            "node": "Lire la sauvegarde",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire la sauvegarde": {
+      "main": [
+        [
+          {
+            "node": "Sauvegarde réussie ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sauvegarde réussie ?": {
+      "main": [
+        [
+          {
+            "node": "Relire la dernière archive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bilan de la sauvegarde",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Relire la dernière archive": {
+      "main": [
+        [
+          {
+            "node": "Bilan de la sauvegarde",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bilan de la sauvegarde": {
+      "main": [
+        [
+          {
+            "node": "Écrire le battement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Écrire le battement": {
+      "main": [
+        [
+          {
+            "node": "Sauvegarde et relecture réussies ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sauvegarde et relecture réussies ?": {
+      "main": [
+        [
+          {
+            "node": "Purger les archives de plus de 14 jours",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerte Slack (échec)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Échec du workflow": {
+      "main": [
+        [
+          {
+            "node": "Alerte Slack (erreur du workflow)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "1e6b973e-7169-4f4c-af31-75541c97f6d9",
+      "name": "Déclencheur 3 h 40",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1,
+              "triggerAtHour": 3,
+              "triggerAtMinute": 40
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "8c0ebb8f-223b-4d99-87b1-98e81d2cdbd6",
+      "name": "Réglages de la sauvegarde",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Réglages de presti-sauvegarde (brief : plans/011-cadrage-01-11/briefs/c4-n8n-sauvegarde.md). Rien n'est lu en base, rien n'est écrit.\n// Le jour est celui de Paris ; le dossier et la conservation sont des défauts du lot, à valider par Benj.\nconst maintenant = new Date();\nconst jour = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(maintenant);\nreturn [{ json: { jour, debut_ms: maintenant.getTime(), dossier: '/home/usine/sauvegardes-presti', conservation_jours: 14 } }];"
+      }
+    },
+    {
+      "id": "e2aeb4fa-9818-4545-a06e-e76dc888b654",
+      "name": "Lancer la sauvegarde",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "resource": "command",
+        "operation": "execute",
+        "authentication": "privateKey",
+        "command": "flock -n -E 75 /tmp/presti-sauvegarde.verrou timeout -k 30 900 node scripts/sauvegarde.mjs --dossier /home/usine/sauvegardes-presti",
+        "cwd": "/home/usine/Documents/presti"
+      },
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "a1221583-5676-4df1-9387-4fc45f6d4fd6",
+      "name": "Lire la sauvegarde",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Lit la sortie de la commande de sauvegarde (scripts/sauvegarde.mjs, tâche 032-020).\n// Codes : 0 réussie ; 75 un autre passage tournait déjà (flock) ; 124 ou 137 délai dépassé ; 2 préconditions absentes ; 1 refus ou échec.\nconst sortie = $input.first().json;\nconst code = typeof sortie.code === 'number' ? sortie.code : null;\nconst stdout = String(sortie.stdout ?? '');\nconst stderr = String(sortie.stderr ?? (typeof sortie.error === 'string' ? sortie.error : (sortie.error && sortie.error.message) || ''));\nconst net = (t) => String(t).replace(/[A-Za-z0-9_+\\/=-]{32,}/g, '…').replace(/\\s+/g, ' ').trim().slice(0, 200);\nconst m = stdout.match(/✅ (\\S+) — (\\d+) tables, (\\d+) lignes, (\\d+) comptes, (\\d+) Ko, (\\d+) s/);\nconst ok = code === 0 && m !== null;\nlet raison = '';\nif (!ok) {\n  if (code === 75) raison = 'une sauvegarde tournait déjà (verrou)';\n  else if (code === 124 || code === 137) raison = 'délai dépassé (900 s), commande coupée';\n  else if (code === 2) raison = 'préconditions absentes (clé de service ou clé publique de sauvegarde)';\n  else if (code === 0) raison = 'la commande a rendu 0 sans la ligne de bilan attendue';\n  else if (code === null) raison = 'la commande n\\'a pas pu être lancée (connexion SSH)';\n  else raison = 'la sauvegarde a refusé ou échoué (code ' + code + ')';\n  const detail = net(stderr || stdout.split('\\n').filter(Boolean).pop() || '');\n  if (detail) raison += ' — ' + detail;\n}\nreturn [{ json: {\n  etape: 'sauvegarde',\n  ok,\n  code,\n  archive: m ? m[1].split('/').pop() : null,\n  tables: m ? Number(m[2]) : null,\n  lignes: m ? Number(m[3]) : null,\n  comptes: m ? Number(m[4]) : null,\n  ko: m ? Number(m[5]) : null,\n  secondes: m ? Number(m[6]) : null,\n  raison,\n} }];"
+      }
+    },
+    {
+      "id": "84a4e5ca-cc59-4f66-97d7-bb73af384a78",
+      "name": "Sauvegarde réussie ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.ok }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "27c2a4bc-8961-4d84-a136-724dac77e0f2",
+      "name": "Relire la dernière archive",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -120
+      ],
+      "parameters": {
+        "resource": "command",
+        "operation": "execute",
+        "authentication": "privateKey",
+        "command": "timeout -k 10 120 node scripts/sauvegarde.mjs --verifier --dernier --dossier /home/usine/sauvegardes-presti",
+        "cwd": "/home/usine/Documents/presti"
+      },
+      "executeOnce": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "71f8d7d5-8539-45e3-a019-0017943e2c03",
+      "name": "Bilan de la sauvegarde",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Bilan du passage : la sauvegarde ET sa relecture doivent être vertes, et la relecture doit porter sur l'archive qui vient d'être écrite.\nconst s = $('Lire la sauvegarde').first().json;\nconst reg = $('Réglages de la sauvegarde').first().json;\nlet r = null;\ntry { r = $('Relire la dernière archive').first().json; } catch (e) { r = null; }\nconst net = (t) => String(t).replace(/[A-Za-z0-9_+\\/=-]{32,}/g, '…').replace(/\\s+/g, ' ').trim().slice(0, 200);\nlet etapeEnEchec = null;\nlet raison = '';\nif (!s.ok) {\n  etapeEnEchec = 'sauvegarde';\n  raison = s.raison;\n} else if (r === null) {\n  etapeEnEchec = 'relecture';\n  raison = 'la relecture n\\'a pas tourné';\n} else {\n  const sortie = String(r.stdout ?? '');\n  const verif = sortie.match(/▶ Vérification de (\\S+)/);\n  const man = sortie.match(/manifeste version (\\d+), fait le (\\S+) : (\\d+) tables, (\\d+) lignes, (\\d+) comptes/);\n  const lueOk = r.code === 0 && sortie.includes('archive relue, comptes égaux');\n  if (!lueOk) {\n    etapeEnEchec = 'relecture';\n    const detail = net(String(r.stderr ?? '') || sortie.split('\\n').filter((l) => l.includes('❌')).slice(0, 2).join(' ') || (typeof r.error === 'string' ? r.error : ''));\n    raison = 'la relecture est rouge (code ' + (typeof r.code === 'number' ? r.code : 'inconnu') + ')' + (detail ? ' — ' + detail : '');\n  } else if (!verif || verif[1].split('/').pop() !== s.archive) {\n    etapeEnEchec = 'relecture';\n    raison = 'la relecture n\\'a pas porté sur l\\'archive du passage (' + s.archive + ')';\n  } else if (!man || Number(man[3]) !== s.tables) {\n    etapeEnEchec = 'relecture';\n    raison = 'le manifeste relu ne compte pas les mêmes tables que la sauvegarde (' + (man ? man[3] : 'illisible') + ' contre ' + s.tables + ')';\n  }\n}\nconst ok = etapeEnEchec === null;\nreturn [{ json: {\n  ok,\n  jour: reg.jour,\n  etape_en_echec: etapeEnEchec,\n  raison,\n  archive: s.archive,\n  tables: s.tables,\n  lignes: s.lignes,\n  comptes: s.comptes,\n  ko: s.ko,\n  secondes_sauvegarde: s.secondes,\n  duree_totale_s: Math.round((Date.now() - reg.debut_ms) / 1000),\n} }];"
+      }
+    },
+    {
+      "id": "68eebc7e-e35e-4b0c-b6d3-e76f9814d107",
+      "name": "Écrire le battement",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        0
+      ],
+      "parameters": {
+        "resource": "command",
+        "operation": "execute",
+        "authentication": "privateKey",
+        "command": "=mkdir -p /home/usine/sauvegardes-presti && printf '%s %s\\n' \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" \"{{ $('Bilan de la sauvegarde').first().json.ok ? 'ok' : 'echec' }}\" > /home/usine/sauvegardes-presti/battement-sauvegarde.txt",
+        "cwd": "/home/usine/Documents/presti"
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "5075dd0d-125d-42a0-9f7c-9fb2a09d30aa",
+      "name": "Sauvegarde et relecture réussies ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1792,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Bilan de la sauvegarde').first().json.ok }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "c65960ce-8d8d-47d0-a894-31caa9adecc5",
+      "name": "Purger les archives de plus de 14 jours",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        -120
+      ],
+      "parameters": {
+        "resource": "command",
+        "operation": "execute",
+        "authentication": "privateKey",
+        "command": "find /home/usine/sauvegardes-presti -maxdepth 1 -type f -name '*.presti' -mtime +14 -delete",
+        "cwd": "/home/usine/Documents/presti"
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "84aef5fa-5802-43c2-995b-64c8a4a518c7",
+      "name": "Alerte Slack (échec)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        2016,
+        120
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "accessToken",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti-auto"
+        },
+        "messageType": "text",
+        "text": "={{ ':rotating_light: presti-sauvegarde du ' + $('Bilan de la sauvegarde').first().json.jour + ' : échec à l\\'étape « ' + $('Bilan de la sauvegarde').first().json.etape_en_echec + ' » — ' + $('Bilan de la sauvegarde').first().json.raison + '. Brief : plans/011-cadrage-01-11/briefs/c4-n8n-sauvegarde.md' }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "e9476d8f-969e-4deb-9c0a-c166d0267ebd",
+      "credentials": {
+        "slackApi": {
+          "id": "lR0GZ7FGXI3FCAF8",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "id": "53da6747-7121-4d5f-ab5e-eb297de67854",
+      "name": "Échec du workflow",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        480
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "cc4cd41c-9d2f-47e6-8e66-a4a01befe794",
+      "name": "Alerte Slack (erreur du workflow)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        480
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "accessToken",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti-auto"
+        },
+        "messageType": "text",
+        "text": "={{ ':rotating_light: presti-sauvegarde : le workflow a échoué au nœud « ' + ($json.execution && $json.execution.lastNodeExecuted ? $json.execution.lastNodeExecuted : 'inconnu') + ' » (exécution ' + ($json.execution && $json.execution.id ? $json.execution.id : 'inconnue') + '). Brief : plans/011-cadrage-01-11/briefs/c4-n8n-sauvegarde.md' }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "68857de7-aef5-42af-bdeb-8d6c013296fd",
+      "credentials": {
+        "slackApi": {
+          "id": "lR0GZ7FGXI3FCAF8",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "id": "745ad3dd-a062-4fc2-969b-2c5471b82657",
+      "name": "Sticky Note daf72f2d",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -420
+      ],
+      "parameters": {
+        "content": "## presti-sauvegarde — inactif\nTous les jours à 3 h 40 (Europe/Paris) : lance la sauvegarde complète sur l'hôte par SSH, relit l'archive, écrit un battement, purge au-delà de 14 jours. Slack #presti-auto en cas d'échec seulement.\nLivré INACTIF : aucun identifiant SSH créé (à poser par Benj). Brief : plans/011-cadrage-01-11/briefs/c4-n8n-sauvegarde.md",
+        "width": 900,
+        "height": 220
+      }
+    }
+  ],
+  "nodeGroups": [
+    {
+      "id": "454a0979-c210-4765-b88b-acbd2b9b28b5",
+      "name": "Bilan et battement",
+      "nodeNames": [
+        "Bilan de la sauvegarde",
+        "Écrire le battement"
+      ],
+      "description": "Bilan du passage, puis une ligne de battement sur l'hôte."
+    },
+    {
+      "id": "dbcc61d6-17e6-44e2-b61d-646a4dbefa2e",
+      "name": "Suite et alertes",
+      "nodeNames": [
+        "Sauvegarde et relecture réussies ?",
+        "Purger les archives de plus de 14 jours",
+        "Alerte Slack (échec)"
+      ],
+      "description": "Purge à 14 jours si tout est vert ; sinon alerte Slack #presti-auto."
+    }
+  ]
+}

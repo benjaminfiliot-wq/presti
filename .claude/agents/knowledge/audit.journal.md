@@ -328,3 +328,17 @@ Mémoire vivante de la catégorie Audit. Chaque agent AJOUTE une entrée après 
   Received) falsifiable : ne lire que le PREMIER, et seulement si son authserv-id est celui du serveur de la boîte ; (b) une
   entrée publique sans coût pour l'émetteur (bot, webhook) ne doit jamais déclencher un envoi qui puise dans un plafond PARTAGÉ
   entre comptes ; (c) une suite qui teste le parseur sur des fixtures à UN seul en-tête ne voit pas l'attaque par doublon.
+
+## 2026-11-02 — presti-audit-attaque (tâche 032-028, sur Oracle) — Lot L16 du chantier 4 : relances groupées de l'assistant (non commité)
+- Contexte : lecture seule, hors ligne, aucune base ni e-mail ni modèle ; banc `.orchestre/preuves/032-028/attaques-l16.mjs` (236 PASS,
+  8 FAIL, tous dans la partie « attaques ») ; les quatre suites rejouées. Entrée posée par la session principale (hors périmètre de l'agent).
+- Constat : verdict NE TIENT PAS, 2 majeurs. (D1) `ordreGroupe` (`lib/assistant/cartes.ts:179-185`) reconnaît un ordre groupé par une liste
+  de motifs ; « Relance M. Leroy et Mme Garnier », « relance tout le monde » passent pour un objet seul, et en « fait tout seul » la
+  PREMIÈRE relance part sans clic (la règle du tour ne rattrape que la seconde). (D2) aucune carte en attente n'est lue à la préparation, et
+  l'anti-doublon du clic lit, envoie, puis trace : deux clics proches relancent deux fois chaque client. 6 mineurs (D3 à D8). Le reste tient :
+  la carte de lot ne part jamais sans clic, exclus et cartes écartées tiennent, isolation des comptes, escalade, rien de 032-007 à 032-018 rouvert.
+- Décision / action : L16 retenu hors du push ; correction confiée à un agent distinct (032-030), vérifiée par le banc de l'auditeur rejoué sans
+  modification, puis les quatre suites.
+- À retenir : (a) une garde qui reconnaît un cas dangereux par une liste de motifs rate ce qu'elle ne liste pas : inverser la charge (ne
+  laisser passer d'office que ce qui est prouvé simple) ; (b) un anti-doublon « lire puis envoyer puis tracer » a une fenêtre de course :
+  réserver avant d'envoyer.

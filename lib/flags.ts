@@ -309,6 +309,18 @@ export const FLAGS = {
    *  canaux-reseaux-qa vert, un vrai export (caviardé) de chaque réseau passé à l'aperçu, et l'accord de Benj.
    *  21/10/2026 — LEVÉ : 0177 appliquée, audit offensif corrigé (liste blanche, consentement tracé, purge à 6 mois, neutralisation des formules), canaux-reseaux-qa 111/0 ; aucun envoi à un prospect importé. Fichiers d'export réels non encore passés à l'aperçu. */
   importProspects: true,
+  /** 02/11/2026 — chantier 4, lot L0. L'ACCUEIL « Aujourd'hui » de la console v2 (plan du chantier 4 §7, lot L5) : `/dashboard`
+   *  par sections, `GET /api/aujourdhui` à réponse par section. Baissé : l'accueil actuel est inchangé, la route répond 404. Se lève
+   *  en essai (lib/essais.ts) au compte fondateur, puis pour tous, sur décision de Benj (question 5 du plan). */
+  consoleV2: false,
+  /** 02/11/2026 — chantier 4, lot L0. Les SMS aux clients de l'artisan (plan §11, lot L7) : `lib/sms/`, À BLANC par défaut (rien ne
+   *  sort). Baissé : aucun SMS, ni simulé ni réel, n'est proposé. Un envoi réel attend en plus 0186 appliquée, le fournisseur, son
+   *  coût approuvé par écrit par Benj (`SMS_COUT_APPROUVE`) et la question 3. */
+  smsClients: false,
+  /** 02/11/2026 — chantier 4, lot L0. Les DEMANDES DE DÉMO « Presti pour l'entreprise » rangées en base (plan §14, lot L19) :
+   *  écriture dans `demandes_demo` par `/api/contact`, liste dans `/controle`. Baissé : `/api/contact` garde son seul e-mail à Benj.
+   *  Ordre : migration appliquée et contrôlée, PUIS lever (jamais l'inverse). */
+  demandesDemo: false,
 } as const
 
 export type Flag = keyof typeof FLAGS

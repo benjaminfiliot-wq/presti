@@ -1,0 +1,580 @@
+
+══ Les fichiers « à coller » ══
+
+  ✅ des jumeaux à vérifier (141 trouvés)
+  ✅ aucun fichier à coller n'est resté à la racine
+
+1. Ils se parsent — le contrôle que le 08/09 a rendu obligatoire
+  ✅ _A_COLLER_sql_editor_0047_a_0052.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0047_a_0052.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0047_a_0052.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0053.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0053.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0053.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0054.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0054.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0054.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0054_0055.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0054_0055.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0054_0055.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0056.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0056.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0056.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0057.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0057.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0057.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0057_0058.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0057_0058.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0057_0058.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0059_0061.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0059_0061.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0059_0061.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0062.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0062.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0062.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0063.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0063.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0063.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0064.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0064.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0064.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0065.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0065.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0065.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0066.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0066.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0066.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0067.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0067.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0067.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0068.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0068.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0068.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0068b.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0068b.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0068b.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0069.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0069.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0069.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0070.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0070.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0070.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0071.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0071.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0071.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0072.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0072.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0072.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0072_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0072_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0072_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0073.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0073.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0073.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0073_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0073_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0073_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0074.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0074.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0074.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0074_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0074_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0074_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0075.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0075.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0075.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0075_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0075_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0075_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0076.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0076.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0076.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0076_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0076_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0076_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0077.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0077.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0077.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0077_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0077_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0077_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0078.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0078.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0078.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0078_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0078_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0078_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0079.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0079.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0079.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0079_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0079_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0079_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0080.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0080.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0080.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0080_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0080_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0080_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0081.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0081.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0081.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0081_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0081_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0081_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0082.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0082.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0082.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0082_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0082_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0082_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0083.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0083.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0083.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0083_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0083_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0083_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0084.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0084.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0084.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0084_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0084_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0084_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0085.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0085.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0085.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0085_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0085_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0085_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0086.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0086.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0086.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0086_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0086_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0086_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0087.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0087.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0087.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0087_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0087_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0087_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0088.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0088.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0088.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0088_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0088_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0088_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0089.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0089.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0089.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0089_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0089_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0089_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0090.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0090.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0090.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0090_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0090_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0090_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0091.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0091.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0091.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0091_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0091_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0091_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0092.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0092.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0092.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0092_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0092_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0092_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0093.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0093.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0093.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0093_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0093_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0093_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0094.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0094.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0094.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0094_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0094_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0094_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0095.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0095.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0095.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0095_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0095_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0095_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0096.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0096.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0096.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0096_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0096_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0096_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0097.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0097.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0097.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0097_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0097_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0097_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0098.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0098.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0098.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0098_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0098_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0098_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0099.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0099.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0099.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0099_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0099_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0099_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0100.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0100.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0100.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0100_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0100_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0100_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0101.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0101.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0101.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0101_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0101_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0101_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0102.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0102.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0102.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0102_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0102_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0102_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0103.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0103.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0103.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0103_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0103_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0103_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0104.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0104.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0104.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0104_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0104_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0104_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0105.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0105.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0105.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0105_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0105_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0105_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0106.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0106.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0106.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0106_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0106_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0106_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0107.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0107.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0107.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0107_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0107_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0107_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0108.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0108.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0108.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0108_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0108_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0108_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0109.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0109.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0109.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0109_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0109_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0109_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0110.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0110.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0110.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0110_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0110_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0110_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0111.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0111.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0111.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0111_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0111_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0111_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0112.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0112.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0112.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0112_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0112_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0112_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0113.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0113.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0113.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0113_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0113_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0113_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0115.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0115.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0115.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0115_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0115_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0115_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0116.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0116.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0116.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0116_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0116_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0116_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0117.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0117.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0117.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0117_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0117_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0117_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0121.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0121.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0121.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0121_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0121_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0121_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0122.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0122.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0122.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0122_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0122_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0122_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0123.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0123.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0123.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0123_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0123_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0123_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0141_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0141_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0141_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0154_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0154_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0154_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0158_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0158_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0158_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0159_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0159_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0159_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0162_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0162_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0162_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0163_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0163_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0163_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0164_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0164_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0164_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0165_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0165_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0165_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0166_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0166_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0166_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0167_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0167_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0167_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0171_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0171_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0171_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0172_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0172_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0172_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0173_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0173_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0173_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0174_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0174_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0174_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0175_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0175_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0175_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0176_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0176_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0176_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0177_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0177_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0177_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0178_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0178_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0178_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0179_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0179_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0179_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0180_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0180_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0180_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0181_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0181_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0181_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0185_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0185_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0185_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0186_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0186_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0186_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0187_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0187_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0187_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0189_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0189_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0189_NU.sql : parenthèses équilibrées
+  ✅ _A_COLLER_sql_editor_0190_NU.sql : chaînes refermées
+  ✅ _A_COLLER_sql_editor_0190_NU.sql : blocs $…$ appariés
+  ✅ _A_COLLER_sql_editor_0190_NU.sql : parenthèses équilibrées
+
+2. Ils portent le SQL de leur migration
+  ✅ _A_COLLER_sql_editor_0047_a_0052.sql ⊂ 0047_aide.sql + 0048_inventaire_v2.sql + 0049_limites_atomiques.sql + 0050_pilotage.sql + 0051_slug_modifiable.sql + 0052_parametres.sql
+  ✅ _A_COLLER_sql_editor_0053.sql ⊂ 0053_plateforme_persona.sql
+  ✅ _A_COLLER_sql_editor_0054.sql ⊂ 0054_purge_comptes_test.sql
+  ✅ _A_COLLER_sql_editor_0054_0055.sql ⊂ 0054_purge_comptes_test.sql + 0055_verrou_credits_stripe.sql
+  ✅ _A_COLLER_sql_editor_0056.sql ⊂ 0056_cache_prix_mutualise.sql
+  ✅ _A_COLLER_sql_editor_0057.sql ⊂ 0057_passages_cron.sql
+  ✅ _A_COLLER_sql_editor_0057_0058.sql ⊂ 0057_passages_cron.sql + 0058_bornes_artisans.sql
+  ✅ _A_COLLER_sql_editor_0059_0061.sql ⊂ 0059_quota_media.sql + 0060_purges_rgpd.sql + 0061_domaine_unique.sql
+  ✅ _A_COLLER_sql_editor_0062.sql ⊂ 0062_mode_reponse_unique.sql
+  ✅ _A_COLLER_sql_editor_0063.sql ⊂ 0063_code_connexion.sql
+  ✅ _A_COLLER_sql_editor_0064.sql ⊂ 0064_push.sql
+  ✅ _A_COLLER_sql_editor_0065.sql ⊂ 0065_direction.sql
+  ✅ _A_COLLER_sql_editor_0066.sql ⊂ 0066_direction_menage.sql
+  ✅ _A_COLLER_sql_editor_0067.sql ⊂ 0067_apports.sql
+  ✅ _A_COLLER_sql_editor_0068.sql ⊂ 0068_controle.sql
+  ✅ _A_COLLER_sql_editor_0068b.sql ⊂ 0068_controle.sql
+  ✅ _A_COLLER_sql_editor_0069.sql ⊂ 0069_courriers.sql
+  ✅ _A_COLLER_sql_editor_0070.sql ⊂ 0070_partenaire.sql
+  ✅ _A_COLLER_sql_editor_0071.sql ⊂ 0071_comptabilite.sql
+  ✅ _A_COLLER_sql_editor_0072.sql ⊂ 0072_courriers_nature.sql
+  ✅ _A_COLLER_sql_editor_0072_NU.sql ⊂ 0072_courriers_nature.sql
+  ✅ _A_COLLER_sql_editor_0073.sql ⊂ 0073_courriers_domaines.sql
+  ✅ _A_COLLER_sql_editor_0073_NU.sql ⊂ 0073_courriers_domaines.sql
+  ✅ _A_COLLER_sql_editor_0074.sql ⊂ 0074_support.sql
+  ✅ _A_COLLER_sql_editor_0074_NU.sql ⊂ 0074_support.sql
+  ✅ _A_COLLER_sql_editor_0075.sql ⊂ 0075_support_element.sql
+  ✅ _A_COLLER_sql_editor_0075_NU.sql ⊂ 0075_support_element.sql
+  ✅ _A_COLLER_sql_editor_0076.sql ⊂ 0076_support_purge.sql
+  ✅ _A_COLLER_sql_editor_0076_NU.sql ⊂ 0076_support_purge.sql
+  ✅ _A_COLLER_sql_editor_0077.sql ⊂ 0077_apport_taux.sql
+  ✅ _A_COLLER_sql_editor_0077_NU.sql ⊂ 0077_apport_taux.sql
+  ✅ _A_COLLER_sql_editor_0078.sql ⊂ 0078_conservation.sql
+  ✅ _A_COLLER_sql_editor_0078_NU.sql ⊂ 0078_conservation.sql
+  ✅ _A_COLLER_sql_editor_0079.sql ⊂ 0079_profils_fondateur.sql
+  ✅ _A_COLLER_sql_editor_0079_NU.sql ⊂ 0079_profils_fondateur.sql
+  ✅ _A_COLLER_sql_editor_0080.sql ⊂ 0080_credits_et_acompte.sql
+  ✅ _A_COLLER_sql_editor_0080_NU.sql ⊂ 0080_credits_et_acompte.sql
+  ✅ _A_COLLER_sql_editor_0081.sql ⊂ 0081_facture_regime_fige.sql
+  ✅ _A_COLLER_sql_editor_0081_NU.sql ⊂ 0081_facture_regime_fige.sql
+  ✅ _A_COLLER_sql_editor_0082.sql ⊂ 0082_support_policies_mortes.sql
+  ✅ _A_COLLER_sql_editor_0082_NU.sql ⊂ 0082_support_policies_mortes.sql
+  ✅ _A_COLLER_sql_editor_0083.sql ⊂ 0083_purger_compte_test_lignes.sql
+  ✅ _A_COLLER_sql_editor_0083_NU.sql ⊂ 0083_purger_compte_test_lignes.sql
+  ✅ _A_COLLER_sql_editor_0084.sql ⊂ 0084_sortie_partenaire.sql
+  ✅ _A_COLLER_sql_editor_0084_NU.sql ⊂ 0084_sortie_partenaire.sql
+  ✅ _A_COLLER_sql_editor_0085.sql ⊂ 0085_purger_compte_test_devis.sql
+  ✅ _A_COLLER_sql_editor_0085_NU.sql ⊂ 0085_purger_compte_test_devis.sql
+  ✅ _A_COLLER_sql_editor_0086.sql ⊂ 0086_canaux_apport.sql
+  ✅ _A_COLLER_sql_editor_0086_NU.sql ⊂ 0086_canaux_apport.sql
+  ✅ _A_COLLER_sql_editor_0087.sql ⊂ 0087_canal_instagram.sql
+  ✅ _A_COLLER_sql_editor_0087_NU.sql ⊂ 0087_canal_instagram.sql
+  ✅ _A_COLLER_sql_editor_0088.sql ⊂ 0088_site_commande.sql
+  ✅ _A_COLLER_sql_editor_0088_NU.sql ⊂ 0088_site_commande.sql
+  ✅ _A_COLLER_sql_editor_0089.sql ⊂ 0089_sites_bucket.sql
+  ✅ _A_COLLER_sql_editor_0089_NU.sql ⊂ 0089_sites_bucket.sql
+  ✅ _A_COLLER_sql_editor_0090.sql ⊂ 0090_audience.sql
+  ✅ _A_COLLER_sql_editor_0090_NU.sql ⊂ 0090_audience.sql
+  ✅ _A_COLLER_sql_editor_0091.sql ⊂ 0091_audience_correctifs.sql
+  ✅ _A_COLLER_sql_editor_0091_NU.sql ⊂ 0091_audience_correctifs.sql
+  ✅ _A_COLLER_sql_editor_0092.sql ⊂ 0092_audience_flux_nu.sql
+  ✅ _A_COLLER_sql_editor_0092_NU.sql ⊂ 0092_audience_flux_nu.sql
+  ✅ _A_COLLER_sql_editor_0093.sql ⊂ 0093_site_fige.sql
+  ✅ _A_COLLER_sql_editor_0093_NU.sql ⊂ 0093_site_fige.sql
+  ✅ _A_COLLER_sql_editor_0094.sql ⊂ 0094_insertion_figee.sql
+  ✅ _A_COLLER_sql_editor_0094_NU.sql ⊂ 0094_insertion_figee.sql
+  ✅ _A_COLLER_sql_editor_0095.sql ⊂ 0095_verrous_maj_slug.sql
+  ✅ _A_COLLER_sql_editor_0095_NU.sql ⊂ 0095_verrous_maj_slug.sql
+  ✅ _A_COLLER_sql_editor_0096.sql ⊂ 0096_ops_socle.sql
+  ✅ _A_COLLER_sql_editor_0096_NU.sql ⊂ 0096_ops_socle.sql
+  ✅ _A_COLLER_sql_editor_0097.sql ⊂ 0097_ops_identite.sql
+  ✅ _A_COLLER_sql_editor_0097_NU.sql ⊂ 0097_ops_identite.sql
+  ✅ _A_COLLER_sql_editor_0098.sql ⊂ 0098_ops_taches.sql
+  ✅ _A_COLLER_sql_editor_0098_NU.sql ⊂ 0098_ops_taches.sql
+  ✅ _A_COLLER_sql_editor_0099.sql ⊂ 0099_ops_garde_envois.sql
+  ✅ _A_COLLER_sql_editor_0099_NU.sql ⊂ 0099_ops_garde_envois.sql
+  ✅ _A_COLLER_sql_editor_0100.sql ⊂ 0100_ops_file_argent.sql
+  ✅ _A_COLLER_sql_editor_0100_NU.sql ⊂ 0100_ops_file_argent.sql
+  ✅ _A_COLLER_sql_editor_0101.sql ⊂ 0101_ops_horloge.sql
+  ✅ _A_COLLER_sql_editor_0101_NU.sql ⊂ 0101_ops_horloge.sql
+  ✅ _A_COLLER_sql_editor_0102.sql ⊂ 0102_packs_pubs.sql
+  ✅ _A_COLLER_sql_editor_0102_NU.sql ⊂ 0102_packs_pubs.sql
+  ✅ _A_COLLER_sql_editor_0103.sql ⊂ 0103_livraison_commandes.sql
+  ✅ _A_COLLER_sql_editor_0103_NU.sql ⊂ 0103_livraison_commandes.sql
+  ✅ _A_COLLER_sql_editor_0104.sql ⊂ 0104_crieur.sql
+  ✅ _A_COLLER_sql_editor_0104_NU.sql ⊂ 0104_crieur.sql
+  ✅ _A_COLLER_sql_editor_0105.sql ⊂ 0105_acquisition_socle.sql
+  ✅ _A_COLLER_sql_editor_0105_NU.sql ⊂ 0105_acquisition_socle.sql
+  ✅ _A_COLLER_sql_editor_0106.sql ⊂ 0106_acquisition_echanges.sql
+  ✅ _A_COLLER_sql_editor_0106_NU.sql ⊂ 0106_acquisition_echanges.sql
+  ✅ _A_COLLER_sql_editor_0107.sql ⊂ 0107_pilotage_lecture.sql
+  ✅ _A_COLLER_sql_editor_0107_NU.sql ⊂ 0107_pilotage_lecture.sql
+  ✅ _A_COLLER_sql_editor_0108.sql ⊂ 0108_pilotage_echanges.sql
+  ✅ _A_COLLER_sql_editor_0108_NU.sql ⊂ 0108_pilotage_echanges.sql
+  ✅ _A_COLLER_sql_editor_0109.sql ⊂ 0109_acquisition_planification.sql
+  ✅ _A_COLLER_sql_editor_0109_NU.sql ⊂ 0109_acquisition_planification.sql
+  ✅ _A_COLLER_sql_editor_0110.sql ⊂ 0110_usine_socle.sql
+  ✅ _A_COLLER_sql_editor_0110_NU.sql ⊂ 0110_usine_socle.sql
+  ✅ _A_COLLER_sql_editor_0111.sql ⊂ 0111_acquisition_envoi.sql
+  ✅ _A_COLLER_sql_editor_0111_NU.sql ⊂ 0111_acquisition_envoi.sql
+  ✅ _A_COLLER_sql_editor_0112.sql ⊂ 0112_pilotage_station.sql
+  ✅ _A_COLLER_sql_editor_0112_NU.sql ⊂ 0112_pilotage_station.sql
+  ✅ _A_COLLER_sql_editor_0113.sql ⊂ 0113_station_reglages.sql
+  ✅ _A_COLLER_sql_editor_0113_NU.sql ⊂ 0113_station_reglages.sql
+  ✅ _A_COLLER_sql_editor_0115.sql ⊂ 0115_postes_agents.sql
+  ✅ _A_COLLER_sql_editor_0115_NU.sql ⊂ 0115_postes_agents.sql
+  ✅ _A_COLLER_sql_editor_0116.sql ⊂ 0116_maquette_lien_objet.sql
+  ✅ _A_COLLER_sql_editor_0116_NU.sql ⊂ 0116_maquette_lien_objet.sql
+  ✅ _A_COLLER_sql_editor_0117.sql ⊂ 0117_ops_demandes.sql
+  ✅ _A_COLLER_sql_editor_0117_NU.sql ⊂ 0117_ops_demandes.sql
+  ✅ _A_COLLER_sql_editor_0121.sql ⊂ 0121_plafond_avant_coup.sql
+  ✅ _A_COLLER_sql_editor_0121_NU.sql ⊂ 0121_plafond_avant_coup.sql
+  ✅ _A_COLLER_sql_editor_0122.sql ⊂ 0122_reservation_envoi.sql
+  ✅ _A_COLLER_sql_editor_0122_NU.sql ⊂ 0122_reservation_envoi.sql
+  ✅ _A_COLLER_sql_editor_0123.sql ⊂ 0123_stop_hors_fil.sql
+  ✅ _A_COLLER_sql_editor_0123_NU.sql ⊂ 0123_stop_hors_fil.sql
+  ✅ _A_COLLER_sql_editor_0141_NU.sql ⊂ 0141_crm_atelier.sql
+  ✅ _A_COLLER_sql_editor_0154_NU.sql ⊂ 0154_crm_search_path_vide.sql
+  ✅ _A_COLLER_sql_editor_0158_NU.sql ⊂ 0158_crm_commandes_temps_reel.sql
+  ✅ _A_COLLER_sql_editor_0159_NU.sql ⊂ 0159_relances_impayes.sql
+  ✅ _A_COLLER_sql_editor_0162_NU.sql ⊂ 0162_crm_rappels.sql
+  ✅ _A_COLLER_sql_editor_0163_NU.sql ⊂ 0163_chantier_pieces.sql
+  ✅ _A_COLLER_sql_editor_0164_NU.sql ⊂ 0164_crm_agenda.sql
+  ✅ _A_COLLER_sql_editor_0165_NU.sql ⊂ 0165_crm_apres_chantier.sql
+  ✅ _A_COLLER_sql_editor_0166_NU.sql ⊂ 0166_chantier_taches_piece.sql
+  ✅ _A_COLLER_sql_editor_0167_NU.sql ⊂ 0167_chantier_suivi.sql
+  ✅ _A_COLLER_sql_editor_0171_NU.sql ⊂ 0171_crm_apres_opposition.sql
+  ✅ _A_COLLER_sql_editor_0172_NU.sql ⊂ 0172_crm_carte_chantiers.sql
+  ✅ _A_COLLER_sql_editor_0173_NU.sql ⊂ 0173_securite_fonctions.sql
+  ✅ _A_COLLER_sql_editor_0174_NU.sql ⊂ 0174_pilote_automatique.sql
+  ✅ _A_COLLER_sql_editor_0175_NU.sql ⊂ 0175_crm_temps_reel_complet.sql
+  ✅ _A_COLLER_sql_editor_0176_NU.sql ⊂ 0176_types_devis_factures.sql
+  ✅ _A_COLLER_sql_editor_0177_NU.sql ⊂ 0177_canaux_reseaux.sql
+  ✅ _A_COLLER_sql_editor_0178_NU.sql ⊂ 0178_factures_lignes_source_prix.sql
+  ✅ _A_COLLER_sql_editor_0179_NU.sql ⊂ 0179_factures_sans_insertion_client.sql
+  ✅ _A_COLLER_sql_editor_0180_NU.sql ⊂ 0180_factures_emission_atomique.sql
+  ✅ _A_COLLER_sql_editor_0181_NU.sql ⊂ 0181_relances_impayes_a_valider.sql
+  ✅ _A_COLLER_sql_editor_0185_NU.sql ⊂ 0185_automatisation.sql
+  ✅ _A_COLLER_sql_editor_0186_NU.sql ⊂ 0186_sms_clients.sql
+  ✅ _A_COLLER_sql_editor_0187_NU.sql ⊂ 0187_factures_envoyee_le.sql
+  ✅ _A_COLLER_sql_editor_0189_NU.sql ⊂ 0189_role_lecture_n8n.sql
+  ✅ _A_COLLER_sql_editor_0190_NU.sql ⊂ 0190_demandes_demo.sql
+
+3. Le piège qui a réellement fait refuser une migration
+  ✅ aucun littéral U&'…' dans une migration
+  ✅ aucun CONSTANT dans un fichier a coller
+
+✅ 568 réussis, 0 échoués
+

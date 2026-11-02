@@ -1,0 +1,4 @@
+$ node -e "const fs=require('fs');const t=fs.readFileSync('.orchestre/preuves/032-027/resume.md','utf8');const m=t.match(/## Ressources utilisées([\s\S]*?)(\n## |$)/);const n=(t.match(/^\| *(1[0-6]|[1-9]) *\|.*\|.*(corrigé|écarté)/gim)||[]).length;const r=fs.readFileSync('plans/011-cadrage-01-11/p5-entreprise/premiere-reponse.md','utf8');const ok=[m&&(m[1].match(/^\s*[-*|] /gm)||[]).length>=3,n>=16,!/74db706a \(HEAD\)|au HEAD .?74db706a/.test(r),/\| *25 *\|/.test(r)];console.log(n,ok.join(' '));process.exit(ok.every(Boolean)?0:1)"
+# 2026-11-02T19:36:34Z · code 0 · 0s
+
+16 true true true true
