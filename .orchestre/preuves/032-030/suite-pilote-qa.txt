@@ -1,0 +1,94 @@
+PASS A1 drapeau `piloteAutomatique` déclaré, commenté et daté (21/10/2026), avec l’ordre « 0174 puis lever » ; LEVÉ le 21/10 après 0174 appliquée et contrôlée
+PASS A2 capacité `assistant.pilote` : Signature et Business seulement (ni Essai, ni Essentiel, ni Studio)
+PASS A3 la grille l’annonce par UNE ligne sous drapeau (absente de la grille publique drapeau baissé), cellules calculées depuis PLANS
+PASS A4 tout est réuni (Signature, pilote et type actifs, prix sourcés, plafond libre) → automatique
+PASS A5 drapeau baissé → rien (motif « drapeau »), même tout le reste réuni
+PASS A6 offre Studio → refus « offre » ; Business (fondateur) → automatique
+PASS A7 pilote coupé → « inactif » ; pilote actif mais type décoché → « type_inactif » (réglage PAR TYPE)
+PASS A8 PRIX NON SOURCÉ → validation manuelle : une ligne « estimation », « ordre de grandeur du marché », « à chiffrer », ou à 0 €, ou un devis sans ligne
+PASS A9 jamais d’argent : marquer_facture_payee, creer_facture (et sans devis, 02/11), rembourser, augmenter_tarifs, supprimer_* (et l’article, 02/11) → « jamais_auto », type introuvable
+PASS A10 liste FERMÉE des outils pilotables, chacun avec son type ; un outil client sans exécuteur serveur (relancer_commande, demander_avis, rappel d’entretien) reste manuel
+PASS A11 plafond : 20 envois automatiques par jour et par compte ; le 21e reste manuel
+PASS A12 délai d’annulation : 10 minutes, une seule écriture ; part_le = prete_le + 10 min
+PASS A13 échéance : attendre à 9 min 59 s, partir à 10 min, trop ancienne après 24 h
+PASS A14 décompte lisible : « Partira dans 7 min », « Part maintenant »
+PASS A15 réglages nettoyés : seulement des booléens `true` sur des types connus ; tout le reste tombe
+PASS A16 clé d’idempotence : « <source>:<objet> » — une carte et une proposition ne se confondent pas
+PASS B1 idempotence à l’entrée : le même objet préparé deux fois n’entre qu’UNE fois dans la file
+PASS B2 délai : rien ne part avant 10 minutes (9 min 59 s : aucune prise, aucun envoi)
+(node:2227546) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/flags.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS B3 à 10 minutes : l’action part, une fois, et la file l’inscrit « partie »
+PASS B4 le passage suivant ne la refait pas (déjà partie)
+PASS B5 annulation par l’artisan pendant le délai : elle ne part pas ; une seconde annulation, ou celle d’un autre compte, ne fait rien
+PASS B6 deux passages SIMULTANÉS (deux instances du tic) : un seul envoi — la réclamation atomique départage
+PASS B7 drapeau baissé : le passage ne lit ni n’envoie rien (rien ne change)
+PASS B8 PRIX NON SOURCÉ relu juste avant l’envoi : rien ne part, l’action repasse en validation manuelle avec le motif
+PASS B9 plafond du jour atteint : manuel, rien ne part
+PASS B10 plafond compté pendant le passage : 20 partent, les 3 suivantes restent à la main
+PASS B11 pilote coupé entre-temps (désactivation immédiate) : l’action est annulée, rien ne part
+PASS B12 offre redescendue en Studio : rien ne part (manuel, motif « offre »)
+PASS B13 une carte d’ENCAISSEMENT glissée dans la file ne part jamais (outil hors liste) : manuel
+PASS B14 carte déjà confirmée ou refusée à la main entre-temps : annulée dans la file, aucun second envoi
+PASS B15 PAUSE de l’artisan : la réponse ne part pas et reste en file (elle partira à la reprise)
+PASS B16 à la reprise, elle part (une fois)
+PASS B17 conversation reprise en main par l’artisan : la réponse est annulée
+PASS B18 déjà traitée au moment d’envoyer (validée à la main) : « annulee », pas « echec »
+PASS B19 échec d’envoi : inscrit « echec » avec le motif, jamais laissé « en_cours »
+PASS B20 restée plus de 24 h en file (pause générale prolongée) : repasse en manuel, ne part pas
+PASS E1a règle : une ligne SANS provenance (éditeur de devis d’avant le correctif) n’est PAS sourcée → validation manuelle
+PASS E1b l’éditeur de devis GARDE la provenance : lue en base, gardée depuis le chiffrage IA (« estimation » par défaut), renvoyée à l’enregistrement, et un prix tapé devient « prix donné par l’artisan »
+PASS E1c au départ, le pilote applique LA même règle (prixSources), plus de test « provenance vide = ok » recopié
+PASS E2a envoi automatique au prospect : mention de l’assistant IA (art. 50) et `anonyme: true` (3/jour/destinataire, part anonyme du plafond)
+PASS E2b envoi automatique : l’e-mail part AVANT que le message soit marqué envoyé ; refusé (plafond), la proposition reste à valider (502)
+PASS E2c limite de réponses de l’IA atteinte dans la conversation (Ma plateforme) : la réponse ne part pas, elle repasse en manuel
+PASS E2d hors plage horaire de Ma plateforme : rien ne part, la réponse attend en file
+PASS E2e la limite et la plage sont lues dans la config de l’artisan (getPlateformeConfigStrict, limite_messages, dansLaPlage), réponses envoyées de l’IA comptées
+PASS E2f l’artisan est prévenu par PUSH seul : aucun e-mail par action (le quota global des e-mails n’est plus consommé)
+PASS M1a compte SUSPENDU : rien ne part, l’action repasse en manuel
+PASS M1b le contexte réel lit la suspension (suspensionEnCours ; erreur de lecture = suspendu)
+PASS M2a BUDGET de temps : passé le budget, les lignes restantes ne sont pas réclamées (rien ne reste « en_cours »), elles attendent le passage suivant
+PASS M2b une ligne restée « en_cours » plus de 5 minutes (passage interrompu) est REPRISE et part
+PASS M2c une ligne « en_cours » depuis moins de 5 minutes n’est pas reprise (un autre passage la traite)
+PASS M2d plafond tenu par le JETON atomique du compte (entre passages et instances) : jetons épuisés → manuel
+PASS M2e jeton réel : consommerLimiteStricte(`pilote:<uid>`, 20, 86400), fail-closed ; réclamation datée (traite_le) pour la reprise
+PASS M3 validation manuelle : un envoi qui ÉCHOUE (canal refusé, e-mail refusé, erreur) rend la réclamation (libererLimite dans finally) — plus de 409 pendant des heures
+PASS M4a une carte née d’une conversation où l’assistant a LU des messages de tiers ne part JAMAIS seule (manuel)
+PASS M4b la marque est posée à la création de la carte, d’après le JOURNAL de la conversation (outils qui rendent du texte de tiers), sous la RLS ; erreur = marquée
+PASS M4c à la mise en file comme au départ, une carte marquée est refusée
+PASS M4d lever la pause, changer le message d’accueil, réécrire « Ma page » : CARTE à confirmer (regler_plateforme, modifier_ma_page), plus d’exécution directe
+PASS F1a changement d’offre hors Signature : la file est annulée (webhook de résiliation ET alignement sur l’abonnement)
+PASS F1b rétrogradé : il VOIT sa file et l’ANNULE (GET/POST file sans exiger l’offre), peut COUPER le pilote mais jamais l’activer
+PASS F2 mise en file : un fondateur compte comme Business (comme au départ)
+PASS F3 envoi de facture (route ET pilote) : 20 par jour et par compte (fail-closed), la même facture pas deux fois en 10 min, réclamation rendue si l’envoi échoue
+PASS C1 l’assistant : chaque carte « à confirmer » passe par piloterCarte APRÈS sa création (rien ne change si le pilote ne la prend pas)
+PASS C2 les réponses proposées (/api/leads et /api/conversation/stream) passent par piloterProposition, après l’insertion de la proposition
+PASS C3 le tic minute fait partir la file — seulement drapeau levé et HORS pause générale (pause illisible = active)
+PASS C4 une décision manuelle sort l’objet de la file : valider / écarter une proposition (/api/messages), confirmer / refuser une carte (/api/assistant/actions)
+PASS C5 piloterCarte et piloterProposition ne lèvent jamais et ne font RIEN drapeau baissé (première instruction)
+PASS C6 drapeau baissé, en vrai : piloterCarte et piloterProposition rendent null sans toucher la base
+PASS C7b la ligne insérée en file porte le compte de la session : `artisan_id: uid`
+PASS C7 file et réglages : chaque requête porte artisan_id = uid (ou la propriété vérifiée de la conversation / du devis)
+PASS C8 l’entrée en file est idempotente en base : upsert « ignoreDuplicates » sur (artisan_id, cle), contrainte unique dans 0174
+PASS C9 la réclamation de départ est atomique (UPDATE … WHERE statut = a_partir) et filtrée par compte
+PASS C10 réalisateurs du pilote : EXACTEMENT les outils pilotables, aucun outil d’argent (encaisser, facturer, rembourser)
+PASS C11 une carte de l’assistant part par confirmerAction (même réclamation de la carte, même journal) ; une proposition par validerPropositionServeur
+PASS C12 UN chemin d’envoi : la route Devis « Envoyer » et Messages (valider, répondre) appellent les mêmes fonctions que le pilote
+PASS C13 idempotence d’une réponse proposée : l’envoi est réclamé une fois (compteur strict, fail-closed) avant de partir — clic de l’artisan ou pilote, jamais deux
+PASS C14 mêmes garde-fous que l’interface : mentions légales bloquantes (devis ET facture), devis accepté non renvoyé, facture non émise / avoir refusés
+PASS C15 devis : le prix est revérifié AU DÉPART (pas seulement à la mise en file), et un devis envoyé à la main depuis la préparation ne repart pas
+PASS C16 messageries jamais en pilote (WhatsApp, Messenger, Instagram, Le Bon Coin, réseaux lus par notification, demande importée) — sauf Telegram : à la mise en file, au départ et au point d’envoi commun
+PASS C17 app/api/pilote/file/route.ts : chaque méthode servie commence par gardePilote (404 drapeau baissé, session, offre lue — Signature exigée pour activer, pas pour voir ou annuler —, 503 sans 0174)
+PASS C17 app/api/pilote/reglages/route.ts : chaque méthode servie commence par gardePilote (404 drapeau baissé, session, offre lue — Signature exigée pour activer, pas pour voir ou annuler —, 503 sans 0174)
+PASS C18 la garde : drapeau AVANT toute lecture, puis la session (authArtisan), puis l’offre (capacité assistant.pilote, fondateur = Business), puis les tables
+PASS C19 désactivation immédiate : couper le pilote annule toute la file, décocher un type annule ce type (écrireReglages)
+PASS C20 l’artisan est prévenu à la mise en file : push qui ouvre Paramètres → Pilote automatique (« Annuler ») ; la file est aussi au poste des assistants
+PASS C21 l’écran : réglage PAR TYPE, liste « Partira dans … » avec bouton Annuler, journal, garde-fous écrits, verrou hors Signature vers /abonnement
+PASS C22 migration 0174 : trois tables, RLS active SANS politique, aucun droit anon/authenticated, déclencheurs de propriété, statut APPLIQUÉE (daté) en tête
+PASS C23 jumeau à coller présent (scripts/sql-nu.mjs) avec le contrôle supabase/controles/0174_pilote_automatique.sql
+PASS C24 aucun octet de contrôle dans les fichiers du pilote
+PASS D1 la suite est au tableau SUITES de scripts/tout-verifier.mjs (cout: gratuit)
+
+88 vert(s), 0 rouge(s)

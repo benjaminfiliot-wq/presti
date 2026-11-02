@@ -36,7 +36,10 @@ const DOSSIER = '/home/usine/sauvegardes-presti'
 const DEPOT = '/home/usine/Documents/presti'
 const BRIEF = 'plans/011-cadrage-01-11/briefs/c4-n8n-sauvegarde.md'
 const SLACK = { slackApi: { id: 'lR0GZ7FGXI3FCAF8', name: 'Slack account 2' } } // « Slack account 2 » existe déjà (list_credentials, 02/11) ; aucun identifiant créé
-const REGLAGES = { executionOrder: 'v1', availableInMCP: true, timezone: 'Europe/Paris', saveDataErrorExecution: 'all', saveDataSuccessExecution: 'all' }
+// 032-033 (audit 032-029, « Ce qu'il faut pour publier en simulation ») : le workflow d'erreur commun presti-erreurs (AQeHiC58UgbMR4Kr),
+// les succès non gardés (le bilan reste dans le battement et l'alerte), les échecs gardés (durée : la purge de l'instance, à régler par Benj).
+const PRESTI_ERREURS = 'AQeHiC58UgbMR4Kr'
+const REGLAGES = { executionOrder: 'v1', availableInMCP: true, timezone: 'Europe/Paris', saveDataErrorExecution: 'all', saveDataSuccessExecution: 'none', errorWorkflow: PRESTI_ERREURS }
 const TYPES_PERMIS = new Set(['n8n-nodes-base.scheduleTrigger', 'n8n-nodes-base.errorTrigger', 'n8n-nodes-base.ssh', 'n8n-nodes-base.code', 'n8n-nodes-base.if', 'n8n-nodes-base.slack', 'n8n-nodes-base.stickyNote'])
 const SECRETS = [
   /sk_live_[A-Za-z0-9]{8,}/, /rk_live_[A-Za-z0-9]{8,}/, /sk-ant-[A-Za-z0-9_-]{12,}/, /sb_secret_[A-Za-z0-9_-]{12,}/, /xox[bap]-[A-Za-z0-9-]{10,}/,
@@ -156,7 +159,7 @@ export function jugerStructure(wf, spec) {
   if (wf.settings?.timezone !== 'Europe/Paris') e('R4', `fuseau attendu Europe/Paris (reçu ${wf.settings?.timezone})`)
   // R5 réglages : liste blanche, délai borné
   const { executionTimeout, ...autres } = wf.settings ?? {}
-  if (!egal(autres, REGLAGES)) e('R5', `réglages inattendus : ${JSON.stringify(autres)} (attendu ${JSON.stringify(REGLAGES)}) — pas d'errorWorkflow : un workflow d'erreur doit être publié`)
+  if (!egal(autres, REGLAGES)) e('R5', `réglages inattendus : ${JSON.stringify(autres)} (attendu ${JSON.stringify(REGLAGES)}) — errorWorkflow = presti-erreurs, succès non gardés`)
   if (!Number.isInteger(executionTimeout) || executionTimeout < 60 || executionTimeout > spec.delaiMax) e('R5', `executionTimeout borné attendu (60 à ${spec.delaiMax} s) : ${executionTimeout}`)
   // R6 commandes SSH exactes
   for (const [nom, att] of Object.entries(spec.ssh)) {
@@ -395,8 +398,10 @@ function mutants(kind) {
     ['clé privée dans une commande', (w) => { noeud(w, RELIRE_N).parameters.command += ' # -----BEGIN OPENSSH PRIVATE KEY-----' }, /^R2 secret|^R6/],
     ['délai d\'exécution ôté', (w) => { delete w.settings.executionTimeout }, /^R5 executionTimeout/],
     ['délai d\'exécution démesuré', (w) => { w.settings.executionTimeout = 86400 }, /^R5 executionTimeout/],
-    ['workflow d\'erreur branché (errorWorkflow)', (w) => { w.settings.errorWorkflow = 'AutreWorkflow01' }, /^R5 réglages/],
-    ['données de succès non gardées', (w) => { w.settings.saveDataSuccessExecution = 'none' }, /^R5 réglages/],
+    ['workflow d\'erreur vers un autre workflow (errorWorkflow)', (w) => { w.settings.errorWorkflow = 'AutreWorkflow01' }, /^R5 réglages/],
+    ['workflow d\'erreur retiré (032-033)', (w) => { delete w.settings.errorWorkflow }, /^R5 réglages/],
+    ['données de succès gardées : saveDataSuccessExecution « all » (032-033)', (w) => { w.settings.saveDataSuccessExecution = 'all' }, /^R5 réglages/],
+    ['données d\'échec non gardées (032-033)', (w) => { w.settings.saveDataErrorExecution = 'none' }, /^R5 réglages/],
     ['un nœud HTTP ajouté', (w) => { w.nodes.push({ id: 'h', name: 'Appel', type: 'n8n-nodes-base.httpRequest', typeVersion: 4.5, position: [0, 0], parameters: {} }) }, /^R3/],
     ['un nœud Execute Command ajouté', (w) => { w.nodes.push({ id: 'x', name: 'Commande locale', type: 'n8n-nodes-base.executeCommand', typeVersion: 1, position: [0, 0], parameters: {} }) }, /^R3/],
     ['onError ôté du premier SSH', (w) => { delete noeud(w, S ? 'Lancer la sauvegarde' : 'Lire les manifestes récents').onError }, /^R6 .*onError/],

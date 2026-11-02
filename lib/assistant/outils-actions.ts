@@ -43,6 +43,8 @@ export const STATUTS_DEMANDE = ['nouveau', 'en_discussion', 'repondu', 'gagne', 
 export const STATUTS_CHANTIER_ACTION = ['a_planifier', 'planifie', 'en_cours', 'en_pause', 'termine', 'annule'] as const
 export const MOUVEMENTS_STOCK = ['entree', 'sortie', 'inventaire', 'perte'] as const
 export const TONS_RELANCE = ['cordial', 'ferme'] as const
+/** 02/11 (L16, chantier 4) — une carte de lot de relances nomme au plus ce nombre de devis retenus (lib/assistant/cartes.ts). */
+export const LOT_RELANCES_MAX = 20
 /** Les types de facture que l'assistant propose. « situation » et « solde » (0176) seulement drapeau `facturesSituation` levé :
  *  baissé, l'outil ne les connaît pas (ni dans son schéma, ni à la validation). */
 export const TYPES_FACTURE_TOUS = ['complete', 'acompte', 'situation', 'solde'] as const
@@ -103,8 +105,13 @@ export const SPEC = {
   },
   relancer_devis: {
     cat: 'confirmation', libelle: 'relancer un devis',
-    desc: "Propose de RELANCER par e-mail un devis envoyé resté sans réponse. Le texte est fixe (deux tons : cordial, ferme) et s'affiche en entier sur la carte ; tu n'écris rien dedans. Rien ne part avant le clic de l'artisan.",
-    champs: { numero: numeroDevis, ton: { t: 'enum', d: 'cordial (défaut) ou ferme.', valeurs: TONS_RELANCE } },
+    desc: "Propose de RELANCER par e-mail un devis envoyé resté sans réponse. Le texte est fixe (deux tons : cordial, ferme) et s'affiche en entier sur la carte ; tu n'écris rien dedans. Rien ne part avant le clic de l'artisan. Un seul devis : numero. PLUSIEURS devis ou plusieurs clients (« relance les devis envoyés il y a plus de 5 jours », « relance Dupont et Martin ») : appelle l'outil UNE SEULE fois, avec envoye_depuis_jours (le nombre de jours que l'artisan a écrit) ou numeros (les numéros rendus par lire_devis), jamais une fois par devis : c'est UNE carte de lot, qui nomme les devis retenus et les exclus avec leur motif (relancé il y a moins de 3 jours, sujet sensible, relance écartée récemment, compte en pause…). Un lot ne part JAMAIS d'office : l'artisan le valide d'un clic. Une relance que l'artisan a écartée ne se repropose pas d'elle-même.",
+    champs: {
+      numero: { ...numeroDevis, req: false, d: 'Numéro d’UN devis, tel que rendu par lire_devis (ex. DEV-2026-0011). Pour plusieurs : numeros ou envoye_depuis_jours.' },
+      numeros: { t: 'liste', d: `Lot : les numéros des devis à relancer (rendus par lire_devis), ${LOT_RELANCES_MAX} au plus.`, max: LOT_RELANCES_MAX },
+      envoye_depuis_jours: { t: 'nombre', d: 'Lot : relancer les devis envoyés il y a plus de ce nombre de jours — le nombre que l’artisan a écrit, jamais deviné.', min: 1, max: 365, sourcer: true },
+      ton: { t: 'enum', d: 'cordial (défaut) ou ferme.', valeurs: TONS_RELANCE },
+    },
   },
   // ── Factures ────────────────────────────────────────────────────────────────────────────────────
   creer_facture: {
@@ -631,6 +638,8 @@ export function validerAction(nom: NomAction, brut: unknown): ValidationAction {
       entree[cle] = n
     }
   }
+  // 02/11 (L16) : les numéros d'un lot de relances, en majuscules et sans doublon (un devis cité deux fois n'est relancé qu'une fois).
+  if (Array.isArray(entree.numeros)) entree.numeros = [...new Set((entree.numeros as string[]).map((n) => n.toUpperCase()))]
   const e = validerCoherence(nom, entree)
   return e ? ko(e) : { ok: true, entree }
 }
@@ -651,6 +660,14 @@ function validerCoherence(nom: NomAction, e: EntreeAction): string | null {
       if (e.type === 'situation' && (e.avancement_pct === null || e.avancement_pct === undefined)) return 'avancement_pct : obligatoire pour une situation de travaux'
       if (e.type !== 'situation' && e.avancement_pct !== null && e.avancement_pct !== undefined) return 'avancement_pct : réservé à type=situation'
       return null
+    // 02/11 (L16) : un devis (numero), OU un lot (numeros, ou envoye_depuis_jours) — jamais deux formes à la fois, jamais aucune.
+    case 'relancer_devis': {
+      const formes = [!!e.numero, !vide('numeros'), e.envoye_depuis_jours !== null && e.envoye_depuis_jours !== undefined].filter(Boolean).length
+      if (formes !== 1) return 'numero (un devis), numeros (un lot) ou envoye_depuis_jours (un lot) : exactement un des trois'
+      if (e.envoye_depuis_jours !== null && e.envoye_depuis_jours !== undefined && !Number.isInteger(e.envoye_depuis_jours)) return 'envoye_depuis_jours : un nombre entier de jours'
+      const faux = ((e.numeros as string[] | undefined) ?? []).filter((n) => !/^DEV-\d{4}-\d{1,6}$/i.test(n))
+      return faux.length ? `numeros : des numéros de devis DEV-AAAA-NNNN attendus (${faux.slice(0, 3).join(', ')})` : null
+    }
     case 'modifier_article':
       return e.seuil_alerte === null && !e.fournisseur_prefere && !e.categorie ? 'rien à modifier' : null
     // 29/10 — sortie de stock rattachée à un chantier ; facture sans devis ; résultat de recherche ; export.

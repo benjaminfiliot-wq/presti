@@ -39,9 +39,11 @@ export type DependancesFile = {
   /**
    * La carte visée, si elle attend encore (null : introuvable ou déjà traitée) ; `contenuClientLu` : marque posée à sa création ;
    * `leadId` (facultatif) : la conversation où elle écrit (réponse, relance du devis ou de la facture d'une conversation), pour relire
-   * les messages du client avant le départ (§3.2) — absent ou null : aucune conversation connue.
+   * les messages du client avant le départ (§3.2) — absent ou null : aucune conversation connue. 02/11 (contre-audit 032-035) : `horsPilote`,
+   * le motif d'une carte qui ne part jamais par le pilote (ordre sur plusieurs clients, escalade… : E1, E2) ; `leadsClient`, toutes les
+   * conversations du même e-mail client, relues aussi (E2).
    */
-  carteDe: (l: LigneAuto) => Promise<{ outil: string; contenuClientLu: boolean; leadId?: string | null } | null>
+  carteDe: (l: LigneAuto) => Promise<{ outil: string; contenuClientLu: boolean; leadId?: string | null; horsPilote?: string | null; leadsClient?: readonly string[] } | null>
   /** Pour une réponse à un prospect : prise en main, limite de réponses de l'IA atteinte, hors plage horaire, ou ok. */
   etatConversation: (l: LigneAuto, maintenant: Date) => Promise<EtatConversation>
   /**
@@ -85,13 +87,17 @@ export async function traiterFile(d: DependancesFile, maintenant = new Date(), l
       if (c.suspendu) { await manuel('suspendu'); continue }
       let outil: string | undefined
       let leadCarte: string | null = null
+      let leadsCarte: string[] = []
       if (l.source === 'carte') {
         const carte = await d.carteDe(l)
         if (!carte) { await fin('annulee', 'carte introuvable ou déjà traitée'); continue }
         if (!OUTILS_EXECUTABLES_PILOTE.includes(carte.outil) || typePiloteDeOutil(carte.outil) !== l.type) { await manuel('jamais_auto'); continue }
         if (carte.contenuClientLu) { await manuel('contenu_client'); continue }
+        // 02/11 (contre-audit 032-035, E1 et E2) : une carte HORS PILOTE revient à l'artisan, son motif dit.
+        if (carte.horsPilote) { await fin('manuel', carte.horsPilote.slice(0, 300)); continue }
         outil = carte.outil
         leadCarte = carte.leadId ?? null
+        leadsCarte = [...(carte.leadsClient ?? [])]
       }
       const lignesPrix = l.type === 'envoi_devis' ? (await d.lignesDevis(l)) ?? [] : undefined
       const dec = decisionPilote({ drapeau: d.drapeau(), plan: c.plan, reglages: c.reglages, type: l.type, outil, lignes: lignesPrix, partiesDepuis24h: c.parties })
@@ -113,6 +119,11 @@ export async function traiterFile(d: DependancesFile, maintenant = new Date(), l
       // MOTS_ESCALADE_TOUJOURS) : un sujet sensible → validation manuelle. Sans conversation connue, rien n'est relu et la ligne part.
       const leadId = l.lead_id ?? leadCarte
       if (leadId && d.escalade && (await d.escalade(l, leadId, maintenant))) { await manuel('escalade'); continue }
+      // 02/11 (contre-audit 032-035, E2) : puis les AUTRES conversations du même client (même e-mail : un litige écrit ailleurs qu'au fil du
+      // devis, un devis créé à la main sans conversation). Une lecture qui lève fait passer la ligne en échec (rien ne part).
+      let autreSensible = false
+      for (const autre of leadsCarte) if (autre !== leadId && d.escalade && (await d.escalade(l, autre, maintenant))) { autreSensible = true; break }
+      if (autreSensible) { await manuel('escalade'); continue }
       // Le plafond du jour, tenu par un jeton atomique par compte (deux passages ou deux instances ne le dépassent pas).
       if (!(await d.jeton(l.artisan_id))) { await manuel('plafond'); continue }
       const r = await d.executer(l)

@@ -5,10 +5,441 @@
   "isArchived": false,
   "versionId": "9106bdf6-2b45-45cb-b274-8f672ef12b12",
   "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 41,
+  "createdAt": "2026-11-02T15:02:52.663Z",
+  "updatedAt": "2026-11-02T20:40:00.537Z",
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
-    "timezone": "Europe/Paris"
+    "timezone": "Europe/Paris",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "errorWorkflow": "AQeHiC58UgbMR4Kr"
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "Chantier 4, lots L3 et L12 (tâches 032-003, 032-019) : douze détecteurs en simulation, lectures GET seulement, bilan agrégé, branche d'erreur sans envoi. Inactif jusqu'au « go » de Benj.",
+  "canExecute": true,
+  "connections": {
+    "Déclencheur 6 h 45": {
+      "main": [
+        [
+          {
+            "node": "Lecture de connexion (regles_automatisation)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lecture de connexion (regles_automatisation)": {
+      "main": [
+        [
+          {
+            "node": "Preuve de connexion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contexte du passage": {
+      "main": [
+        [
+          {
+            "node": "Capacités des offres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capacités des offres": {
+      "main": [
+        [
+          {
+            "node": "Lire comptes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire comptes": {
+      "main": [
+        [
+          {
+            "node": "Lire factures",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire factures": {
+      "main": [
+        [
+          {
+            "node": "Lire devis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire devis": {
+      "main": [
+        [
+          {
+            "node": "Lire demandes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire demandes": {
+      "main": [
+        [
+          {
+            "node": "Lire chantiers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire chantiers": {
+      "main": [
+        [
+          {
+            "node": "Lire reservations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire reservations": {
+      "main": [
+        [
+          {
+            "node": "Lire materiaux",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire materiaux": {
+      "main": [
+        [
+          {
+            "node": "Lire stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire stock": {
+      "main": [
+        [
+          {
+            "node": "Lire commandes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire commandes": {
+      "main": [
+        [
+          {
+            "node": "Lire relances impayes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire relances impayes": {
+      "main": [
+        [
+          {
+            "node": "Lire arrets de relance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire arrets de relance": {
+      "main": [
+        [
+          {
+            "node": "Lire reglages des relances",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire reglages des relances": {
+      "main": [
+        [
+          {
+            "node": "Lire reglages de la plateforme",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire reglages de la plateforme": {
+      "main": [
+        [
+          {
+            "node": "Lire tarifs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire tarifs": {
+      "main": [
+        [
+          {
+            "node": "Lire apres chantier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Départ des constats": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 01 facture échue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 01 facture échue": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 02 chantier à facturer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 02 chantier à facturer": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 03 devis signé sans acompte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 03 devis signé sans acompte": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 04 devis sans réponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 04 devis sans réponse": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 05 facture jamais envoyée (coupé)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 05 facture jamais envoyée (coupé)": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 06 demande sans réponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 06 demande sans réponse": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 07 demande sans devis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 07 demande sans devis": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 08 devis bientôt expiré",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 08 devis bientôt expiré": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 09 stock sous le seuil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 09 stock sous le seuil": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 10 demande d avis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Niveau proposé selon l offre": {
+      "main": [
+        [
+          {
+            "node": "Bilan par détecteur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire apres chantier": {
+      "main": [
+        [
+          {
+            "node": "Lire rappels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire rappels": {
+      "main": [
+        [
+          {
+            "node": "Lire reglages du pilote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire reglages du pilote": {
+      "main": [
+        [
+          {
+            "node": "Lire cartes refusees",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire cartes refusees": {
+      "main": [
+        [
+          {
+            "node": "Départ des constats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 10 demande d avis": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 11 réponse à une relance d impayé",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 11 réponse à une relance d impayé": {
+      "main": [
+        [
+          {
+            "node": "Détecteur 12 entretien à proposer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détecteur 12 entretien à proposer": {
+      "main": [
+        [
+          {
+            "node": "Niveau proposé selon l offre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Échec du passage": {
+      "main": [
+        [
+          {
+            "node": "Message d échec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preuve de connexion": {
+      "main": [
+        [
+          {
+            "node": "Contexte du passage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
   "nodes": [
     {
@@ -1610,426 +2041,6 @@
       }
     }
   ],
-  "connections": {
-    "Déclencheur 6 h 45": {
-      "main": [
-        [
-          {
-            "node": "Lecture de connexion (regles_automatisation)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lecture de connexion (regles_automatisation)": {
-      "main": [
-        [
-          {
-            "node": "Preuve de connexion",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Contexte du passage": {
-      "main": [
-        [
-          {
-            "node": "Capacités des offres",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Capacités des offres": {
-      "main": [
-        [
-          {
-            "node": "Lire comptes",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire comptes": {
-      "main": [
-        [
-          {
-            "node": "Lire factures",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire factures": {
-      "main": [
-        [
-          {
-            "node": "Lire devis",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire devis": {
-      "main": [
-        [
-          {
-            "node": "Lire demandes",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire demandes": {
-      "main": [
-        [
-          {
-            "node": "Lire chantiers",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire chantiers": {
-      "main": [
-        [
-          {
-            "node": "Lire reservations",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire reservations": {
-      "main": [
-        [
-          {
-            "node": "Lire materiaux",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire materiaux": {
-      "main": [
-        [
-          {
-            "node": "Lire stock",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire stock": {
-      "main": [
-        [
-          {
-            "node": "Lire commandes",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire commandes": {
-      "main": [
-        [
-          {
-            "node": "Lire relances impayes",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire relances impayes": {
-      "main": [
-        [
-          {
-            "node": "Lire arrets de relance",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire arrets de relance": {
-      "main": [
-        [
-          {
-            "node": "Lire reglages des relances",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire reglages des relances": {
-      "main": [
-        [
-          {
-            "node": "Lire reglages de la plateforme",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire reglages de la plateforme": {
-      "main": [
-        [
-          {
-            "node": "Lire tarifs",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire tarifs": {
-      "main": [
-        [
-          {
-            "node": "Lire apres chantier",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Départ des constats": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 01 facture échue",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 01 facture échue": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 02 chantier à facturer",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 02 chantier à facturer": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 03 devis signé sans acompte",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 03 devis signé sans acompte": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 04 devis sans réponse",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 04 devis sans réponse": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 05 facture jamais envoyée (coupé)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 05 facture jamais envoyée (coupé)": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 06 demande sans réponse",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 06 demande sans réponse": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 07 demande sans devis",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 07 demande sans devis": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 08 devis bientôt expiré",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 08 devis bientôt expiré": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 09 stock sous le seuil",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 09 stock sous le seuil": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 10 demande d avis",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Niveau proposé selon l offre": {
-      "main": [
-        [
-          {
-            "node": "Bilan par détecteur",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire apres chantier": {
-      "main": [
-        [
-          {
-            "node": "Lire rappels",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire rappels": {
-      "main": [
-        [
-          {
-            "node": "Lire reglages du pilote",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire reglages du pilote": {
-      "main": [
-        [
-          {
-            "node": "Lire cartes refusees",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lire cartes refusees": {
-      "main": [
-        [
-          {
-            "node": "Départ des constats",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 10 demande d avis": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 11 réponse à une relance d impayé",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 11 réponse à une relance d impayé": {
-      "main": [
-        [
-          {
-            "node": "Détecteur 12 entretien à proposer",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Détecteur 12 entretien à proposer": {
-      "main": [
-        [
-          {
-            "node": "Niveau proposé selon l offre",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Échec du passage": {
-      "main": [
-        [
-          {
-            "node": "Message d échec",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Preuve de connexion": {
-      "main": [
-        [
-          {
-            "node": "Contexte du passage",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    }
-  },
   "nodeGroups": [
     {
       "id": "e2737371-448b-46aa-86e5-52e94845cb11",
@@ -2097,7 +2108,11 @@
       "description": "Lecture de connexion (une ligne, rien ne descend), jour de Paris, seuils, copie figée des capacités des offres"
     }
   ],
-  "updatedAt": "2026-11-02T18:46:59.453Z",
-  "exporte_le": "2026-11-02T18:49:53.616Z",
-  "source": "MCP n8n-oracle get_workflow_details (tâche 032-019), réponse enregistrée par le harnais puis recopiée par node, sans retouche"
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-02T20:40:31.198Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 032-037), réponse enregistrée par le harnais (fichier tool-results du harnais) puis recopiée par node, sans retouche ; « scopes » (droits de l'utilisateur du MCP) ôté"
 }

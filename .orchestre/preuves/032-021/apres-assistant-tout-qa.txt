@@ -1,0 +1,140 @@
+
+── A. Catalogue, validation, sources
+PASS les 10 nouvelles actions internes sont DIRECTES
+PASS les 8 nouvelles actions qui partent chez un client / fournisseur, touchent la page publique ou ne se défont pas sont À CONFIRMER
+PASS les envois client portent les noms convenus avec le pilote (envoyer_facture, relancer_commande, demander_avis, envoyer_rappel_entretien) ; seul envoyer_facture part en pilote, les autres restent à confirmer
+PASS opposition et réglage des relances automatiques ne sont JAMAIS pilotables (toujours un clic)
+PASS chaque action CRM nouvelle est marquée crm (proposée seulement avec le CRM)
+PASS outils : sans CRM, aucun outil CRM nouveau (lecture ou écriture) ; avec, tous
+PASS regler_plateforme : le mode « auto » est REFUSÉ (l’artisan le choisit lui-même), assistee accepté
+PASS creer_rappel : UNE cible et une échéance ; heure HH:MM
+PASS enregistrer_commande : livraison et au moins une ligne ; envoyer_facture : un numéro FAC-
+PASS regler_validation_auto / regler_relances_impayes : actif obligatoire (vrai ou faux)
+PASS anti-fabrication : une quantité de commande, une heure, un nombre de réponses doivent venir de l’artisan
+PASS ligne de commande lue : « 20 u plaque BA13 », « 3 sacs de colle », « 12 vis » ; illisible → null
+PASS cadrage : « carrelage salle de bain fini » est une ACTION (les outils d’écriture sont proposés) ; « où j’en suis » → lire_ou_j_en_suis
+PASS cadrage : les questions de lecture restent des lectures
+
+── B. La correspondance d’avancement (pure)
+PASS net : « carrelage salle de bain fini » → les 2 tâches de carrelage de la salle de bain, pas la crédence de la cuisine
+PASS ambigu : « le carrelage est terminé » (sans pièce, tâches dans 2 pièces) → rien coché, 3 candidates
+PASS pièce seule : « la cuisine est finie » → toutes les tâches à faire de la cuisine (libellé ou pièce choisie)
+PASS rien : « toiture finie » (aucune tâche de toiture) ; « fini » seul → rien
+PASS rien : déjà faites (« peinture plafond finie »)
+PASS partiel : « pose carrelage mural » (aucune tâche n’a tous les mots) → ambigu, jamais coché au hasard
+PASS avancement : la règle de la fiche (lib/crm/chantier.ts), 1 faite sur 5 → 20 %, aucune tâche → null
+
+── C. Les actions internes atteignent la bonne route, pour un objet DU COMPTE
+PASS avancer_chantier : 2 tâches de A cochées par PATCH /api/crm/taches/[id] (faite: true), jamais celle de B
+PASS avancer_chantier : avancement rendu (3 faites sur 5 → 60 %), action journalisée et annulable
+PASS avancer_chantier : toutes les lectures filtrées sur le compte
+PASS avancer_chantier annulé : les 2 tâches décochées (faite: false) par la même route
+PASS avancer_chantier ambigu : RIEN coché, candidates rendues pour que l’assistant demande
+PASS chantier d’un AUTRE compte (« Toiture Martin », de B) : introuvable, aucune route appelée
+PASS cloturer_chantier : POST /api/crm/chantiers/<chantier de A>/valider { action: valider }, annulable (rouvrir)
+PASS remettre_chantier_carte : même route, { action: remettre }, chantier de A
+PASS regler_validation_auto : GET puis PUT /api/crm/reglages { validation_auto: true }, annulable
+PASS repartir_taches_par_piece : les tâches SANS pièce reçoivent celle de leur libellé (Joints… → Salle de bain), les autres ne bougent pas
+PASS repartir_taches_par_piece (une tâche) : PATCH { piece: Cuisine } sur « Pose évier »
+PASS creer_rappel : POST /api/crm/rappels sur le chantier DE A (type, échéance, heure, texte), annulable
+PASS creer_rappel sur un devis de B : introuvable, rien créé
+PASS cocher_rappel : le rappel de A (même texte chez B) est coché par PATCH /api/crm/rappels/[id] { fait: true }
+PASS enregistrer_commande : POST /api/crm/commandes, lignes lues, l’article de l’inventaire DE A rattaché (pas celui de B), chantier de A
+PASS recevoir_commande : PATCH /api/crm/commandes/<commande de A> { action: recue, entrer_en_stock: true }
+PASS revoquer_lien_suivi : GET puis DELETE /api/crm/chantiers/<chantier de A>/suivi
+PASS regler_plateforme hors offre : refus qui renvoie à l’écran Abonnement, AUCUNE écriture
+PASS regler_plateforme : PROPOSER = une carte en attente avec l’avant / après, AUCUNE écriture
+PASS regler_plateforme CONFIRMÉ : upsert de LA ligne du compte (on_conflict artisan_id), pause posée sur la fiche du compte, annulable
+PASS regler_plateforme annulé : mode, ton et pause remis comme avant
+PASS modifier_ma_page : PROPOSER = une carte en attente (page publique), la fiche n’est PAS modifiée
+PASS modifier_ma_page CONFIRMÉ : PATCH de la fiche du compte (zone, prestation ajoutée), B intact, annulable
+PASS modifier_ma_page : retirer une prestation absente → refus qui liste celles de la page
+
+── D. Aucun envoi sans confirmation (et une seule fois)
+PASS envoyer_facture : PROPOSER = une carte en attente, la route d’envoi (envoyerFacture) n’est PAS appelée ; le crochet du pilote est consulté
+PASS envoyer_facture : CONFIRMER = la route d’envoi appelée UNE fois ; un second clic ne refait rien
+PASS envoyer_facture : la carte de A est introuvable pour le compte B
+PASS relancer_commande : PROPOSER = une carte en attente, la route d’envoi (commandeRelancer) n’est PAS appelée ; le crochet du pilote est consulté
+PASS relancer_commande : CONFIRMER = la route d’envoi appelée UNE fois ; un second clic ne refait rien
+PASS relancer_commande : la carte de A est introuvable pour le compte B
+PASS demander_avis : PROPOSER = une carte en attente, la route d’envoi (apresEnvoyer) n’est PAS appelée ; le crochet du pilote est consulté
+PASS demander_avis : CONFIRMER = la route d’envoi appelée UNE fois ; un second clic ne refait rien
+PASS demander_avis : la carte de A est introuvable pour le compte B
+PASS noter_opposition_client : PROPOSER = une carte en attente, la route d’envoi (opposition) n’est PAS appelée ; le crochet du pilote est consulté
+PASS noter_opposition_client : CONFIRMER = la route d’envoi appelée UNE fois ; un second clic ne refait rien
+PASS noter_opposition_client : la carte de A est introuvable pour le compte B
+PASS regler_relances_impayes : PROPOSER = une carte en attente, la route d’envoi (relancesEcrire) n’est PAS appelée ; le crochet du pilote est consulté
+PASS regler_relances_impayes : CONFIRMER = la route d’envoi appelée UNE fois ; un second clic ne refait rien
+PASS regler_relances_impayes : la carte de A est introuvable pour le compte B
+PASS envoyer_facture d’une facture de B : introuvable, aucune carte
+PASS envoyer_facture d’un brouillon : refus (seule une facture émise s’envoie)
+PASS envoyer_rappel_entretien sans rappel « entretien » : refus clair, rien préparé
+PASS aucun outil de confirmation n’a de réalisation atteignable sans confirmerAction : les exécuteurs du modèle ne font que proposer
+
+── E. Les nouvelles lectures
+PASS lire_fil : le fil de A, dans l’ordre, texte du client EMBALLÉ et coordonnées masquées, message écarté exclu
+PASS lire_fil d’une conversation de B : introuvable
+PASS lire_devis_detail : lignes et provenance des prix (1 ligne à chiffrer repérée), devis de B introuvable
+PASS lire_profil : offre lue sous la session ; en Studio, le CRM n’est PAS inclus « à partir de Signature » (renvoi Abonnement)
+PASS lire_plateforme : hors offre → refus avec renvoi à l’écran Abonnement ; sinon mode choisi / appliqué et réglages
+PASS lire_ou_j_en_suis : par GET /api/crm/vue (garde du CRM), salle d’attente + poste des assistants + rappels + livraisons en retard
+PASS lire_rappels / lire_commandes : rappels en retard, commande en retard (jours de retard comptés), chantier nommé
+PASS une seule lecture de la vue par tour (cache), même pour 3 outils
+PASS sans CRM : lire_ou_j_en_suis, lire_rappels, lire_commandes refusent (« CRM pas ouvert »)
+PASS validation des lectures : conversation_id UUID, numéro DEV-, quand fermé
+
+── F. Le code
+PASS aucune clé de service dans les nouveaux modules (ni supabaseAdmin, ni service_role)
+PASS aucun appel à confirmerAction dans les nouveaux modules (seul le clic de l’artisan exécute une carte)
+PASS le crochet du pilote automatique est conservé dans proposee() (dep.piloterCarte ?? piloterCarte)
+PASS actionsTout est branché dans actionsDeSession, lecturesTout dans executeursDeSession
+PASS chaque nouvelle lecture PostgREST de actions-tout / lectures-tout est filtrée sur le compte
+PASS aucun octet de contrôle (< 0x20 hors \n \r \t) dans les fichiers de ce lot
+
+── G. 29/10 — l’assistant FAIT : « fait tout seul », facture sans devis, recherche, liste d’achat, export Excel, sortie pour un chantier
+PASS fait tout seul : « envoie la facture FAC-2026-0001 » → envoyée TOUT DE SUITE, une fois, sans carte à confirmer ni pilote
+PASS fait tout seul : inscrite au journal des actions (mode direct, exécutée, sans expiration), avec ce qui a été fait et le texte de la proposition
+PASS fait tout seul : la fiche n’est pas « à confirmer » — un clic ne renvoie rien
+PASS pas demandée par l’artisan (ou texte de tiers lu) : la CARTE reste, rien n’est envoyé, et l’assistant sait pourquoi
+PASS fait tout seul : la limite de 30 envois par jour s’applique — refus clair, RIEN envoyé, rien inscrit comme fait
+PASS fait tout seul : le plafond de 200 actions par jour s’applique avant tout
+PASS fait tout seul : « augmente mes tarifs de 5 % » → CARTE (geste §3.2, jamais d’office), aucun prix changé
+PASS … confirmé d’un clic : lot appliqué avec les entrées de la proposition (45 → 47,25), chez A seulement, annulable
+PASS … et annulé d’un clic : prix remis à 45
+PASS facture SANS devis demandée (fait tout seul) : CARTE avec le montant simulé (geste §3.2, jamais d’office), rien d’émis, et le modèle sait pourquoi
+PASS … CONFIRMÉE : creerFacture avec un CORPS (aucun devis), ligne au tarif de A (45 € HT, TVA du tarif 10 %) et prix donné (TVA 20 % demandée), TTC simulé vérifié à l’émission ; scellée, donc PAS annulable
+PASS facture sans devis : un tarif d’un AUTRE compte est introuvable, rien d’émis
+PASS facture sans devis : une ligne SANS prix est refusée (jamais de facture à 0 €), rien d’émis
+PASS facture sans devis non demandée par l’artisan : une CARTE avec le montant simulé, rien d’émis
+PASS … CONFIRMÉE : émise une fois, avec le TTC annoncé sur la carte
+PASS recherche : la route de l’Inventaire (POST /api/inventaire/recherche, crédit et offre compris) avec la requête de l’artisan ; prix VUS rendus tels quels avec leur source
+PASS recherche : les textes des pages (désignation, raison d’un « non vu ») sont emballés comme du texte de tiers ; ni sceau ni lien au modèle
+PASS recherche : les résultats SCELLÉS sont gardés sur la fiche du journal (relus par retenir_resultat)
+PASS retenir : le résultat n° 2 part TEL QUEL (sceau compris) vers /recherche/retenir, dans l’inventaire ; fiche créée → annulable
+PASS retenir vers la liste d’achat : la quantité de l’artisan transmise, annulable (ligne retirée)
+PASS retenir un numéro absent : refus qui dit combien il y en a
+PASS retenir dans une AUTRE conversation : rien à retenir (une recherche n’est relue que dans sa conversation)
+PASS liste d’achat : les ALERTES de A seulement (vis inox : 4 en stock, seuil 10 → 6 à racheter ; la colle, au-dessus de son seuil, n’y est pas ; rien de B)
+PASS liste d’achat : toutes les lectures filtrées sur le compte (les lignes passent par leur liste)
+PASS liste d’achat : redemandée, rien n’est doublé
+PASS liste d’achat exportée en Excel (la seule façon de la relire aujourd’hui)
+PASS liste d’achat annulée : ses lignes retirées, et la liste créée pour l’occasion (redevenue vide) supprimée
+PASS export Excel : un vrai .xlsx (ZIP « PK »), le devis de A dedans, JAMAIS celui de B ; lectures filtrées ; fichier nommé
+PASS export Excel : le fichier va à l’écran seulement — ni au modèle, ni au journal des actions
+PASS export du stock : les articles de A (vis inox à racheter, fournisseur noté), aucun de B
+PASS export des tarifs : ceux de A seulement (45 € HT), sans formule venue des données
+PASS sortie pour un chantier AVEC une réservation de même quantité : sortie par la route de la réservation (celle de A, jamais celle de B), pas de second mouvement
+PASS sortie pour un chantier SANS réservation de cette quantité : mouvement de sortie rattaché au devis du chantier, refusé s’il rendait le stock négatif, chantier noté
+PASS sortie pour le chantier d’un AUTRE compte : introuvable, rien décompté
+PASS supprimer un article DEMANDÉ (fait tout seul) : CARTE (geste §3.2, jamais d’office), aucune route appelée
+PASS … confirmée d’un clic : DELETE /api/inventaire?id=<article de A>, irréversible (pas d’annulation)
+PASS chaque outil du catalogue (52) a son exécution côté serveur ; la fabrique refuse une proposition sans réalisation
+PASS BOUT EN BOUT : l’artisan demande l’envoi, aucun texte de tiers lu → envoyée tout de suite, carte « faite »
+PASS BOUT EN BOUT : un message de client lu dans le même tour → la même demande reste une CARTE à confirmer, rien n’est envoyé
+PASS BOUT EN BOUT : une question de lecture (pas de demande d’action) → un envoi tenté par le modèle reste une CARTE
+
+120 PASS, 0 FAIL
+(node:2972351) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/assistant/outils-actions.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

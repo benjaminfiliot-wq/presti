@@ -638,6 +638,557 @@ try {
       surPanne.parti === true && surPanne.mails.includes('dupont@essai.test'), JSON.stringify(surPanne.r.donnees).slice(0, 200))
   }
 
+  // ═══════════════════════ A7. Les relances GROUPÉES : une carte de lot, jamais d'office (lot L16 du chantier 4, 02/11) ═══════════════════════
+  // plans/011-cadrage-01-11/chantier-4-assistant-plan.md §0 bis rangs 4 et 8, question 1, §14 L16 ; P3:160 « Relance les devis envoyés il y a
+  // plus de 5 jours ». Le vrai actionsDeSession sur la doublure de PostgREST : 4 devis visés (3 retenus, 1 exclu), 1 trop récent ; le
+  // réalisateur (l'envoi des e-mails) n'est atteint QUE par confirmerAction, comme la route /api/assistant/actions.
+  console.log('\n── A7. Relances groupées (L16) : UNE carte de lot, ses exclus et leur motif ; rien ne part avant le clic ; une carte écartée ne revient pas')
+  {
+    const P3 = 'Relance les devis envoyés il y a plus de 5 jours'
+    const LOT = [[101, 'M. Leroy', 'leroy', 1200, '2026-10-12'], [102, 'Mme Garnier', 'garnier', 860, '2026-10-15'], [103, 'M. Roux', 'roux', 2400, '2026-10-18'], [104, 'Mme Petit', 'petit', 540, '2026-10-20'], [105, 'M. Recent', 'recent', 300, '2026-10-31']]
+    const numDe = (n) => `DEV-2026-0${n}`
+    /** Le monde du lot : le compte A, cinq devis envoyés (le 105 il y a deux jours : hors du critère), chacun avec sa conversation. Mme Petit
+     *  (104) a été relancée hier depuis le CRM (registre commun). Options : pause du compte, sans la trace du CRM, messages d'un client. */
+    const mondeLot = ({ pause = false, crm = true, client = {} } = {}) => {
+      mondeA()
+      T.artisans[0].leads_pause = pause
+      for (const [n, c, mail, ttc, le] of LOT) T.devis.push({ id: id(n), artisan_id: A, numero: numDe(n), statut: 'envoye', objet: 'Travaux d’essai', client_nom: c, client_email: `${mail}@essai.test`, client_adresse: null, total_ht: ttc / 1.1, total_tva: ttc - ttc / 1.1, total_ttc: ttc, remise_pct: 0, acompte_pct: 0, validite_jours: 90, conditions: null, notes: null, lead_id: id(n + 50), envoye_le: `${le}T10:00:00Z` })
+      T.leads = LOT.map(([n, c, mail]) => ({ id: id(n + 50), artisan_id: A, nom_prospect: c, contact: `${mail}@essai.test`, statut: 'repondu', message: 'Bonjour, un devis pour des travaux' }))
+      T.messages = Object.entries(client).flatMap(([n, textes]) => textes.map((contenu, i) => ({ id: id(800 + Number(n) * 3 + i), lead_id: id(Number(n) + 50), sens: 'in', contenu, sent_at: `2026-10-2${i}T10:00:00Z`, etat: null, type: null })))
+      T.crm_rappels = crm ? [{ id: id(990), artisan_id: A, devis_id: id(104), type: 'relancer_devis', envoye_le: '2026-11-01T08:00:00Z' }] : []
+      T.assistant_actions = []
+    }
+    /** Le magasin des cartes, MIROIR de la table assistant_actions de la doublure (en production, magasin et session lisent la même table). */
+    const magasinMiroir = () => {
+      const m = conf.magasinEnMemoire()
+      const refleter = (f) => { if (!f) return f; T.assistant_actions = [...(T.assistant_actions ?? []).filter((x) => x.id !== f.id), { ...f }]; return f }
+      return { ...m, creer: async (f) => refleter(await m.creer(f)), transiter: async (...a) => refleter(await m.transiter(...a)) }
+    }
+    /** Un tour de l'assistant (message, « fait tout seul » ou non) et la route des clics, sur le MÊME magasin et les mêmes doublures. */
+    const sessionLot = ({ message = P3, autonome = true, mod = srvMod, exclusions = null } = {}) => {
+      const mails = [], piloteAppels = []
+      const magasin = magasinMiroir()
+      const dependances = {
+        appeler: async () => ({ status: 200, json: { ok: true } }), envoyerMail: async (m) => { mails.push(m.to); return { ok: true } },
+        piloterCarte: async (_uid, fiche) => { piloteAppels.push(fiche); return { part_le: '2026-11-02T09:10:00Z' } }, maintenant: () => new Date('2026-11-02T09:00:00Z'),
+        ...(exclusions ? { exclusionsRelance: exclusions } : {}),
+      }
+      const commun = { uid: A, jeton: 'jeton-essai', origine: 'http://localhost', isFounder: false, crm: false, meilleursClients: false, tour: () => 1, magasin, dependances }
+      const srv = mod.actionsDeSession({ ...commun, conversationId: id(906), autonome: () => autonome, textesArtisan: [message] })
+      // La route /api/assistant/actions : sa propre fabrique, sans message ni « fait tout seul » (app/api/assistant/actions/route.ts:44-47).
+      const clic = mod.actionsDeSession({ ...commun, conversationId: id(907) })
+      const deps = { magasin, realisateurs: clic.realisateurs, inverses: clic.inverses, journaliser: async () => {} }
+      return { srv, magasin, mails, piloteAppels, deps, autreTour: (o = {}) => mod.actionsDeSession({ ...commun, conversationId: id(906), autonome: () => o.autonome ?? true, textesArtisan: [o.message ?? P3] }) }
+    }
+    const lotDe = (r) => r.carte?.lot ?? null
+    const numeros = (xs) => (xs ?? []).map((x) => x.numero).join(',')
+
+    // A7a — P3:160, en mode « fait tout seul » (l'artisan l'a demandé lui-même) : UNE carte, aucun e-mail, aucun pilote.
+    mondeLot()
+    const s1 = sessionLot()
+    const r1 = await s1.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+    const l1 = lotDe(r1)
+    ok('A7a « Relance les devis envoyés il y a plus de 5 jours », demandé (fait tout seul) : UNE carte de lot en attente — 3 retenus (101, 102, 103), 1 exclu (104), le devis de 2 jours hors du lot',
+      r1.carte?.statut === 'en_attente' && r1.carte?.outil === 'relancer_devis' && r1.donnees?.carte_de_lot === true && numeros(l1?.retenus) === 'DEV-2026-0101,DEV-2026-0102,DEV-2026-0103'
+      && numeros(l1?.exclus) === 'DEV-2026-0104' && !JSON.stringify(l1).includes('DEV-2026-0105'), JSON.stringify(r1.donnees).slice(0, 400))
+    ok('A7b … le RÉALISATEUR n’est jamais appelé avant la validation : aucun e-mail, aucune relance inscrite, rien dans la file du pilote, jamais « c’est fait »',
+      s1.mails.length === 0 && s1.piloteAppels.length === 0 && s1.magasin.toutes().length === 1 && s1.magasin.toutes().every((f) => f.statut === 'en_attente')
+      && r1.donnees?.fait_tout_seul !== true && /RIEN n'a été envoyé/.test(r1.donnees?.a_savoir ?? '') && r1.donnees?.pas_d_office === true, JSON.stringify({ mails: s1.mails, pilote: s1.piloteAppels.length, fiches: s1.magasin.toutes().map((f) => f.statut) }))
+    const textes = LOT.slice(0, 3).map(([n, c, , ttc, le]) => cartesMod.texteRelanceDevis({ client: c, numero: numDe(n), objet: 'Travaux d’essai', totalTtc: ttc, envoyeLe: `${le}T10:00:00Z`, validiteJours: 90, artisan: 'Atelier Essai', ton: 'cordial' }))
+    ok('A7c … la carte nomme l’exclu ET son motif (relancé hier depuis le CRM, registre commun), et porte le texte EXACT de chacune des 3 relances',
+      /déjà été relancé depuis le CRM le 01\/11\/2026/.test(l1?.exclus?.[0]?.motif ?? '') && r1.carte.lignes.some((l) => l.label === 'Exclu' && /DEV-2026-0104 · Mme Petit — Ce client a déjà été relancé/.test(l.valeur))
+      && (l1?.retenus ?? []).every((x, i) => x.message.texte === textes[i].texte && x.message.objet === textes[i].objet && x.message.a === `${LOT[i][2]}@essai.test`) && (r1.donnees?.exclus ?? []).some((x) => /DEV-2026-0104.*relancé/.test(x)),
+      JSON.stringify(l1?.exclus))
+    // A7d — le clic de l'artisan (la route des clics) : les 3 relances partent, chacune inscrite au journal, objet par objet.
+    const c1 = await conf.confirmerAction(s1.deps, A, r1.carte.id)
+    const traces = s1.magasin.toutes().filter((f) => f.statut === 'executee' && f.objet_type === 'devis')
+    ok('A7d … au clic seulement : 3 e-mails, aux 3 retenus ; chaque relance inscrite au journal des actions par devis (le registre commun et l’anti-doublon la voient)',
+      c1.ok && c1.statut === 'executee' && s1.mails.join() === 'leroy@essai.test,garnier@essai.test,roux@essai.test' && traces.map((f) => f.objet_id).join() === [id(101), id(102), id(103)].join()
+      && traces.every((f) => f.outil === 'relancer_devis' && f.entrees.du_lot === true), JSON.stringify({ c1, mails: s1.mails }))
+    const c1b = await conf.confirmerAction(s1.deps, A, r1.carte.id)
+    const r1b = await s1.autreTour().executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+    ok('A7e … un second clic ne renvoie rien (carte réclamée une fois) ; le même ordre au tour suivant ne prépare aucun lot : les 4 sont exclus, chacun avec son motif',
+      !c1b.ok && c1b.code === 'deja_traitee' && s1.mails.length === 3 && r1b.resultat === 'refus' && /Aucun devis à relancer/.test(r1b.donnees?.erreur ?? '') && (r1b.donnees?.erreur.match(/relancé/g) ?? []).length >= 4,
+      JSON.stringify(r1b.donnees).slice(0, 400))
+
+    // A7f — les autres motifs : « ne plus relancer » (le point d'entrée de 0185), sujet d'escalade, pas d'e-mail ; puis la pause du compte.
+    mondeLot({ crm: false, client: { 102: ['Litige : votre chantier a inondé ma cuisine, mon avocat vous écrira'] } })
+    T.devis.find((d) => d.id === id(103)).client_email = null
+    const s2 = sessionLot({ exclusions: async (_uid, ids) => new Map(ids.filter((x) => x === id(101)).map((x) => [x, 'ne plus relancer ce client (demandé par vous)'])) })
+    const r2 = await s2.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+    const ex2 = Object.fromEntries((lotDe(r2)?.exclus ?? []).map((x) => [x.numero, x.motif]))
+    ok('A7f motifs d’exclusion : « ne plus relancer », sujet d’escalade (le motif du pilote), pas d’e-mail — seul 104 est retenu ; rien n’est parti',
+      numeros(lotDe(r2)?.retenus) === 'DEV-2026-0104' && /ne plus relancer/.test(ex2['DEV-2026-0101'] ?? '') && ex2['DEV-2026-0102'] === R.LIBELLE_MOTIF.escalade && /pas d’e-mail/.test(ex2['DEV-2026-0103'] ?? '') && s2.mails.length === 0,
+      JSON.stringify(ex2))
+    mondeLot({ pause: true })
+    const s3 = sessionLot()
+    const r3 = await s3.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+    ok('A7g compte en pause : aucun lot, les 4 devis exclus avec le motif « compte en pause », rien n’est parti',
+      r3.resultat === 'refus' && (r3.donnees?.erreur.match(/compte en pause/g) ?? []).length === 4 && s3.mails.length === 0 && s3.magasin.toutes().length === 0, r3.donnees?.erreur)
+    mondeLot()
+    const s4 = sessionLot({ exclusions: async () => { throw new Error('relances_exclusions : lecture refusée (essai)') } })
+    const r4 = await s4.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 })).then((x) => x, (e) => ({ leve: String(e?.message ?? e) }))
+    ok('A7h « ne plus relancer » illisible : aucun lot n’est préparé (fail-closed), rien n’est parti', /lecture refusée/.test(r4.leve ?? '') && s4.magasin.toutes().length === 0 && s4.mails.length === 0, JSON.stringify(r4).slice(0, 200))
+
+    // A7i — rang 8 : la carte de lot ÉCARTÉE ne revient pas ; une relance seule écartée n'est pas reproposée d'elle-même.
+    mondeLot()
+    const s5 = sessionLot()
+    const r5 = await s5.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+    const ecart = await conf.refuserAction(s5.deps, A, r5.carte.id)
+    const r5b = await s5.autreTour().executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+    ok('A7i rang 8 : la carte de lot écartée par l’artisan ne revient pas — le même ordre ne prépare aucune carte ; chaque devis du lot porte « relance écartée par vous le 02/11 »',
+      ecart.ok && r5b.resultat === 'refus' && (r5b.donnees?.erreur.match(/relance écartée par vous/g) ?? []).length === 3 && s5.magasin.toutes().filter((f) => f.statut === 'en_attente').length === 0 && s5.mails.length === 0,
+      JSON.stringify(r5b.donnees).slice(0, 400))
+    const q = await s5.autreTour({ message: 'Quels devis dois-je relancer ?', autonome: false }).executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
+    const nomme = await s5.autreTour({ message: 'Relance quand même DEV-2026-0101', autonome: true }).executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
+    ok('A7j … la relance seule d’un devis écarté : reproposée d’elle-même (une question), refus « ne la repropose pas » ; redemandée par l’artisan, une CARTE (jamais d’office), aucun e-mail',
+      q.resultat === 'refus' && /ne la repropose pas/.test(q.donnees?.erreur ?? '') && nomme.carte?.statut === 'en_attente' && nomme.donnees?.pas_d_office === true && /Vous aviez écarté cette relance/.test(nomme.donnees?.pourquoi_une_carte ?? '') && s5.mails.length === 0,
+      `${JSON.stringify(q.donnees).slice(0, 200)} | ${JSON.stringify(nomme.donnees).slice(0, 200)}`)
+    const repris = await s5.autreTour({ message: 'Relance DEV-2026-0101 et DEV-2026-0102' }).executeurs.relancer_devis(vrai('relancer_devis', { numeros: ['DEV-2026-0101', 'DEV-2026-0102'] }))
+    ok('A7k … un lot qui NOMME les devis écartés (numéros écrits par l’artisan) les reprend, en carte', numeros(lotDe(repris)?.retenus) === 'DEV-2026-0101,DEV-2026-0102' && repris.carte?.statut === 'en_attente' && s5.mails.length === 0, JSON.stringify(repris.donnees).slice(0, 300))
+
+    // A7l — un ordre groupé ne se relance pas devis par devis ; un objet seul garde le « fait tout seul », pas le second du même message.
+    mondeLot({ crm: false })
+    const s6 = sessionLot()
+    const seulDansLot = await s6.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
+    ok('A7l ordre groupé (P3:160) mais relance d’un seul devis : refus « une seule carte de lot », rien n’est parti ni préparé',
+      seulDansLot.resultat === 'refus' && /Ordre groupé/.test(seulDansLot.donnees?.erreur ?? '') && s6.mails.length === 0 && s6.magasin.toutes().length === 0, JSON.stringify(seulDansLot.donnees).slice(0, 200))
+    const s7 = sessionLot({ message: 'Relance M. Leroy' })
+    const un = await s7.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
+    const deux = await s7.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0102' }))
+    ok('A7m témoin : « Relance M. Leroy » (un objet seul) part d’office comme avant (choix du 29/10) ; une SECONDE relance du même message, sur un autre devis, attend le clic',
+      un.donnees?.fait_tout_seul === true && deux.carte?.statut === 'en_attente' && deux.donnees?.pas_d_office === true && /Plusieurs relances dans le même message/.test(deux.donnees?.pourquoi_une_carte ?? '') && s7.mails.join() === 'leroy@essai.test',
+      `${JSON.stringify(un.donnees).slice(0, 150)} | ${JSON.stringify(deux.donnees).slice(0, 200)}`)
+
+    // A7n — au clic, chaque devis est recontrôlé : un litige écrit APRÈS la carte, ou une conversation illisible, retient la relance.
+    mondeLot({ crm: false })
+    const s8 = sessionLot()
+    const r8 = await s8.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+    T.messages.push({ id: id(899), lead_id: id(152), sens: 'in', contenu: 'Je conteste le devis, litige en cours', sent_at: '2026-11-02T08:59:00Z', etat: null, type: null })
+    const c8 = await conf.confirmerAction(s8.deps, A, r8.carte.id)
+    ok('A7n au clic, chaque devis est relu : le litige écrit après la carte retient 102 (motif dit dans le résultat) ; les autres partent',
+      numeros(lotDe(r8)?.retenus) === 'DEV-2026-0101,DEV-2026-0102,DEV-2026-0103,DEV-2026-0104' && c8.ok && s8.mails.join() === 'leroy@essai.test,roux@essai.test,petit@essai.test' && /DEV-2026-0102 : Le client parle/.test(c8.resume ?? ''),
+      JSON.stringify({ c8, mails: s8.mails }).slice(0, 400))
+    mondeLot({ crm: false })
+    const s9 = sessionLot()
+    const r9 = await s9.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+    PANNES.add('leads')
+    const c9 = await conf.confirmerAction(s9.deps, A, r9.carte.id).finally(() => PANNES.delete('leads'))
+    ok('A7o … conversations illisibles au clic : aucune relance ne part, la carte passe en « non exécutée » avec le motif (côté sûr)',
+      !c9.ok && c9.code === 'echec' && s9.mails.length === 0 && /pas pu être relus/.test(c9.erreur ?? ''), JSON.stringify(c9).slice(0, 300))
+
+    // Les MUTANTS : chaque garde retirée, le juge doit voir la brèche.
+    const jouerMut = async (mod, o = {}) => { mondeLot({ crm: false, ...(o.monde ?? {}) }); const s = sessionLot({ mod, ...(o.session ?? {}) }); return { s, r: await s.srv.executeurs.relancer_devis(vrai('relancer_devis', o.entree ?? { envoye_depuis_jours: 5 })) } }
+    const m1 = await jouerMut(await mutant('lib/assistant/actions-serveur.ts', "      horsAuto: 'Un lot de relances", "      horsAutoRetire: 'Un lot de relances"))
+    ok('A7p MUTANT (le lot sans sa garde « jamais d’office ») : le juge VOIT la brèche — en « fait tout seul », le réalisateur part AVANT tout clic : 4 e-mails',
+      m1.s.mails.length === 4 && m1.r.donnees?.fait_tout_seul === true, JSON.stringify({ mails: m1.s.mails, d: m1.r.donnees }).slice(0, 300))
+    const m2 = await jouerMut(await mutant('lib/assistant/actions-serveur.ts', "    if (nom === 'relancer_devis' && p.apercu.lot) return carteDeLot(p)\n", '\n'), { session: { autonome: false } })
+    const vrai2 = await jouerMut(srvMod, { session: { autonome: false } })
+    ok('A7q MUTANT (la carte de lot passée au pilote) : le juge VOIT la brèche — la carte entre dans la file du pilote, qui la ferait partir sans clic ; le vrai code, jamais',
+      m2.s.piloteAppels.length === 1 && !!m2.r.donnees?.pilote_automatique && vrai2.s.piloteAppels.length === 0 && !vrai2.r.donnees?.pilote_automatique, `${m2.s.piloteAppels.length}/${vrai2.s.piloteAppels.length}`)
+    const ecarterPuisRedemander = async (mod) => {
+      mondeLot({ crm: false })
+      const s = sessionLot({ mod })
+      const r = await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+      await conf.refuserAction(s.deps, A, r.carte.id)
+      return { s, lot: await s.autreTour().executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 })), seul: await s.autreTour({ message: 'Quels devis dois-je relancer ?', autonome: false }).executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' })) }
+    }
+    const m3 = await ecarterPuisRedemander(await mutant('lib/assistant/actions-serveur.ts', '    if (ecartee && !nommeDans(messageArtisan, String(d.numero))) return phraseEcartee(ecartee)\n', '\n'))
+    ok('A7r MUTANT (les refus oubliés dans le lot) : le juge VOIT la brèche — le lot écarté revient tel quel, en boucle (4 retenus)', numeros(lotDe(m3.lot)?.retenus).split(',').length === 4 && m3.lot.carte?.statut === 'en_attente', JSON.stringify(m3.lot.donnees).slice(0, 200))
+    const m4 = await ecarterPuisRedemander(await mutant('lib/assistant/actions-serveur.ts', "    if (ecartee && ecartee !== 'illisible' && !redemandee) return ko(", '    if (false) return ko('))
+    ok('A7s MUTANT (le refus oublié pour une relance seule) : le juge VOIT la brèche — l’assistant repropose d’elle-même la relance écartée', m4.seul.carte?.statut === 'en_attente' && m4.seul.resultat !== 'refus', JSON.stringify(m4.seul.donnees).slice(0, 200))
+    const m5 = await jouerMut(await mutant('lib/assistant/actions-serveur.ts', '    if (ordreGroupe(messageArtisan)) return ko("Ordre groupé', '    if (false) return ko("Ordre groupé'), { entree: { numero: 'DEV-2026-0101' } })
+    ok('A7t MUTANT (l’ordre groupé relancé devis par devis) : le juge VOIT la brèche — sous P3:160, la relance d’un seul devis part d’office', m5.r.donnees?.fait_tout_seul === true && m5.s.mails.length === 1, JSON.stringify(m5.r.donnees).slice(0, 200))
+    const mut6 = await mutant('lib/assistant/actions-serveur.ts', "    return autre || (nom === 'relancer_facture'", "    return false && (nom === 'relancer_facture'")
+    mondeLot({ crm: false })
+    const s10 = sessionLot({ mod: mut6, message: 'Relance M. Leroy' })
+    await s10.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
+    await s10.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0102' }))
+    mondeLot({ crm: false })
+    const s10f = sessionLot({ mod: mut6, message: 'Relance toutes les factures impayées' })
+    const f10 = await s10f.srv.executeurs.relancer_facture(vrai('relancer_facture', { numero: 'FAC-2026-0021' }))
+    ok('A7u MUTANT (la règle du tour retirée) : le juge VOIT la brèche — deux relances du même message partent d’office, en rafale ; et l’impayé d’un ordre groupé aussi',
+      s10.mails.length === 2 && f10.donnees?.fait_tout_seul === true && s10f.mails.length === 1, `${s10.mails.join()} | ${JSON.stringify(f10.donnees).slice(0, 150)}`)
+    mondeLot({ crm: false })
+    const s12 = sessionLot({ message: 'Relance toutes les factures impayées' })
+    const f12 = await s12.srv.executeurs.relancer_facture(vrai('relancer_facture', { numero: 'FAC-2026-0021' }))
+    ok('A7w les impayés d’un ordre groupé (« Relance toutes les factures impayées ») : chaque relance attend le clic, aucune ne part d’office',
+      f12.carte?.statut === 'en_attente' && f12.donnees?.pas_d_office === true && s12.mails.length === 0, JSON.stringify(f12.donnees).slice(0, 200))
+    const mut7 = await mutant('lib/assistant/actions-serveur.ts', '      const motif = await motifExclusion(d, { ecartes: new Map(), neplus })', '      const motif = null')
+    mondeLot({ crm: false })
+    const s11 = sessionLot({ mod: mut7 })
+    const r11 = await s11.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+    T.messages.push({ id: id(898), lead_id: id(152), sens: 'in', contenu: 'Je conteste le devis, litige en cours', sent_at: '2026-11-02T08:59:00Z', etat: null, type: null })
+    await conf.confirmerAction(s11.deps, A, r11.carte.id)
+    ok('A7v MUTANT (aucun recontrôle au clic) : le juge VOIT la brèche — le client en litige depuis la carte reçoit quand même sa relance', s11.mails.includes('garnier@essai.test'), s11.mails.join())
+
+    // ═══════════════════════ A8. Les défauts de l'audit offensif 032-028, corrigés (tâche 032-030) — chaque essai a son MUTANT ═══════════════════════
+    console.log('\n── A8. Audit 032-028 corrigé (032-030) : la preuve « un seul client », la réservation au clic, « ne plus relancer », la pause, l’autre conversation')
+    const ACT = 'lib/assistant/actions-serveur.ts'
+    const parAdresseDe = (mails) => mails.reduce((m, x) => (m[x] = (m[x] ?? 0) + 1, m), {})
+    /** Un tour : le message de l'artisan, puis les appels relancer_devis du modèle (devis par devis). */
+    const tourLot = async (message, appels, o = {}) => {
+      mondeLot({ crm: false, ...(o.monde ?? {}) })
+      const s = sessionLot({ message, autonome: o.autonome ?? true, mod: o.mod ?? srvMod, exclusions: o.exclusions ?? null })
+      const rs = []
+      for (const e of appels) rs.push(await s.srv.executeurs.relancer_devis(vrai('relancer_devis', e)))
+      return { s, rs }
+    }
+    // A8a — D1 : un ordre groupé que ordreGroupe ne reconnaît pas ; la PREMIÈRE relance devis par devis ne part plus d'office.
+    const ORDRES_NON_VUS = ['Relance M. Leroy et Mme Garnier', 'Relance tout le monde', 'Relance DEV-2026-0101 et 0102', 'relance leroy, garnier, roux', 'Relance Leroy Garnier', 'Relancez les gens qui n’ont pas répondu']
+    const sortsD1 = []
+    for (const m of ORDRES_NON_VUS) sortsD1.push([m, await tourLot(m, [{ numero: 'DEV-2026-0101' }])])
+    ok('A8a D1 : six ordres groupés que ordreGroupe ne voit pas (« et », « tout le monde », numéro abrégé, virgules, deux noms collés, « les gens ») — la 1re relance devis par devis est une CARTE, aucun e-mail',
+      sortsD1.every(([, x]) => x.s.mails.length === 0 && x.rs[0].carte?.statut === 'en_attente' && x.rs[0].donnees?.pas_d_office === true && x.rs[0].donnees?.fait_tout_seul !== true),
+      sortsD1.map(([m, x]) => `${m}=${x.s.mails.length}/${x.rs[0].donnees?.pourquoi_une_carte ?? JSON.stringify(x.rs[0].donnees).slice(0, 80)}`).join(' | '))
+    const temoinsD1 = []
+    for (const [m, n] of [['Relance M. Leroy', 'DEV-2026-0101'], ['Relance le devis DEV-2026-0101', 'DEV-2026-0101'], ['relance garnier', 'DEV-2026-0102']]) temoinsD1.push([m, await tourLot(m, [{ numero: n }])])
+    ok('A8b D1 témoin : un seul client nommé, ou le numéro complet seul — la relance part d’office comme avant (choix de Benj du 29/10), une fois',
+      temoinsD1.every(([, x]) => x.rs[0].donnees?.fait_tout_seul === true && x.s.mails.length === 1), temoinsD1.map(([m, x]) => `${m}=${x.s.mails.join()}`).join(' | '))
+    const nomAutre = await tourLot('Relance Mme Garnier', [{ numero: 'DEV-2026-0101' }])
+    ok('A8c D1 : le modèle relance le devis d’un AUTRE client que celui nommé (« Relance Mme Garnier » → devis de M. Leroy) : une carte, rien ne part',
+      nomAutre.s.mails.length === 0 && nomAutre.rs[0].carte?.statut === 'en_attente', JSON.stringify(nomAutre.rs[0].donnees).slice(0, 200))
+    const mutD1 = await mutant(ACT, '    if (!p.horsAuto && p.cible && premiereDuTour', '    if (false && p.cible && premiereDuTour')
+    const surMutD1 = await tourLot('Relance M. Leroy et Mme Garnier', [{ numero: 'DEV-2026-0101' }], { mod: mutD1 })
+    ok('A8d MUTANT (la preuve « un seul client » retirée : la version du lot L16) : le juge VOIT la brèche — « Relance M. Leroy et Mme Garnier » relance M. Leroy sans clic',
+      surMutD1.s.mails.join() === 'leroy@essai.test' && surMutD1.rs[0].donnees?.fait_tout_seul === true, surMutD1.s.mails.join())
+
+    // A8e — D2 : deux cartes de lot sur les mêmes devis, cliquées EN MÊME TEMPS : la réservation avant l'envoi, chaque client une fois au plus.
+    const doubleClic = async (mod) => {
+      mondeLot({ crm: false })
+      const s = sessionLot({ mod })
+      const r1 = await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+      const r2 = await s.autreTour().executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+      const cs = await Promise.all([conf.confirmerAction(s.deps, A, r1.carte.id), conf.confirmerAction(s.deps, A, r2.carte.id)])
+      return { s, r2, cs, par: parAdresseDe(s.mails) }
+    }
+    const dc = await doubleClic(srvMod)
+    ok('A8e D2 : deux cartes de lot sur les mêmes devis, cliquées en même temps — aucun client relancé deux fois ; la 2e carte annonce l’autre (alerte)',
+      Object.values(dc.par).every((n) => n === 1) && JSON.stringify(dc.r2.carte ?? {}).includes('aussi dans une autre carte de relance'),
+      `${JSON.stringify(dc.par)} | ${dc.cs.map((c) => c.resume ?? c.erreur).join(' || ').slice(0, 300)}`)
+    const tracesDc = dc.s.magasin.toutes().filter((f) => f.objet_type === 'devis' && f.entrees?.du_lot === true)
+    ok('A8f D2 : chaque relance partie a UNE trace « executee » ; une réservation perdante passe en « echec » (jamais en_cours oubliée)',
+      tracesDc.filter((f) => f.statut === 'executee').length === dc.s.mails.length && tracesDc.every((f) => f.statut === 'executee' || f.statut === 'echec'),
+      JSON.stringify(tracesDc.map((f) => `${f.entrees.numero}:${f.statut}`)))
+    const mutD2 = await mutant(ACT, '      if (concurrente) { await lever(concurrente);', '      if (false) { await lever(concurrente);')
+    const dcMut = await doubleClic(mutD2)
+    ok('A8g MUTANT (la relecture après réservation retirée : la version du lot L16) : le juge VOIT la brèche — un client reçoit deux relances',
+      Object.values(dcMut.par).some((n) => n >= 2), JSON.stringify(dcMut.par))
+    // A8h — D2, à la préparation : un devis qu'un autre lot est en train de relancer (réservation en_cours) n'entre pas dans un lot neuf.
+    const enCoursAilleurs = async (mod) => {
+      mondeLot({ crm: false })
+      const s = sessionLot({ mod })
+      await s.magasin.creer({ artisan_id: A, conversation_id: id(906), tour: 1, outil: 'relancer_devis', mode: 'direct', statut: 'en_cours', titre: 'Relance du devis DEV-2026-0101 (lot)', entrees: { numero: 'DEV-2026-0101', du_lot: true }, apercu: { titre: 'x', lignes: [], avant_apres: [], alertes: [], irreversible: true }, annulation: null, resultat_resume: null, objet_type: 'devis', objet_id: id(101), expire_le: null })
+      return { s, r: await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 })) }
+    }
+    const eca = await enCoursAilleurs(srvMod)
+    ok('A8h D2 : un devis en train de partir par une autre carte (réservation en_cours) est EXCLU du lot neuf, motif dit',
+      !numeros(lotDe(eca.r)?.retenus).includes('0101') && (lotDe(eca.r)?.exclus ?? []).some((x) => x.numero === 'DEV-2026-0101' && /en train de partir/.test(x.motif)), JSON.stringify(lotDe(eca.r)?.exclus))
+    const ecaMut = await enCoursAilleurs(await mutant(ACT, "    if (x.ouvertes?.get(d.id)?.statut === 'en_cours') return", '    if (false) return'))
+    ok('A8i MUTANT (l’exclusion à la préparation retirée) : le juge VOIT la brèche — le devis en cours d’envoi revient dans le lot neuf', numeros(lotDe(ecaMut.r)?.retenus).includes('0101'), numeros(lotDe(ecaMut.r)?.retenus))
+    // A8j — D2 : la relance SEULE d'un devis qu'une carte de lot attend déjà de relancer : pas de seconde carte.
+    const seulSurLot = async (mod) => {
+      mondeLot({ crm: false })
+      const s = sessionLot({ mod })
+      await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+      return { s, r: await s.autreTour({ message: 'Quels devis dois-je relancer ?', autonome: false }).executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' })) }
+    }
+    const ssl = await seulSurLot(srvMod)
+    ok('A8j D2 : la relance seule d’un devis déjà dans une carte de lot en attente : refus « attend déjà le clic », aucune seconde carte',
+      ssl.r.resultat === 'refus' && /attend déjà le clic/.test(ssl.r.donnees?.erreur ?? '') && ssl.s.magasin.toutes().filter((f) => f.statut === 'en_attente').length === 1, JSON.stringify(ssl.r.donnees).slice(0, 200))
+    const sslMut = await seulSurLot(await mutant(ACT, '    if (ouverteP) return ko(', '    if (false) return ko('))
+    ok('A8k MUTANT (le contrôle des cartes ouvertes retiré) : le juge VOIT la brèche — une seconde carte relance le même devis', sslMut.r.carte?.statut === 'en_attente', JSON.stringify(sslMut.r.donnees).slice(0, 160))
+
+    // A8l — D3 : « ne plus relancer » sur la relance SEULE — d'office comme au clic.
+    const NEPLUS = async (_u, ids) => new Map(ids.filter((x) => x === id(101)).map((x) => [x, 'ne plus relancer ce client']))
+    const np = await tourLot('Relance M. Leroy', [{ numero: 'DEV-2026-0101' }], { exclusions: NEPLUS })
+    ok('A8l D3 : « ne plus relancer » sur une relance seule en « fait tout seul » : refus, motif dit, aucun e-mail', np.s.mails.length === 0 && np.rs[0].resultat === 'refus' && /ne plus relancer/.test(np.rs[0].donnees?.erreur ?? ''), JSON.stringify(np.rs[0].donnees).slice(0, 200))
+    const mutNp = await copie(ACT, { remplacer: [['    if (neplusP) return ko(', '    if (false) return ko('], ['    if (neplus) return ko(`Pas de relance du devis', '    if (false) return ko(`Pas de relance du devis']] })
+    const npMut = await tourLot('Relance M. Leroy', [{ numero: 'DEV-2026-0101' }], { exclusions: NEPLUS, mod: mutNp })
+    ok('A8m MUTANT (« ne plus relancer » ignoré par la relance seule : la version du lot L16) : le juge VOIT la brèche — M. Leroy relancé', npMut.s.mails.join() === 'leroy@essai.test', npMut.s.mails.join())
+    const auClic = async (mod) => {
+      mondeLot({ crm: false })
+      let marque = false
+      const s = sessionLot({ message: 'Quels devis dois-je relancer ?', autonome: false, mod, exclusions: async (_u, ids) => new Map(marque ? ids.map((x) => [x, 'ne plus relancer ce client']) : []) })
+      const r = await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
+      marque = true
+      const c = await conf.confirmerAction(s.deps, A, r.carte.id)
+      return { s, r, c }
+    }
+    const clicNp = await auClic(srvMod)
+    ok('A8n D3 : « ne plus relancer » posé APRÈS la carte d’une relance seule : au clic, rien ne part, la carte dit pourquoi', clicNp.r.carte?.statut === 'en_attente' && !clicNp.c.ok && clicNp.s.mails.length === 0 && /ne plus relancer/.test(clicNp.c.erreur ?? ''), JSON.stringify(clicNp.c).slice(0, 200))
+    const clicNpMut = await auClic(await mutant(ACT, '    if (neplus) return ko(`Pas de relance du devis', '    if (false) return ko(`Pas de relance du devis'))
+    ok('A8o MUTANT (« ne plus relancer » non relu au clic) : le juge VOIT la brèche — la relance part au clic', clicNpMut.s.mails.join() === 'leroy@essai.test', clicNpMut.s.mails.join())
+
+    // A8p — D4 : le compte en pause, relance SEULE en « fait tout seul » : une carte, jamais d'office.
+    const pz = await tourLot('Relance M. Leroy', [{ numero: 'DEV-2026-0101' }], { monde: { pause: true } })
+    ok('A8p D4 : compte en pause, « Relance M. Leroy » (fait tout seul) : une carte qui le dit, aucun e-mail', pz.s.mails.length === 0 && pz.rs[0].carte?.statut === 'en_attente' && /compte en pause/.test(pz.rs[0].donnees?.pourquoi_une_carte ?? ''), JSON.stringify(pz.rs[0].donnees).slice(0, 200))
+    const pzMut = await tourLot('Relance M. Leroy', [{ numero: 'DEV-2026-0101' }], { monde: { pause: true }, mod: await mutant(ACT, '    const pauseP = ctx.autonome?.() === true ? await compteEnPause()', '    const pauseP = false && ctx.autonome?.() === true ? await compteEnPause()') })
+    ok('A8q MUTANT (la pause ignorée par la relance seule : la version du lot L16) : le juge VOIT la brèche — M. Leroy relancé pendant la pause', pzMut.s.mails.join() === 'leroy@essai.test', pzMut.s.mails.join())
+
+    // A8r — D5 : le client en litige dans une AUTRE conversation (même e-mail), son devis sans conversation : exclu du lot.
+    const autreConv = async (mod) => {
+      mondeLot({ crm: false })
+      T.devis.find((d) => d.id === id(102)).lead_id = null
+      T.leads.push({ id: id(160), artisan_id: A, nom_prospect: 'Mme Garnier', contact: 'Garnier@Essai.test'.toLowerCase(), statut: 'repondu', message: 'Litige : malfaçon, mon avocat vous écrira' })
+      const s = sessionLot({ mod })
+      return lotDe(await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 })))
+    }
+    const ac = await autreConv(srvMod)
+    ok('A8r D5 : litige écrit dans une autre conversation du même client (même e-mail), devis sans conversation : 102 exclu du lot, motif d’escalade',
+      !numeros(ac?.retenus).includes('0102') && (ac?.exclus ?? []).some((x) => x.numero === 'DEV-2026-0102' && x.motif === R.LIBELLE_MOTIF.escalade), JSON.stringify(ac?.exclus))
+    const acMut = await autreConv(await mutant(ACT, '    if (emails.size) {', '    if (false) {'))
+    ok('A8s MUTANT (seule la conversation du devis relue : la version du lot L16) : le juge VOIT la brèche — 102 retenu sans un mot', numeros(acMut?.retenus).includes('0102'), numeros(acMut?.retenus))
+
+    // A8t — D6 : un numéro « nommé » se compare à égalité, plus par sous-chaîne.
+    const cartesVrai = await imp('lib/assistant/cartes.ts')
+    ok('A8t D6 : DEV-2026-1000 n’est pas « nommé » dans « relance DEV-2026-10001 » ; il l’est dans « relance dev-2026-1000 vite »',
+      cartesVrai.nommeDans('relance DEV-2026-10001', 'DEV-2026-1000') === false && cartesVrai.nommeDans('relance dev-2026-1000 vite', 'DEV-2026-1000') === true)
+    const cartesMut = await mutant('lib/assistant/cartes.ts', '  if (/^(?:DEV|FAC)-\\d{4}-\\d{1,6}$/.test(n)) return numerosDans(texte).includes(n)\n', '  return String(texte ?? \'\').toUpperCase().includes(n)\n')
+    ok('A8u MUTANT (la recherche par sous-chaîne : la version du lot L16) : le juge VOIT la brèche — DEV-2026-1000 « nommé » dans DEV-2026-10001', cartesMut.nommeDans('relance DEV-2026-10001', 'DEV-2026-1000') === true)
+
+    // A8v — D7 : le pilote refuse lui-même une carte de lot (piloterCarte), sans même lire ses réglages.
+    const pilSrv = await imp('lib/pilote/serveur.ts')
+    const ficheLot = { id: id(950), artisan_id: A, outil: 'relancer_devis', titre: 'Relancer 4 devis', entrees: { lot: [{ id: id(101), numero: 'DEV-2026-0101' }], ton: 'cordial' }, mode: 'confirmation', statut: 'en_attente' }
+    mondeLot({ crm: false })
+    const n0 = requetes.length
+    const enFile = await pilSrv.piloterCarte(A, ficheLot)
+    const lusPilote = requetes.slice(n0).length
+    ok('A8v D7 : une carte de lot présentée au pilote (piloterCarte) : refusée d’entrée, aucune lecture, rien en file', enFile === null && lusPilote === 0, `${JSON.stringify(enFile)} / ${lusPilote} requêtes`)
+    const pilMut = await mutant('lib/pilote/serveur.ts', '    if (Array.isArray((fiche.entrees as { lot?: unknown } | null)?.lot)) return null\n', '')
+    const n1 = requetes.length
+    await pilMut.piloterCarte(A, ficheLot)
+    ok('A8w MUTANT (la garde du pilote retirée : la version du lot L16) : le juge VOIT la brèche — la carte de lot atteint la décision du pilote (ses réglages sont lus)', requetes.slice(n1).length > 0, `${requetes.slice(n1).length} requêtes`)
+    ok('A8x D7 : le réalisateur du pilote refuse une carte de lot avant toute lecture (source : lib/pilote/executeur.ts, avant devisDe)',
+      /R\.relancer_devis = async \(e\) => \{\n    if \(estCarteDeLot\(e\)\) return ko2\(/.test(lire('lib/pilote/executeur.ts')) && /const estCarteDeLot = \(entrees[^)]*\): boolean => Array\.isArray\(entrees\?\.lot\)/.test(lire('lib/pilote/executeur.ts')))
+
+    // A8y — D8 : le journal des actions illisible n'est plus lu « jamais relancé » : le devis sort du lot.
+    const journalPanne = async (mod) => {
+      mondeLot({ crm: false })
+      const s = sessionLot({ mod })
+      s.magasin.dernierEnvoi = async () => { throw new Error('panne du journal (essai)') }
+      const r = await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+      return { ...(lotDe(r) ?? { retenus: [], exclus: [] }), r, mails: s.mails }
+    }
+    const jp = await journalPanne(srvMod)
+    ok('A8y D8 : journal des actions illisible à la préparation : aucun devis retenu, chacun des 4 exclu avec le motif « journal des relances illisible », aucun e-mail',
+      (jp.retenus ?? []).length === 0 && jp.r.resultat === 'refus' && ((jp.r.donnees?.erreur ?? '').match(/journal des relances illisible/g) ?? []).length === 4 && jp.mails.length === 0, JSON.stringify(jp.r.donnees).slice(0, 300))
+    const jpMut = await journalPanne(await mutant(ACT, '.then((v) => v, () => MOTIF_JOURNAL_ILLISIBLE)', '.then((v) => v, () => null)'))
+    ok('A8z MUTANT (la panne lue « jamais relancé » : la version du lot L16) : le juge VOIT la brèche — les devis sont retenus malgré le journal illisible', (jpMut.retenus ?? []).length > 0, numeros(jpMut.retenus))
+
+    // ═══════════════════════ A9. Contre-audit 032-035 corrigé (tâche 032-036) — le PILOTE ne fait jamais partir un ordre groupé ni une escalade ═══════════════════════
+    console.log('\n── A9. Contre-audit 032-035 corrigé (032-036) : hors pilote (E1, E2), cartes coupées, réservations, preuve « un seul client » (E3 à E9)')
+    const EXE_DOUBLURES = { '@/lib/envoisPdfServeur': "export async function envoyerDevisServeur(): Promise<never> { throw new Error('doublure : aucun PDF dans ce juge') }\nexport async function envoyerFactureServeur(): Promise<never> { throw new Error('doublure : aucun PDF dans ce juge') }\n" }
+    const MARQUE = cartesVrai.MARQUE_HORS_PILOTE
+    /** Le DÉPART d'une carte par la VRAIE file du pilote (traiterFile) avec les vraies lectures (carteDe, escalade) ; réclamation et envoi doublés. */
+    const depart = async (refId, { deps = EXE.dependancesSupabase(), traiter = traiterFile } = {}) => {
+      const T0d = new Date('2026-11-02T09:00:00Z'), DIXd = new Date(T0d.getTime() + 10 * 60_000)
+      const ligne = { id: id(1681), artisan_id: A, type: 'relance_devis', source: 'carte', ref_id: refId, lead_id: null, libelle: 'Relancer', prete_le: T0d.toISOString(), part_le: DIXd.toISOString(), statut: 'a_partir' }
+      const file = new Map([[ligne.id, ligne]])
+      const envois = []
+      await traiter({ ...deps, reprendre: async () => 0, mures: async () => [...file.values()].filter((l) => l.statut === 'a_partir').map((l) => ({ ...l })),
+        reclamer: async (l) => { const x = file.get(l.id); if (x.statut !== 'a_partir') return false; x.statut = 'en_cours'; return true },
+        terminer: async (l, st, m) => { const x = file.get(l.id); x.statut = st; x.motif = m },
+        contexte: async () => ({ plan: 'signature', leads_pause: false, suspendu: false, reglages: { actif: true, types: { relance_devis: true, relance_impaye: true } }, parties: 0 }),
+        drapeau: () => true, jeton: async () => true, executer: async (l) => { envois.push(l.ref_id); return { ok: true, resume: 'parti' } } }, DIXd)
+      return { ligne: file.get(ligne.id), envois }
+    }
+    const fichesDe = (s) => s.magasin.toutes().filter((f) => f.mode === 'confirmation' && f.statut === 'en_attente')
+
+    // A9a — E1 : un ordre sur plusieurs clients, reconnu, en Signature (la doublure du pilote accepte tout) : AUCUNE carte n'entre au pilote.
+    const e1 = await tourLot('Relance M. Leroy et Mme Garnier', [{ numero: 'DEV-2026-0101' }, { numero: 'DEV-2026-0102' }])
+    ok('A9a E1 : « Relance M. Leroy et Mme Garnier » (Signature, pilote actif) : 0 e-mail, 0 carte au pilote ; chaque carte porte la marque hors pilote et le dit au modèle',
+      e1.s.mails.length === 0 && e1.s.piloteAppels.length === 0 && fichesDe(e1.s).length === 2 && fichesDe(e1.s).every((f) => typeof f.entrees?.[MARQUE] === 'string')
+      && e1.rs.every((r) => r.donnees?.hors_pilote === true && !r.donnees?.pilote_automatique), JSON.stringify(e1.rs.map((r) => r.donnees)).slice(0, 300))
+    // A9b — … et au départ, la vraie file la rend à l'artisan (la marque relue par carteDe), même si elle y était entrée.
+    const d1 = await depart(fichesDe(e1.s)[0].id)
+    ok('A9b E1 : une carte marquée qui arriverait dans la file (vraie traiterFile, vrai carteDe) passe « manuel », motif dit ; rien ne part',
+      d1.envois.length === 0 && d1.ligne.statut === 'manuel' && /plusieurs/i.test(d1.ligne.motif ?? ''), JSON.stringify(d1.ligne))
+    const e1Mut = await tourLot('Relance M. Leroy et Mme Garnier', [{ numero: 'DEV-2026-0101' }, { numero: 'DEV-2026-0102' }], { mod: await mutant(ACT, '    const auto = horsPilote ? null : await (dep.piloterCarte ?? piloterCarte)(ctx.uid, fiche)', '    const auto = await (dep.piloterCarte ?? piloterCarte)(ctx.uid, fiche)') })
+    ok('A9c MUTANT (la garde « hors pilote » de l’assistant retirée : la version de 032-030) : le juge VOIT la brèche — les 2 cartes de l’ordre groupé entrent au pilote',
+      e1Mut.s.piloteAppels.length === 2 && !!e1Mut.rs[0].donnees?.pilote_automatique, `${e1Mut.s.piloteAppels.length}`)
+    const d1Mut = await depart(fichesDe(e1.s)[0].id, { traiter: (await mutant('lib/pilote/file.ts', "        if (carte.horsPilote) { await fin('manuel', carte.horsPilote.slice(0, 300)); continue }\n", '')).traiterFile })
+    ok('A9d MUTANT (la marque non relue au départ) : le juge VOIT la brèche — la carte de l’ordre groupé part par le pilote', d1Mut.envois.length === 1 && d1Mut.ligne.statut === 'partie', JSON.stringify(d1Mut.ligne))
+    // A9e — E1, hors « fait tout seul » (une question) : le message nomme deux clients, la carte reste hors du pilote.
+    const e1q = await tourLot('Tu peux relancer M. Leroy et Mme Garnier ?', [{ numero: 'DEV-2026-0101' }], { autonome: false })
+    ok('A9e E1 : « Tu peux relancer M. Leroy et Mme Garnier ? » (pas « fait tout seul ») : une carte, jamais au pilote', e1q.s.piloteAppels.length === 0 && e1q.rs[0].carte?.statut === 'en_attente' && e1q.s.mails.length === 0, JSON.stringify(e1q.rs[0].donnees).slice(0, 200))
+    const e1qMut = await tourLot('Tu peux relancer M. Leroy et Mme Garnier ?', [{ numero: 'DEV-2026-0101' }], { autonome: false, mod: await mutant(ACT, '    if (!horsPilote && !preuveFaite && p.cible', '    if (false && !preuveFaite && p.cible') })
+    ok('A9f MUTANT (le contrôle « plusieurs clients » hors fait tout seul retiré) : le juge VOIT la brèche — la carte entre au pilote', e1qMut.s.piloteAppels.length === 1, `${e1qMut.s.piloteAppels.length}`)
+    // A9g — témoin : une relance proposée sans ordre groupé (« Quels devis dois-je relancer ? ») entre toujours au pilote et part au départ.
+    const tem = await tourLot('Quels devis dois-je relancer ?', [{ numero: 'DEV-2026-0101' }], { autonome: false })
+    const dTem = await depart(fichesDe(tem.s)[0]?.id)
+    ok('A9g témoin : une relance seule proposée hors ordre groupé entre au pilote (Signature) et part à 10 minutes — le pilote n’est pas cassé',
+      tem.s.piloteAppels.length === 1 && dTem.envois.length === 1 && dTem.ligne.statut === 'partie', `${tem.s.piloteAppels.length} | ${JSON.stringify(dTem.ligne)}`)
+    // A9h — E1, l'ordre DÉCOUPÉ par le modèle : la 1re carte est entrée au pilote, la 2de révèle l'ordre groupé : la 1re est RETIRÉE de la file,
+    // et au départ le pilote la rend à la main (une autre carte de relance dans le même tour de la même conversation).
+    const nPatch = requetes.length
+    const dec = await tourLot('Quels devis dois-je relancer ?', [{ numero: 'DEV-2026-0101' }, { numero: 'DEV-2026-0102' }], { autonome: false })
+    const premiere = fichesDe(dec.s).find((f) => f.objet_id === id(101))
+    const retire = requetes.slice(nPatch).some((q) => q.methode === 'PATCH' && q.table === 'actions_auto' && q.params.some(([k, v]) => k === 'cle' && v === `eq.carte:${premiere?.id}`))
+    const dDec = await depart(premiere?.id)
+    ok('A9h E1 : ordre découpé en cartes seules (101 au pilote, puis 102) : la ligne de 101 est annulée dans la file, 102 n’y entre pas, et au départ 101 revient à la main',
+      dec.s.piloteAppels.length === 1 && retire && dec.rs[1].donnees?.hors_pilote === true && dDec.envois.length === 0 && dDec.ligne.statut === 'manuel',
+      `${dec.s.piloteAppels.length} | retiré=${retire} | ${JSON.stringify(dDec.ligne)}`)
+    const nPatch2 = requetes.length
+    const decMut = await tourLot('Quels devis dois-je relancer ?', [{ numero: 'DEV-2026-0101' }, { numero: 'DEV-2026-0102' }], { autonome: false, mod: await mutant(ACT, '    if (tour) await retirerDuPiloteLesCartesDuTour(tour)', '    if (false) await retirerDuPiloteLesCartesDuTour(tour)') })
+    ok('A9i MUTANT (la 1re carte laissée dans la file) : le juge VOIT la brèche — aucune annulation de sa ligne', !requetes.slice(nPatch2).some((q) => q.methode === 'PATCH' && q.table === 'actions_auto') && decMut.s.piloteAppels.length === 1)
+    const EXE_dec = await copie('lib/pilote/executeur.ts', { remplacer: [['?? await ordreDecoupe(l.artisan_id, f)', '?? null']], doublures: EXE_DOUBLURES })
+    const dDecMut = await depart(premiere?.id, { deps: EXE_dec.dependancesSupabase() })
+    ok('A9j MUTANT (l’ordre découpé non relu au départ) : le juge VOIT la brèche — la 1re carte part par le pilote', dDecMut.envois.length === 1, JSON.stringify(dDecMut.ligne))
+
+    // A9k — E2 : litige écrit dans une AUTRE conversation de Mme Garnier (devis 102 sans conversation), « Relance Mme Garnier » (fait tout seul).
+    const mondeLitige = (sansConvDuDevis) => {
+      mondeLot({ crm: false })
+      if (sansConvDuDevis) T.devis.find((d) => d.id === id(102)).lead_id = null
+      T.leads.push({ id: id(160), artisan_id: A, nom_prospect: 'Mme Garnier', contact: 'garnier@essai.test', statut: 'repondu', message: 'Litige : malfaçon, mon avocat vous écrira' })
+    }
+    mondeLitige(true)
+    const e2s = sessionLot({ message: 'Relance Mme Garnier' })
+    const e2 = await e2s.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0102' }))
+    ok('A9k E2 : la carte d’escalade (litige dans une autre conversation) n’entre pas au pilote ; marquée hors pilote, motif d’escalade',
+      e2s.mails.length === 0 && e2s.piloteAppels.length === 0 && e2.carte?.statut === 'en_attente' && fichesDe(e2s)[0]?.entrees?.[MARQUE] === R.LIBELLE_MOTIF.escalade, JSON.stringify(e2.donnees).slice(0, 200))
+    mondeLitige(true)
+    const e2sM = sessionLot({ message: 'Relance Mme Garnier', mod: await mutant(ACT, '    if (horsAuto === LIBELLE_MOTIF.escalade || horsAuto === MOTIF_ESCALADE_ILLISIBLE) horsPilote = horsPilote ?? horsAuto', '    if (false) horsPilote = horsPilote ?? horsAuto') })
+    await e2sM.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0102' }))
+    ok('A9l MUTANT (l’escalade non tenue hors du pilote : la version de 032-030) : le juge VOIT la brèche — la carte d’escalade entre au pilote', e2sM.piloteAppels.length === 1)
+    // A9m — E2 au départ : une carte NON marquée (proposée hors « fait tout seul ») du devis 102, dont la conversation est propre ; le client
+    // écrit « litige, mon avocat » dans une AUTRE conversation (même e-mail). Le pilote relit toutes les conversations du client.
+    mondeLitige(false)
+    const e2p = await (async () => { const s = sessionLot({ message: 'Quels devis dois-je relancer ?', autonome: false }); await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0102' })); return s })()
+    const cd = await EXE.dependancesSupabase().carteDe({ id: id(1682), artisan_id: A, type: 'relance_devis', source: 'carte', ref_id: fichesDe(e2p)[0]?.id, lead_id: null, libelle: 'x', prete_le: '2026-11-02T09:00:00Z', part_le: '2026-11-02T09:10:00Z' })
+    const dE2 = await depart(fichesDe(e2p)[0]?.id)
+    ok('A9m E2 : au départ, le pilote relit la conversation du devis PUIS celles du même e-mail : le litige écrit ailleurs rend la relance à la main',
+      e2p.piloteAppels.length === 1 && cd?.leadId === id(152) && (cd?.leadsClient ?? []).includes(id(160)) && dE2.envois.length === 0 && dE2.ligne.statut === 'manuel' && dE2.ligne.motif === R.LIBELLE_MOTIF.escalade,
+      `${JSON.stringify(cd)} | ${JSON.stringify(dE2.ligne)}`)
+    const dE2MutF = await depart(fichesDe(e2p)[0]?.id, { traiter: (await mutant('lib/pilote/file.ts', '      for (const autre of leadsCarte) if (autre !== leadId && d.escalade && (await d.escalade(l, autre, maintenant))) { autreSensible = true; break }\n', '')).traiterFile })
+    ok('A9n MUTANT (seule la conversation du devis relue au départ) : le juge VOIT la brèche — la relance part chez le client en litige', dE2MutF.envois.length === 1, JSON.stringify(dE2MutF.ligne))
+    const EXE_mail = await copie('lib/pilote/executeur.ts', { remplacer: [['  if (emails.size) {', '  if (false) {']], doublures: EXE_DOUBLURES })
+    const dE2MutE = await depart(fichesDe(e2p)[0]?.id, { deps: EXE_mail.dependancesSupabase() })
+    ok('A9o MUTANT (les conversations du même e-mail non lues par carteDe) : le juge VOIT la brèche — la relance part', dE2MutE.envois.length === 1, JSON.stringify(dE2MutE.ligne))
+    PANNES.add('leads')
+    const dE2Panne = await depart(fichesDe(e2p)[0]?.id).finally(() => PANNES.delete('leads'))
+    ok('A9p E2 : conversations du client illisibles au départ : la ligne passe en échec, rien ne part', dE2Panne.envois.length === 0 && dE2Panne.ligne.statut === 'echec', JSON.stringify(dE2Panne.ligne))
+    // A9q — le vrai piloterCarte refuse une carte marquée, sans rien lire ; mutant : la garde retirée, la carte atteint la décision du pilote.
+    const ficheMarquee = { id: id(951), artisan_id: A, outil: 'relancer_devis', titre: 'Relancer M. Leroy', entrees: { numero: 'DEV-2026-0101', [MARQUE]: 'Le message vise plusieurs clients' }, mode: 'confirmation', statut: 'en_attente' }
+    mondeLot({ crm: false })
+    const n2 = requetes.length
+    const enFile2 = await pilSrv.piloterCarte(A, ficheMarquee)
+    ok('A9q E1/E2 : le vrai piloterCarte refuse une carte marquée hors pilote : null, aucune lecture', enFile2 === null && requetes.length === n2, `${JSON.stringify(enFile2)} / ${requetes.length - n2}`)
+    const pilMut2 = await mutant('lib/pilote/serveur.ts', '    if (motifHorsPilote(fiche.entrees) !== null) return null\n', '')
+    const n3 = requetes.length
+    await pilMut2.piloterCarte(A, ficheMarquee)
+    ok('A9r MUTANT (la garde de piloterCarte retirée) : le juge VOIT la brèche — la carte marquée atteint la décision du pilote (réglages lus)', requetes.length > n3, `${requetes.length - n3} requêtes`)
+    const rpM = await EXE.realisateursPilote(A, '2026-11-02T09:00:00Z').relancer_devis({ numero: 'DEV-2026-0101', [MARQUE]: 'plusieurs clients' })
+    ok('A9s E1/E2 : les réalisateurs du pilote refusent une carte marquée avant toute lecture', rpM.ok === false && /plusieurs clients/.test(rpM.erreur ?? ''), JSON.stringify(rpM))
+
+    // A9t — E3 : une carte de LOT réclamée puis coupée (fonction tuée) : 40 jours plus tard, ses devis jamais tentés repartent.
+    const coupe = async (mod = srvMod, { recente = false } = {}) => {
+      mondeLot({ crm: false })
+      const s = sessionLot({ mod })
+      const r = await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+      await s.magasin.transiter(A, r.carte.id, ['en_attente'], 'en_cours')
+      const le = recente ? new Date('2026-11-02T08:58:00Z') : new Date('2026-12-12T09:00:00Z')
+      if (recente) T.assistant_actions.find((f) => f.id === r.carte.id).maj_le = '2026-11-02T08:57:00Z'
+      const plusTard = (message) => mod.actionsDeSession({ uid: A, jeton: 'jeton-essai', origine: 'http://localhost', isFounder: false, crm: false, meilleursClients: false, tour: () => 1, magasin: s.magasin, conversationId: id(909),
+        autonome: () => true, textesArtisan: [message], dependances: { envoyerMail: async (m) => { s.mails.push(m.to); return { ok: true } }, piloterCarte: async () => null, maintenant: () => le } })
+      const seul = await plusTard('Relance M. Leroy').executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
+      const lot = await plusTard('Relance les devis envoyés il y a plus de 5 jours').executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+      return { s, seul, lot }
+    }
+    const e3 = await coupe()
+    ok('A9t E3 : lot coupé avant tout envoi, 40 jours plus tard : « Relance M. Leroy » part d’office (une fois), et un nouveau lot reprend 101',
+      e3.seul.donnees?.fait_tout_seul === true && e3.s.mails.join() === 'leroy@essai.test' && /0102/.test(numeros(lotDe(e3.lot)?.retenus)), `${JSON.stringify(e3.seul.donnees).slice(0, 160)} | ${numeros(lotDe(e3.lot)?.retenus)}`)
+    const e3r = await coupe(srvMod, { recente: true })
+    ok('A9u E3 témoin : la même carte réclamée il y a 3 minutes (le lot part peut-être) tient encore ses devis — pas d’office, exclus du lot neuf',
+      e3r.seul.donnees?.fait_tout_seul !== true && e3r.s.mails.length === 0 && !numeros(lotDe(e3r.lot)?.retenus).includes('0101'), `${JSON.stringify(e3r.seul.donnees).slice(0, 160)} | ${numeros(lotDe(e3r.lot)?.retenus)}`)
+    const e3m = await coupe(await mutant(ACT, "      if (statut === 'en_cours' && f.mode !== 'direct' && f.maj_le && Date.parse(f.maj_le) < (lotF ? maintenant().getTime() - CARTE_COUPEE_MS : borne)) continue\n", ''))
+    ok('A9v MUTANT (la borne des cartes coupées retirée : la version de 032-030) : le juge VOIT la brèche — 40 jours plus tard, rien ne part d’office et le lot exclut 101',
+      e3m.seul.donnees?.fait_tout_seul !== true && !numeros(lotDe(e3m.lot)?.retenus).includes('0101'), `${JSON.stringify(e3m.seul.donnees).slice(0, 120)}`)
+
+    // A9w — E5 : l'envoi de 102 échoue au clic du lot ET la levée de sa réservation échoue deux fois : la carte le dit ; « Relance Mme Garnier »
+    // ensuite donne une carte (hors pilote), jamais un refus muet.
+    const leveeImpossible = async (mod = srvMod) => {
+      mondeLot({ crm: false })
+      const s = sessionLot({ mod })
+      const r = await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
+      const transiter = s.magasin.transiter
+      s.magasin.transiter = async (u, idf, de, vers, champs) => { if (vers === 'echec' && T.assistant_actions.find((f) => f.id === idf)?.objet_id === id(102)) throw new Error('journal indisponible'); return transiter(u, idf, de, vers, champs) }
+      const clic = mod.actionsDeSession({ uid: A, jeton: 'jeton-essai', origine: 'http://localhost', isFounder: false, crm: false, meilleursClients: false, tour: () => 1, magasin: s.magasin, conversationId: id(907),
+        dependances: { envoyerMail: async (m) => { if (m.to === 'garnier@essai.test') return { ok: false }; s.mails.push(m.to); return { ok: true } }, maintenant: () => new Date('2026-11-02T09:00:00Z') } })
+      const c = await conf.confirmerAction({ magasin: s.magasin, realisateurs: clic.realisateurs, inverses: {}, journaliser: async () => {} }, A, r.carte.id)
+      s.magasin.transiter = transiter
+      const seul = await s.autreTour({ message: 'Relance Mme Garnier' }).executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0102' }))
+      return { s, c, seul }
+    }
+    const e5 = await leveeImpossible()
+    ok('A9w E5 : réservation de 102 non levée (deux essais) : le résultat du clic le dit (« journal à reprendre ») ; la relance seule suivante est une CARTE hors pilote, aucun e-mail à 102',
+      /journal à reprendre/.test(e5.c.resume ?? '') && e5.seul.carte?.statut === 'en_attente' && e5.seul.donnees?.hors_pilote === true && !e5.s.mails.includes('garnier@essai.test'), `${e5.c.resume} | ${JSON.stringify(e5.seul.donnees).slice(0, 200)}`)
+    const e5m = await leveeImpossible(await mutant(ACT, "    const ouverteP = ouverteBrute?.statut === 'en_attente' ? ouverteBrute : null", '    const ouverteP = ouverteBrute'))
+    ok('A9x MUTANT (une réservation en cours refuse, comme avant) : le juge VOIT la brèche — Mme Garnier, jamais relancée, ne peut plus l’être', e5m.seul.resultat === 'refus' && !e5m.seul.carte, JSON.stringify(e5m.seul.donnees).slice(0, 160))
+
+    // A9y — E4 : sept ordres SEULS très courants partent d'office, une fois (« un objet seul garde le fait tout seul ») ; les ordres groupés restent des cartes.
+    const SEULS = ['Bonjour, relance M. Leroy', 'Relance M. Leroy, merci', 'Relance M. Leroy avec un ton ferme', 'Relance tout de suite M. Leroy', 'Relance M. Leroy pour son devis du 12 octobre', 'Relance M. Leroy plus fermement', 'Relance M. Leroy, il n’a pas répondu']
+    const sortsSeuls = []
+    for (const m of SEULS) sortsSeuls.push([m, await tourLot(m, [{ numero: 'DEV-2026-0101' }])])
+    ok('A9y E4 : sept ordres seuls courants (politesse, ton, « tout de suite », une date, une virgule) partent d’office, une fois',
+      sortsSeuls.every(([, x]) => x.s.mails.join() === 'leroy@essai.test' && x.rs[0].donnees?.fait_tout_seul === true), sortsSeuls.filter(([, x]) => x.s.mails.length !== 1).map(([m, x]) => `${m}=${x.rs[0].donnees?.pourquoi_une_carte}`).join(' | '))
+    const LS = { numero: 'DEV-2026-0101', client: 'M. Leroy' }, CLIENTS = ['M. Leroy', 'Mme Garnier', 'M. Roux', 'Mme Petit', 'M. Recent']
+    const cartesM4 = await mutant('lib/assistant/cartes.ts', 'const MARQUES_PLUSIEURS = / (?:tous|', 'const MARQUES_PLUSIEURS = / (?:et|avec|plus|tout|tous|')
+    ok('A9z MUTANT (« et », « avec », « plus », « tout » remis parmi les marques : la version de 032-030) : le juge VOIT la gêne — « avec un ton ferme », « tout de suite », « plus fermement » ne partent plus',
+      ['Relance M. Leroy avec un ton ferme', 'Relance tout de suite M. Leroy', 'Relance M. Leroy plus fermement'].every((m) => cartesM4.motifPasUnSeul(m, LS, CLIENTS, 1) !== null && cartesVrai.motifPasUnSeul(m, LS, CLIENTS, 1) === null))
+
+    // A9-E6 — l'anglais, une faute sur l'autre nom, un client absent des noms relus : une carte, jamais d'office.
+    ok('A9e6a E6 : « Remind Leroy and the others », « Relance Leroy Garnié », « Relance Leroy and Garnier » (Garnier absent des clients relus) : la preuve « un seul » ne passe pas',
+      cartesVrai.motifPasUnSeul('Remind Leroy and the others', LS, CLIENTS, 1) !== null && cartesVrai.motifPasUnSeul('Relance Leroy Garnié', LS, CLIENTS, 1) !== null
+      && cartesVrai.motifPasUnSeul('Relance Leroy and Garnier', LS, ['M. Leroy', 'M. Roux'], 1) !== null)
+    const cartesM6a = await mutant('lib/assistant/cartes.ts', "  if ((CONNECTEURS.test(n) || SEPARATEURS.test(brut.replace(DATE_ECRITE, ' ')))", '  if (false')
+    const cartesM6b = await mutant('lib/assistant/cartes.ts', 'nomme(m))))) return MOTIF_PLUSIEURS_CLIENTS', 'false)))) return MOTIF_PLUSIEURS_CLIENTS')
+    ok('A9e6b MUTANTS (le mot relié inconnu ignoré ; la faute de frappe ignorée) : le juge VOIT les brèches — « Leroy and Garnier » (Garnier non relu) et « Leroy Garnié » passent',
+      cartesM6a.motifPasUnSeul('Relance Leroy and Garnier', LS, ['M. Leroy', 'M. Roux'], 1) === null && cartesM6b.motifPasUnSeul('Relance Leroy Garnié', LS, CLIENTS, 1) === null)
+    {
+      const src = lire(ACT)
+      const corps = src.slice(src.indexOf('async function clientsDuCompte()'), src.indexOf('async function devisEnAttenteDuClient('))
+      ok('A9e6c E6 (source, sans mutant : une doublure de PostgREST sans décalage ne sait pas paginer) : clientsDuCompte relit TOUS les clients, par pages ordonnées, et lève au-delà du plafond',
+        /await session\.from\(table\)\.select\('id, client_nom'\)\.eq\('artisan_id', ctx\.uid\)\.order\('id', \{ ascending: true \}\)\.range\(page \* PAGE_CLIENTS, \(page \+ 1\) \* PAGE_CLIENTS - 1\)\n/.test(corps)
+        && !/\.limit\(\d+\)/.test(corps.replace(/\/\/.*$/gm, '')) && /if \(page >= PAGES_CLIENTS_MAX\) throw/.test(corps), corps.slice(0, 200))
+    }
+    // A9-E7 — un nom désigne un client, pas un objet : M. Leroy a DEUX devis envoyés, « Relance M. Leroy » ne choisit pas pour l'artisan.
+    const deuxDevis = async (mod = srvMod) => {
+      mondeLot({ crm: false })
+      T.devis.push({ ...T.devis.find((d) => d.id === id(101)), id: id(106), numero: 'DEV-2026-0106', objet: 'Second chantier', total_ttc: 5400, envoye_le: '2026-10-25T10:00:00Z' })
+      const s = sessionLot({ message: 'Relance M. Leroy', mod })
+      return { s, r: await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0106' })) }
+    }
+    const e7 = await deuxDevis()
+    ok('A9e7a E7 : « Relance M. Leroy », deux devis envoyés à M. Leroy : une carte qui le dit, aucun e-mail, hors pilote', e7.s.mails.length === 0 && e7.r.carte?.statut === 'en_attente' && /2 pièces en attente/.test(e7.r.donnees?.pourquoi_une_carte ?? '') && e7.s.piloteAppels.length === 0, JSON.stringify(e7.r.donnees).slice(0, 200))
+    const e7m = await deuxDevis(await mutant(ACT, 'motifPasUnSeul(messageArtisan, cible, autres, n)', 'motifPasUnSeul(messageArtisan, cible, autres)'))
+    ok('A9e7b MUTANT (le nombre de devis du client ignoré : la version de 032-030) : le juge VOIT la brèche — le devis choisi par le modèle part d’office', e7m.s.mails.join() === 'leroy@essai.test', e7m.s.mails.join())
+    // A9-E8 — deux « Relance M. Leroy » simultanés (deux onglets) : la relance seule d'office réserve son devis avant l'envoi.
+    const deuxOnglets = async (mod = srvMod) => {
+      mondeLot({ crm: false })
+      const s = sessionLot({ message: 'Relance M. Leroy', mod })
+      const t2 = s.autreTour({ message: 'Relance M. Leroy' })
+      const rs = await Promise.all([s.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' })), t2.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))])
+      return { s, rs }
+    }
+    const e8 = await deuxOnglets()
+    ok('A9e8a E8 : deux « Relance M. Leroy » simultanés (fait tout seul) : M. Leroy reçoit UNE relance au plus ; aucune réservation oubliée en cours',
+      (parAdresseDe(e8.s.mails)['leroy@essai.test'] ?? 0) <= 1 && !T.assistant_actions.some((f) => f.statut === 'en_cours'), `${JSON.stringify(parAdresseDe(e8.s.mails))} | ${JSON.stringify(T.assistant_actions.map((f) => `${f.mode}:${f.statut}`))}`)
+    const seul8 = await tourLot('Relance M. Leroy', [{ numero: 'DEV-2026-0101' }])
+    const traces8 = seul8.s.magasin.toutes().filter((f) => f.objet_id === id(101))
+    ok('A9e8b E8 témoin : une relance seule d’office part une fois ; sa trace « faite » est inscrite, sa réservation levée (aucune en cours)',
+      seul8.s.mails.join() === 'leroy@essai.test' && traces8.some((f) => f.statut === 'executee') && traces8.every((f) => f.statut !== 'en_cours'), JSON.stringify(traces8.map((f) => `${f.mode}:${f.statut}`)))
+    const e8m = await deuxOnglets(await mutant(ACT, "      const verrou = nom === 'relancer_devis' && p.objet?.type === 'devis' ? await reserverRelanceSeule(", '      const verrou = false ? await reserverRelanceSeule('))
+    ok('A9e8c MUTANT (la réservation d’office retirée : la version du 29/10) : le juge VOIT la brèche — M. Leroy relancé deux fois', (parAdresseDe(e8m.s.mails)['leroy@essai.test'] ?? 0) === 2, JSON.stringify(parAdresseDe(e8m.s.mails)))
+    // A9-E9 — « ne plus relancer » : un seul lecteur, passé aussi au pilote.
+    {
+      const exe = lire('lib/pilote/executeur.ts')
+      ok('A9e9 E9 (source, sans mutant : l’exécuteur réel tire un composant .tsx) : le pilote passe à ses réalisateurs le MÊME lecteur « ne plus relancer » que l’assistant',
+        /realisateurs: realisateursPilote\(l\.artisan_id, fiche\.cree_le, exclusionsRelanceParDefaut\)/.test(exe) && /import \{[^}]*exclusionsRelanceParDefaut[^}]*\} from '@\/lib\/assistant\/actions-serveur'/.test(exe)
+        && /const exclusionsRelance = dep\.exclusionsRelance \?\? exclusionsRelanceParDefaut/.test(lire(ACT)) && (await srvMod.exclusionsRelanceParDefaut(A, [id(101)])).size === 0)
+    }
+  }
+
   // ═══════════════════════ B. La règle « tout auto » : jamais un prix sans source ═══════════════════════
   console.log('\n── B. Règle « tout auto » : un devis à prix estimé ne part pas')
   const L = id(600)

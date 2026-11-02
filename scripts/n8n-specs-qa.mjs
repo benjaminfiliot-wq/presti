@@ -1,7 +1,14 @@
-// GARDE COMMUNE de tout export de workflow n8n de Presti (chantier 4, lot L12, tâche 032-019). Hors ligne : aucun réseau, aucune base,
-// aucun modèle. Elle juge un ou plusieurs exports (le JSON rendu par le MCP `get_workflow_details`, ou son objet `workflow`) contre les
-// « Règles communes à tout workflow n8n du chantier » (plans/011-cadrage-01-11/chantier-4-assistant-plan.md, §0 bis, l.127-158 ; rang 26,
-// l.108) et la règle n8n-first (.claude/rules/architecture-outils.md) :
+// GARDE COMMUNE de tout export de workflow n8n de Presti (chantier 4, lot L12, tâche 032-019 ; étendue aux familles `ent-*` et `lib-*`
+// par la tâche 035-001). Hors ligne : aucun réseau, aucune base, aucun modèle. Elle juge un ou plusieurs exports (le JSON rendu par le MCP
+// `get_workflow_details`, ou son objet `workflow`), ou tous les `*.workflow.json` d'un dossier.
+//
+// LES FAMILLES (tirées du nom du workflow) :
+//   « c4 »  tout ce qui ne commence ni par `ent-` ni par `lib-`/`gabarit-` : les workflows du chantier 4 (`presti-*`). Règles R1 à R7,
+//           À L'IDENTIQUE de 032-019 : R5 « lectures GET seulement » n'y est jamais assouplie (détecteurs en lecture seule).
+//   « ent » `ent-<client>-*` : les workflows d'une entreprise cliente (prompt 5). « lib » `lib-*` et `gabarit-*` : la bibliothèque partagée.
+//           Mêmes R1 à R4, R6 et R7 (R7 sur les lectures), R5 réglée par famille, et en plus R8 à R20.
+//
+// Règles communes (plans/011-cadrage-01-11/chantier-4-assistant-plan.md, §0 bis, l.127-158 ; rang 26, l.108 ; .claude/rules/architecture-outils.md) :
 //   R1  inactif : `active: false`, aucune version publiée (« Mise en service », §0 bis) ;
 //   R2  aucun secret dans l'export : motifs de scripts/garde-commit.mjs:16-26, jeton porteur, champ `data` d'un identifiant ;
 //   R3  une branche d'erreur (rang 26) : un Error Trigger relié à au moins un nœud, ou `settings.errorWorkflow` = un identifiant nu ;
@@ -9,17 +16,48 @@
 //       et aucun autre : la mention d'IA (lib/mentionAssistant.ts:14-17) pour un texte du modèle envoyé au nom d'un artisan sans sa relecture,
 //       PIED_AUTOMATIQUE (lib/relancesImpayes.ts:62) pour un rappel d'impayé, PIED_APRES (lib/apresChantier.ts:51) pour l'après-chantier,
 //       rien pour un texte fixe ou un message de Presti. Jamais « Presti » dans un envoi au nom d'un artisan (marque blanche) ;
-//   R5  lectures GET seulement : HTTP Request en GET, sans corps ; Supabase en get/getAll ; aucun type de nœud hors liste blanche ;
+//   R5  c4 : lectures GET seulement : HTTP Request en GET, sans corps ; Supabase en get/getAll ; aucun type de nœud hors liste blanche.
+//       ent/lib : HTTP en GET, POST ou PATCH (un corps seulement hors GET), nœud Supabase exclu (R14), liste blanche propre ; l'écriture
+//       n'est permise que derrière la porte « simulation » (R15) ;
 //   R6  identifiants nommés : chaque identifiant d'un nœud = exactement `{ id, name }`, deux textes non vides, jamais une expression ;
 //   R7  ce que n8n lit (§0 bis) : hôte écrit en dur et permis ; `select=` présent, sans `*`, sans jointure, sans alias, sans colonne qui
 //       contient nom, email, contact, adresse, message, contenu ou texte. Seule exception (§0 bis) : une lecture faite AU MOMENT d'envoyer,
-//       qui le déclare dans ses notes (`lecture-pour-envoi: <nœud d'envoi>`) et alimente ce nœud d'envoi.
-// Elle prouve qu'elle sait rougir : chaque MUTANT (sur l'export de presti-detecteurs et sur un workflow d'envoi FICTIF construit ici) doit
-// la faire échouer pour sa raison. Elle sert aussi à 032-013 et 032-014 : `node … scripts/n8n-specs-qa.mjs <export.json> [<export.json>…]`.
+//       qui le déclare dans ses notes (`lecture-pour-envoi: <nœud d'envoi>`) et alimente ce nœud d'envoi. En ent/lib, `select=` sur les GET.
+// Règles neuves des familles ent/lib (sources : p5 = plans/011-cadrage-01-11/prompts-benj/p5-entreprise-sur-mesure.md ; PR = la première
+// réponse, plans/011-cadrage-01-11/p5-entreprise/premiere-reponse.md, ligne 035-001 l.934, § 4.6 l.397-430, § 5.5 l.619-759 ;
+// FM = plans/011-cadrage-01-11/p5-entreprise/fiche-methode-n8n.md) :
+//   R8  ni `chat_id` ni adresse e-mail écrits dans l'export (PR:934 ; p5:247, aucune donnée de client dans une alerte) ;
+//   R9  workflow d'erreur DÉSIGNÉ : `settings.errorWorkflow` = l'identifiant de `lib-erreur-commune` ; une branche interne ne suffit pas.
+//       `lib-erreur-commune` lui-même porte son Error Trigger relié, et ne se désigne pas (PR § 4.6 « Les réglages » ; FM:917-924) ;
+//   R10 fuseau `Europe/Paris` (PR § 4.6 ; FM:166, New York par défaut) ;
+//   R11 politique d'appel en liste : un enfant (Execute Workflow Trigger) en `workflowsFromAList` avec `callerIds` non vide ; un
+//       workflow que personne n'appelle en `none` ou en liste ; jamais `any` (PR § 4.6) ;
+//   R12 délai maximal d'exécution : `settings.executionTimeout` entier de 1 à 3 600 s (PR § 4.6 ; FM:933) ;
+//   R13 ent-* : succès non sauvés (`saveDataSuccessExecution: none`), progression non sauvée (PR § 4.6 ; FM:45, :914, :1038). Le masquage
+//       des données de production n'est PAS contrôlé : le nom de son réglage dans n8n 2.45.7 n'est lu nulle part (preuve de 035-001) ;
+//   R14 filtre organisation sur chaque requête : `organisation_id=eq.…` en paramètre (GET, PATCH), `organisation_id` dans le corps
+//       (POST) ; nœud Supabase exclu, car son filtre ne se lit pas dans la requête (PR § 4.6 « Les lectures » ; FM:41-43, point 8) ;
+//   R15 porte « simulation » avant tout effet : un nœud If déclaré (`porte: simulation`), une seule condition booléenne « vrai » sur
+//       `simulation`, typage strict ; tout effet (envoi, HTTP hors GET) n'est atteignable que par la sortie « faux » d'une porte (p5:318 ;
+//       PR § 5.5 `lib-executer` : « aucun nœud d'écriture n'est atteignable » en simulation) ;
+//   R16 contrats d'entrée et de sortie : un enfant commence par « Contrat d'entrée » (Code, notes `contrat: <nom>@N`, contrôle des 7 clés
+//       de l'enveloppe@1) et finit par un seul « Contrat de sortie » (Code, les 9 clés de la sortie), seul bout de chemin (PR § 4.6
+//       « La structure », § 5.5 « Les contrats » ; FM:837-849) ;
+//   R17 compatible 3.0 : aucun nœud retiré en 3.0 ni Execute Command ; Execute Sub-workflow en source `database`, identifiant fixe ;
+//       AI Agent 3.x (PR § 4.6 ; FM:73-81) ;
+//   R18 modèles : AI Agent avec `passthroughBinaryImages` à faux, `maxIterations` de 1 à 10, un Structured Output Parser en JSON Schema
+//       saisi (`manual`), `autoFix` à faux, puis une revalidation en Code (PR § 4.6 « Les modèles » ; FM:292-313) ;
+//   R19 nœuds Code : aucun module, ni réseau, ni environnement ; empreinte SHA-256 du code tenue par le registre `empreintes-code.json`
+//       posé à côté de l'export (PR § 4.6 « Les nœuds Code », parade à É3) ;
+//   R20 mention d'IA sur les workflows visés : un envoi en aval d'un nœud de modèle déclare `pied: mention` (R4 contrôle alors le texte)
+//       (PR:934 ; lib/mentionAssistant.ts:14-17).
+// Elle prouve qu'elle sait rougir : chaque MUTANT (sur l'export de presti-detecteurs, sur un workflow d'envoi FICTIF construit ici, et
+// sur les trois exports fictifs de scripts/fixtures/n8n-specs-qa/) doit la faire échouer pour sa raison.
 //
-// Lancement (sans argument : l'export de presti-detecteurs du lot L12) :
-//   node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/n8n-specs-qa.mjs [exports…]
-import { readFileSync } from 'node:fs'
+// Lancement (sans argument : l'export de presti-detecteurs du lot L12 et les trois exports fictifs) :
+//   node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/n8n-specs-qa.mjs [exports… | dossiers…]
+import { readFileSync, existsSync, statSync, readdirSync } from 'node:fs'
+import { createHash } from 'node:crypto'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PIED_AUTOMATIQUE } from '../lib/relancesImpayes.ts'
@@ -27,7 +65,10 @@ import { PIED_APRES } from '../lib/apresChantier.ts'
 import { mentionAssistant } from '../lib/mentionAssistant.ts'
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const PAR_DEFAUT = ['.orchestre/preuves/032-019/presti-detecteurs.workflow.json']
+const DETECTEURS = '.orchestre/preuves/032-019/presti-detecteurs.workflow.json'
+const DOSSIER_FICTIFS = 'scripts/fixtures/n8n-specs-qa'
+const FICTIFS = ['lib-exemple-executer', 'ent-exemple-relance', 'ent-exemple-parent'].map((n) => `${DOSSIER_FICTIFS}/${n}.workflow.json`)
+const PAR_DEFAUT = [DETECTEURS, ...FICTIFS]
 
 // ─── Les listes de la garde ──────────────────────────────────────────────────────────────────────────────────────────────────
 // Le début de la mention, sans le nom de l'artisan (qui vient d'une expression dans n8n) ; l'apostrophe typographique ou droite.
@@ -47,6 +88,23 @@ const TYPES_PERMIS = new Set([
   'n8n-nodes-base.code', 'n8n-nodes-base.stickyNote', 'n8n-nodes-base.if', 'n8n-nodes-base.filter', 'n8n-nodes-base.set',
   'n8n-nodes-base.merge', 'n8n-nodes-base.splitInBatches', 'n8n-nodes-base.noOp', ...TYPES_ENVOI,
 ])
+// Familles ent/lib : la même liste, SANS le nœud Supabase (R14), plus les sous-workflows, le routage, l'arrêt en erreur et le modèle
+// (AI Agent 3.x, Claude, parseur structuré). Un autre fournisseur de modèle s'ajoute ici en connaissance de cause.
+const SOUS_TRIGGER = 'n8n-nodes-base.executeWorkflowTrigger'
+const SOUS_APPEL = 'n8n-nodes-base.executeWorkflow'
+const AGENT = '@n8n/n8n-nodes-langchain.agent'
+const PARSEUR = '@n8n/n8n-nodes-langchain.outputParserStructured'
+const CODE = 'n8n-nodes-base.code'
+const TYPES_PERMIS_NEUFS = new Set([
+  ...[...TYPES_PERMIS].filter((t) => t !== 'n8n-nodes-base.supabase'),
+  SOUS_TRIGGER, SOUS_APPEL, 'n8n-nodes-base.switch', 'n8n-nodes-base.stopAndError', AGENT, '@n8n/n8n-nodes-langchain.lmChatAnthropic', PARSEUR,
+])
+// Nœuds retirés en 3.0 (page des changements cassants, FM:73-76), plus Execute Command, exclu (PR § 4.6).
+const RETIRES_3 = new Map([
+  ['n8n-nodes-base.function', 'Function'], ['n8n-nodes-base.functionItem', 'Function Item'], ['n8n-nodes-base.workflowTrigger', 'Workflow Trigger'],
+  ['n8n-nodes-base.htmlExtract', 'HTML Extract'], ['@n8n/n8n-nodes-langchain.code', 'LangChain Code'], ['n8n-nodes-base.aiTransform', 'AI Transform'],
+  ['n8n-nodes-base.executeCommand', 'Execute Command'],
+])
 // Les hôtes qu'une lecture HTTP peut joindre : l'API REST du projet Supabase (architecture-outils.md, « Supabase »).
 const HOTES_PERMIS = new Set(['gorcdvmueakcncsmrouo.supabase.co'])
 const INTERDIT = /nom|e-?mail|contact|adresse|message|contenu|texte/i
@@ -56,6 +114,13 @@ const SECRETS = [
   /eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9_-]{20,}/, /\bBearer\s+[A-Za-z0-9._-]{20,}/, /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
 ]
 const ID_NU = /^[A-Za-z0-9_-]{6,64}$/
+const COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/
+const CHAT_ID_EN_DUR = /chat_?id['"\\]*\s*[:=]\s*['"\\]*-?\d{5,}/i
+const MODULE_OU_RESEAU = /\brequire\s*\(|\bimport\s*\(|^\s*import\s|\bhelpers\s*\.\s*(?:httpRequest|request)|\bfetch\s*\(|\bprocess\s*\.|\$env\b|\bXMLHttpRequest\b|\bWebSocket\b/m
+const CONTRAT_FORME = /^(lib|gabarit|ent)-[a-z0-9-]+@[0-9]+$/
+// L'enveloppe@1 (PR § 5.5, « Les contrats ») : les clés obligatoires de l'entrée et de la sortie.
+const CLES_ENTREE = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees']
+const CLES_SORTIE = ['contrat', 'statut', 'cle_idempotence', 'simulation', 'resultat', 'effets_prevus', 'effets_faits', 'journal', 'erreurs']
 
 const texteDe = (o) => JSON.stringify(o ?? {})
 const piedDeclare = (n) => { const m = /^\s*pied\s*:\s*(\S+)\s*$/m.exec(String(n.notes ?? '')); return m ? m[1] : null }
@@ -66,13 +131,27 @@ function atteint(wf, de, vers) {
   while (file.length) { const x = file.shift(); if (x === vers) return true; if (vus.has(x)) continue; vus.add(x); file.push(...sorties(wf, x)) }
   return false
 }
+// Les arêtes d'un nœud, avec leur genre (main, ai_languageModel…) et leur numéro de sortie (0 = « vrai » d'un If, 1 = « faux »).
+const aretes = (wf, nom) => Object.entries(wf.connections?.[nom] ?? {}).flatMap(([genre, liste]) =>
+  (Array.isArray(liste) ? liste : []).flatMap((sortie, i) => (Array.isArray(sortie) ? sortie : []).filter(Boolean).map((l) => ({ vers: l.node, genre, sortie: i }))))
+const famille = (wf) => { const n = String(wf.name ?? ''); return /^ent-/.test(n) ? 'ent' : /^(lib|gabarit)-/.test(n) ? 'lib' : 'c4' }
+const empreinte = (t) => createHash('sha256').update(String(t), 'utf8').digest('hex')
+function* clesProfondes(o, chemin = '') {
+  if (!o || typeof o !== 'object') return
+  for (const [k, v] of Object.entries(o)) { yield [k, v, `${chemin}${k}`]; if (v && typeof v === 'object') yield* clesProfondes(v, `${chemin}${k}.`) }
+}
+const methodeDe = (n) => String(n.parameters?.method ?? 'GET').toUpperCase()
+const estEffet = (n) => TYPES_ENVOI.has(n.type) || (n.type === 'n8n-nodes-base.httpRequest' && methodeDe(n) !== 'GET')
+  || (n.type === 'n8n-nodes-base.supabase' && !['get', 'getAll'].includes(n.parameters?.operation))
 
 // ─── La garde ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-function verifier(brut) {
+function verifier(brut, registre = {}) {
   const e = []
   const wf = brut && brut.workflow && Array.isArray(brut.workflow.nodes) ? brut.workflow : brut
   const ko = (regle, m) => e.push(`${regle} ${m}`)
   if (!wf || !Array.isArray(wf.nodes)) return ['export illisible : aucun tableau `nodes`']
+  const fam = famille(wf)
+  const neuf = fam !== 'c4'
   // R1
   if (wf.active !== false) ko('R1', 'le workflow doit être inactif (active: false)')
   if (wf.activeVersionId) ko('R1', 'le workflow ne doit avoir aucune version publiée (activeVersionId)')
@@ -88,21 +167,26 @@ function verifier(brut) {
   if (!brancheInterne && !brancheExterne) ko('R3', "aucune branche d'erreur (rang 26) : un Error Trigger relié à un nœud, ou settings.errorWorkflow")
   const noms = new Set(wf.nodes.map((n) => n.name))
   for (const n of wf.nodes) {
-    // R5 : types
-    if (!TYPES_PERMIS.has(n.type)) ko('R5', `${n.name} : type de nœud hors liste blanche (${n.type})`)
+    // R5 : types (liste blanche de la famille)
+    if (!(neuf ? TYPES_PERMIS_NEUFS : TYPES_PERMIS).has(n.type)) ko('R5', `${n.name} : type de nœud hors liste blanche (${n.type})`)
     // R6 : identifiants
     for (const [genre, c] of Object.entries(n.credentials ?? {})) {
       const nom = c && typeof c === 'object' ? c.name : null
       if (!c || typeof c !== 'object' || Object.keys(c).sort().join(',') !== 'id,name' || typeof c.id !== 'string' || !c.id || typeof nom !== 'string' || !nom.trim()
         || String(c.id).startsWith('=') || String(nom).startsWith('=')) ko('R6', `${n.name} : identifiant ${genre} non nommé ou hors forme { id, name } (${texteDe(c).slice(0, 60)})`)
     }
-    // R5 : lectures seulement
+    // R5 : lectures seulement (c4) ; écriture permise derrière la porte (ent/lib, R15), jamais par le nœud Supabase (R14)
     const p = n.parameters ?? {}
-    if (n.type === 'n8n-nodes-base.supabase' && !['get', 'getAll'].includes(p.operation)) ko('R5', `${n.name} : Supabase en ${p.operation} (get ou getAll seulement)`)
+    if (n.type === 'n8n-nodes-base.supabase') {
+      if (neuf) ko('R14', `${n.name} : nœud Supabase exclu d'un ${fam}-* : le filtre organisation doit se lire dans la requête (HTTP Request)`)
+      else if (!['get', 'getAll'].includes(p.operation)) ko('R5', `${n.name} : Supabase en ${p.operation} (get ou getAll seulement)`)
+    }
     if (n.type === 'n8n-nodes-base.httpRequest') {
-      const methode = String(p.method ?? 'GET').toUpperCase()
-      if (methode !== 'GET') ko('R5', `${n.name} : HTTP ${methode} (lectures GET seulement)`)
-      if (p.sendBody) ko('R5', `${n.name} : corps de requête interdit`)
+      const methode = methodeDe(n)
+      if (!neuf && methode !== 'GET') ko('R5', `${n.name} : HTTP ${methode} (lectures GET seulement)`)
+      if (neuf && !['GET', 'POST', 'PATCH'].includes(methode)) ko('R5', `${n.name} : HTTP ${methode} (GET, POST ou PATCH seulement dans un ${fam}-*)`)
+      if (p.sendBody && (!neuf || methode === 'GET')) ko('R5', `${n.name} : corps de requête interdit`)
+      const lecture = methode === 'GET'
       // R7 : hôte et colonnes
       let hote = null
       if (typeof p.url !== 'string' || p.url.includes('{{') || p.url.startsWith('=')) ko('R7', `${n.name} : adresse calculée (expression) : l'hôte doit être écrit en dur`)
@@ -110,13 +194,22 @@ function verifier(brut) {
       if (hote && !HOTES_PERMIS.has(hote)) ko('R7', `${n.name} : hôte non permis (${hote})`)
       const params = p.queryParameters?.parameters ?? []
       const select = params.filter((q) => q?.name === 'select')
-      if (hote && select.length !== 1) ko('R7', `${n.name} : un seul select= attendu (aucune lecture de toutes les colonnes)`)
+      if (hote && select.length !== 1 && (!neuf || lecture)) ko('R7', `${n.name} : un seul select= attendu (aucune lecture de toutes les colonnes)`)
       const exception = lecturePourEnvoi(n)
       if (exception && !(noms.has(exception) && TYPES_ENVOI.has(wf.nodes.find((x) => x.name === exception)?.type) && atteint(wf, n.name, exception))) ko('R7', `${n.name} : « lecture-pour-envoi » vers ${exception}, qui n'est pas un nœud d'envoi alimenté par cette lecture`)
       for (const s of select) {
         const v = String(s.value ?? '')
         if (/[*()]/.test(v) || v.includes(':')) ko('R7', `${n.name} : select= avec *, jointure ou alias (${v.slice(0, 80)})`)
         for (const col of v.split(',').map((c) => c.trim())) if (INTERDIT.test(col) && !exception) ko('R7', `${n.name} : colonne interdite lue (${col})`)
+      }
+      // R14 : filtre organisation sur chaque requête (ent/lib)
+      if (neuf && hote && HOTES_PERMIS.has(hote)) {
+        if (methode === 'POST') {
+          if (!/organisation_id/.test(texteDe([p.jsonBody, p.bodyParameters, p.body]))) ko('R14', `${n.name} : écriture sans organisation_id dans le corps`)
+        } else {
+          const filtres = params.filter((q) => q?.name === 'organisation_id')
+          if (filtres.length !== 1 || !/^=?eq\./.test(String(filtres[0].value ?? ''))) ko('R14', `${n.name} : requête sans filtre organisation (un seul organisation_id=eq.… attendu)`)
+        }
       }
     }
     // R4 : pieds
@@ -132,7 +225,126 @@ function verifier(brut) {
       if (pied !== 'aucun' && /presti/i.test(t)) ko('R4', `${n.name} : « Presti » dans un envoi au nom d'un artisan (marque blanche)`)
     }
   }
+  if (neuf) reglesNeuves(wf, fam, tout, brancheInterne, registre, ko)
   return e
+}
+
+// ─── Les règles neuves des familles ent/lib (R8 à R20) ──────────────────────────────────────────────────────────────────────
+function reglesNeuves(wf, fam, tout, brancheInterne, registre, ko) {
+  const s = wf.settings ?? {}
+  const parNom = new Map(wf.nodes.map((n) => [n.name, n]))
+  // R8 : ni chat_id ni e-mail en dur
+  const courriel = COURRIEL.exec(tout)
+  if (courriel) ko('R8', `adresse e-mail écrite dans l'export (${courriel[0].replace(/^[^@]{0,2}[^@]*@/, '…@')})`)
+  if (CHAT_ID_EN_DUR.test(tout)) ko('R8', 'chat_id écrit en dur dans l\'export')
+  for (const n of wf.nodes) for (const [k, v, chemin] of clesProfondes(n.parameters)) {
+    if (/^chat_?id$/i.test(k) && (typeof v === 'number' || (typeof v === 'string' && v.trim() && !v.startsWith('=')))) ko('R8', `${n.name} : ${chemin} écrit en dur (une expression qui lit la configuration, jamais une valeur)`)
+  }
+  // R9 : workflow d'erreur désigné
+  const ew = s.errorWorkflow
+  if (wf.name === 'lib-erreur-commune') {
+    if (!brancheInterne) ko('R9', 'lib-erreur-commune doit porter son Error Trigger relié à un nœud')
+    if (ew !== undefined) ko('R9', 'lib-erreur-commune ne désigne pas de workflow d\'erreur : il est celui des autres')
+  } else if (!(typeof ew === 'string' && ID_NU.test(ew))) ko('R9', 'aucun workflow d\'erreur désigné (settings.errorWorkflow = l\'identifiant de lib-erreur-commune) : une branche interne ne suffit pas')
+  else if (wf.id && ew === wf.id) ko('R9', 'le workflow se désigne lui-même comme workflow d\'erreur')
+  // R10 : fuseau
+  if (s.timezone !== 'Europe/Paris') ko('R10', `fuseau ${s.timezone ?? 'absent (New York par défaut)'} : Europe/Paris attendu`)
+  // R11 : politique d'appel en liste
+  const enfant = wf.nodes.some((n) => n.type === SOUS_TRIGGER)
+  const ids = String(s.callerIds ?? '').split(',').map((x) => x.trim()).filter(Boolean)
+  const enListe = s.callerPolicy === 'workflowsFromAList' && ids.length > 0 && ids.every((i) => ID_NU.test(i))
+  if (enfant && !enListe) ko('R11', `politique d'appel ${s.callerPolicy ?? 'absente'} : un enfant n'est appelé que par une liste (workflowsFromAList et callerIds)`)
+  if (!enfant && !enListe && s.callerPolicy !== 'none') ko('R11', `politique d'appel ${s.callerPolicy ?? 'absente'} : none ou une liste, jamais any`)
+  // R12 : délai maximal
+  if (!Number.isInteger(s.executionTimeout) || s.executionTimeout < 1 || s.executionTimeout > 3600) ko('R12', `délai maximal d'exécution ${s.executionTimeout ?? 'absent'} : un entier de 1 à 3600 s attendu`)
+  // R13 : ent-* : ce que n8n garde
+  if (fam === 'ent') {
+    if (s.saveDataSuccessExecution !== 'none') ko('R13', `succès sauvés (${s.saveDataSuccessExecution ?? 'défaut de l\'instance'}) : saveDataSuccessExecution none attendu sur un ent-*`)
+    if (s.saveExecutionProgress === true) ko('R13', 'progression des exécutions sauvée sur un ent-*')
+  }
+  // R15 : la porte « simulation » avant tout effet
+  const portes = new Set()
+  for (const n of wf.nodes.filter((x) => /^\s*porte\s*:\s*simulation\s*$/m.test(String(x.notes ?? '')))) {
+    const c = n.parameters?.conditions ?? {}
+    const liste = Array.isArray(c.conditions) ? c.conditions : []
+    const op = liste[0]?.operator ?? {}
+    const bonne = n.type === 'n8n-nodes-base.if' && liste.length === 1 && /simulation/.test(String(liste[0].leftValue ?? ''))
+      && op.type === 'boolean' && op.operation === 'true' && c.options?.typeValidation === 'strict' && n.parameters?.looseTypeValidation !== true
+    if (bonne) portes.add(n.name)
+    else ko('R15', `${n.name} : porte « simulation » mal formée (un If, une seule condition booléenne « vrai » sur simulation, typage strict)`)
+  }
+  const entrants = new Set(wf.nodes.flatMap((n) => aretes(wf, n.name).map((a) => a.vers)))
+  const racines = wf.nodes.filter((n) => n.type !== 'n8n-nodes-base.stickyNote' && !entrants.has(n.name)).map((n) => n.name)
+  const sansPorte = new Set(), file = [...racines]
+  while (file.length) {
+    const x = file.shift(); if (sansPorte.has(x)) continue; sansPorte.add(x)
+    for (const a of aretes(wf, x)) if (!(portes.has(x) && a.genre === 'main' && a.sortie === 1)) file.push(a.vers)
+  }
+  for (const n of wf.nodes) if (estEffet(n) && sansPorte.has(n.name)) ko('R15', `${n.name} : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »`)
+  // R16 : contrats d'entrée et de sortie (enfants)
+  if (enfant) {
+    const declencheurs = wf.nodes.filter((n) => n.type === SOUS_TRIGGER)
+    if (declencheurs.length !== 1) ko('R16', `${declencheurs.length} Execute Workflow Trigger : un seul attendu`)
+    const d = declencheurs[0]
+    const suivants = aretes(wf, d.name).filter((a) => a.genre === 'main').map((a) => a.vers)
+    const entree = parNom.get("Contrat d'entrée")
+    if (suivants.length !== 1 || suivants[0] !== "Contrat d'entrée" || entree?.type !== CODE) ko('R16', "l'enfant doit commencer par un seul nœud Code « Contrat d'entrée »")
+    const contrat = /^\s*contrat\s*:\s*(\S+)\s*$/m.exec(String(entree?.notes ?? ''))?.[1]
+    if (!contrat || !CONTRAT_FORME.test(contrat) || contrat.split('@')[0] !== wf.name) ko('R16', `contrat d'entrée : notes « contrat: ${wf.name}@N » attendues (${contrat ?? 'absentes'})`)
+    const codeEntree = String(entree?.parameters?.jsCode ?? '')
+    if (contrat && !codeEntree.includes(`'${contrat}'`)) ko('R16', `« Contrat d'entrée » ne vérifie pas le contrat ${contrat}`)
+    for (const k of CLES_ENTREE) if (!codeEntree.includes(`'${k}'`)) ko('R16', `« Contrat d'entrée » ne contrôle pas la clé « ${k} » de l'enveloppe@1`)
+    const fins = wf.nodes.filter((n) => n.name === 'Contrat de sortie')
+    if (fins.length !== 1 || fins[0].type !== CODE) ko('R16', 'un seul nœud Code « Contrat de sortie » attendu')
+    else {
+      if (aretes(wf, 'Contrat de sortie').length) ko('R16', '« Contrat de sortie » doit être le dernier nœud')
+      const codeSortie = String(fins[0].parameters?.jsCode ?? '')
+      if (contrat && !codeSortie.includes(`'${contrat}'`)) ko('R16', `« Contrat de sortie » ne rend pas le contrat ${contrat}`)
+      for (const k of CLES_SORTIE) if (!codeSortie.includes(`'${k}'`)) ko('R16', `« Contrat de sortie » ne rend pas la clé « ${k} »`)
+      const vus = new Set(), f = d ? [d.name] : []
+      while (f.length) { const x = f.shift(); if (vus.has(x)) continue; vus.add(x); f.push(...aretes(wf, x).filter((a) => a.genre === 'main').map((a) => a.vers)) }
+      for (const x of vus) {
+        const n = parNom.get(x)
+        if (n && x !== 'Contrat de sortie' && n.type !== 'n8n-nodes-base.stopAndError' && !aretes(wf, x).some((a) => a.genre === 'main')) ko('R16', `${x} : bout de chemin hors du « Contrat de sortie » (une seule sortie)`)
+      }
+    }
+  }
+  for (const n of wf.nodes) {
+    const p = n.parameters ?? {}
+    // R17 : compatible 3.0
+    if (RETIRES_3.has(n.type)) ko('R17', `${n.name} : nœud ${RETIRES_3.get(n.type)} (retiré en 3.0 ou exclu)`)
+    if (n.type === SOUS_APPEL) {
+      if (p.source !== 'database') ko('R17', `${n.name} : Execute Sub-workflow en source ${p.source ?? 'absente'} (database attendue)`)
+      const w = p.workflowId
+      if (!(w && typeof w === 'object' && w.__rl === true && ['list', 'id'].includes(w.mode) && ID_NU.test(String(w.value)))) ko('R17', `${n.name} : sous-workflow désigné par un identifiant fixe, jamais une expression`)
+    }
+    if (n.type === AGENT && !(Number(n.typeVersion) >= 3)) ko('R17', `${n.name} : AI Agent ${n.typeVersion} (3.x attendu)`)
+    // R18 : modèles
+    if (n.type === AGENT) {
+      const o = p.options ?? {}
+      if (o.passthroughBinaryImages !== false) ko('R18', `${n.name} : passthroughBinaryImages doit valoir faux (vrai par défaut)`)
+      if (!Number.isInteger(o.maxIterations) || o.maxIterations < 1 || o.maxIterations > 10) ko('R18', `${n.name} : maxIterations borné de 1 à 10 attendu (${o.maxIterations ?? 'absent'})`)
+      const parseurs = wf.nodes.filter((x) => aretes(wf, x.name).some((a) => a.genre === 'ai_outputParser' && a.vers === n.name))
+      if (p.hasOutputParser !== true || parseurs.length !== 1 || parseurs[0].type !== PARSEUR) ko('R18', `${n.name} : un seul Structured Output Parser branché attendu`)
+      const apres = aretes(wf, n.name).filter((a) => a.genre === 'main').map((a) => parNom.get(a.vers))
+      if (!apres.length || !apres.every((x) => x?.type === CODE)) ko('R18', `${n.name} : la sortie du modèle doit être revalidée par un nœud Code`)
+    }
+    if (n.type === PARSEUR) {
+      if (p.schemaType !== 'manual') ko('R18', `${n.name} : schéma ${p.schemaType ?? 'fromJson (défaut)'} : JSON Schema saisi (manual) attendu`)
+      if (p.autoFix === true) ko('R18', `${n.name} : autoFix doit valoir faux (hors schéma = rejet)`)
+    }
+    // R19 : nœuds Code
+    if (n.type === CODE) {
+      const js = String(p.jsCode ?? p.pythonCode ?? '')
+      if (MODULE_OU_RESEAU.test(js)) ko('R19', `${n.name} : module, réseau ou environnement dans un nœud Code`)
+      const h = empreinte(js), attendu = registre?.[wf.name]?.[n.name]
+      if (!attendu) ko('R19', `${n.name} : empreinte inconnue (${h.slice(0, 12)}…) : à inscrire dans empreintes-code.json, à côté de l'export`)
+      else if (attendu !== h) ko('R19', `${n.name} : empreinte changée (${h.slice(0, 12)}… au lieu de ${String(attendu).slice(0, 12)}…)`)
+    }
+  }
+  // R20 : mention d'IA sur un envoi en aval d'un modèle
+  const modeles = wf.nodes.filter((n) => String(n.type).startsWith('@n8n/n8n-nodes-langchain.'))
+  for (const n of wf.nodes) if (TYPES_ENVOI.has(n.type) && modeles.some((m) => atteint(wf, m.name, n.name)) && piedDeclare(n) !== 'mention') ko('R20', `${n.name} : envoi en aval d'un modèle sans « pied: mention »`)
 }
 
 // ─── Un workflow d'envoi FICTIF, pour éprouver R4 (aucun workflow d'envoi n'existe encore dans n8n) ─────────────────────────────
@@ -164,15 +376,17 @@ const FICTIF = {
 
 // ─── Les mutants : chacun doit faire rougir la garde, pour la raison nommée ─────────────────────────────────────────────────────
 const copie = (o) => JSON.parse(JSON.stringify(o))
-const muter = (f) => (wf) => { const m = copie(wf); f(m); return m }
+const muter = (f) => (wf) => { const m = copie(wf); f(m.workflow && Array.isArray(m.workflow.nodes) ? m.workflow : m); return m }
 const noeud = (wf, nom) => { const n = wf.nodes.find((x) => x.name === nom); if (!n) throw new Error(`nœud absent : ${nom}`); return n }
+const lien = (vers, i = 0) => ({ node: vers, type: 'main', index: i })
 // Une clé fictive, assemblée ici pour que ce fichier ne porte aucun motif de secret (scripts/garde-commit.mjs).
 const CLE_FICTIVE = 'sb_' + 'secret_' + 'x'.repeat(24)
 const MUTANTS_DETECTEURS = [
   ['workflow actif', muter((w) => { w.active = true }), /^R1 /],
   ['version publiée', muter((w) => { w.activeVersionId = 'v1' }), /^R1 /],
-  ['branche d’erreur ôtée (rang 26)', muter((w) => { w.nodes = w.nodes.filter((n) => n.type !== 'n8n-nodes-base.errorTrigger') }), /^R3 /],
-  ['Error Trigger relié à rien', muter((w) => { for (const n of w.nodes) if (n.type === 'n8n-nodes-base.errorTrigger') delete w.connections[n.name] }), /^R3 /],
+  // Depuis 032-033, l'export porte aussi settings.errorWorkflow : ôter la seule branche interne ne prouvait plus rien. Les deux branches partent.
+  ['branche d’erreur ôtée (rang 26) : Error Trigger et workflow d’erreur', muter((w) => { w.nodes = w.nodes.filter((n) => n.type !== 'n8n-nodes-base.errorTrigger'); delete w.settings.errorWorkflow }), /^R3 /],
+  ['Error Trigger relié à rien, sans workflow d’erreur', muter((w) => { for (const n of w.nodes) if (n.type === 'n8n-nodes-base.errorTrigger') delete w.connections[n.name]; delete w.settings.errorWorkflow }), /^R3 /],
   ['workflow d’erreur en expression', muter((w) => { w.settings.errorWorkflow = '={{ $json.id }}' }), /^R3 /],
   ['colonne `nom` lue', muter((w) => { noeud(w, 'Lire comptes').parameters.queryParameters.parameters[0].value += ',nom' }), /^R7 .*colonne interdite/],
   ['select=* ', muter((w) => { noeud(w, 'Lire devis').parameters.queryParameters.parameters[0].value = '*' }), /^R7 .*select=/],
@@ -190,6 +404,15 @@ const MUTANTS_DETECTEURS = [
   ['clé en clair dans un identifiant', muter((w) => { noeud(w, 'Lire stock').credentials.supabaseApi.data = { serviceRole: CLE_FICTIVE } }), /^R2 |^R6 /],
   ['clé de service collée dans un paramètre', muter((w) => { noeud(w, 'Lire stock').parameters.queryParameters.parameters.push({ name: 'apikey', value: CLE_FICTIVE }) }), /^R2 /],
   ['nœud Slack sans pied déclaré', muter((w) => { w.nodes.push({ id: 's', name: 'Avertir', type: 'n8n-nodes-base.slack', typeVersion: 2, position: [0, 0], credentials: { slackApi: { id: 'IdentifiantFictif03', name: 'Slack essai' } }, parameters: { text: 'x' } }) }), /^R4 .*sans pied/],
+  // 035-001 : la porte « simulation » des ent/lib ne rouvre JAMAIS l'écriture d'un workflow du chantier 4 (détecteurs en lecture seule).
+  ['c4 : écriture POST derrière une porte « simulation » bien formée', muter((w) => {
+    const pt = { id: 'pt', name: 'Porte simulation', type: 'n8n-nodes-base.if', typeVersion: 2.2, position: [0, 0], notes: 'porte: simulation',
+      parameters: { conditions: { options: { caseSensitive: true, leftValue: '', typeValidation: 'strict', version: 2 }, conditions: [{ leftValue: '={{ $json.simulation }}', rightValue: '', operator: { type: 'boolean', operation: 'true', singleValue: true } }], combinator: 'and' } } }
+    w.nodes.push(pt); noeud(w, 'Lire chantiers').parameters.method = 'POST'
+    for (const [de, c] of Object.entries(w.connections)) for (const sortie of c.main ?? []) for (const l of sortie ?? []) if (l?.node === 'Lire chantiers') { l.node = 'Porte simulation'; void de }
+    w.connections['Porte simulation'] = { main: [[], [lien('Lire chantiers')]] }
+  }), /^R5 .*Lire chantiers.*POST/],
+  ['c4 : nœud de sous-workflow ajouté (hors liste blanche du chantier 4)', muter((w) => { w.nodes.push({ id: 'sw', name: 'Appeler', type: SOUS_APPEL, typeVersion: 1.4, position: [0, 0], parameters: { source: 'database', workflowId: { __rl: true, mode: 'id', value: 'Inconnu0001' } } }) }), /^R5 .*hors liste blanche/],
 ]
 const MUTANTS_FICTIF = [
   ['mention ôtée d’un workflow visé (réponse seule)', muter((w) => { noeud(w, 'Réponse seule').parameters.text = 'Bonjour,\n{{ $json.corps }}' }), /^R4 .*Réponse seule.*absent/],
@@ -205,17 +428,91 @@ const MUTANTS_FICTIF = [
   ['lecture pour envoi déclarée mais qui n’alimente pas l’envoi', muter((w) => { w.connections['Lire destinataire'] = { main: [[]] } }), /^R7 .*lecture-pour-envoi/],
   ['branche d’erreur ôtée du workflow d’envoi', muter((w) => { delete w.connections['Échec'] }), /^R3 /],
 ]
+// Les mutants des règles neuves, chacun sur l'export fictif qui porte la règle (scripts/fixtures/n8n-specs-qa/).
+const telegram = (chatId) => ({ id: 'tg', name: 'Alerter Benj', type: 'n8n-nodes-base.telegram', typeVersion: 1.2, position: [0, 0], notes: 'pied: aucun', credentials: { telegramApi: { id: 'IdentifiantFictif05', name: 'Telegram essai' } }, parameters: { chatId, text: 'Exemple. Un agent est à l’arrêt.' } })
+const MUTANTS_LIB = [
+  ['R8 adresse e-mail écrite dans un nœud', muter((w) => { noeud(w, 'Écrire la carte').parameters.headerParameters.parameters.push({ name: 'X-Contact', value: 'gerant@exemple.invalid' }) }), /^R8 .*e-mail/],
+  ['R8 chat_id Telegram écrit en dur', muter((w) => { w.nodes.push(telegram('123456789')); w.connections['Effets prévus'].main[0].push(lien('Alerter Benj')) }), /^R8 .*chat/i],
+  ['R9 branche d’erreur interne à la place du workflow d’erreur désigné', muter((w) => {
+    delete w.settings.errorWorkflow
+    w.nodes.push({ id: 'et', name: 'Échec', type: 'n8n-nodes-base.errorTrigger', typeVersion: 1, position: [0, 0], parameters: {} }, { id: 'no', name: 'Rien', type: 'n8n-nodes-base.noOp', typeVersion: 1, position: [0, 0], parameters: {} })
+    w.connections['Échec'] = { main: [[lien('Rien')]] }
+  }), /^R9 .*aucun workflow d'erreur désigné/],
+  ['R9 le workflow se désigne lui-même', muter((w) => { w.id = 'LibExecuterFictif01'; w.settings.errorWorkflow = 'LibExecuterFictif01' }), /^R9 .*lui-même/],
+  ['R10 fuseau New York', muter((w) => { w.settings.timezone = 'America/New_York' }), /^R10 /],
+  ['R10 fuseau absent', muter((w) => { delete w.settings.timezone }), /^R10 /],
+  ['R11 enfant appelable par tout workflow (any)', muter((w) => { w.settings.callerPolicy = 'any' }), /^R11 /],
+  ['R11 liste d’appelants vide', muter((w) => { w.settings.callerIds = '' }), /^R11 /],
+  ['R12 délai maximal retiré', muter((w) => { delete w.settings.executionTimeout }), /^R12 /],
+  ['R12 délai maximal de 2 h', muter((w) => { w.settings.executionTimeout = 7200 }), /^R12 /],
+  ['R14 lecture sans filtre organisation', muter((w) => { const q = noeud(w, "Relire l'interrupteur").parameters.queryParameters; q.parameters = q.parameters.filter((x) => x.name !== 'organisation_id') }), /^R14 .*filtre organisation/],
+  ['R14 filtre organisation sans eq.', muter((w) => { noeud(w, "Relire l'interrupteur").parameters.queryParameters.parameters.find((x) => x.name === 'organisation_id').value = 'not.is.null' }), /^R14 .*filtre organisation/],
+  ['R14 écriture sans organisation_id', muter((w) => { const p = noeud(w, 'Écrire la carte').parameters; p.jsonBody = p.jsonBody.replace(/organisation_id: [^,]+, /, '') }), /^R14 .*organisation_id dans le corps/],
+  ['R14 nœud Supabase dans un lib-*', muter((w) => { w.nodes.push({ id: 'sb', name: 'Lire en direct', type: 'n8n-nodes-base.supabase', typeVersion: 1, position: [0, 0], credentials: { supabaseApi: { id: 'IdentifiantFictif01', name: 'Supabase account' } }, parameters: { resource: 'row', operation: 'getAll', tableId: 'configuration_organisation' } }) }), /^R14 .*Supabase/],
+  ['R15 la porte « simulation » retirée (p5:318)', muter((w) => { w.nodes = w.nodes.filter((n) => n.name !== 'Porte simulation'); delete w.connections['Porte simulation']; w.connections["Relire l'interrupteur"].main = [[lien('Écrire la carte'), lien('Effets prévus')]] }), /^R15 .*Écrire la carte.*effet atteignable/],
+  ['R15 l’écriture branchée sur la sortie « vrai » (simulation)', muter((w) => { w.connections['Porte simulation'].main = [[lien('Effets prévus'), lien('Écrire la carte')], []] }), /^R15 .*Écrire la carte.*effet atteignable/],
+  ['R15 porte inversée (condition « faux »)', muter((w) => { noeud(w, 'Porte simulation').parameters.conditions.conditions[0].operator.operation = 'false' }), /^R15 .*mal formée/],
+  ['R15 porte en typage souple', muter((w) => { noeud(w, 'Porte simulation').parameters.conditions.options.typeValidation = 'loose' }), /^R15 .*mal formée/],
+  ['R15 porte sur un autre champ que simulation', muter((w) => { noeud(w, 'Porte simulation').parameters.conditions.conditions[0].leftValue = '={{ $json.interrupteur_general }}' }), /^R15 .*mal formée/],
+  ['R15 l’erreur de la porte mène à l’écriture', muter((w) => { noeud(w, 'Porte simulation').onError = 'continueErrorOutput'; w.connections['Porte simulation'].main.push([lien('Écrire la carte')]) }), /^R15 .*Écrire la carte.*effet atteignable/],
+  ['R15 un second déclencheur qui contourne la porte', muter((w) => { w.nodes.push({ id: 'ma', name: 'Essai manuel', type: 'n8n-nodes-base.scheduleTrigger', typeVersion: 1.2, position: [0, 0], parameters: {} }); w.connections['Essai manuel'] = { main: [[lien('Écrire la carte')]] } }), /^R15 .*Écrire la carte.*effet atteignable/],
+  ['R16 contrat d’entrée contourné', muter((w) => { w.connections['Appelé par la chaîne'].main = [[lien("Relire l'interrupteur")]] }), /^R16 .*commencer/],
+  ['R16 contrat d’entrée qui ne contrôle plus simulation', muter((w) => { const n = noeud(w, "Contrat d'entrée"); n.parameters.jsCode = n.parameters.jsCode.replace(", 'simulation',", ',') }), /^R16 .*« simulation »/],
+  ['R16 contrat déclaré pour un autre gabarit', muter((w) => { noeud(w, "Contrat d'entrée").notes = 'contrat: lib-relancer@1' }), /^R16 .*notes « contrat/],
+  ['R16 deuxième fin de chemin hors du contrat de sortie', muter((w) => { w.connections['Écrire la carte'].main = [[]] }), /^R16 .*Écrire la carte.*bout de chemin/],
+  ['R16 contrat de sortie sans effets_faits', muter((w) => { const n = noeud(w, 'Contrat de sortie'); n.parameters.jsCode = n.parameters.jsCode.replace("'effets_faits': effetsFaits,", '') }), /^R16 .*« effets_faits »/],
+  ['R17 nœud Execute Command', muter((w) => { w.nodes.push({ id: 'ex', name: 'Commande', type: 'n8n-nodes-base.executeCommand', typeVersion: 1, position: [0, 0], parameters: { command: 'true' } }) }), /^R17 .*Execute Command/],
+  ['R17 nœud Function (retiré en 3.0)', muter((w) => { w.nodes.push({ id: 'fn', name: 'Ancien code', type: 'n8n-nodes-base.function', typeVersion: 1, position: [0, 0], parameters: { functionCode: 'return items;' } }) }), /^R17 .*Function/],
+  ['R19 nœud Code modifié après revue (empreinte)', muter((w) => { noeud(w, 'Effets prévus').parameters.jsCode += '\n// ajout' }), /^R19 .*Effets prévus.*empreinte changée/],
+  ['R19 nœud Code inconnu du registre', muter((w) => { w.nodes.push({ id: 'cx', name: 'Code neuf', type: CODE, typeVersion: 2, position: [0, 0], parameters: { jsCode: 'return $input.all();' } }) }), /^R19 .*Code neuf.*empreinte inconnue/],
+  ['R19 module chargé dans un nœud Code', muter((w) => { noeud(w, 'Effets prévus').parameters.jsCode = "const fs = require('fs');\n" + noeud(w, 'Effets prévus').parameters.jsCode }), /^R19 .*module/],
+  ['R19 réseau sortant depuis un nœud Code', muter((w) => { noeud(w, 'Effets prévus').parameters.jsCode += "\nawait this.helpers.httpRequest({ url: 'https://exemple.invalid' });" }), /^R19 .*réseau/],
+  ['famille : le lib-* renommé hors famille retombe sous R5 (lecture seule)', muter((w) => { w.name = 'presti-exemple-executer' }), /^R5 .*Écrire la carte.*POST/],
+]
+const MUTANTS_RELANCE = [
+  ['R13 succès sauvés sur un ent-*', muter((w) => { w.settings.saveDataSuccessExecution = 'all' }), /^R13 .*succès/],
+  ['R13 réglage de sauvegarde des succès ôté', muter((w) => { delete w.settings.saveDataSuccessExecution }), /^R13 .*succès/],
+  ['R13 progression sauvée sur un ent-*', muter((w) => { w.settings.saveExecutionProgress = true }), /^R13 .*progression/],
+  ['R15 l’envoi branché sans porte', muter((w) => { w.connections['Revalider le message'].main = [[lien('Envoyer la relance')]] }), /^R15 .*Envoyer la relance.*effet atteignable/],
+  ['R17 AI Agent v1 (retiré en 3.0)', muter((w) => { noeud(w, 'Rédiger la relance').typeVersion = 1.9 }), /^R17 .*AI Agent/],
+  ['R18 passthroughBinaryImages laissé à vrai', muter((w) => { noeud(w, 'Rédiger la relance').parameters.options.passthroughBinaryImages = true }), /^R18 .*passthroughBinaryImages/],
+  ['R18 maxIterations non borné', muter((w) => { delete noeud(w, 'Rédiger la relance').parameters.options.maxIterations }), /^R18 .*maxIterations/],
+  ['R18 parseur débranché', muter((w) => { delete w.connections['Schéma du message'] }), /^R18 .*Structured Output Parser/],
+  ['R18 parseur en exemple JSON', muter((w) => { noeud(w, 'Schéma du message').parameters.schemaType = 'fromJson' }), /^R18 .*JSON Schema/],
+  ['R18 autoFix activé', muter((w) => { noeud(w, 'Schéma du message').parameters.autoFix = true }), /^R18 .*autoFix/],
+  ['R18 sortie du modèle sans revalidation en Code', muter((w) => { w.connections['Rédiger la relance'].main = [[lien('Porte simulation')]]; w.nodes = w.nodes.filter((n) => n.name !== 'Revalider le message'); delete w.connections['Revalider le message'] }), /^R18 .*revalidée/],
+  ['R20 envoi du texte du modèle déclaré sans pied et sans mention', muter((w) => { const n = noeud(w, 'Envoyer la relance'); n.notes = 'pied: aucun'; n.parameters.text = '={{ $json.texte }}' }), /^R20 .*Envoyer la relance/],
+  ['R4 mention ôtée d’un envoi qui la déclare', muter((w) => { noeud(w, 'Envoyer la relance').parameters.text = '={{ $json.texte }}' }), /^R4 .*Envoyer la relance.*absent/],
+]
+const MUTANTS_PARENT = [
+  ['R11 parent appelable par tout workflow (any)', muter((w) => { w.settings.callerPolicy = 'any' }), /^R11 .*jamais any/],
+  ['R11 politique d’appel absente', muter((w) => { delete w.settings.callerPolicy }), /^R11 /],
+  ['R14 filtre organisation retiré du parent', muter((w) => { const q = noeud(w, 'Lire la configuration').parameters.queryParameters; q.parameters = q.parameters.filter((x) => x.name !== 'organisation_id') }), /^R14 /],
+  ['R17 sous-workflow en source parameter (JSON collé)', muter((w) => { const p = noeud(w, 'Appeler la relance').parameters; p.source = 'parameter'; p.workflowJson = '{}' }), /^R17 .*source parameter/],
+  ['R17 sous-workflow désigné par une expression', muter((w) => { noeud(w, 'Appeler la relance').parameters.workflowId = '={{ $json.enfant }}' }), /^R17 .*identifiant fixe/],
+  ['R8 chat_id écrit en dur dans un nœud Telegram', muter((w) => { w.nodes.push(telegram('@canal_exemple')); w.connections['Bilan'] = { main: [[lien('Alerter Benj')]] } }), /^R8 .*chatId/],
+  ['R13 succès sauvés sur le parent', muter((w) => { w.settings.saveDataSuccessExecution = 'all' }), /^R13 /],
+]
 
 // ─── Lancement ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2).filter((a) => !a.startsWith('--'))
-const chemins = (args.length ? args : PAR_DEFAUT).map((c) => path.resolve(RACINE, c))
+function deplier(c) {
+  if (!existsSync(c) || !statSync(c).isDirectory()) return [c]
+  return readdirSync(c, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name)).flatMap((d) =>
+    d.isDirectory() ? deplier(path.join(c, d.name)) : d.name.endsWith('.workflow.json') ? [path.join(c, d.name)] : [])
+}
+const chemins = (args.length ? args : PAR_DEFAUT).map((c) => path.resolve(RACINE, c)).flatMap(deplier)
 let echecs = 0
 const lire = (c) => { try { return JSON.parse(readFileSync(c, 'utf8')) } catch (err) { return { illisible: err.message } } }
-const exports = chemins.map((c) => [c, lire(c)])
-for (const [c, wf] of exports) {
-  const e = wf.illisible ? [`export illisible : ${wf.illisible}`] : verifier(wf)
-  const nom = (wf.workflow ?? wf).name ?? '?'
-  console.log(`${e.length ? '✗' : '✓'} ${path.relative(RACINE, c)} (${nom}) : ${e.length ? e.length + ' manquement(s)' : 'R1 à R7 tenues'}`)
+// Le registre des empreintes des nœuds Code (R19) : `empreintes-code.json`, dans le dossier de l'export.
+const registreDe = (c) => { const f = path.join(path.dirname(c), 'empreintes-code.json'); if (!existsSync(f)) return {}; const r = lire(f); return r.illisible ? {} : r }
+const exports = chemins.map((c) => [c, lire(c), registreDe(c)])
+if (!exports.length) { console.log('✗ aucun export à juger'); echecs++ }
+for (const [c, wf, reg] of exports) {
+  const e = wf.illisible ? [`export illisible : ${wf.illisible}`] : verifier(wf, reg)
+  const w = wf.workflow ?? wf
+  const fam = w.nodes ? famille(w) : '?'
+  console.log(`${e.length ? '✗' : '✓'} ${path.relative(RACINE, c)} (${w.name ?? '?'}, famille ${fam}) : ${e.length ? e.length + ' manquement(s)' : fam === 'c4' ? 'R1 à R7 tenues' : 'R1 à R20 tenues'}`)
   for (const m of e) console.log(`    ✗ ${m}`)
   if (e.length) echecs++
 }
@@ -223,20 +520,30 @@ for (const [c, wf] of exports) {
 const eFictif = verifier(FICTIF)
 console.log(`${eFictif.length ? '✗' : '✓'} workflow d'envoi fictif (4 pieds, lecture au moment d'envoyer) : ${eFictif.length ? eFictif.join(' ; ') : 'passe la garde'}`)
 if (eFictif.length) echecs++
-// Les mutants : sur l'export de presti-detecteurs (le premier jugé, ou celui du lot L12), puis sur le fictif.
-const base = exports.find(([, w]) => (w.workflow ?? w).name === 'presti-detecteurs')?.[1] ?? lire(path.resolve(RACINE, PAR_DEFAUT[0]))
+// Les mutants : sur l'export de presti-detecteurs (le premier vert parmi ceux jugés, sinon celui du lot L12), sur le fictif d'envoi, puis sur
+// les trois exports fictifs des familles neuves (toujours lus dans scripts/fixtures/n8n-specs-qa/, avec leur registre).
+const cheminDet = path.resolve(RACINE, DETECTEURS)
+const base = exports.find(([, w, r]) => (w.workflow ?? w).name === 'presti-detecteurs' && !verifier(w, r).length)?.[1] ?? lire(cheminDet)
+const fictif = (n) => { const c = path.resolve(RACINE, `${DOSSIER_FICTIFS}/${n}.workflow.json`); return [lire(c), registreDe(c)] }
+const [lib, regLib] = fictif('lib-exemple-executer')
+const [relance, regRelance] = fictif('ent-exemple-relance')
+const [parent, regParent] = fictif('ent-exemple-parent')
+const LOTS = [
+  ['presti-detecteurs', base, {}, MUTANTS_DETECTEURS], ['fictif', FICTIF, {}, MUTANTS_FICTIF],
+  ['lib-exemple-executer', lib, regLib, MUTANTS_LIB], ['ent-exemple-relance', relance, regRelance, MUTANTS_RELANCE], ['ent-exemple-parent', parent, regParent, MUTANTS_PARENT],
+]
 let verts = 0, total = 0
-for (const [lot, wf, liste] of [['presti-detecteurs', base, MUTANTS_DETECTEURS], ['fictif', FICTIF, MUTANTS_FICTIF]]) {
-  if (verifier(wf).length) { console.log(`  ✗ mutants sur ${lot} : la base n'est pas verte, ils ne prouveraient rien`); echecs++; continue }
+for (const [lot, wf, reg, liste] of LOTS) {
+  if (wf.illisible || verifier(wf, reg).length) { console.log(`  ✗ mutants sur ${lot} : la base n'est pas verte, ils ne prouveraient rien`); echecs++; continue }
   for (const [titre, f, attendu] of liste) {
     total++
     let e
-    try { e = verifier(f(wf)) } catch (err) { e = []; console.log(`  ✗ mutant « ${titre} » inapplicable : ${err.message}`) }
+    try { e = verifier(f(wf), reg) } catch (err) { e = []; console.log(`  ✗ mutant « ${titre} » inapplicable : ${err.message}`) }
     const bon = e.filter((m) => attendu.test(m))
     console.log(`  ${bon.length ? '✓' : '✗'} mutant « ${titre} » (${lot}) ${bon.length ? 'fait rougir la garde' : 'NE FAIT PAS rougir la garde pour sa raison'}\n      → ${(bon[0] ?? e[0] ?? 'aucun manquement').slice(0, 180)}`)
     if (!bon.length) verts++
   }
 }
-console.log(`n8n-specs-qa : ${exports.length} export(s), ${total} mutants (${MUTANTS_DETECTEURS.length} sur presti-detecteurs, ${MUTANTS_FICTIF.length} sur le fictif)`)
+console.log(`n8n-specs-qa : ${exports.length} export(s), ${total} mutants (${LOTS.map(([l, , , m]) => `${m.length} sur ${l}`).join(', ')})`)
 if (echecs || verts) { if (verts) console.log(`  ✗ ${verts} mutant(s) laissent la garde verte`); console.log('ÉCHEC'); process.exit(1) }
 console.log('OK')

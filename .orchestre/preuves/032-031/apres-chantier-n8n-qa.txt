@@ -1,0 +1,130 @@
+apres-chantier-n8n-qa : .orchestre/preuves/032-031/presti-apres-chantier.workflow.json (presti-apres-chantier, id 18cmxK4gy1ceqFYD)
+Comparaison à l’ancien code (tourApresChantier), cas par cas, au jour de Paris du 2026-11-02 (et rejouée aux instants 2026-11-02T23:30:00Z, 2027-02-28T23:30:00Z) :
+  ✓ essai (les sept cas demandés) — ancien code : 6 rappel(s), n8n : 4
+      écart écrit É2 avis:00000000-0000-4000-c000-000000000003 posé par l'ancien code, pas par n8n
+      écart écrit É1 avis:00000000-0000-4000-c000-000000000001 : « Demander un avis à Client Fictif » → « Demander un avis à le client »
+      écart écrit É2 entretien:00000000-0000-4000-c000-000000000003:1 posé par l'ancien code, pas par n8n
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000001:1 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 avis:00000000-0000-4000-c000-000000000005 : « Demander un avis à Client Fictif » → « Demander un avis à le client »
+  ✓ terminé hier, avis le surlendemain, entretien dans un an moins 15 jours — ancien code : 2 rappel(s), n8n : 2
+      écart écrit É1 avis:00000000-0000-4000-c000-000000000001 : « Demander un avis à Client Fictif » → « Demander un avis à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000001:1 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+  ✓ il y a 6 mois : pas d’avis (rattrapage de 14 jours), entretien de la PAC ; rattrapage à la limite (17 jours avant, activé il y a 3 jours) — ancien code : 2 rappel(s), n8n : 2
+      écart écrit É1 avis:00000000-0000-4000-c000-000000000004 : « Demander un avis à Client Fictif » → « Demander un avis à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000002:1 : « Proposer l’entretien (pompe à chaleur) à Client Fictif » → « Proposer l’entretien (pompe à chaleur) à le client »
+  ✓ avec opposition : l’ancien code pose, n8n non (É2) — ancien code : 2 rappel(s), n8n : 0
+      écart écrit É2 avis:00000000-0000-4000-c000-000000000001 posé par l'ancien code, pas par n8n
+      écart écrit É2 entretien:00000000-0000-4000-c000-000000000001:1 posé par l'ancien code, pas par n8n
+  ✓ opposition posée depuis la demande d’avis (la route a retiré l’entretien) : l’ancien code le repose, n8n non (É2) — ancien code : 1 rappel(s), n8n : 0
+      écart écrit É2 entretien:00000000-0000-4000-c000-000000000001:1 posé par l'ancien code, pas par n8n
+  ✓ déjà rappelé (clés existantes, et une clé d’entretien plus loin que le rang dû) — ancien code : 2 rappel(s), n8n : 2
+      écart écrit É1 avis:00000000-0000-4000-c000-000000000003 : « Demander un avis à Client Fictif » → « Demander un avis à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000003:1 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+  ✓ pause générale active : rien des deux côtés — ancien code : 0 rappel(s), n8n : 0, mêmes rappels
+  ✓ pause générale illisible : l’ancien code se tait (doute), n8n aussi — ancien code : 0 rappel(s), n8n : 0, mêmes rappels
+  ✓ offre Studio, Essentiel ou sans offre : rien — ancien code : 0 rappel(s), n8n : 0, mêmes rappels
+  ✓ offre Signature (avis seul), Entreprise (entretien seul), fondateur en Studio, réglages décochés — ancien code : 3 rappel(s), n8n : 3
+      écart écrit É1 avis:00000000-0000-4000-c000-000000000001 : « Demander un avis à Client Fictif » → « Demander un avis à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000002:1 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 avis:00000000-0000-4000-c000-000000000003 : « Demander un avis à Client Fictif » → « Demander un avis à le client »
+  ✓ en cours, fin future, plus de 3 ans, sans date ; équipement lu dans une ligne du devis, fini aujourd’hui — ancien code : 2 rappel(s), n8n : 2, mêmes rappels
+  ✓ plafond : 26 chantiers, 20 rappels au plus, les plus proches d’abord — ancien code : 20 rappel(s), n8n : 20
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000001:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000003:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000005:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000007:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000009:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000011:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000013:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000015:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000017:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000019:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000021:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000023:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000025:3 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000002:2 : « Proposer l’entretien (pompe à chaleur) à Client Fictif » → « Proposer l’entretien (pompe à chaleur) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000004:2 : « Proposer l’entretien (pompe à chaleur) à Client Fictif » → « Proposer l’entretien (pompe à chaleur) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000006:2 : « Proposer l’entretien (pompe à chaleur) à Client Fictif » → « Proposer l’entretien (pompe à chaleur) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000008:2 : « Proposer l’entretien (pompe à chaleur) à Client Fictif » → « Proposer l’entretien (pompe à chaleur) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000010:2 : « Proposer l’entretien (pompe à chaleur) à Client Fictif » → « Proposer l’entretien (pompe à chaleur) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000012:2 : « Proposer l’entretien (pompe à chaleur) à Client Fictif » → « Proposer l’entretien (pompe à chaleur) à le client »
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000014:2 : « Proposer l’entretien (pompe à chaleur) à Client Fictif » → « Proposer l’entretien (pompe à chaleur) à le client »
+  ✓ « Pompe à chaleur » avec majuscule : le motif du code ne la reconnaît pas (lib/apresChantier.ts:97), n8n non plus (même résultat) — ancien code : 1 rappel(s), n8n : 1
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000002:1 : « Proposer l’entretien (pompe à chaleur) à Client Fictif » → « Proposer l’entretien (pompe à chaleur) à le client »
+  ✓ chantier absent de la vue des signaux : n8n ne pose rien pour lui (É4) — ancien code : 4 rappel(s), n8n : 2
+      écart écrit É1 avis:00000000-0000-4000-c000-000000000001 : « Demander un avis à Client Fictif » → « Demander un avis à le client »
+      écart écrit É4 avis:00000000-0000-4000-c000-000000000002 posé par l'ancien code, pas par n8n
+      écart écrit É1 entretien:00000000-0000-4000-c000-000000000001:1 : « Proposer l’entretien (chaudière) à Client Fictif » → « Proposer l’entretien (chaudière) à le client »
+      écart écrit É4 entretien:00000000-0000-4000-c000-000000000002:1 posé par l'ancien code, pas par n8n
+  ✓ signal d’un autre compte sur le même chantier : seul celui du compte compte (M2 de 032-010) — ancien code : 2 rappel(s), n8n : 0
+      écart écrit É2 avis:00000000-0000-4000-c000-000000000001 posé par l'ancien code, pas par n8n
+      écart écrit É2 entretien:00000000-0000-4000-c000-000000000001:1 posé par l'ancien code, pas par n8n
+  ✓ deux comptes : la clé d’un autre compte ne compte pas — ancien code : 2 rappel(s), n8n : 2
+      écart écrit É1 avis:00000000-0000-4000-c000-000000000001 : « Demander un avis à Client Fictif » → « Demander un avis à le client »
+      écart écrit É1 avis:00000000-0000-4000-c000-000000000002 : « Demander un avis à Client Fictif » → « Demander un avis à le client »
+  ✓ idempotence : 4 rappel(s) au premier passage, 0 au second (clé artisan_id,cle)
+  ✓ structure (S1-S10), copie figée (C1-C6) et comparaison : vertes
+  ✓ essai n8n : la pin data rejouée hors ligne rend la sortie de n8n, et c’est celle du cas « essai »
+  ✓ garde commune n8n-specs-qa : ✓ .orchestre/preuves/032-031/presti-apres-chantier.workflow.json (presti-apres-chantier) : R1 à R7 tenues
+  ✓ mutant « opposition ignorée » fait rougir le juge
+      → essai (les sept cas demandés) : n8n ≠ ancien code (écarts écrits appliqués)
+  ✓ mutant « clé de l’avis changée » fait rougir le juge
+      → essai (les sept cas demandés) : n8n ≠ ancien code (écarts écrits appliqués)
+  ✓ mutant « clé de l’entretien sans son rang » fait rougir le juge
+      → essai (les sept cas demandés) : n8n ≠ ancien code (écarts écrits appliqués)
+  ✓ mutant « fuseau changé (UTC) » fait rougir le juge
+      → il y a 6 mois : pas d’avis (rattrapage de 14 jours), entretien de la PAC ; rattrapage à la limite (17 jours avant, activé il y a 3 jours) : n8n ≠ ancien code (écarts écri
+  ✓ mutant « fuseau du workflow changé » fait rougir le juge
+      → S2 fuseau du workflow : UTC (Europe/Paris attendu)
+  ✓ mutant « pause générale ignorée » fait rougir le juge
+      → pause générale active : rien des deux côtés : n8n ≠ ancien code (écarts écrits appliqués)
+  ✓ mutant « pause illisible prise pour levée » fait rougir le juge
+      → pause générale illisible : l’ancien code se tait (doute), n8n aussi : n8n ≠ ancien code (écarts écrits appliqués)
+  ✓ mutant « offre Studio admise » fait rougir le juge
+      → C3 offre studio : crm false dans le code, true dans n8n
+  ✓ mutant « fondateur ignoré » fait rougir le juge
+      → offre Signature (avis seul), Entreprise (entretien seul), fondateur en Studio, réglages décochés : n8n ≠ ancien code (écarts écrits appliqués)
+  ✓ mutant « plafond de 20 levé » fait rougir le juge
+      → C1 seuil max_poses_par_passage : 25 dans n8n, 20 dans le code
+  ✓ mutant « délai de l’avis changé » fait rougir le juge
+      → C1 seuil delai_avis_jours : 3 dans n8n, 2 dans le code
+  ✓ mutant « rattrapage changé » fait rougir le juge
+      → C1 seuil rattrapage_jours : 30 dans n8n, 14 dans le code
+  ✓ mutant « préavis changé » fait rougir le juge
+      → C1 seuil preavis_jours : 14 dans n8n, 15 dans le code
+  ✓ mutant « périodicité de la PAC changée » fait rougir le juge
+      → C2 équipements {"chaudiere":{"nom":"chaudière","mois":12},"pompe_a_chaleur":{"nom":"pompe à chaleur","mois":12},"conduit_de_fumee":{"nom":"conduit de fumée","mois":12}} ≠
+  ✓ mutant « clés existantes ignorées » fait rougir le juge
+      → essai (les sept cas demandés) : n8n ≠ ancien code (écarts écrits appliqués)
+  ✓ mutant « clés lues tous comptes confondus » fait rougir le juge
+      → deux comptes : la clé d’un autre compte ne compte pas : n8n ≠ ancien code (écarts écrits appliqués)
+  ✓ mutant « signal joint par le seul chantier » fait rougir le juge
+      → signal d’un autre compte sur le même chantier : seul celui du compte compte (M2 de 032-010) : n8n ≠ ancien code (écarts écrits appliqués)
+  ✓ mutant « fin à venir acceptée » fait rougir le juge
+      → en cours, fin future, plus de 3 ans, sans date ; équipement lu dans une ligne du devis, fini aujourd’hui : n8n ≠ ancien code (écarts écrits appliqués)
+  ✓ mutant « drapeau baissé ignoré » fait rougir le juge
+      → C4 drapeau crmApresChantier : false dans n8n, true dans lib/flags.ts
+  ✓ mutant « écriture réelle » fait rougir le juge
+      → S10 la pose doit rester une simulation (ecrit: false)
+  ✓ mutant « déclencheur à 9 h » fait rougir le juge
+      → S5 déclencheur : [{"field":"days","daysInterval":1,"triggerAtHour":9,"triggerAtMinute":0}] (tous les jours à 8 h 00 attendu)
+  ✓ mutant « workflow actif » fait rougir le juge
+      → S1 le workflow doit être inactif
+  ✓ mutant « nom du client lu » fait rougir le juge
+      → S6 Lire chantiers : paramètres [["select","id,artisan_id,statut,date_fin_reelle,client_nom"],["artisan_id","={{ 'in.(' + ($('Lire reglages').all().map(i => i.json.artisan
+  ✓ mutant « titre lu » fait rougir le juge
+      → S6 Lire chantiers : paramètres [["select","id,artisan_id,statut,date_fin_reelle,titre"],["artisan_id","={{ 'in.(' + ($('Lire reglages').all().map(i => i.json.artisan_id).
+  ✓ mutant « filtre « terminé » ôté de la lecture » fait rougir le juge
+      → S6 Lire chantiers : paramètres [["select","id,artisan_id,statut,date_fin_reelle"],["artisan_id","={{ 'in.(' + ($('Lire reglages').all().map(i => i.json.artisan_id).filter
+  ✓ mutant « lecture devenue POST » fait rougir le juge
+      → S6 Lire cles : GET sans corps ni en-tête attendu
+  ✓ mutant « nœud d’écriture ajouté » fait rougir le juge
+      → S3 nœuds ["Contexte du passage","Déclencheur 8 h","Lire chantiers","Lire cles","Lire comptes","Lire pause generale","Lire reglages","Lire signaux","Message d echec","Pose
+  ✓ mutant « branche d’erreur ôtée » fait rougir le juge
+      → S9 branche d'erreur : Échec du passage → Message d echec attendu
+apres-chantier-n8n-qa : 16 cas × 3 instants, 28 mutants
+OK
+(node:2228742) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/apresChantierTour.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,0 +1,109 @@
+PASS A1 drapeaux `devisLots` et `facturesSituation` déclarés après `crmPointage`, commentés et datés 21/10/2026, LEVÉS après 0176 et 0180
+PASS A2 drapeau baissé : `situation` et `solde` explicites → 404, sans une seule lecture ni écriture en base, sans numéro tiré
+(node:2972491) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/flags.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS A3 drapeau baissé : acompte puis facture → le chemin d’avant (acompte 30 % puis SOLDE) ; seul le type est écrit (0176 appliquée), aucune donnée de situation
+PASS A4 POST /api/factures : drapeau baissé, `situation`/`solde` → 404 avant creerFacture ; tout autre `type` ignoré (le chemin d’avant)
+PASS A5 routes devis : `type_devis` et `lot` lus SEULEMENT drapeau `devisLots` levé ; chiffrage : `par_lots` seulement drapeau levé
+PASS A6 écran du devis : tout le neuf derrière LOTS = actif(devisLots) et TYPES_FACTURE_ECRAN = actif(facturesSituation) ; baissé, « Créer la facture » envoie { devis_id } comme avant
+PASS A7 assistant, drapeau levé : les 4 types (« complete », « acompte », « situation », « solde ») et avancement_pct acceptés
+PASS A8 chiffrage IA hors devis par lots : prompt système, message et max_tokens IDENTIQUES à HEAD (octet pour octet), aucun `lot` rendu
+PASS B9 chiffrage IA par lots : la consigne CONSIGNE_LOTS et le champ "lot" dans le format ; les règles anti-fabrication restent (provenance, TVA)
+PASS B10 chiffrage IA par lots (fixture) : chaque ligne garde son lot, nettoyé (caractère de contrôle retiré) ; une provenance inventée retombe sur « estimation »
+PASS B1 un devis par lots et le même devis simple : total HT, remise, TVA par taux, TTC et acompte IDENTIQUES au centime (2 devis, dont remise 7,5 % et 3 taux)
+PASS B2 regroupement : ordre de première apparition, lignes sans lot à part (titre « Hors lot »), sous-total HT brut par lot
+PASS B3 sous-totaux des lots = total brut du devis (devis aux montants ronds) : 2 000 + 7 000 + 3 000 = 12 000 € HT
+PASS B4 « Regrouper les lignes » : chaque lot d’un seul tenant, ordre de première apparition, ordre interne gardé (tri stable)
+PASS B5 nom de lot nettoyé : caractères de contrôle retirés, espaces resserrés, 80 caractères au plus, vide → null
+PASS B6 PDF RENDU (lib/DevisPDF.tsx) d’un devis par lots : chaque lot en titre et « Sous-total <lot> HT : <montant> »
+PASS B7 PDF RENDU : total HT, TVA par taux et TTC du devis par lots = ceux du devis simple (12 000,00 HT ; TVA 10 % 1 100,00 ; TVA 20 % 200,00 ; 13 300,00 TTC)
+PASS B8 garde-fou blanc : le PDF artisan ne porte jamais « Presti »
+PASS C1 situation n° 1 à 30 % d’un devis 10 000 € (10 %) + 5 000 € (20 %) : 4 500,00 HT, 600,00 TVA, 5 100,00 TTC
+PASS C2 situation n° 2 à 70 % (cumul) : 10 500 − 4 500 = 6 000,00 HT ; TVA 400 + 400 ; 6 800,00 TTC
+PASS C3 situation n° 3 à 100 % : 4 500,00 HT ; la somme des trois = le devis au centime (15 000,00 HT, 17 000,00 TTC)
+PASS C4 numéros de situation 1, 2, 3 ; objet « Situation n° k — … » ; type « situation » ; avancement, marché et cumul figés sur la pièce
+PASS C5 lignes de la situation n° 2 : travaux cumulés à 70 % par taux (+7 000 et +3 500), puis « Déduction de la situation n° 1 FAC-… » par taux (−3 000 et −1 500) ; quantité −1, prix positif
+PASS C6 détail figé (PDF, Factur-X) de la n° 2 : marché 15 000, cumul antérieur 4 500 (30 %), cumul à date 10 500 (70 %), déjà facturé 4 500, montant 6 000
+PASS C7 une 4e situation à 100 % (tout facturé) → refus « Rien à facturer », aucun numéro tiré de plus
+PASS C8 après 100 % de situations, la facture de solde est refusée : il ne reste rien
+PASS C9 argent du dossier après 100 % de situations : facturé 17 000,00 TTC, reste à facturer 0, couvert, aucune situation prise pour un acompte ni un « acompte double »
+PASS C10 argent du dossier à 70 % : facturé 11 900,00 TTC sur 17 000,00, reste à facturer 5 100,00
+PASS C11 fiche chantier après des situations : « Facturer » reste ouvert et émet le SOLDE (plus « déjà facturé »)
+PASS C11b l’avoir de la situation n° 2 par le chemin réel (émission atomique) : numéroté dans la séquence, aux montants opposés, la situation passe « annulée »
+PASS C12 un avoir sur la situation n° 2 : facturé redescend à 5 100,00 TTC, reste à facturer 11 900,00
+PASS C13 après l’avoir, la référence redevient la n° 1 (30 %) : 25 % est un recul (409) ; 70 % refacture 6 000,00 HT (10 500 − 4 500), cumul antérieur 30 %, numéro 3 (le 2 n’est jamais réutilisé)
+PASS C14 enchaînement des situations du devis : 1 (30 %), 2 (70 %, annulée par avoir), 3 (70 %) — chaque numéro une seule fois
+PASS C14b un avoir dont la pièce d’origine est restée « émise » l’annule quand même : la situation suivante à 70 % refacture 6 000,00 HT
+PASS C15 acompte 30 % (4 500,00 HT, 5 100,00 TTC, type « acompte ») puis situation à 20 % → refusée : l’acompte couvre déjà ce cumul
+PASS C16 situation à 50 % après l’acompte : 7 500 − 4 500 = 3 000,00 HT (TVA 200 + 200, 3 400,00 TTC), ligne « Déduction de l’acompte facturé FAC-… »
+PASS C17 situation à 100 % : 15 000 − 7 500 = 7 500,00 HT ; acompte + situations = le devis au centime (15 000,00 HT)
+PASS C18 situation par lot n° 1 (Lot 1 100 %, Lot 2 50 %, Lot 3 0 %) : 2 000 + 3 000 + 500 = 5 500,00 HT ; TVA 500 + 100 = 600,00
+PASS C19 lignes par lot × taux, chacune avec son `lot` : « Lot 2 — Plomberie : avancement cumulé 50 % (part soumise à TVA 20 %) » = 500,00
+PASS C20 n° 2 (Lot 2 100 %, Lot 3 40 %, Lot 1 non saisi = gardé à 100 %) : cumul 10 200 − 5 500 = 4 700,00 HT
+PASS C21 un lot qui recule (Lot 1 100 → 90 %) → 409 ; un lot à 120 % → 422 ; un lot inconnu → 400 ; passer en avancement global après des situations par lot → 409
+PASS C22 n° 3 à 100 % partout : 12 000 − 10 200 = 1 800,00 HT ; les trois = le devis (12 000,00 HT) ; avancement global figé 100 %
+PASS C23 PDF RENDU de la situation n° 2 : « Situation de travaux n° 2 », devis de référence, marché 12 000,00, cumul antérieur 5 500,00, cumul à date 10 200,00, montant 4 700,00, et le détail par lot
+PASS C24 refus avant tout numéro : 100,01 % (422), 0 % (422), « beaucoup » (422), rien (422), lot par lot sur un devis sans lots (400)
+PASS C25 avancement qui recule (60 → 59,99 %) → 409 « ne peut pas reculer » ; même avancement (60 %) → 409 « Rien à facturer »
+PASS C26 le devis a changé de montant depuis la n° 1 → 409 (les situations portent sur le même marché)
+PASS C27 devis non signé → 409 ; devis déjà facturé en entier → situation refusée (409, « avoir » proposé)
+PASS C28 devis remisé de 10 % (13 500,00 HT) : situations 30 % (4 050,00) et 70 % (5 400,00), puis SOLDE = 4 050,00 HT ; la somme = le devis au centime
+PASS C29 lignes du solde : les lignes du devis, la remise par taux, puis une déduction par situation et par taux (4 lignes « Déduction de la situation n° … »)
+PASS C30 « Facture de solde » sans acompte ni situation → 409 (« choisissez Facture ») ; « Facture » → tout le devis, type « standard »
+PASS C31 « Facture » après une situation à 40 % : c’est le solde (9 000,00 HT, type « solde »), pas une deuxième facture complète
+PASS C32 300 devis tirés au sort (décimales, remises, 1 à 4 taux, la moitié par lots), situations jusqu’à 100 % : la somme des situations = le marché HT au centime, chaque cumul ≥ le précédent
+PASS C33 Factur-X d’une situation : TypeCode 380, la note « Situation de travaux n° 2 — devis …, marché 15000.00 EUR HT … montant de cette situation 6000.00 EUR HT », contrôle avant émission sans écart de total
+PASS C34 la route Factur-X porte la note de situation ; l’acompte reste en 380 (UNTDID 386 « facture d’acompte » non utilisé, voir le rapport) ; le lot n’est pas lu (colonnes nommées)
+PASS C35 simulation (carte de l’assistant) d’une situation à 100 % : 4 500,00 HT / 5 100,00 TTC annoncés, situation n° 3, AUCUN numéro tiré, rien d’écrit
+PASS C36 assistant, drapeau levé : TYPES_FACTURE = complete, acompte, situation, solde ; avancement_pct (1 à 100, à sourcer) obligatoire pour une situation et réservé à elle
+PASS C37 assistant : creer_facture reste « à confirmer » ; la carte d’une situation ou d’un solde annonce le montant de simulerFacture ; le clic passe type et avancement à creerFacture
+PASS D1 SANS 0180 (fonction absente) : facture, acompte et situation → 503, aucune écriture directe en base, aucun numéro, aucune facture
+PASS D2 SANS 0180 : l’avoir → 503, la facture reste émise, rien d’écrit
+PASS D3 coupure après l’en-tête : tout est annulé (transaction) — aucune facture, aucune ligne, AUCUN numéro consommé, jamais une facture « emise » sans numéro
+PASS D5 coupure après les lignes : tout est annulé (transaction) — aucune facture, aucune ligne, AUCUN numéro consommé, jamais une facture « emise » sans numéro
+PASS D6 coupure au scellement : tout est annulé (transaction) — aucune facture, aucune ligne, AUCUN numéro consommé, jamais une facture « emise » sans numéro
+PASS D7 UN appel facture_emettre, aucune écriture directe du serveur ; la facture sort numérotée (FAC-2026-0001), scellée, avec ses 2 lignes et l’empreinte SHA-256 du contenu AVEC son numéro
+PASS D8 un devis sans ligne : la facture est refusée (422) avant toute écriture
+PASS D9 double clic « Facture » (deux émissions SIMULTANÉES, chacune ayant lu « rien de facturé ») : UNE seule facture complète, l’autre refusée par la base (jamais plus que le devis)
+PASS D10 deux situations SIMULTANÉES (70 % et 100 %, calculées sur le même « déjà facturé 0 ») : une seule émise, l’autre refusée ; jamais plus que le devis
+PASS D11 un acompte poussé DIRECTEMENT à la base sur un devis déjà facturé en entier (le serveur contourné) : refusé (409, « jamais plus que le devis »), rien d’écrit
+PASS D4 la sonde des colonnes (devis par lots) : une réponse positive est gardée, une négative reposée après une minute ; les routes devis répondent 503 à « par lots » sans 0176
+PASS D12 plus AUCUNE écriture directe de facture côté serveur : ni insert, ni next_numero, ni empreinte calculée dans lib/factureDepuisDevis.ts ni dans l’avoir ; un seul rpc facture_emettre ; PATCH refuse de sceller une facture sans numéro
+PASS D13 enregistrer un devis ne le vide plus jamais : lignes et totaux remplacés en une transaction (devis_lignes_remplacer), sinon anciennes lignes remises si l’insertion échoue ; à la création, une erreur de lignes retire le brouillon
+PASS H1 (C1) devis 15 000 HT, situations 30 % puis 70 % (10 500 HT), puis acompte 50 % (7 500 HT) → REFUSÉ (18 000 > 15 000), rien d’émis
+PASS H2 (C1, vu en production via l’assistant) facture complète puis acompte 30 % : refusé, par le type comme par l’ancien chemin (acomptePct seul)
+PASS H3 (M1) devis par lots avec acompte, lot à 20 % encore à 0 % : AUCUNE TVA négative — l’acompte (4 500 HT) s’impute sur le seul taux réalisé : 10 000 − 4 500 = 5 500 HT, TVA { 10 % : 550 }
+PASS H4 (M1) à 100 % : acompte + situations = le devis au centime (15 000 HT), TVA cumulée = celle du devis (10 % : 1 000 ; 20 % : 1 000), aucune pièce à TVA négative
+PASS H5 (M2) un émoji à la limite : coupé ENTRE deux caractères (80 caractères, pas de demi-émoji), JSON sain ; une demi-paire orpheline est retirée ; la désignation (300) aussi
+PASS H6 (M4) une facture SANS LIGNE est « complète », jamais un acompte (every sur une liste vide)
+PASS H7 (M4, E1) une facture scellée VIDE (avant 0178) compte dans le déjà-facturé : ni situation (« facture complète », avoir proposé) ni acompte (« plus que le devis ») par-dessus
+PASS H8 l’avoir d’une facture scellée vide à PLUSIEURS taux (15 000 HT, 2 000 TVA : 10 % et 20 % mêlés) : refusé (409), aucune TVA inventée, la facture reste émise
+PASS H9 l’avoir d’une facture scellée vide à taux unique (1 000 HT, 100 TVA → 10 %) : une ligne −1 000 à 10 %, la facture passe « annulée »
+PASS H10 (M5) le TTC annoncé à l’artisan : un centime d’écart au moment d’émettre → 409, rien d’émis ; égal → émis ; la carte de l’assistant le transmet et le clic le passe
+PASS H11 un lot renommé après une situation → 409 clair (« n’existe plus sur le devis (renommé ?) ») ; une saisie de lot illisible (null) → 422, jamais prise pour « inchangé »
+PASS H12 Factur-X : la tonne part en TNE (plus en C62) ; l’écran signale un pourcentage de lot illisible au lieu de l’envoyer
+PASS E1 en-tête comme 0174 : « 0176 · », écrite et APPLIQUÉE le 21/10/2026 (contrôle 9/9), l’ordre (essai à sec, application, contrôle, suite, PUIS les drapeaux)
+PASS E2 idempotente et additive : `add column if not exists`, `create … if not exists`, `create or replace`, `drop trigger if exists` ; aucun drop de table ni de colonne, aucun update ni delete de lignes
+PASS E3 garde-fous en base : type et données de situation figés à l’UPDATE ; devis du même artisan et signé ; verrou par devis ; jamais plus que le devis
+PASS E4 garde-fous de situation en base : cumul > 0 et ≤ marché, marché = total HT du devis, avancement et cumul qui ne reculent pas, lots entre 0 et 100 et qui ne reculent pas, numéro jamais réutilisé
+PASS E5 fonction `security invoker`, search_path figé à vide, noms qualifiés ; contraintes de valeur sur chaque colonne neuve
+PASS E6 jumeau à coller (scripts/sql-nu.mjs) avec le contrôle supabase/controles/0176_types_devis_factures.sql en pied, numérotation des factures non touchée
+WAIT E7 PGlite introuvable (PGLITE_DIR=<dossier où « npm install @electric-sql/pglite » a été fait>) : 0176 n’est pas rejouée dans un Postgres ici.
+PASS E8 0180 en tête : écrite et APPLIQUÉE le 21/10/2026, l’ordre (coller, contrôler, PUIS déployer : le code est fail-closed sans elle) ; idempotente (create or replace, if not exists), aucune ligne existante modifiée
+PASS E9 facture_emettre : SECURITY DEFINER, search_path vide, EXECUTE retiré à public/anon/authenticated et donné au seul service_role ; verrou artisan PUIS devis ; refus préfixés « refus : »
+PASS E10 facture_emettre : déjà-facturé RECALCULÉ (factures du devis émises ou payées, ni avoir ni visées par un avoir, SANS condition de lignes), jamais plus que le devis pour TOUS les types, montant d’une situation = cumul − déjà facturé, d’un solde = devis − déjà facturé
+PASS E11 facture_emettre, tout ou rien : lignes contrôlées (≥ 1, ≤ 200, HT, TVA par taux et TTC recalculés), puis facture et lignes insérées, puis next_numero DANS la transaction (jamais n ?? 1), puis scellement et empreinte calculée par la base ; l’avoir passe « annulée » la facture visée dans la même transaction
+PASS E12 0180 : devis_lignes_remplacer (lignes et totaux en une transaction, au service_role seul) ; factures_situation_verifier étendue : devis du même artisan et jamais plus que le devis pour TOUTE facture rattachée à un devis (avoirs exceptés)
+PASS E13 jumeau 0180 à coller avec son contrôle en pied (fonctions, droits, index, 0 facture émise sans numéro)
+WAIT E14 PGlite introuvable : 0180 n’est pas rejouée dans un Postgres ici.
+PASS G1 unités (29 entrées) : m² et m³ gardés (m2 → m², m3 → m³, « mètre carré » → m²), ml, u, h, j, forfait, ens., kg, l, t ; une unité inconnue est gardée telle quelle
+PASS G2 une ligne de chiffrage IA en m² reste en m² (et m3 → m³) : plus aucune surface en mètres linéaires
+PASS G3 TVA lue : 0 (franchise) reste 0 ; le défaut ne remplace qu’un taux absent ou illisible ; l’écran lit par tauxTvaLu (base ET chiffrage IA) et propose 0 % en franchise
+PASS G4 /api/devis/generer lit le régime de TVA de l’artisan (comme /api/devis/auto) et le transmet ; au réel le prompt ne dit plus « franchise → 0 % » (sans régime, il le disait)
+PASS G5 provenance « vos tarifs » : gardée si le prix est, au centime, celui d’un tarif de ce libellé (42,50 ou 44,90) ; 42,51 ou 0 → « estimation » ; sans prix (ancien appel) le libellé seul est vérifié ; un libellé inventé → « estimation »
+PASS G6 chiffrage IA (fixture, sans appel) : la ligne au prix du tarif garde « vos tarifs · Rexel · … », celle au prix modifié redevient « estimation »
+PASS F1 aucun octet de contrôle (hors tabulation et fins de ligne) dans les fichiers du chantier
+
+101 vert(s), 0 rouge(s)

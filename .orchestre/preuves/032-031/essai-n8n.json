@@ -1,0 +1,242 @@
+{
+ "workflow_id": "18cmxK4gy1ceqFYD",
+ "execution_id": "355",
+ "statut": "success",
+ "mode": "manual (test_workflow, pin data)",
+ "debut": "2026-11-02T20:04:50.155Z",
+ "fin": "2026-11-02T20:04:50.224Z",
+ "jour": "2026-11-02",
+ "source": "MCP n8n-oracle get_workflow_execution 355, nœud « Poser les rappels (simulation) » ; pin data : scripts/apres-chantier-n8n-qa.mjs --pin=2026-11-02",
+ "pinData": {
+  "Déclencheur 8 h": [
+   {
+    "json": {
+     "timestamp": "2026-11-02T08:00:00.000+01:00"
+    }
+   }
+  ],
+  "Lire pause generale": [
+   {
+    "json": {
+     "pause_generale": false
+    }
+   }
+  ],
+  "Lire reglages": [
+   {
+    "json": {
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "avis": true,
+     "entretien": true,
+     "actif_depuis": "2026-10-03T09:00:00+00:00"
+    }
+   },
+   {
+    "json": {
+     "artisan_id": "00000000-0000-4000-a000-000000000002",
+     "avis": true,
+     "entretien": false,
+     "actif_depuis": null
+    }
+   },
+   {
+    "json": {
+     "artisan_id": "00000000-0000-4000-a000-000000000003",
+     "avis": true,
+     "entretien": true,
+     "actif_depuis": null
+    }
+   }
+  ],
+  "Lire comptes": [
+   {
+    "json": {
+     "id": "00000000-0000-4000-a000-000000000001",
+     "plan": "signature",
+     "is_founder": false
+    }
+   },
+   {
+    "json": {
+     "id": "00000000-0000-4000-a000-000000000002",
+     "plan": "signature",
+     "is_founder": false
+    }
+   },
+   {
+    "json": {
+     "id": "00000000-0000-4000-a000-000000000003",
+     "plan": "studio",
+     "is_founder": false
+    }
+   }
+  ],
+  "Lire chantiers": [
+   {
+    "json": {
+     "id": "00000000-0000-4000-c000-000000000001",
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "statut": "termine",
+     "date_fin_reelle": "2026-11-01"
+    }
+   },
+   {
+    "json": {
+     "id": "00000000-0000-4000-c000-000000000002",
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "statut": "termine",
+     "date_fin_reelle": "2026-05-02"
+    }
+   },
+   {
+    "json": {
+     "id": "00000000-0000-4000-c000-000000000003",
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "statut": "termine",
+     "date_fin_reelle": "2026-10-28"
+    }
+   },
+   {
+    "json": {
+     "id": "00000000-0000-4000-c000-000000000004",
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "statut": "termine",
+     "date_fin_reelle": "2026-10-29"
+    }
+   },
+   {
+    "json": {
+     "id": "00000000-0000-4000-c000-000000000005",
+     "artisan_id": "00000000-0000-4000-a000-000000000002",
+     "statut": "termine",
+     "date_fin_reelle": "2026-10-31"
+    }
+   },
+   {
+    "json": {
+     "id": "00000000-0000-4000-c000-000000000006",
+     "artisan_id": "00000000-0000-4000-a000-000000000003",
+     "statut": "termine",
+     "date_fin_reelle": "2026-11-01"
+    }
+   }
+  ],
+  "Lire signaux": [
+   {
+    "json": {
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "chantier_id": "00000000-0000-4000-c000-000000000001",
+     "equipement": "chaudiere",
+     "oppose": false
+    }
+   },
+   {
+    "json": {
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "chantier_id": "00000000-0000-4000-c000-000000000002",
+     "equipement": "pompe_a_chaleur",
+     "oppose": false
+    }
+   },
+   {
+    "json": {
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "chantier_id": "00000000-0000-4000-c000-000000000003",
+     "equipement": "conduit_de_fumee",
+     "oppose": true
+    }
+   },
+   {
+    "json": {
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "chantier_id": "00000000-0000-4000-c000-000000000004",
+     "equipement": "chaudiere",
+     "oppose": false
+    }
+   },
+   {
+    "json": {
+     "artisan_id": "00000000-0000-4000-a000-000000000002",
+     "chantier_id": "00000000-0000-4000-c000-000000000005",
+     "equipement": null,
+     "oppose": false
+    }
+   },
+   {
+    "json": {
+     "artisan_id": "00000000-0000-4000-a000-000000000003",
+     "chantier_id": "00000000-0000-4000-c000-000000000006",
+     "equipement": "chaudiere",
+     "oppose": false
+    }
+   }
+  ],
+  "Lire cles": [
+   {
+    "json": {
+     "id": "r4a",
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "cle": "avis:00000000-0000-4000-c000-000000000004"
+    }
+   },
+   {
+    "json": {
+     "id": "r4b",
+     "artisan_id": "00000000-0000-4000-a000-000000000001",
+     "cle": "entretien:00000000-0000-4000-c000-000000000004:1"
+    }
+   }
+  ]
+ },
+ "sortie": {
+  "mode": "simulation",
+  "ecrit": false,
+  "table": "crm_rappels",
+  "conflit": "artisan_id,cle",
+  "doublons": "ignores",
+  "jour": "2026-11-02",
+  "pause": false,
+  "comptes": 2,
+  "poses": 4,
+  "sans_signal": 0,
+  "opposes": 1,
+  "lignes": [
+   {
+    "artisan_id": "00000000-0000-4000-a000-000000000001",
+    "chantier_id": "00000000-0000-4000-c000-000000000001",
+    "type": "demande_avis",
+    "echeance": "2026-11-03",
+    "origine": "systeme",
+    "cle": "avis:00000000-0000-4000-c000-000000000001",
+    "texte": "Demander un avis à le client"
+   },
+   {
+    "artisan_id": "00000000-0000-4000-a000-000000000001",
+    "chantier_id": "00000000-0000-4000-c000-000000000001",
+    "type": "entretien",
+    "echeance": "2027-10-17",
+    "origine": "systeme",
+    "cle": "entretien:00000000-0000-4000-c000-000000000001:1",
+    "texte": "Proposer l’entretien (chaudière) à le client"
+   },
+   {
+    "artisan_id": "00000000-0000-4000-a000-000000000001",
+    "chantier_id": "00000000-0000-4000-c000-000000000002",
+    "type": "entretien",
+    "echeance": "2028-04-17",
+    "origine": "systeme",
+    "cle": "entretien:00000000-0000-4000-c000-000000000002:1",
+    "texte": "Proposer l’entretien (pompe à chaleur) à le client"
+   },
+   {
+    "artisan_id": "00000000-0000-4000-a000-000000000002",
+    "chantier_id": "00000000-0000-4000-c000-000000000005",
+    "type": "demande_avis",
+    "echeance": "2026-11-02",
+    "origine": "systeme",
+    "cle": "avis:00000000-0000-4000-c000-000000000005",
+    "texte": "Demander un avis à le client"
+   }
+  ]
+ }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "AQeHiC58UgbMR4Kr",
+  "name": "presti-erreurs",
+  "active": false,
+  "isArchived": false,
+  "versionId": "feb50b6a-9cb2-48b8-8143-ca50845c06cd",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 4,
+  "createdAt": "2026-11-02T20:14:05.382Z",
+  "updatedAt": "2026-11-02T20:14:10.014Z",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "Europe/Paris",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "executionTimeout": 60
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "Tâche 032-033 : workflow d'erreur commun des workflows du soir — alerte courte Slack #presti-auto (workflow, nœud, numéro d'exécution, heure), aucune donnée d'artisan ni de client. Inactif.",
+  "canExecute": true,
+  "connections": {
+    "Échec d un workflow": {
+      "main": [
+        [
+          {
+            "node": "Message sans donnée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message sans donnée": {
+      "main": [
+        [
+          {
+            "node": "Alerte #presti-auto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "a00076c3-3b50-44bb-808a-b0b748e99458",
+      "name": "Échec d un workflow",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "ae0b23f3-aec3-4bcc-84de-c8de272fd821",
+      "name": "Message sans donnée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-erreurs (tâche 032-033) : une alerte courte, SANS AUCUNE DONNÉE d'artisan ni de client.\n// Ne sortent que : le nom du workflow, le nom du nœud fautif, le numéro d'exécution, l'heure de Paris.\n// Jamais execution.error (message, pile), execution.url, trigger.error, ni rien de ce que le passage a lu.\nconst e = $input.first().json ?? {}\nconst wf = e.workflow && typeof e.workflow === 'object' ? e.workflow : {}\nconst ex = e.execution && typeof e.execution === 'object' ? e.execution : {}\nconst nomBrut = typeof wf.name === 'string' ? wf.name : ''\nconst nom = /^presti-[a-z0-9-]{1,48}$/.test(nomBrut) ? nomBrut : 'workflow hors liste'\nconst noeudBrut = typeof ex.lastNodeExecuted === 'string' ? ex.lastNodeExecuted : (e.trigger ? 'déclencheur' : '')\nconst noeud = /^[\\p{L}\\p{N} ()'’«»#._-]{1,60}$/u.test(noeudBrut) ? noeudBrut : 'inconnu'\nconst numBrut = ex.id === undefined || ex.id === null ? '' : String(ex.id)\nconst numero = /^\\d{1,12}$/.test(numBrut) ? numBrut : 'sans numéro'\nconst heure = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', dateStyle: 'short', timeStyle: 'short' }).format(new Date())\nconst texte = `:rotating_light: ${nom} a échoué au nœud « ${noeud} » (exécution ${numero}, ${heure}, heure de Paris). Détail dans les exécutions de n8n (Oracle).`\nreturn [{ json: { texte } }]\n"
+      }
+    },
+    {
+      "id": "d4542092-6438-4833-b143-0810382e4222",
+      "name": "Alerte #presti-auto",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "accessToken",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti-auto"
+        },
+        "messageType": "text",
+        "text": "={{ $json.texte }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "notes": "pied: aucun\nMessage interne de Presti à Benj, sans donnée d artisan ni de client (tâche 032-033).",
+      "webhookId": "5053f3fa-7703-4615-ba3f-aa84c53a2e02",
+      "credentials": {
+        "slackApi": {
+          "id": "lR0GZ7FGXI3FCAF8",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "id": "9dd92782-096d-4c63-bdf7-4bd00ba1ba0e",
+      "name": "Sticky Note 9852efa3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## presti-erreurs (032-033)\nWorkflow d erreur commun, désigné dans les réglages des six workflows du soir.\nNe part que sur l échec d une exécution de PRODUCTION, jamais d un essai manuel.\nAlerte : nom du workflow, nœud, numéro d exécution, heure. Aucune donnée (ni message d erreur, ni pile, ni lien).",
+        "color": 4,
+        "width": 688,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-02T20:16:40.195Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 032-033), réponse enregistrée par le harnais (journal du harnais) puis recopiée par node, sans retouche ; « scopes » (droits de l'utilisateur du MCP) ôté"
+}

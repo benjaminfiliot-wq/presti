@@ -335,6 +335,26 @@ C'est le cœur du produit. Presti agit **pour le compte de l'artisan** (sous-tra
 | **Durée côté Anthropic** | **À documenter par le fondateur** à partir des conditions de l'API d'Anthropic (conservation, non-entraînement) : les pages publiques affirment que le prestataire n'utilise pas ces données pour entraîner ses modèles ; la pièce qui le prouve est à archiver (§ 24) |
 | **Où** | `lib/ai.ts`, `lib/ai/`, `app/api/leads`, `lib/plateformeConfig.ts` |
 
+## 23 bis. Les lectures de n8n sur le serveur Oracle *(chantier 4, 2 novembre 2026 ; aucun workflow publié à cette date)*
+
+Depuis le 02/11/2026, la logique récurrente de Presti se construit dans n8n (décision du fondateur, `.claude/rules/architecture-outils.md`,
+« règle n8n-first »). Cette section existe **avant** la publication du premier workflow qui lit des données d'artisans, comme le plan l'exige
+(`plans/011-cadrage-01-11/chantier-4-assistant-plan.md`, règles communes, « Ce que n8n lit »). Au 02/11/2026, **aucun** de ces workflows n'est
+publié : tous sont inactifs, essayés sur des données fictives.
+
+| | |
+|---|---|
+| **Finalité** | Repérer pour l'artisan l'argent à récupérer et les actions à préparer (`presti-detecteurs`), composer son point du matin (`presti-briefing-matin`), suivre ses premiers jours et ses bilans à J+14 et J+30 (`presti-suivi-artisan`), sauvegarder la base et vérifier la sauvegarde (`presti-sauvegarde`, `presti-garde-sauvegarde`), ranger les demandes de démo « Presti pour l'entreprise » (`presti-demande-demo`), poser les rappels d'après-chantier (`presti-apres-chantier`) |
+| **Données lues** | Des **identifiants, dates, montants et statuts** : jamais un nom, une adresse, un e-mail, un téléphone ni le texte d'un client. Liste exacte des tables et colonnes, workflow par workflow : `.orchestre/preuves/032-029/rapport.md`, annexe A (relevée contre le rôle `n8n_lecture`, `supabase/migrations/0189_role_lecture_n8n.sql`). Seule exception prévue : un workflow qui envoie lit, au moment d'envoyer, l'adresse et le nom du destinataire ; aucun n'envoie à la date de cette section. La sauvegarde, elle, lit toutes les tables : c'est sa fonction ; l'archive est **chiffrée** par une clé publique, la clé privée reste hors du serveur (`scripts/sauvegarde.mjs`, § 4.1 du plan) |
+| **Où** | n8n auto-hébergé dans Docker sur le serveur Oracle Cloud de Presti, région **eu-paris-1** (Paris, relevé le 02/11/2026 par les métadonnées de l'instance), lié à `127.0.0.1:5678`, joint seulement par un tunnel SSH. Le n8n hébergé en ligne (`presti.app.n8n.cloud`) ne reçoit aucune donnée personnelle (`.claude/rules/architecture-outils.md`) |
+| **Durée dans n8n** | Exécutions réussies : **rien n'est gardé** (`saveDataSuccessExecution: 'none'`, posé avant toute publication : tâche 032-033). Exécutions en échec : **14 jours** (336 h, purge par défaut de l'instance n8n), retenus le 02/11/2026 à la publication en simulation de `presti-detecteurs` et `presti-briefing-matin`, en attendant que le fondateur fixe une durée plus courte (`EXECUTIONS_DATA_MAX_AGE`, réglage du serveur). Une exécution d'essai du 02/11 (n° 333 et 334 de `presti-detecteurs`) a gardé une vraie ligne de `regles_automatisation` : **sa suppression est un geste du fondateur** (audit 032-029, D-1) |
+| **Alertes** | Un workflow en échec prévient le fondateur dans Slack `#presti-auto` par `presti-erreurs` : nom du workflow, nœud, numéro et heure de l'exécution, **sans aucune donnée** d'artisan ni de client |
+| **Accès** | Le fondateur (compte propriétaire de n8n) ; la session principale de Claude Code, par le connecteur `n8n-oracle` ; Hermes, par le même connecteur **en lecture seule** (`.claude/rules/architecture-outils.md`) |
+| **Base légale** | Exécution du contrat d'abonnement de l'artisan (art. 6.1.b) pour les détecteurs, le point du matin, le suivi et l'après-chantier ; intérêt légitime de Presti à la sécurité et à la continuité du service (art. 6.1.f) pour la sauvegarde ; mesures précontractuelles à la demande de l'entreprise (art. 6.1.b) pour les demandes de démo |
+| **Personnes** | Les artisans clients de Presti ; pour la sauvegarde, aussi les prospects et clients de l'artisan (contenu chiffré) ; pour les démos, les personnes qui en demandent une |
+| **Sous-traitant** | Oracle (hébergement du serveur, Paris) : accord de traitement des données **à archiver** par le fondateur, comme au § 24 (« à archiver » ≠ « signé ») |
+| **Avant chaque publication** | Relire cette section ; le workflow est audité par un agent distinct, essayé en simulation, puis publié sur le « go » écrit du fondateur |
+
 ## 24. Transferts hors Union européenne et garanties
 
 Le tableau dit ce que les **textes publics annoncent** (`lib/legalArtisan.ts`, `app/cgu`, `app/confidentialite`) et ce qu'il reste à **archiver**. Il n'affirme la signature d'aucun accord : aucune pièce n'en est versionnée dans le dépôt (recherche du 20/10).

@@ -1,0 +1,79 @@
+── 1. Le badge de l’offre Studio
+  ✅ le CSS ne pose plus « Le plus choisi » sur la carte Studio
+  ✅ la landing et /abonnement n’affichent aucun badge « Populaire / Recommandé / Le plus choisi »
+  ✅ (mutation) un badge réintroduit dans le CSS est vu
+  ✅ (mutation) un badge « Populaire » réintroduit sur la landing est vu
+
+── 2. Les nombres de l’aide sont ceux du code
+  ✅ réponses par conversation, relances J+2/5/10, impayés J+3/10/21, 10 par jour, assistée par défaut
+  ✅ (mutation) limite_messages: 9 est vu
+  ✅ (mutation) CADENCE_RELANCES = [2, 5, 11] est vu
+  ✅ (mutation) mode par défaut « auto » est vu
+
+── 3. L’envoi autonome exige l’offre (lib/plans.ts)
+  ✅ plateforme.ia.auto : Signature seulement (25/10), ni Studio ni l’Essai
+  ✅ modeEffectif rétrograde en « assistée » (verrou_offre) sans cette capacité
+  ✅ relances préparées et assistant : Studio ; relances envoyées seules, CRM et Pilote : Signature
+  ✅ l’aide ne nomme plus l’Essentiel comme offre (OFFRES_AIDE, NOM_OFFRE)
+  ✅ « réponse envoyée seule » : Signature, et Studio reste en « Assistée »
+  ✅ « relances des conversations » : préparées en Studio (après votre clic), seules en Signature
+  ✅ « relances d’impayés » : préparées en Studio (vous l’envoyez), seules en Signature
+  ✅ le passage quotidien ne fait partir la relance de conversation seule qu’avec relances.auto
+  ✅ le tour des impayés ne fait partir la relance seule qu’avec factures.relances.auto
+  ✅ les entrées de l’assistant qui touchent au CRM portent la capacité crm
+
+── 4. Chaque fonctionnalité listée a son offre
+  ✅ tous les articles et toutes les vidéos de l’aide ont une entrée dans CAPACITE_AIDE
+  ✅ la pastille rejoint l’offre déclarée de chaque article et de chaque vidéo
+  ✅ « site » (vidéo) est dit « commandé à part », pas rangé dans une offre
+  ✅ chaque ligne de « Qui a quoi » commence à l’offre que dit offreMinimale (lib/plans.ts)
+  ✅ les drapeaux des lignes du tableau existent
+
+── 5. Chaque automatisme annoncé existe dans le code
+  ✅ relances de conversation
+  ✅ expiration des devis
+  ✅ purges RGPD
+  ✅ relances d’impayés
+  ✅ après-chantier
+  ✅ rappels du matin
+  ✅ validation automatique du chantier
+  ✅ temps réel du CRM
+  ✅ alertes de l’atelier
+  ✅ briefing sur demande (bouton)
+  ✅ les deux passages planifiés sont ceux de vercel.json (relances, relève)
+  ✅ l’assistant n’est lancé par AUCUN passage planifié (il n’agit que sur message)
+  ✅ les drapeaux des entrées « automatique » existent
+  ✅ les capacités citées existent dans la formule la plus haute
+
+── 6. La règle de l’assistant : ce qui part chez un client attend un clic
+  ✅ envoyer, relancer, répondre, facturer, encaisser, supprimer, lot de prix : tous en « confirmation »
+  ✅ (mutation) un « envoyer un devis » passé en direct est vu
+  ✅ au moins 8 actions en confirmation et des actions directes (la liste de SPEC a été lue)
+  ✅ la carte à confirmer vaut 24 heures, et le texte publié le dit
+  ✅ le texte publié cite la limite de messages de plans.ts
+  ✅ la réponse commence par « Non »
+  ✅ Pilote : délai et plafond de l’aide = ceux de lib/pilote/regles.ts
+  ✅ Pilote : l’entrée est réservée à assistant.pilote, sous son drapeau, et « à activer »
+  ✅ Pilote : l’article du centre d’aide existe, Signature, avec le délai et le plafond du code
+  ✅ Pilote : l’article de l’assistant ne promet plus « rien sans votre clic » sans nommer l’exception
+  ✅ Pilote : drapeau levé, la réponse nomme l’exception, le délai et les garde-fous
+
+── 7. L’essai gratuit sans carte
+  ✅ durées 14 / 21 lues dans ESSAI_JOURS (deux offres)
+  ✅ crédits d’essai = prorata arrondi, plafonné à ESSAI_CREDITS_PLAFOND
+  ✅ le tableau lit les essais et le plafond dans le code (aucun chiffre retapé)
+
+── 8. Les fichiers
+  ✅ lib/aideAutomatique.ts : aucun octet de contrôle
+  ✅ app/aide/Automatique.tsx : aucun octet de contrôle
+  ✅ app/aide/TableauOffres.tsx : aucun octet de contrôle
+  ✅ app/aide/PastilleOffre.tsx : aucun octet de contrôle
+  ✅ app/aide/page.tsx : aucun octet de contrôle
+  ✅ app/AidePanneau.tsx : aucun octet de contrôle
+  ✅ app/aide/VideoAide.tsx : aucun octet de contrôle
+  ✅ lib/aide.ts : aucun octet de contrôle
+  ✅ scripts/aide-automatique-qa.mjs : aucun octet de contrôle
+  ✅ la page /aide montre « Ce qui est automatique » et « Qui a quoi » et les cherche
+  ✅ chaque article du centre d’aide affiche sa pastille
+
+✅ 62 contrôles passés, 0 échecs

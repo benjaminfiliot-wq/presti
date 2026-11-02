@@ -1,0 +1,70 @@
+PASS A1 contexte valide lu (chantier, UUID mis en minuscules)
+PASS A2 le libellé envoyé par l’écran n’est JAMAIS retenu (seuls type et id)
+PASS A3 toute autre forme → aucun contexte (types inconnus, identifiants invalides, injection, caractères de contrôle)
+PASS A4 client du CRM : référence d-, l-, c-, f- + identifiant ; catégorie : un nom court
+PASS A5 phrase neutre : « [Contexte : chantier « … »] », sans identifiant, sans crochets/guillemets/retours injectés
+PASS A5b libellé vide après nettoyage → aucune phrase
+PASS A6 suggestions : « Où j’en suis aujourd’hui ? » sans contexte ; « Coche les tâches finies de ce chantier », « Commande ce qui manque » sur un chantier ; « Relance ce devis » sur un devis
+PASS A7 chaque type de contexte a des suggestions
+PASS A8 contexte d’un objet de la maquette : chantier, véhicule, membre, rayon ; rien pour accueil, bureau, assistants
+PASS A9 fil d’activité FILTRÉ PAR COMPTE : l’action d’un autre compte n’apparaît jamais
+PASS A10 fil : le plus récent d’abord, états lisibles (fait, à confirmer, expirée)
+PASS A11 fil : « Tâche « carrelage » cochée — chantier Dupont » (nom relu sous le compte, ajouté une fois)
+PASS A12 compteurs du compte seulement : 2 faites aujourd’hui (pas celle de la veille ni celle de l’autre compte), 1 à confirmer (l’expirée ne compte pas), 1 envoi confirmé
+PASS A13 compteurs : un compte sans action → zéros
+PASS A14 objet à mettre en évidence : chantier, rayon d’un article, commande (son chantier, sinon le rayon), devis (son chantier), demande → accueil, facture → bureau
+PASS A15 un objet hors maquette n’est jamais visé (chantier absent, rayon absent, type inconnu, null)
+PASS A16 surbrillance de 2 à 3 s
+PASS A17 réponse SIMULÉE de l’exemple : dit qu’une relance attend « Confirmer » (ou le pilote), et que rien n’est lu ni enregistré
+PASS A18 réponse simulée : « coche » = action interne annulable, notée au journal
+PASS A19 activité de l’exemple : fictive, cohérente avec ses compteurs
+PASS B1 chantier du compte : libellé RELU EN BASE (titre · client), pas celui de l’écran
+PASS B2 chaque lecture porte artisan_id = uid
+PASS B3 le chantier d’un AUTRE compte → aucun contexte (sans erreur)
+PASS B4 un identifiant inventé → aucun contexte
+PASS B5 forme invalide ou compte vide → aucun contexte, aucune lecture
+PASS B6 devis, commande, rayon, client (référence d’une demande) : libellés de la base
+PASS B7 le rayon d’un autre compte → aucun contexte
+PASS B8 base en panne → aucun contexte (le message part sans), jamais une exception
+PASS C1 le contexte est résolu avec la SESSION de l’artisan (RLS) et son uid
+PASS C2 le message de l’artisan reste INTACT (il est la source des nombres permis) : le contexte va dans la consigne
+PASS C3 le serveur dit ce qu’il a RETENU (type + libellé, jamais l’identifiant)
+PASS C4 le contexte est résolu APRÈS la garde (drapeau, session, offre) : un compte sans accès n’atteint pas la lecture
+PASS D1 garde du CRM (drapeau crmAtelierVivant, session, essai, offre) pour les SIX méthodes (GET, puis 405 après la garde)
+PASS D2 assistant_actions filtrée par artisan_id = g.uid, et chaque nom relu sous le même filtre
+PASS D3 ni les entrées ni l’aperçu (textes aux clients) ne sont lus
+PASS D4 filActivite et compteursActivite reçoivent g.uid (double filtre)
+PASS E1 UN seul moteur : la page /assistant et le panneau du CRM utilisent useConversationAssistant ; seul ce module appelle /api/assistant
+PASS E2 le contexte part en { type, id } seulement (le libellé de l’écran ne part pas)
+PASS E3 ATELIER : bouton « Assistant » dans la barre, avec l’objet sélectionné comme contexte
+PASS E4 FICHE CHANTIER : bouton « Assistant » de l’en-tête + « Demander à l’assistant », contexte = ce chantier
+PASS E5 PANNEAU D’UN OBJET : « Demander à l’assistant » avec le contexte de l’objet
+PASS E6 OFFRE : l’assistant est dès Studio (capacité `assistant`), le CRM reste Signature (capacité `crm`) : Essai / ancien Essentiel → verrouillé
+PASS E7 VERROU : hors offre, le bouton est un lien vers /abonnement (aucun panneau, aucun appel)
+PASS E8 drapeau ou essai fermé : rien n’apparaît (aucun bouton mort)
+PASS E9 EXEMPLE : réponse simulée et RETOUR avant tout envoi ; aucun contexte transmis ; accès sans lecture
+PASS E10 EXEMPLE : activité fictive, aucune lecture ; « Annuler » refusé sans appel
+PASS E11 ACCESSIBILITÉ : dialogue modal étiqueté, Échap ferme (sans fermer le panneau dessous), Tab reste dans le panneau, focus porté puis rendu
+PASS E12 TÉLÉPHONE : panneau plein écran sous 760 px ; animations coupées en « réduire les animations »
+PASS E13 APRÈS une réponse : la vue du CRM est relue, le poste relit son fil, et les objets touchés sont mis en évidence
+PASS E14 POSTE : fil d’activité et compteurs en tête du poste des assistants
+PASS E15 PILOTE : lu par GET /api/pilote/file, montré seulement sur une réponse 200 complète (drapeau baissé → rien)
+PASS E16 ANNULER depuis le poste : POST /api/pilote/file { id, decision: « annuler » }, puis relecture
+PASS E17 « Partira dans … » calculé par texteDecompte (lib/pilote/regles.ts), rafraîchi sans relire le serveur
+PASS E18 SURBRILLANCE : l’atelier écoute surligner, résout la clé (cleSceneDe), la garde dans `halo` et l’efface après la durée ; plus de TODO(Scene3D)
+PASS E19 OUVERTURE CONTEXTUELLE : « Demander à l’assistant » publie l’événement, le panneau l’écoute seulement si l’accès est ouvert
+PASS E20 aucun octet de contrôle dans les fichiers du lot
+PASS E21 MARQUE : la sélection n’est plus détournée (`marque = selection ?? focus`, sans halo), et c’est elle seule qui part en `selection=`
+PASS E22 ATELIER passe `halo={indexHalo}` (indexDe(halo), même indexation que la sélection) à la scène 3D et aux DEUX plans 2D
+PASS E23 SCENE3D : prop `halo?: number | null`, un HaloAssistant monté le seul temps du halo, l’objet soulevé dans ses deux couches (formes et fenêtres) ; rythme fini avant l’effacement (≤ DUREE_SURBRILLANCE_MS)
+PASS E24 DISTINCT de la sélection : la scène ne teinte pas l’objet du halo (couleur() ne lit pas `halo`), le halo ne bouge pas la caméra (Regie ne le reçoit pas) ; couleur = accent corail, aucun bleu
+PASS E25 RÉDUIRE LES ANIMATIONS : 3D → anneau fixe (branche calme qui sort avant toute pulsation), objet non soulevé ; 2D → contour fixe hors @media, écho animé SEULEMENT dans prefers-reduced-motion: no-preference
+PASS E26 PAR IMAGE, ni allocation ni recherche : le corps de useFrame du halo n’a ni `new`, ni clone, ni tableau/objet littéral ; la couche repose les seules instances de l’objet (haloIdx, calculé hors image)
+PASS E27 PLAN 2D : prop `halo`, classe ` halo` posée sur l’objet d’indice `halo`, À CÔTÉ de ` choisi` (jamais à sa place)
+SAUTÉ R (rendu réel) : BASE_URL_DEMO absent (serveur de démonstration isolé non lancé).
+
+63 PASS · 0 FAIL
+(node:2972537) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/crm/assistantCrm.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

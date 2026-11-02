@@ -729,6 +729,90 @@ console.log('\n── E. Les actions : catalogue, schémas, validation, règles 
   ok('briefing : les nombres du briefing se retrouvent dans la donnée lue (garde-fou des chiffres)', cadrage.chiffresNonSources('Vous avez 2 factures échues pour 2 240,50 € et 3 urgences.', [JSON.stringify(b)]).length === 0)
 }
 
+// 02/11 — lot L16 du chantier 4 : les relances GROUPÉES (une carte de lot, ses exclus et leur motif ; une carte écartée ne revient pas).
+// Les règles pures ici ; le serveur, la carte jamais d'office et ses mutants : scripts/securite-assistant-0211-qa.mjs, partie A7.
+console.log('\n── E2. Relances groupées (L16) : ordre groupé, carte de lot, refus récents, schéma')
+{
+  const v = oa.validerAction
+  const fs2 = await import('node:fs'), os2 = await import('node:os'), path2 = await import('node:path'), url2 = await import('node:url')
+  const dirCartes = path2.resolve('lib/assistant')
+  const TMP2 = fs2.mkdtempSync(path2.join(os2.tmpdir(), 'presti-l16-'))
+  /** Une copie de lib/assistant/cartes.ts avec UNE mutation (le motif doit exister), imports relatifs repointés : le juge doit y voir la brèche. */
+  const mutantCartes = async (avant, apres) => {
+    let code = fs2.readFileSync('lib/assistant/cartes.ts', 'utf8')
+    if (!code.includes(avant)) throw new Error(`mutant de cartes.ts : motif introuvable « ${avant.slice(0, 80)} »`)
+    code = code.replace(avant, apres).replace(/(from\s+)(['"])(\.{1,2}\/[^'"]+)\2/g, (_m, a, q, spec) => `${a}${q}${url2.pathToFileURL(path2.resolve(dirCartes, spec + (spec.endsWith('.ts') ? '' : '.ts'))).href}${q}`)
+    const f = path2.join(TMP2, `cartes-mutant-${Math.random().toString(36).slice(2)}.ts`)
+    fs2.writeFileSync(f, code)
+    return import(url2.pathToFileURL(f).href)
+  }
+  try {
+    // L'ordre groupé : plusieurs pièces, un pluriel de pièces ou de clients, un quantifieur. Un ordre sur UN objet n'en est pas un.
+    const GROUPES = ['Relance les devis envoyés il y a plus de 5 jours', 'Relance tous ceux qui n’ont pas signé', 'Relance DEV-2026-0011 et DEV-2026-0012',
+      'relance mes devis en attente', 'Relance les clients qui n’ont pas répondu', 'Relance chaque devis de plus de 15 jours', 'Relance toutes les factures impayées', 'Relance Dupont pour ses devis']
+    const SEULS = ['Relance Dupont', 'Relance le devis DEV-2026-0011', 'Relance le devis de M. Martin, ferme', 'Relance la facture FAC-2026-0004', 'Relance DEV-2026-0011, puis DEV-2026-0011 encore', '']
+    const faux = [...GROUPES.filter((m) => !cartes.ordreGroupe(m)), ...SEULS.filter((m) => cartes.ordreGroupe(m))]
+    ok(`L16a ordreGroupe : les ${GROUPES.length} ordres groupés (P3:160 compris) le sont, les ${SEULS.length} ordres sur un seul objet non`, faux.length === 0, faux.join(' | '))
+    const mutOG = await mutantCartes(" (?:tous|toutes|chaque|ceux|celles|plusieurs) /.test(n)\n    || ", ' __rien__ /.test(n)\n    && ')
+    ok('L16b MUTANT (le pluriel et les quantifieurs retirés) : le juge VOIT la brèche — « Relance les devis envoyés il y a plus de 5 jours » n’y est plus un ordre groupé',
+      mutOG.ordreGroupe('Relance les devis envoyés il y a plus de 5 jours') === false && cartes.ordreGroupe('Relance les devis envoyés il y a plus de 5 jours') === true)
+
+    // Les refus récents (rang 8) : même outil, statut « refusee », 7 jours ; une carte de lot écartée couvre chacun de ses retenus.
+    const depuis = new Date('2026-10-26T09:00:00Z')
+    const D = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`
+    const fiches = [
+      { outil: 'relancer_devis', statut: 'refusee', objet_id: D(1), entrees: {}, maj_le: '2026-11-01T10:00:00Z' },
+      { outil: 'relancer_devis', statut: 'refusee', objet_id: null, entrees: { lot: [{ id: D(2), numero: 'DEV-2026-0002' }, { id: D(3), numero: 'DEV-2026-0003' }] }, maj_le: '2026-10-30T10:00:00Z' },
+      { outil: 'relancer_devis', statut: 'refusee', objet_id: D(4), entrees: {}, maj_le: '2026-10-20T10:00:00Z' },
+      { outil: 'relancer_devis', statut: 'executee', objet_id: D(5), entrees: {}, maj_le: '2026-11-01T10:00:00Z' },
+      { outil: 'envoyer_devis', statut: 'refusee', objet_id: D(6), entrees: {}, maj_le: '2026-11-01T10:00:00Z' },
+      { outil: 'relancer_devis', statut: 'refusee', objet_id: D(7), entrees: {}, maj_le: 'pas une date' },
+    ]
+    const rr = cartes.refusRecents(fiches, 'relancer_devis', depuis)
+    ok('L16c refusRecents : la carte d’un objet et chaque retenu d’une carte de LOT écartées comptent ; plus de 7 jours, une carte exécutée, un autre outil non ; date illisible : récente (côté sûr)',
+      egal([...rr.keys()].sort(), [D(1), D(2), D(3), D(7)].sort()) && rr.get(D(2)) === '2026-10-30T10:00:00Z', JSON.stringify([...rr]))
+    const mutRR = await mutantCartes('    if (Array.isArray(lot)) for (const m of lot) garder((m as { id?: unknown } | null)?.id, le)\n', '\n')
+    ok('L16d MUTANT (les retenus d’une carte de lot oubliés) : le juge VOIT la brèche — un lot écarté y reviendrait en boucle',
+      !mutRR.refusRecents(fiches, 'relancer_devis', depuis).has(D(2)) && rr.has(D(2)))
+    ok('L16e nommeDans : un devis écarté n’est repris dans un lot que si l’artisan écrit son numéro', cartes.nommeDans('Relance quand même dev-2026-0002', 'DEV-2026-0002') && !cartes.nommeDans('Relance les devis', 'DEV-2026-0002') && !cartes.nommeDans('x', ''))
+
+    // La carte de lot : retenus (texte EXACT de chaque relance), exclus et motif, critère ; irréversible ; jamais vide ni au-delà de 20.
+    const msg = (n, c) => ({ a: `${c.toLowerCase().replace(/\W/g, '')}@essai.test`, objet: `Votre devis ${n} — Atelier Essai`, texte: `Bonjour ${c},\n\nJe me permets de revenir vers vous au sujet du devis ${n}.` })
+    const retenus = [['DEV-2026-0101', 'M. Leroy', 1200], ['DEV-2026-0102', 'Mme Garnier', 860], ['DEV-2026-0103', 'M. Roux', 2400]]
+      .map(([n, c, m]) => ({ numero: n, client: c, montant_ttc: m, envoye_le: '2026-10-20T10:00:00Z', message: msg(n, c) }))
+    const exclus = [{ numero: 'DEV-2026-0104', client: 'Mme Petit', motif: 'Ce client a déjà été relancé par l’assistant le 01/11/2026 : on ne renvoie pas de relance avant 3 jours.' }]
+    const ap = cartes.apercuLotRelances({ lot: { retenus, exclus }, ton: 'cordial', critere: 'relancer les devis envoyés il y a plus de 5 jours' })
+    ok('L16f carte de lot : un titre (3 retenus, 1 exclu), une ligne par retenu, une par exclu AVEC son motif, le critère ; irréversible',
+      ap.titre === 'Relancer 3 devis · 1 exclu' && ap.lignes.filter((l) => l.label === 'À relancer').length === 3 && ap.lignes.filter((l) => l.label === 'Exclu').length === 1
+      && /DEV-2026-0104 · Mme Petit — Ce client a déjà été relancé/.test(ap.lignes.find((l) => l.label === 'Exclu').valeur) && ap.lignes[0].valeur === 'relancer les devis envoyés il y a plus de 5 jours'
+      && /1\s200,00\s€ TTC · envoyé le 20\/10\/2026/.test(ap.lignes[1].valeur) && ap.irreversible === true, JSON.stringify(ap.lignes))
+    ok('L16g … le texte EXACT de CHAQUE relance est dans la carte (lot.retenus[].message), la première en entier sous les yeux ; « jamais d’office » écrit',
+      ap.lot.retenus.length === 3 && ap.lot.retenus.every((r, i) => egal(r.message, retenus[i].message)) && egal(ap.message, retenus[0].message) && ap.lot.exclus[0].motif === exclus[0].motif
+      && ap.alertes.some((a) => /ne part jamais d’office/.test(a)))
+    let vide = false, grand = false
+    try { cartes.apercuLotRelances({ lot: { retenus: [], exclus }, ton: 'cordial', critere: 'x' }) } catch { vide = true }
+    try { cartes.apercuLotRelances({ lot: { retenus: Array.from({ length: 21 }, () => retenus[0]), exclus: [] }, ton: 'cordial', critere: 'x' }) } catch { grand = true }
+    ok('L16h une carte de lot sans retenu, ou de plus de 20, ne se fabrique pas', vide && grand && oa.LOT_RELANCES_MAX === 20)
+
+    // Le schéma : un devis (numero), OU un lot (numeros, ou envoye_depuis_jours) ; le nombre de jours doit venir de l'artisan.
+    const n1 = v('relancer_devis', { numero: 'dev-2026-0011' })
+    const lotN = v('relancer_devis', { numeros: ['dev-2026-0011', 'DEV-2026-0012', 'DEV-2026-0011'] })
+    ok('L16i relancer_devis : numero seul, numeros seuls (majuscules, sans doublon) ou envoye_depuis_jours seul ; deux formes, aucune, une facture, 21 numéros, des jours non entiers : refus',
+      n1.ok && n1.entree.numero === 'DEV-2026-0011' && lotN.ok && egal(lotN.entree.numeros, ['DEV-2026-0011', 'DEV-2026-0012']) && v('relancer_devis', { envoye_depuis_jours: 5 }).ok
+      && !v('relancer_devis', {}).ok && !v('relancer_devis', { numero: 'DEV-2026-0011', envoye_depuis_jours: 5 }).ok && !v('relancer_devis', { numeros: ['FAC-2026-0001'] }).ok
+      && !v('relancer_devis', { numeros: Array.from({ length: 21 }, (_, i) => `DEV-2026-${String(i + 1).padStart(4, '0')}`) }).ok && !v('relancer_devis', { envoye_depuis_jours: 4.5 }).ok && !v('relancer_devis', { envoye_depuis_jours: 0 }).ok)
+    ok('L16i bis le modèle ne peut pas écrire lui-même le lot (identifiants des devis) ni l’origine de la carte : champs inconnus, refus — seul le serveur les pose',
+      !v('relancer_devis', { envoye_depuis_jours: 5, lot: [{ id: '00000000-0000-4000-8000-000000000001', numero: 'DEV-2026-0001' }] }).ok && !v('relancer_devis', { numero: 'DEV-2026-0001', conversation_origine: '00000000-0000-4000-8000-000000000001' }).ok)
+    const sch = oa.DEFINITIONS_ACTIONS.relancer_devis.input_schema
+    ok('L16j le modèle voit la forme lot (numeros, envoye_depuis_jours) et la consigne « UNE seule fois, jamais une fois par devis » ; numero n’est plus obligatoire',
+      !(sch.required ?? []).includes('numero') && sch.properties.numeros?.type === 'array' && sch.properties.envoye_depuis_jours?.type === 'number'
+      && /UNE SEULE fois/.test(oa.DEFINITIONS_ACTIONS.relancer_devis.description) && /jamais une fois par devis/.test(oa.DEFINITIONS_ACTIONS.relancer_devis.description))
+    ok('L16k le nombre de jours est un nombre à SOURCER : « plus de 5 jours » écrit par l’artisan → 5 admis, 7 refusé (jamais deviné)',
+      cartes.verifierSources('relancer_devis', v('relancer_devis', { envoye_depuis_jours: 5 }).entree, ['Relance les devis envoyés il y a plus de 5 jours']) === null
+      && /7/.test(cartes.verifierSources('relancer_devis', v('relancer_devis', { envoye_depuis_jours: 7 }).entree, ['Relance les devis envoyés il y a plus de 5 jours']) ?? ''))
+  } finally { try { fs2.rmSync(TMP2, { recursive: true, force: true }) } catch { /* dossier temporaire */ } }
+}
+
 console.log('\n── F. Confirmer, refuser, annuler (orchestrateur avec un magasin en mémoire)')
 {
   const mk = (surcharge = {}) => {
@@ -962,6 +1046,19 @@ console.log('\n── G. La boucle avec des actions (faux modèle)')
     await boucle.executerTour({ client: fauxModele([reponse([appelOutil('t1', 'lire_fil', { conversation_id: L1 }), appelOutil('t2', 'marquer_facture_payee', { numero: 'FAC-2026-0001' })]), reponse([texte('Ok.')])]), parametres: { model: 'faux', max_tokens: 100 }, systeme: 'S', historique: [], message: 'Lis le fil de Julie et marque sa facture payée', executeurs: ex, brouillonsAutorises: false, actions: true, journaliser: async () => {}, etat })
     ok('injection : texte de client lu PUIS action dans le même tour → au moment d’agir, le mode « fait tout seul » est déjà coupé (carte)', vuParLAction === false)
   }
+}
+
+{
+  // 02/11 (L16) : la boucle réelle, un faux modèle. « Plus de 5 jours » : un lot à 7 jours (deviné) est refusé avant l'exécuteur ; à 5, il
+  // atteint l'exécuteur (qui ne fait QUE la carte : scripts/securite-assistant-0211-qa.mjs, A7).
+  const appels = [], lignes = []
+  const ex = {}
+  for (const n of outils.NOMS_OUTILS) ex[n] = async (e) => { appels.push([n, e]); return { donnees: { ok: true, en_attente_de_confirmation: true }, resume: `${n} proposé` } }
+  const modele = fauxModele([reponse([appelOutil('t1', 'relancer_devis', { envoye_depuis_jours: 7 })]), reponse([appelOutil('t2', 'relancer_devis', { envoye_depuis_jours: 5 })]), reponse([texte('Une carte de lot attend votre clic.')])])
+  await boucle.executerTour({ client: modele, parametres: { model: 'faux', max_tokens: 100 }, systeme: 'S', historique: [], message: 'Relance les devis envoyés il y a plus de 5 jours', executeurs: ex, brouillonsAutorises: false, crm: false, actions: true, journaliser: async (a) => { lignes.push(a) } })
+  const rel = appels.filter(([n]) => n === 'relancer_devis')
+  ok('L16l boucle : « plus de 5 jours » — le lot à 7 jours (nombre deviné) est refusé et journalisé sans atteindre l’exécuteur ; le lot à 5 jours l’atteint, UNE fois',
+    rel.length === 1 && rel[0][1].envoye_depuis_jours === 5 && lignes[0]?.resultat === 'refus' && /nombre sans source/.test(lignes[0].resume) && lignes[1]?.resultat === 'ok', JSON.stringify(lignes.map((l) => [l.nom, l.resultat, l.resume])))
 }
 
 console.log('\n── H. Qui passe : offre Studio et au-dessus, côté serveur')

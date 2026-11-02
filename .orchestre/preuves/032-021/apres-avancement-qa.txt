@@ -1,0 +1,36 @@
+PASS A1 « carrelage salle de bain fini » → NET : la seule tâche « carrelage » de la salle de bain (pas celle de la cuisine, pas une tâche déjà faite)
+PASS A2 « la salle de bain est terminée » → NET : toutes les tâches NON faites de la pièce (libellé ou pièce choisie)
+PASS A3 « carrelage fini » sans pièce, deux pièces concernées → AMBIGU : rien n’est coché, les candidates sont rendues
+PASS A4 rien ne correspond → RIEN (et pas une tâche approchante cochée)
+PASS A5 l’avancement est LA règle de la fiche (lib/crm/chantier.ts), pas une copie : 1/6 → 2/6
+PASS A6 avancer_chantier : action DIRECTE du CRM (interne : exécutée et journalisée, pas un envoi au client), jamais pilotée
+PASS A7 réalisation : les tâches du chantier de l’artisan (artisan_id = uid), cochées par la route PATCH /api/crm/taches/<id>, ambigu/rien → rien n’est écrit, annulable (restaurer_taches)
+PASS B1 photo « Après » légendée « Salle de bain refaite » → propose les tâches NON faites de la salle de bain
+PASS B2 une photo « Avant » / « Pendant » / « Problème » ne propose rien
+PASS B3 légende sans pièce reconnue (ou absente) → rien : on ne devine pas la pièce
+PASS B4 pièce reconnue mais tout y est fait → rien à proposer
+PASS B5 la route PROPOSE seulement (aucune écriture de tâche) : lecture filtrée chantier + artisan_id = uid, réponse `avancement_propose`, après l’enregistrement de la photo
+PASS B6 l’écran demande la confirmation : « Cocher » passe par PATCH /api/crm/taches/<id> (le chemin du clic), « Pas encore » ne fait rien
+PASS C1 formulaire : seulement des tâches NON FAITES de CE chantier ; identifiant inventé, d’un autre chantier, mal formé, doublon ou autre champ : ignorés
+PASS C2 au plus 60 tâches par envoi
+PASS C3 la vue : les tâches RESTANTES (avec leur pièce), le compte fait / total — rien d’autre (ni prix, ni adresse, ni client)
+PASS C4 la page est autonome et sûre : aucun script, texte échappé (titre et libellés), formulaire POST vers elle-même, cases de 44 px au moins
+PASS C5 tout fait : la page le dit, sans formulaire
+PASS C6 page publique : drapeau crmPointage AVANT toute lecture, débit limité, jeton au format exact, empreinte SHA-256 seule cherchée
+PASS C7 à chaque requête : offre du compte (capacité crm), essai, compte non suspendu ; chantier annulé ou terminé → 404
+PASS F4a la page de pointage ne lit PAS le titre du chantier : nom neutre « Chantier réf. XXXX — type de bâtiment », jamais d’adresse
+PASS F4b libelleNeutre : référence courte tirée de l’identifiant, type de bâtiment en clair, rien d’autre
+PASS C8 l’écriture : SEULEMENT « faite: true », sur les tâches choisies, de CE chantier, de CE compte, encore à faire — jamais décocher, renommer ni supprimer
+PASS C9 en-têtes : noindex, no-store, aucune référence sortante, CSP sans script (formulaire vers soi seulement)
+PASS C10 le lien (créer, remplacer, révoquer) : six méthodes, toutes derrière gardeCrm (drapeau crmPointage, session, offre CRM), jeton 32 octets, empreinte seule, artisan_id = uid
+PASS C11 drapeau crmPointage commenté et daté, ordre « 0174 puis lever », LEVÉ le 21/10 après 0174 ; la fiche ne montre le bloc que drapeau levé
+PASS C12 table chantier_pointage : un lien par chantier, empreinte hexadécimale unique, déclencheur de propriété, RLS sans politique
+PASS C13 « pointage » est un chemin technique (jamais pris pour le nom d’un artisan sur un domaine)
+PASS C14 le choix est écrit : pourquoi la photo et le pointage, pourquoi PAS la facture d’acompte ni la sortie de matériel
+PASS D1 la suite est au tableau SUITES de scripts/tout-verifier.mjs (cout: gratuit)
+
+30 vert(s), 0 rouge(s)
+(node:2972476) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/flags.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

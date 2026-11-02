@@ -1,0 +1,53 @@
+
+── GF-1 créneau inventé
+  ✅ « Je peux passer jeudi à 14 h » est vu
+  ✅ « Je vous propose un rendez-vous le 16 octobre » est vu
+  ✅ « Je vous rappelle demain matin » est vu
+  ✅ « Je passe vers 9h30 » est vu
+  ✅ « lâché lundi matin » (aucun engagement) n’est pas vu
+  ✅ « Quel jour vous arrangerait ? » n’est pas vu
+  ✅ négation : « je ne suis pas disponible jeudi matin » n’est pas vu
+  ✅ horaires déclarés « de 8 h à 18 h » : autorisé
+  ✅ même phrase, profil vide : vue
+
+── GF-2 profil vide : le filtre s’applique
+  ✅ prix retiré
+  ✅ créneau retiré
+  ✅ le reste est gardé
+  ✅ garderAvantEnvoi, profil vide : prix et créneau retirés
+
+── GF-3 mode automatique : rien ne part avant le filtre
+  ✅ onDelta reçoit UN seul fragment
+  ✅ le fragment est le texte filtré, rendu à l’identique
+  ✅ une régénération avec le rappel nommé a été tentée
+  ✅ texte propre : un seul appel, texte intact
+
+── GF-4 première réponse et relances : même filtre, persona appliquée
+  ✅ première réponse : prix et créneau retirés
+  ✅ première réponse : modèle réglé transmis
+  ✅ première réponse : tutoiement et formule d’ouverture dans le cadrage
+  ✅ relance : prix et créneau retirés
+  ✅ relance : tutoiement dans le cadrage
+
+── GF-5 le ton de Ma plateforme fait foi
+  ✅ le réglage passe en premier
+  ✅ le message de l’inscription ne sert que d’exemple
+  ✅ sans message d’inscription : le réglage seul
+
+── GF-6 escalade avant le mode assisté
+  ✅ Assistée + « fuite » → escalade
+  ✅ Studio en auto verrouillé + mot d’escalade → silence (rien n’est préparé)
+  ✅ Studio en auto sans mot d’escalade → préparée (verrou_offre), pas envoyée
+  ✅ Signature en auto sans mot d’escalade → la réponse part
+  ✅ Assistée sans mot d’escalade → assistée (inchangé)
+
+── GF-7 mention de l’assistant
+  ✅ la mention est en pied
+  ✅ jamais deux fois
+  ✅ sans nom d’artisan : mention neutre
+
+✓ garde-fou des envois : 33 vert(s), 0 rouge(s)
+(node:2972552) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/ai/antiFabrication.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

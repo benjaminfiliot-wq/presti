@@ -1,0 +1,18 @@
+{
+  "_lisez_moi": "Empreintes SHA-256 (texte jsCode en UTF-8) des nœuds Code des exports de ce dossier, tenues par scripts/n8n-specs-qa.mjs (R19). Exemple. Exports fictifs.",
+  "lib-exemple-executer": {
+    "Contrat d'entrée": "8261b4c4619906ce36d23e871deb736f6636b9be797c7ff868cf9655e8044acb",
+    "Effets prévus": "f7c877c9d899eb02a7e89367cdc424cf37a92300d7b92bd45e0bcee86dfdb6d9",
+    "Contrat de sortie": "9f5f59a5ef6b733e05cd9e78940166edf2f84faa8d180ea9e1f39d771346835e"
+  },
+  "ent-exemple-relance": {
+    "Contrat d'entrée": "017e708f149d5b3fa0da507e9c8a4538ea30782efd5887cbe2045d09b1744421",
+    "Revalider le message": "022ffeb290b10cf4b31e16411da61b4e8dc073264b86cfb17018d65c8dedd9f4",
+    "Effets prévus": "f7c877c9d899eb02a7e89367cdc424cf37a92300d7b92bd45e0bcee86dfdb6d9",
+    "Contrat de sortie": "a07dcbd259caf88a43e6db20888fbe3aecd0601a40495cc90bc5ccb8edbee2e6"
+  },
+  "ent-exemple-parent": {
+    "Préparer l'enveloppe": "41388a54a2c5a4f623a317420f5e8c1dc3e715fa863d5b49b0c41b4a3ea5747b",
+    "Bilan": "ff80c0c0a63a3131d5b0fa073a0c42161288497c67a706b544fb451201eb0e74"
+  }
+}

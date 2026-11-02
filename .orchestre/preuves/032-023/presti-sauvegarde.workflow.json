@@ -2,32 +2,26 @@
   "id": "16Gbnw1jg1JmFbfV",
   "name": "presti-sauvegarde",
   "active": false,
+  "isArchived": false,
   "versionId": "90fa1b61-ef1d-477f-ab09-1c7c79c3deae",
+  "activeVersionId": null,
+  "triggerCount": 0,
   "nodeCount": 14,
   "createdAt": "2026-11-02T19:19:41.062Z",
-  "updatedAt": "2026-11-02T19:19:51.500Z",
+  "updatedAt": "2026-11-02T20:40:00.964Z",
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
     "timezone": "Europe/Paris",
     "saveDataErrorExecution": "all",
-    "saveDataSuccessExecution": "all",
-    "executionTimeout": 1200
+    "saveDataSuccessExecution": "none",
+    "executionTimeout": 1200,
+    "errorWorkflow": "AQeHiC58UgbMR4Kr"
   },
-  "description": "Chantier 4, lot L8 (tâche 032-023) : sauvegarde complète à 3 h 40 (Europe/Paris) par SSH, relecture, battement, purge à 14 jours ; alerte Slack #presti-auto en cas d'échec. Inactif jusqu'au « go » de Benj.",
-  "isArchived": false,
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "parentFolderId": null,
+  "description": "Chantier 4, lot L8 (tâche 032-023) : sauvegarde complète à 3 h 40 (Europe/Paris) par SSH, relecture, battement, purge à 14 jours ; alerte Slack #presti-auto en cas d'échec. Inactif jusqu'au « go » de Benj.",
   "canExecute": true,
-  "activeVersion": null,
-  "meta": {
-    "aiBuilderAssisted": true,
-    "builderVariant": "mcp"
-  },
-  "exporte_le": "2026-11-02T19:30:00Z",
-  "source": "MCP n8n-oracle get_workflow_details (tâche 032-023) ; export reconstitué des paramètres rendus par le MCP (mêmes identifiants, même code), jamais publié",
   "connections": {
     "Déclencheur 3 h 40": {
       "main": [
@@ -471,5 +465,12 @@
       ],
       "description": "Purge à 14 jours si tout est vert ; sinon alerte Slack #presti-auto."
     }
-  ]
+  ],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-02T20:40:31.198Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 032-037), réponse enregistrée par le harnais (journal du harnais) puis recopiée par node, sans retouche ; « scopes » (droits de l'utilisateur du MCP) ôté"
 }

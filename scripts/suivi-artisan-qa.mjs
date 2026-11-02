@@ -76,7 +76,10 @@ const CLES_NOEUD = { 'n8n-nodes-base.scheduleTrigger': ['id', 'name', 'type', 't
   'n8n-nodes-base.httpRequest': ['id', 'name', 'type', 'typeVersion', 'position', 'parameters', 'credentials', 'alwaysOutputData', 'executeOnce'],
   'n8n-nodes-base.code': ['id', 'name', 'type', 'typeVersion', 'position', 'parameters'],
   'n8n-nodes-base.stickyNote': ['id', 'name', 'type', 'typeVersion', 'position', 'parameters'] }
-const REGLAGES_ATTENDUS = { executionOrder: 'v1', availableInMCP: true, timezone: 'Europe/Paris', saveDataSuccessExecution: 'none' }
+// 032-033 (audit 032-029, S-1 et S-2) : la liste blanche s'ouvre à ces seules clés et valeurs — le workflow d'erreur commun
+// presti-erreurs (AQeHiC58UgbMR4Kr), les succès non gardés, les échecs gardés (leur durée est la purge de l'instance, à régler par Benj).
+const PRESTI_ERREURS = 'AQeHiC58UgbMR4Kr'
+const REGLAGES_ATTENDUS = { executionOrder: 'v1', availableInMCP: true, timezone: 'Europe/Paris', saveDataSuccessExecution: 'none', saveDataErrorExecution: 'all', errorWorkflow: PRESTI_ERREURS }
 const PAGINATION = { pagination: { paginationMode: 'updateAParameterInEachRequest', parameters: { parameters: [{ type: 'qs', name: 'offset', value: '={{ $pageCount * 1000 }}' }] },
   paginationCompleteWhen: 'other', completeExpression: '={{ !Array.isArray($response.body) || $response.body.length < 1000 }}', limitPagesFetched: true, maxRequests: 50 } }
 
@@ -861,6 +864,10 @@ const MUTANTS = [
   { nom: 'workflow publié', f: (c) => { c.wf.activeVersionId = 'v1' }, raison: /publié/ },
   { nom: 'workflow d\'erreur inconnu branché', f: (c) => { c.wf.settings.errorWorkflow = 'inconnu' }, raison: /settings/ },
   { nom: 'exécutions réussies conservées', f: (c) => { delete c.wf.settings.saveDataSuccessExecution }, raison: /settings/ },
+  { nom: 'exécutions réussies conservées (saveDataSuccessExecution: all, 032-033)', f: (c) => { c.wf.settings.saveDataSuccessExecution = 'all' }, raison: /settings/ },
+  { nom: 'exécutions en erreur non gardées (032-033)', f: (c) => { c.wf.settings.saveDataErrorExecution = 'none' }, raison: /settings/ },
+  { nom: 'workflow d\'erreur retiré (032-033)', f: (c) => { delete c.wf.settings.errorWorkflow }, raison: /settings/ },
+  { nom: 'workflow d\'erreur en expression (032-033)', f: (c) => { c.wf.settings.errorWorkflow = '={{ "' + PRESTI_ERREURS + '" }}' }, raison: /settings/ },
   { nom: 'faux secret dans l\'export', f: (c) => { c.wf.nodes.find((n) => n.type === 'n8n-nodes-base.stickyNote').parameters.content += ' ' + 'sk_' + 'live_' + 'Z'.repeat(24) }, raison: /secret/ },
   { nom: 'faux jeton dans un en-tête', f: (c) => { c.wf.nodes.find((n) => n.type === 'n8n-nodes-base.stickyNote').parameters.content += ' Bearer ' + 'abc'.repeat(8) }, raison: /secret/ },
   { nom: 'getWorkflowStaticData comme registre', f: code('Garde du suivi', 'const cles = new Set();', "const cles = new Set(); const st = $getWorkflowStaticData('global');"), raison: /getWorkflowStaticData/ },

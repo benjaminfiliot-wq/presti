@@ -86,7 +86,10 @@ const CHAINE = [
   ['Devis sans réponse', T.code], ['Impayés', T.code], ['Stock sous le seuil', T.code], ['Point du jour par compte', T.code], ['Bilan du passage', T.code],
 ]
 const DECLENCHEUR_ATTENDU = { rule: { interval: [{ field: 'days', daysInterval: 1, triggerAtHour: 7, triggerAtMinute: 30 }] } }
-const REGLAGES = { executionOrder: 'v1', timezone: 'Europe/Paris', availableInMCP: true } // pas d'`errorWorkflow` (Q6 : le workflow d'erreur commun du lot L12)
+// 032-033 (audit 032-029, B-1 et B-2) : la liste blanche s'ouvre à ces seules clés et valeurs — le workflow d'erreur commun
+// presti-erreurs (AQeHiC58UgbMR4Kr), les succès non gardés, les échecs gardés (leur durée est la purge de l'instance, à régler par Benj).
+const PRESTI_ERREURS = 'AQeHiC58UgbMR4Kr'
+const REGLAGES = { executionOrder: 'v1', timezone: 'Europe/Paris', availableInMCP: true, saveDataSuccessExecution: 'none', saveDataErrorExecution: 'all', errorWorkflow: PRESTI_ERREURS }
 
 // ─── É1 : le gabarit EXACT de chaque nœud HTTP (celui de « Lire factures » du lot L3, .orchestre/preuves/032-003) ─────────────────
 const COMPTES_DU_PASSAGE = "={{ 'in.(' + $('Comptes retenus').first().json.ids + ')' }}"
@@ -145,7 +148,7 @@ function structure(wf, { filtreTexte = true } = {}) {
   if (wf.isArchived) ko('le workflow ne doit pas être archivé')
   if (wf.name !== 'presti-briefing-matin') ko(`nom inattendu : ${wf.name}`)
   if (wf.pinData && Object.keys(wf.pinData).length) ko('aucune donnée épinglée ne doit rester dans le workflow')
-  if (!clesExactes(wf.settings, Object.keys(REGLAGES))) ko(`réglages du workflow hors liste blanche (${Object.keys(wf.settings ?? {}).join(', ')}) : executionOrder, timezone, availableInMCP seulement`)
+  if (!clesExactes(wf.settings, Object.keys(REGLAGES))) ko(`réglages du workflow hors liste blanche (${Object.keys(wf.settings ?? {}).join(', ')}) : ${Object.keys(REGLAGES).join(', ')} seulement`)
   for (const [k, v] of Object.entries(REGLAGES)) if (wf.settings?.[k] !== v) ko(`réglage settings.${k} : ${JSON.stringify(v)} attendu`)
   for (const k of Object.keys(wf.settings ?? {})) if (!(k in REGLAGES)) ko(`réglage du workflow non permis : settings.${k}`)
   const texte = JSON.stringify(wf)
@@ -1363,7 +1366,11 @@ const MUTANTS = [
   ['second identifiant', mutantNoeud('Lire stock', (n) => { n.credentials.httpHeaderAuth = { id: 'x', name: 'Autre' } }), { attendu: /identifiant/ }],
   // Le workflow
   ['workflow actif', (wf) => { const m = copie(wf); m.active = true; return m }, { attendu: /inactif/ }],
-  ['errorWorkflow posé', (wf) => { const m = copie(wf); m.settings.errorWorkflow = 'AutreWorkflowQuiPosteSurSlack'; return m }, { attendu: /settings|réglage/ }],
+  ['errorWorkflow vers un autre workflow', (wf) => { const m = copie(wf); m.settings.errorWorkflow = 'AutreWorkflowQuiPosteSurSlack'; return m }, { attendu: /settings|réglage/ }],
+  ['errorWorkflow retiré (032-033)', (wf) => { const m = copie(wf); delete m.settings.errorWorkflow; return m }, { attendu: /settings|réglage/ }],
+  ['succès gardés : saveDataSuccessExecution « all » (032-033)', (wf) => { const m = copie(wf); m.settings.saveDataSuccessExecution = 'all'; return m }, { attendu: /settings|réglage/ }],
+  ['succès gardés : réglage ôté (032-033)', (wf) => { const m = copie(wf); delete m.settings.saveDataSuccessExecution; return m }, { attendu: /settings|réglage/ }],
+  ['échecs non gardés (032-033)', (wf) => { const m = copie(wf); m.settings.saveDataErrorExecution = 'none'; return m }, { attendu: /settings|réglage/ }],
   ['déclencheur à 8 h', mutantNoeud(DECLENCHEUR, (n) => { n.parameters.rule.interval[0].triggerAtHour = 8 }), { attendu: /déclencheur/ }],
   ['nœud d’envoi ajouté (Gmail) après le bilan', (wf) => { const m = copie(wf); m.nodes.push({ id: 'y', name: 'Envoyer', type: 'n8n-nodes-base.gmail', typeVersion: 2.1, position: [0, 0], parameters: {} }); m.connections['Bilan du passage'] = { main: [[{ node: 'Envoyer', type: 'main', index: 0 }]] }; return m }, { attendu: /inattendu|rien ne doit suivre/ }],
   ['graphe recâblé (stock lu avant les matériaux)', (wf) => { const m = copie(wf); m.connections['Lire factures'] = { main: [[{ node: 'Lire stock', type: 'main', index: 0 }]] }; return m }, { attendu: /connexion/ }],

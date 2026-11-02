@@ -1,0 +1,5 @@
+✅ relances-impayes-qa : 236/236 contrôles — calendrier, opt-in, arrêts, idempotence, isolation, pause, plafond, sources
+(node:2227537) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/relancesImpayes.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

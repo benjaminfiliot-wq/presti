@@ -1,0 +1,284 @@
+{
+  "id": "4R2wS9374GUxb63F",
+  "name": "presti-demande-demo",
+  "active": false,
+  "isArchived": false,
+  "versionId": "8e9ec1e2-8340-4d74-b1ce-79bbdc679ddf",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 6,
+  "createdAt": "2026-11-02T19:27:50.902Z",
+  "updatedAt": "2026-11-02T20:40:02.607Z",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "Europe/Paris",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "AQeHiC58UgbMR4Kr"
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "Chantier 4, lot L19 (tâche 032-026) : demandes de démo entreprise — avis à Benj sur Slack #presti-auto une fois par demande, relance à J+2 si non traitée ; lectures GET seulement, aucun envoi au demandeur. Inactif jusqu'au « go » de Benj.",
+  "canExecute": true,
+  "connections": {
+    "Toutes les 15 minutes": {
+      "main": [
+        [
+          {
+            "node": "Fenêtres du passage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fenêtres du passage": {
+      "main": [
+        [
+          {
+            "node": "Lire demandes neuves",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire demandes neuves": {
+      "main": [
+        [
+          {
+            "node": "Lire demandes à relancer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire demandes à relancer": {
+      "main": [
+        [
+          {
+            "node": "Avis à Benj",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avis à Benj": {
+      "main": [
+        [
+          {
+            "node": "Prévenir Benj (#presti-auto)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "e508b057-3911-48aa-95f1-3e08c1d71451",
+      "name": "Toutes les 15 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 */15 * * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "9f2f252d-d801-4915-af97-73e82bd44987",
+      "name": "Fenêtres du passage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-demande-demo — les fenêtres du passage (brief : plans/011-cadrage-01-11/briefs/c4-n8n-demande-demo.md).\n// Une demande est vue UNE fois : chaque passage couvre une fenêtre de 15 minutes alignée sur l'horloge, décalée de 5 minutes\n// (le temps qu'une écriture soit visible). Les fenêtres se suivent sans trou ni chevauchement : [fin - 15 min, fin).\n// La relance de J+2 couvre la même fenêtre, 48 heures plus tôt. Aucune mémoire dans n8n, aucune écriture en base.\nconst PAS = 15 * 60 * 1000;\nconst DECALAGE = 5 * 60 * 1000;\nconst J2 = 48 * 60 * 60 * 1000;\nconst brut = $input.first().json.timestamp;\nconst t = Date.parse(typeof brut === 'string' ? brut : '');\nif (!Number.isFinite(t)) throw new Error('presti-demande-demo : heure du passage illisible');\nconst fin = Math.floor(t / PAS) * PAS - DECALAGE;\nconst debut = fin - PAS;\nconst iso = (ms) => new Date(ms).toISOString();\nreturn [{ json: { avis_debut: iso(debut), avis_fin: iso(fin), relance_debut: iso(debut - J2), relance_fin: iso(fin - J2) } }];\n"
+      }
+    },
+    {
+      "id": "39c3574a-a59a-4754-8258-261f4ae73420",
+      "name": "Lire demandes neuves",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/demandes_demo",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,taille,activite,etat,cree_le"
+            },
+            {
+              "name": "motif",
+              "value": "eq.entreprise"
+            },
+            {
+              "name": "and",
+              "value": "={{ '(cree_le.gte.' + $('Fenêtres du passage').first().json.avis_debut + ',cree_le.lt.' + $('Fenêtres du passage').first().json.avis_fin + ')' }}"
+            },
+            {
+              "name": "order",
+              "value": "cree_le.asc,id.asc"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "340d1b0e-e6e5-48f3-94fe-69252bd610c8",
+      "name": "Lire demandes à relancer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/demandes_demo",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,taille,activite,etat,cree_le"
+            },
+            {
+              "name": "motif",
+              "value": "eq.entreprise"
+            },
+            {
+              "name": "etat",
+              "value": "eq.nouvelle"
+            },
+            {
+              "name": "and",
+              "value": "={{ '(cree_le.gte.' + $('Fenêtres du passage').first().json.relance_debut + ',cree_le.lt.' + $('Fenêtres du passage').first().json.relance_fin + ')' }}"
+            },
+            {
+              "name": "order",
+              "value": "cree_le.asc,id.asc"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "169cc3cd-ea67-4ab0-9d9a-34a12a0f4012",
+      "name": "Avis à Benj",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-demande-demo — les avis à Benj (brief : plans/011-cadrage-01-11/briefs/c4-n8n-demande-demo.md).\n// Refait DANS LE CODE ce que la requête filtre (refus par défaut) : identifiant, taille et activité en liste fermée, date dans la\n// fenêtre du passage, et pour la relance l'état « nouvelle ». Ne garde que l'identifiant, la taille, l'activité et les dates :\n// jamais un prénom, une adresse ni un message, même si la lecture en rendait un. Un avis par demande, une relance par demande.\nconst TAILLES = ['1', '2 à 5', '6 à 20', 'plus de 20'];\nconst ACTIVITES = ['Artisan', 'Entreprise du bâtiment', 'Architecte', 'Autre'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nconst LIEN = 'https://qg.prestiapp.fr/controle?onglet=demos';\nconst f = $('Fenêtres du passage').first().json;\nconst dans = (iso, a, b) => { const x = Date.parse(iso); return typeof iso === 'string' && Number.isFinite(x) && x >= Date.parse(a) && x < Date.parse(b); };\nconst propre = (j) => (j && typeof j.id === 'string' && UUID.test(j.id) && TAILLES.includes(j.taille) && ACTIVITES.includes(j.activite)\n  && typeof j.cree_le === 'string') ? { id: j.id, taille: j.taille, activite: j.activite, etat: j.etat, cree_le: j.cree_le } : null;\nconst equipe = (t) => (t === '1' ? 'seul' : t + ' personnes');\nconst avis = [];\nconst vus = new Set();\nconst ajouter = (type, d, texte) => {\n  const cle = 'demo:' + d.id + ':' + type;\n  if (vus.has(cle)) return;\n  vus.add(cle);\n  avis.push({ cle, type, demande_id: d.id, taille: d.taille, activite: d.activite, cree_le: d.cree_le, texte });\n};\nfor (const it of $('Lire demandes neuves').all()) {\n  const d = propre(it.json);\n  if (!d || !dans(d.cree_le, f.avis_debut, f.avis_fin)) continue;\n  ajouter('avis', d, 'Nouvelle demande de démo entreprise : ' + d.activite + ', équipe ' + equipe(d.taille) + '. À lire et traiter dans le Poste de contrôle : ' + LIEN);\n}\nfor (const it of $('Lire demandes à relancer').all()) {\n  const d = propre(it.json);\n  if (!d || d.etat !== 'nouvelle' || !dans(d.cree_le, f.relance_debut, f.relance_fin)) continue;\n  ajouter('relance_j2', d, 'Demande de démo entreprise toujours à traiter, reçue il y a 2 jours : ' + d.activite + ', équipe ' + equipe(d.taille) + '. Poste de contrôle : ' + LIEN);\n}\nreturn avis.map((a) => ({ json: a }));\n"
+      }
+    },
+    {
+      "id": "641a14aa-0cc2-46f7-b5f4-de87dcf74828",
+      "name": "Prévenir Benj (#presti-auto)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "accessToken",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti-auto"
+        },
+        "messageType": "text",
+        "text": "={{ $json.texte }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "webhookId": "3fce800c-3aef-4e9e-8b43-4bbdd8cab222",
+      "credentials": {
+        "slackApi": {
+          "id": "lR0GZ7FGXI3FCAF8",
+          "name": "Slack account 2"
+        }
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-02T20:40:31.198Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 032-037), réponse enregistrée par le harnais (journal du harnais) puis recopiée par node, sans retouche ; « scopes » (droits de l'utilisateur du MCP) ôté"
+}

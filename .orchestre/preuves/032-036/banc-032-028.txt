@@ -1,0 +1,290 @@
+
+── A1. Les gestes §3.2 restent une carte, même demandés par l’artisan (fait tout seul)
+PASS A1a une seule liste (lib/pilote/regles.ts OUTILS_JAMAIS_AUTO) : argent, factures (avec la facture SANS devis), suppressions (avec l’article), lot de prix
+PASS A1b le pilote lit la MÊME liste : creer_facture_libre et supprimer_article ne sont ni pilotables ni « auto » (motif jamais_auto)
+PASS A1c chaque geste a sa raison dite à l’artisan : argent, comptabilité scellée, suppression, prix en lot ; un geste ordinaire n’en a pas
+PASS A1d les gestes §3.2 du catalogue de l’assistant sont tous « à confirmer » (aucune action directe ne les contourne)
+PASS A1e DEMANDÉS par l’artisan (fait tout seul vrai) : les 7 gestes §3.2 du catalogue restent une CARTE « en attente » — rien d’écrit, aucune route, aucune facture émise
+PASS A1f le résultat de l’outil dit au modèle qu’une carte attend le clic de l’artisan, et POURQUOI (jamais « c’est fait »)
+PASS A1g … et la carte, confirmée d’un clic par l’artisan, s’exécute (le geste existe toujours, il n’est seulement jamais d’office)
+PASS A1h témoin : « envoie la facture FAC-2026-0021 » (geste hors §3.2) part toujours tout de suite en fait tout seul (choix de Benj du 29/10 inchangé)
+PASS A1i non demandés : carte aussi (comportement inchangé), avec la même raison
+PASS A1j MUTANT (garde retirée : la version du 29/10) : le juge VOIT la brèche — les gestes §3.2 demandés y sont exécutés d’office
+
+── A2. Une QUESTION n’est jamais une action exécutée d’office
+PASS A2a la brèche : « Quels devis dois-je relancer ? » contient « relanc » (action demandée) — c’est une QUESTION, rien d’office
+PASS A2b 26 questions (mot interrogatif en tête, normalisé, ou « ? » final, même suivi d’un émoji) : question === true, jamais d’office
+PASS A2c 15 ordres (impératifs, « oui ») : question === false — « Relance les devis envoyés il y a plus de 5 jours » part toujours d’office
+PASS A2d faitToutSeul exige question === false et un ordre net (absents : carte, fail-closed) ; texte de tiers lu : carte, comme avant
+PASS A2e le prompt le dit au modèle : une question n’exécute rien d’office (carte proposée) ; un ordre, si — sauf les gestes §3.2, toujours une carte
+PASS A2f MUTANT (faitToutSeul sans les conditions « question » et « ordre net ») : le juge VOIT la brèche — « Quels devis dois-je relancer ? » y passe en fait tout seul
+
+── A2 bis. Une négation, une hésitation ou un fait passé n’ouvrent pas le « fait tout seul » (audit 032-001, D2)
+PASS A2g 58 phrases qui ne sont pas des ordres (négation, arrêt, report, condition, hésitation, fait passé) : jamais d’office
+PASS A2h témoins : 25 ordres nets, dont « relance ceux qui n’ont pas répondu », partent toujours d’office
+PASS A2h2 12 demandes qui ne sont pas un ordre net (« N’oublie pas de… », une condition, un report) : une carte, d’un clic
+PASS A2i le prompt le dit au modèle : un interdit n’est pas fait (et jamais « FAIS-LA ») ; un « déjà fait » n’est pas refait
+PASS A2j MUTANT (hésitations non lues, ni dans la question ni dans l’ordre) : le juge VOIT la brèche — « Relance Dupont, bonne idée » y passe en fait tout seul
+PASS A2k MUTANT (interdits, « déjà fait » et ordre net ignorés, les gardes retirées) : le juge VOIT la brèche — « Ne relance surtout pas Dupont » y passe en fait tout seul
+PASS A2l MUTANT (ordre net ignoré : la version du contre-audit 032-004) : le juge VOIT la brèche — « Relance Dupont plus tard » et « Relance pas Dupont » y passent en fait tout seul
+PASS A2n les 30 tournures du troisième audit (dont « C’est bon, je m’en occupe » après « Voulez-vous que je le relance ? ») : jamais d’office
+PASS A2o MUTANT (un accord en tête ouvre, quoi qu’il suive : la version du troisième audit) : le juge VOIT la brèche — « Ok, Dupont est un bon client » y passe en fait tout seul
+PASS A2q les 29 tournures du quatrième audit (dont « Ok noté », « Ok merci », « C’est bon » après une proposition) : jamais d’office
+PASS A2r témoins : un oui net (« oui », « oui merci », « ok », « d’accord », « vas-y »), ou un accord suivi d’un ordre, ouvre toujours
+PASS A2s les 17 tournures du cinquième audit (« à 14h30 », « vers 10h », « à midi », « cet aprèm », « la semaine pro », « partie », « effectuée », « transmise », « expédiée »…) : jamais d’office
+PASS A2t les trois vrais ordres de 032-007 (« Ok ça marche », une date qui filtre — « depuis le 15 octobre » — ou qui décrit le chantier) partent d’office ; « Relance Dupont le 15 », « ok ça marche merci » restent des cartes
+PASS A2u MUTANTS (REPORT et FAIT_EN_FIN de 032-006) : le juge VOIT les brèches — « Relance Dupont à 14h30 » et « Relance Dupont partie » y passent en fait tout seul
+PASS A2v MUTANT (toute date lue comme un report : la version de 032-006) : le juge VOIT la carte de trop — « Relance tous ceux qui n’ont pas signé depuis le 15 octobre » y devient une carte
+PASS A2p MUTANT (rétractations non lues) : le juge VOIT la brèche — « Relance Dupont — en fait non. » y passe en fait tout seul
+PASS A2m le prompt le dit au modèle : une demande qui n’est pas un ordre net (un report) n’est pas faite « tout de suite », une carte est proposée
+
+── A3. « Fait tout seul » : un devis au prix estimé, à chiffrer ou nul ne part jamais d’office (audit 032-001, D1)
+PASS A3a la brèche de l’attaque 2 : une ligne estimée et une à 0 € — demandé par l’artisan, le devis reste une CARTE, aucune route d’envoi atteinte
+PASS A3b … et le modèle sait pourquoi (le motif du pilote, jamais « c’est fait »), la carte avertit l’artisan
+PASS A3c témoin : toutes les lignes tarifées (vos tarifs, prix donné par l’artisan), le devis part d’office comme avant (choix de Benj du 29/10)
+PASS A3d devis sans aucune ligne, ou lignes illisibles (lecture en erreur) : carte, rien d’office (côté sûr)
+PASS A3e MUTANT (motif du devis ignoré : la version de l’audit) : le juge VOIT la brèche — le devis au prix estimé y part d’office
+
+── A4. Un prix recopié n’est pas « donné par l’artisan » : pas de blanchiment de la provenance (contre-audit 032-004, D1 bis)
+PASS A4a la chaîne de l’audit : 450 € recopié d’un autre devis (l’artisan ne l’a pas écrit) — la ligne garde son prix, pas l’étiquette « prix donné par l’artisan »
+PASS A4b … donc ce devis ne part jamais seul : la règle des prix du pilote et de « fait tout seul » le refuse
+PASS A4c témoin : l’artisan a écrit « 450 € » lui-même — « prix donné par l’artisan », le devis pourra partir sur son ordre
+PASS A4d sans les textes de l’artisan (appelant qui les oublie) : aucun prix n’est le sien (côté sûr)
+PASS A4e la route de l’assistant passe ce que l’artisan a écrit — son message et SES messages de l’historique, jamais une réponse de l’assistant
+PASS A4f MUTANT (l’étiquette posée sur tout prix fourni : la version du contre-audit) : le juge VOIT la brèche — 450 € recopié y devient « prix donné par l’artisan » et passe la règle des prix
+PASS A4g une quantité (45 m²), un numéro de devis, une date, un numéro de rue écrits par l’artisan ne sont pas des prix : la ligne estimée qui leur ressemble reste « à vérifier »
+PASS A4h … et un prix écrit avec sa marque (« € », « euros », « HT », « le m² ») en est un
+PASS A4i « 450 € TTC » à TVA 10 % (défaut) : 409,09 € HT seulement ; ni 450 posé en HT, ni 375 (sa forme à 20 %), ni 426,54 (à 5,5 %)
+PASS A4j les 16 graphies TTC de 032-007 (« TVA comprise », « taxes comprises », « (TTC) », « TVAC », « TTC » avant le nombre…) : 450 n’est jamais un HT, 409,09 l’est à 10 %
+PASS A4k … sans prendre pour TTC un prix HT voisin (« 450 € TTC, 300 € HT » : 300 reste HT ; « 450 € HT soit 495 € TTC » : 450 HT)
+PASS A4l tauxTtcPossibles : 375 € HT après « 450 € TTC » n’est la forme HT qu’à 20 % — la question du taux, jamais un taux deviné
+PASS A4m MUTANT (les trois formes HT admises à tout taux : la version de 032-006) : le juge VOIT la brèche — 375 € HT à TVA 10 % y passe pour un prix de l’artisan
+PASS A4n MUTANT (la lecture TTC de 032-006 : « TTC » juste après le nombre seulement) : le juge VOIT la brèche — « 450 € TVA comprise », « (TTC) », « Prix TTC 450 € »… y donnent 450 en HT
+
+── A5. La bibliothèque de tarifs n’enregistre que le prix écrit par l’artisan (troisième audit 032-005, A2)
+PASS A5a la chaîne de l’audit : 450 € lu dans le devis de Martin, jamais écrit par l’artisan — ajouter_tarif refuse, rien n’entre dans ses tarifs
+PASS A5b témoin : l’artisan écrit « 450 € HT » — le tarif s’enregistre
+PASS A5c modifier_tarif : un « ordre de grandeur » que l’artisan n’a pas écrit est refusé (aucune écriture) ; « 52 € de l’heure » écrit par lui passe
+PASS A5d MUTANT (garde retirée : la version du troisième audit) : le juge VOIT la brèche — l’estimation de 450 € y entre dans les tarifs
+PASS A5e « 450 € TTC » : 409,09 € HT à TVA 10 % s’enregistre ; 375 € HT à 10 % (la forme à 20 %) est refusé par « Prix TTC donné : quel taux de TVA ? », rien d’écrit ; 375 € HT à 20 % s’enregistre
+PASS A5f les graphies TTC de 032-007 : 450 recopié en HT après « 450 € TVA comprise », « prix TTC 450 € », « (TTC) »… est refusé (question du taux), rien d’écrit
+PASS A5g modifier_tarif lit le taux DU TARIF (10 %) : 37,50 € HT (la forme à 20 %) est refusé, 40,91 € HT passe
+
+── A6. « Fait tout seul » : un fil où le client parle d’un sujet d’escalade reste une carte, même demandé (032-007)
+PASS A6a la brèche de 032-007 : « Relance tous les devis en attente » sur un fil en litige — les 4 outils (relance de devis, d’impayé, réponse préparée, réponse) restent une CARTE, aucun e-mail, aucune route
+PASS A6b … et le modèle sait pourquoi : le motif du pilote (« Le client parle d’un sujet sensible… »), jamais « c’est fait »
+PASS A6c témoin : le même fil sans sujet sensible — les quatre outils partent d’office comme avant (choix de Benj du 29/10)
+PASS A6d les mots de l’artisan (Ma plateforme) comptent : « carrelage » est le sien — le client ne l’écrit pas, la relance part ; il l’écrit, carte
+PASS A6e le plancher commun (sujetEscalade) vaut ici, même si l’artisan a vidé ses mots : « perdu 2 litres d’eau » garde la carte
+PASS A6f une lecture en erreur (messages, conversation, réglages) garde la carte, rien ne part (côté sûr) ; le motif le dit
+PASS A6g MUTANT (la relecture retirée : la version du cinquième audit) : le juge VOIT la brèche — la relance du fil en litige y part d’office, e-mail au client
+PASS A6h MUTANT (une lecture en erreur lue « rien à escalader ») : le juge VOIT la brèche — conversation illisible, la relance du fil en litige y part d’office
+
+── A7. Relances groupées (L16) : UNE carte de lot, ses exclus et leur motif ; rien ne part avant le clic ; une carte écartée ne revient pas
+PASS A7a « Relance les devis envoyés il y a plus de 5 jours », demandé (fait tout seul) : UNE carte de lot en attente — 3 retenus (101, 102, 103), 1 exclu (104), le devis de 2 jours hors du lot
+PASS A7b … le RÉALISATEUR n’est jamais appelé avant la validation : aucun e-mail, aucune relance inscrite, rien dans la file du pilote, jamais « c’est fait »
+PASS A7c … la carte nomme l’exclu ET son motif (relancé hier depuis le CRM, registre commun), et porte le texte EXACT de chacune des 3 relances
+PASS A7d … au clic seulement : 3 e-mails, aux 3 retenus ; chaque relance inscrite au journal des actions par devis (le registre commun et l’anti-doublon la voient)
+PASS A7e … un second clic ne renvoie rien (carte réclamée une fois) ; le même ordre au tour suivant ne prépare aucun lot : les 4 sont exclus, chacun avec son motif
+PASS A7f motifs d’exclusion : « ne plus relancer », sujet d’escalade (le motif du pilote), pas d’e-mail — seul 104 est retenu ; rien n’est parti
+PASS A7g compte en pause : aucun lot, les 4 devis exclus avec le motif « compte en pause », rien n’est parti
+PASS A7h « ne plus relancer » illisible : aucun lot n’est préparé (fail-closed), rien n’est parti
+PASS A7i rang 8 : la carte de lot écartée par l’artisan ne revient pas — le même ordre ne prépare aucune carte ; chaque devis du lot porte « relance écartée par vous le 02/11 »
+PASS A7j … la relance seule d’un devis écarté : reproposée d’elle-même (une question), refus « ne la repropose pas » ; redemandée par l’artisan, une CARTE (jamais d’office), aucun e-mail
+PASS A7k … un lot qui NOMME les devis écartés (numéros écrits par l’artisan) les reprend, en carte
+PASS A7l ordre groupé (P3:160) mais relance d’un seul devis : refus « une seule carte de lot », rien n’est parti ni préparé
+PASS A7m témoin : « Relance M. Leroy » (un objet seul) part d’office comme avant (choix du 29/10) ; une SECONDE relance du même message, sur un autre devis, attend le clic
+PASS A7n au clic, chaque devis est relu : le litige écrit après la carte retient 102 (motif dit dans le résultat) ; les autres partent
+PASS A7o … conversations illisibles au clic : aucune relance ne part, la carte passe en « non exécutée » avec le motif (côté sûr)
+PASS A7p MUTANT (le lot sans sa garde « jamais d’office ») : le juge VOIT la brèche — en « fait tout seul », le réalisateur part AVANT tout clic : 4 e-mails
+PASS A7q MUTANT (la carte de lot passée au pilote) : le juge VOIT la brèche — la carte entre dans la file du pilote, qui la ferait partir sans clic ; le vrai code, jamais
+PASS A7r MUTANT (les refus oubliés dans le lot) : le juge VOIT la brèche — le lot écarté revient tel quel, en boucle (4 retenus)
+PASS A7s MUTANT (le refus oublié pour une relance seule) : le juge VOIT la brèche — l’assistant repropose d’elle-même la relance écartée
+PASS A7t MUTANT (l’ordre groupé relancé devis par devis) : le juge VOIT la brèche — sous P3:160, la relance d’un seul devis part d’office
+PASS A7u MUTANT (la règle du tour retirée) : le juge VOIT la brèche — deux relances du même message partent d’office, en rafale ; et l’impayé d’un ordre groupé aussi
+PASS A7w les impayés d’un ordre groupé (« Relance toutes les factures impayées ») : chaque relance attend le clic, aucune ne part d’office
+PASS A7v MUTANT (aucun recontrôle au clic) : le juge VOIT la brèche — le client en litige depuis la carte reçoit quand même sa relance
+
+── X. Audit offensif 032-028 du lot L16 (PASS = la garde tient ; FAIL = brèche)
+PASS X1a ordre groupé « Relance M. Leroy et Mme Garnier » (fait tout seul), le modèle relance devis par devis : AUCUN e-mail avant le clic
+PASS X1b ordre groupé « Relance tout le monde » (fait tout seul), le modèle relance devis par devis : AUCUN e-mail avant le clic
+PASS X1c ordre groupé « Relance DEV-2026-0101 et 0102 » (fait tout seul), le modèle relance devis par devis : AUCUN e-mail avant le clic
+PASS X1d ordre groupé « relance leroy, garnier, roux » (fait tout seul), le modèle relance devis par devis : AUCUN e-mail avant le clic
+PASS X1e … le même ordre en UN appel numeros : une carte de lot en attente, aucun e-mail, aucun pilote
+PASS X2a entrée forgée par le modèle {"lot":[{"id":"00000000-0000-4000-8000-000000000104","numero":"DEV-2026-0104"}]} : refusée par validerAction
+PASS X2b entrée forgée par le modèle {"numeros":["DEV-2026-0101"],"conversation_origine":"00000000-0000-4000-8000-000 : refusée par validerAction
+PASS X2c entrée forgée par le modèle {"numero":"DEV-2026-0101","numeros":["DEV-2026-0102"]} : refusée par validerAction
+PASS X2d entrée forgée par le modèle {"envoye_depuis_jours":0} : refusée par validerAction
+PASS X2e entrée forgée par le modèle {"numeros":["DEV-2026-0001","DEV-2026-0002","DEV-2026-0003","DEV-2026-0004","DEV : refusée par validerAction
+PASS X3a double clic simultané sur la même carte de lot : une seule exécution, chaque client UNE relance
+PASS X3b deux cartes de lot sur les mêmes devis, cliquées l’une après l’autre : la seconde ne renvoie rien (journal par devis)
+PASS X3c deux cartes de lot sur les mêmes devis, cliquées en même temps : chaque client reçoit UNE relance
+PASS X3d lot à moitié parti (2 sur 4, envoi en échec ensuite) : la carte dit ce qui n’est pas parti ; le lot suivant ne reprend QUE les non partis
+PASS X4a second ordre qui nomme les exclus (104 relancé hier depuis le CRM, 102 en litige) : aucun lot, les deux restent exclus, aucun e-mail
+PASS X4b … et en relance seule « fait tout seul » : 104 (relancé hier depuis le CRM) refusé, aucun e-mail
+PASS X4c « ne plus relancer » sur une relance SEULE (fait tout seul) : rien ne part
+PASS X4d compte en pause, relance SEULE (fait tout seul) : rien ne part
+PASS X5a injection dans le message d’un client (pas de « fait tout seul ») : au mieux une carte de lot en attente — aucun e-mail, aucun pilote
+PASS X5b … même avec le « fait tout seul » levé à tort : le lot reste une carte, aucun e-mail, aucun pilote
+PASS X6a Signature, pilote actif pour les relances (doublure qui accepte tout) : la carte de lot n’entre pas dans la file
+PASS X6b … une carte de lot glissée dans la file du pilote : son réalisateur la lit par entrees.numero, absent d’une carte de lot → introuvable, rien ne part (source)
+PASS X7a lot écarté, puis « Relance M. Leroy » (fait tout seul) : au plus une CARTE, jamais d’office
+PASS X7b lot écarté, puis le même ordre reformulé (3 jours au lieu de 5) : les devis écartés ne reviennent pas
+PASS X8a l’artisan B confirme la carte de lot de A : « introuvable », aucun e-mail
+PASS X8b une carte de A dont le lot désigne le devis de B : rien ne part chez le client de B
+PASS X9a escalade cachée (« Je conteste la facture et le devis », message) : 102 exclu du lot
+PASS X9b escalade cachée (« Suite au sinistre, mon assurance va vous contacter », message) : 102 exclu du lot
+PASS X9c escalade cachée (« Je vous mets en demeure de reprendre les travaux », message) : 102 exclu du lot
+PASS X9d escalade cachée (« Mon avocat a le dossier », demande d’origine) : 102 exclu du lot
+PASS X9e escalade cachée (« LITIGE !!! vous m’avez arnaqué », message) : 102 exclu du lot
+PASS X9f (mineur, limite connue du pilote) client en litige dans une autre conversation, devis sans conversation : la carte le signale ou l’exclut
+
+── B. Règle « tout auto » : un devis à prix estimé ne part pas
+PASS B0 le profil de l’essai a toutes les mentions bloquantes (sinon B2 ne prouverait rien)
+PASS B1 « tout auto », une ligne au prix ESTIMÉ par l’IA : rien ne part — le devis reste brouillon, aucun message « devis envoyé »
+PASS B1b … et la notification à l’artisan dit pourquoi (une ligne a un prix estimé ou à chiffrer) et que rien n’est parti
+PASS B2 « tout auto », toutes les lignes SOURCÉES (vos tarifs, prix donné par l’artisan) et mentions complètes : le devis part (comportement de la règle gardé)
+PASS B3 une ligne « à chiffrer » à 0 € : rien ne part non plus
+PASS B4 prix sourcés mais une mention légale manque : rien ne part (inchangé), et la notification ne parle pas de prix
+PASS B5 une règle qui fait VALIDER (« Réactif ») : brouillon, notification inchangée (aucune phrase sur les prix) — rien d’autre ne change
+PASS B6 les lignes relues sont celles du devis CRÉÉ (son id), filtrées par le compte : lignesDuDevis de lib/pilote/serveur.ts
+PASS B7 MUTANT (prix non relus : la version d’avant le 02/11) : le juge VOIT la brèche — le devis au prix estimé y part
+
+── B bis. Acompte à l’acceptation : seulement pour une offre qui a les règles ; émis seul ou préparé pour un clic, au choix de l’artisan
+PASS B8 Studio avec une règle « Tout auto » (acompte 30 %) écrite depuis le navigateur : aucun acompte, rien d’émis, aucune notification, rien d’écrit
+PASS B9 Signature, réglage par défaut : la facture d’acompte de 30 % part SEULE — une émission (devis, 30 %), son message dans le fil, aucune notification
+PASS B9b Signature, l’artisan a choisi « d’un clic » : rien d’émis, rien d’écrit, une notification qui dit le pourcentage, le devis et le clic, jamais « Presti »
+PASS B9c émission refusée (mention manquante) : aucun message « émise », l’artisan est prévenu avec la raison
+PASS B10 règle désactivée : rien
+PASS B11 offre illisible (aucune fiche artisan) : rien, côté sûr
+PASS B11b une règle sans acompte (« Équilibré ») : rien
+PASS B11c l’offre Entreprise a les règles de Signature : la facture d’acompte part
+PASS B12 la route d’acceptation passe par acompteALAcceptationDuDevis (verrou, puis le choix de l’artisan) : plus aucun creerFacture en direct
+PASS B12b le maillon acompte_seul : une règle d’avant le 02/11 (sans lui) garde l’émission seule ; les 4 préréglages l’ont ; la phrase dit le choix
+PASS B13 MUTANT (verrou d’offre retiré : la version d’avant le 02/11) : le juge VOIT la brèche — le compte Studio obtient sa facture d’acompte
+PASS B14 MUTANT (le choix de l’artisan ignoré) : le juge VOIT l’écart — « d’un clic » réglé, le mutant émet quand même
+
+── C1. Les sujets d’escalade (règle pure)
+PASS C1a les listes toujours appliquées contiennent toute la liste du 02/11 (§3.2 et les mots par défaut de l’artisan)
+PASS C1b 22 façons de le dire (pluriels, accords, majuscules, apostrophes, « mis en demeure », « inondée ») : toutes repérées, même sans aucun mot de l’artisan
+PASS C1c un message ordinaire n’est pas une escalade
+PASS C1d les mots de l’artisan s’ajoutent (accents ignorés, comme motEscalade) ; ses mots par défaut sont couverts même s’il les retire
+PASS C1e un motif neuf « escalade », au libellé du 02/11
+
+── C2. Au départ de la file (orchestrateur, file en mémoire)
+PASS C2a réponse préparée à un prospect qui écrit « je prends un avocat » : rien ne part, la ligne passe à la main, motif « escalade »
+PASS C2b sans mot d’escalade : elle part (une fois)
+PASS C2c une ligne SANS conversation (relance d’un devis qui n’en a pas) : rien n’est relu et elle part — pas annulée pour autant
+PASS C2d message de l’assistant au client (carte rattachée à une conversation) qui parle de tribunal : à la main, motif « escalade »
+PASS C2e relance d’impayé d’un client qui « conteste » : à la main
+PASS C2f la même relance, sans sujet sensible : elle part
+PASS C2g un mot que l’ARTISAN a ajouté (Ma plateforme) compte aussi
+PASS C2h messages illisibles : rien ne part (échec inscrit, fail-closed)
+PASS C2i dépendance FACULTATIVE : les faux d’avant le 02/11 (sans « escalade ») marchent comme avant (la vraie la fournit : C3)
+PASS C2j les garde-fous d’avant passent d’abord (conversation reprise en main : annulée, comme avant)
+PASS C2k MUTANT (escalade non relue : la version d’avant le 02/11) : le juge VOIT la brèche — la réponse au client qui prend un avocat y part
+
+── C3. La vraie dépendance (lib/pilote/executeur.ts), sur la doublure de PostgREST
+PASS C3a la vraie file fournit la dépendance « escalade »
+PASS C3b seuls les messages ENTRANTS comptent : l’artisan qui écrit lui-même « litige », « assurés » ne bloque rien
+PASS C3c un message ENTRANT « je conteste, mon avocat… » → escalade, même si l’artisan a vidé ses mots (liste toujours appliquée)
+PASS C3d lecture bornée : messages de CETTE conversation, sens « in », les plus récents d’abord, 10 au plus
+PASS C3e un mot de l’artisan (plateforme_config.escalade_mots) compte
+PASS C3f la conversation d’un AUTRE compte ne se lit pas (rien relu, rien bloqué par erreur)
+PASS C3g carteDe rend la conversation de la carte : celle du devis (relance), du devis de la facture (impayé), la conversation elle-même (réponse)
+PASS C3h devis sans conversation : leadId null (la ligne partira sans relecture) ; carte d’un autre compte : introuvable
+PASS C3i les lectures de carteDe sont filtrées par le compte (devis, factures)
+PASS C3j bout en bout : la relance de devis d’un client qui « prend un avocat » (carte SANS lead_id en file : conversation retrouvée par le devis) reste à la main
+PASS C3k conversation illisible (lecture de « leads » en erreur, message « mon avocat » en base) : l’escalade LÈVE, rien ne part (audit 032-001, D3)
+PASS C3l … et une conversation réellement absente rend toujours false (C3f inchangé : seule une erreur lève)
+PASS C3m MUTANT (lecture de la conversation sans son erreur : la version de l’audit) : le juge VOIT la brèche — l’escalade y rend false, la ligne partirait
+PASS C3n témoin : un mot PROPRE à l’artisan (« carrelage fissuré »), base saine → escalade
+PASS C3o réglages de la plateforme illisibles : l’escalade LÈVE (le mot de l’artisan n’est pas remplacé par les défauts), rien ne part
+PASS C3p témoin : 3 réponses de l’IA pour une limite de 2 → « limite »
+PASS C3q compte des réponses illisible : etatConversation LÈVE (la limite ne saute pas), rien ne part
+PASS C3r MUTANT (réglages et compte lus sans leur erreur : la version du contre-audit) : le juge VOIT les brèches — le mot de l’artisan perdu, la limite sautée
+
+── C4. Le lexique d’escalade couvre les synonymes courants (audit 032-001, D5)
+PASS C4a les 70 messages sensibles des deux audits : tous renvoyés à la main
+PASS C4b 20 messages ordinaires : aucun ne part à la main (le lexique ne bloque pas tout)
+PASS C4c MUTANT (une ligne des synonymes retirée) : le juge VOIT la brèche — « Je ne paierai pas cette facture » y passe sans escalade
+PASS C4d MUTANT (les mots entiers lus comme des débuts de mot : la version du contre-audit) : le juge VOIT le faux positif — « Le gazon devant la maison » y part à la main
+
+── C6. La réponse qui part SEULE au prospect lit aussi les sujets d’escalade toujours appliqués (contre-audit 032-004, I3)
+PASS C6a mode « auto » : litige, plainte, sinistre ne reçoivent jamais de réponse seule de l’IA (escalade : l’artisan est alerté)
+PASS C6b témoins : un message ordinaire part seul en « auto » ; en « assistée », le même litige reste un brouillon à relire (pas d’envoi seul)
+PASS C6c MUTANT (la liste toujours appliquée non lue par la réponse seule : la version du contre-audit) : le juge VOIT la brèche — « Litige en cours : mon avocat… » y reçoit une réponse seule
+PASS C6d « Alors, vous me répondez ? » juste après « Litige : mon avocat vous écrira » : escalade (le fil récent du client est relu) ; seul, ce message part
+PASS C6e … et decisionReponse le transmet (le chemin des routes de conversation)
+PASS C6f MUTANT (le fil non relu : la version du troisième audit) : le juge VOIT la brèche — la suite du litige y reçoit une réponse seule
+PASS C6h « Bonjour, mon ballon d’eau chaude fuit, pouvez-vous passer ? » (Signature, auto) : escalade, aucune réponse seule
+PASS C6i MUTANT (les racines « fui », « fuy » et « urgen » retirées : la version du quatrième audit) : le juge VOIT la brèche — « Mon robinet fuit » y passe sans escalade
+PASS C6j les 14 formes de 032-007 (« a fui », « s’est mis à fuir », « fuira », « perd de l’eau »…) : escalade, aucune réponse seule en Signature « auto »
+PASS C6k … sans prendre « un fusible à changer » pour une fuite (faux positif écarté)
+PASS C6l les 12 formes de 032-008 (« a perdu de l’eau », « perd beaucoup d’eau », « des pertes d’eau », « refuit »…) : escalade, aucune réponse seule en Signature « auto »
+PASS C6m … sans prendre « perd de la pression », « j’ai perdu votre devis », « pertes de chaleur » ni « refuge » pour une fuite
+PASS C6l MUTANT (la classe « perdre … eau » retirée : la version du cinquième audit) : le juge VOIT la brèche — « Le ballon a perdu de l’eau cette nuit » y passe sans escalade
+PASS C6n les 7 formes de 032-011 (« perd 2 litres d’eau », « perd de plus en plus d’eau », « perd deau », « perd, sans dégât, de l’eau »…) : escalade, aucune réponse seule en Signature « auto »
+PASS C6n MUTANT (la classe du sixième audit : trois mots, sans chiffre) : le juge VOIT la brèche — « Le ballon perd 2 litres d’eau par jour » y passe sans escalade
+PASS C6j MUTANT (la ligne du quatrième audit : fuit, fuient, fuyait, fuyaient) : le juge VOIT la brèche — « Le robinet a fui toute la nuit » y passe sans escalade
+PASS C6o les 22 synonymes de 032-007 et les 18 de 032-011 (M4 : « l’eau s’échappe », « de l’eau qui sort », « mon chauffe-eau perd »…) : escalade, aucune réponse seule en Signature « auto »
+PASS C6p … sans faux positif nouveau : 30 demandes ordinaires fictives, lues avec les mots par défaut de l’artisan — aucune ne passe à la main (dont « brûleur », « chaudière gaz », « attestation d’assurance décennale »)
+PASS C6q … et ces noms ôtés ne masquent jamais un vrai sujet (« ça sent le gaz près de la chaudière gaz », « le brûleur a brûlé », « attestation d’assurance : j’ai un litige »)
+PASS C6r MUTANTS (les synonymes retirés ; le motif « l’appareil perd » retiré ; les noms neutres non ôtés) : le juge VOIT chaque écart — « une tache d’humidité » et « Mon chauffe-eau perd, pouvez-vous passer ? » y passent, « le brûleur de ma chaudière » y est pris
+PASS C6s MUTANTS de 032-011 (F6) : sans « refui », « Ça refuit » passe (C6l le voit) ; avec « refu », « Refuge pour chats » est pris (C6m le voit)
+PASS C6t les 6 formes de 032-007, 032-008, 032-011 et de ce lot sur la vraie dépendance du pilote : renvoyées à la main ; un fil ordinaire part
+PASS C6g les trois routes qui répondent seules passent le fil récent du client (les derniers messages entrants, MESSAGES_ESCALADE_RELUS)
+
+── C5. Une relance de conversation proposée relit le registre commun au départ (audit 032-001, D6)
+PASS C5a relance proposée par le cron, mais le devis du client relancé hier par l’assistant : 409 « déjà relancé », rien n’est écrit ni envoyé
+PASS C5b registre illisible (une de ses lectures en erreur) : 503, rien ne part
+PASS C5c MUTANT (registre non relu au départ : la version de l’audit) : le juge VOIT la brèche — la relance y passe le contrôle
+
+── C9. Le cron des relances de conversation ne parle pas seul sur un fil en escalade ou pris en main (quatrième audit 032-006, E1)
+PASS C9a un litige dans un message du client : sujetDuFil le repère (la relance du cron sera annulée)
+PASS C9b témoin : un fil ordinaire — aucun sujet, la relance suit son cours
+PASS C9c le litige dans la DEMANDE d’origine (leads.message) compte aussi
+PASS C9d messages ou réglages illisibles : sujetDuFil LÈVE (le cron laisse la relance due, rien ne part)
+PASS C9e MUTANT (erreur de lecture avalée) : le juge VOIT la brèche — le fil illisible y passe pour « rien à escalader »
+PASS C9f le vrai GET du cron : témoin — un fil ordinaire en Signature, la relance part (un e-mail au client, tracée dans le fil)
+PASS C9g … un fil en litige (ou une fuite dans la demande d’origine) : rien ne part, la relance est annulée sans un mot au client
+PASS C9h … un fil pris en main par l’artisan : rien ne part, la relance est annulée
+PASS C9i … réglages de la plateforme illisibles : rien ne part, la relance reste DUE (elle repartira)
+PASS C9j MUTANT (le sujet du fil ignoré : la version d’avant 032-006) : le juge VOIT la brèche — la relance du fil en litige y part, e-mail au client
+PASS C9k MUTANT (prise en main ignorée) : le juge VOIT la brèche — la relance d’un fil pris en main y part
+
+── C10. Relances d’impayés : une contestation écrite depuis l’émission rend une CARTE (032-007) ; la demande d’origine n’est jamais relue (R1, 032-015)
+PASS C10a témoin : le vrai passage des impayés, client sans contestation (message avant l’échéance) — la relance J+3 part en Signature
+PASS C10b la brèche de 032-007 : une contestation écrite le 05/10, après l’émission, avant l’échéance (3 formes) — rien ne part, la relance devient une CARTE à valider avec le motif, aucun arrêt « le client a répondu » (R1)
+PASS C10c … en Studio aussi : rien ne part ; la relance reste préparée (une carte), avec le motif « à relire »
+PASS C10d réglages de la plateforme illisibles : rien ne part (le passage saute le compte, l’erreur est dite)
+PASS C10d2 messages du client illisibles : rien ne part, rien n’est préparé (côté sûr)
+PASS C10e MUTANT (la contestation ignorée : la version de 032-007) : le juge VOIT la brèche — la relance de la facture contestée y part, e-mail au client
+PASS C10f R1 (annexe E de 032-015) : les 13 demandes d’origine ordinaires (fuite, goutte, urgent, disjoncteur, décennale…) — la relance Signature PART, aucun arrêt
+PASS C10g R1 … en Studio : les 13 relances sont PRÉPARÉES, sans motif « sujet sensible », aucun arrêt
+PASS C10h R1 : la demande d’un AUTRE dossier du même e-mail (« Fuite sur le WC ») n’est jamais relue — la relance part
+PASS C10i R1 : une contestation écrite AVANT l’émission (mars 2025, autre chantier) ne compte pas — la relance part (la lecture est bornée à l’émission)
+PASS C10j le client a VRAIMENT écrit depuis l’échéance : l’arrêt « le client a répondu » reste (vrai), rien ne part, aucune carte
+PASS C10j2 … et l’écran dit « le client a répondu » pour cet arrêt seulement (etatPourEcran)
+PASS C10k MUTANT (la demande d’origine relue : la version de 032-009) : le juge VOIT la régression — 11/13 relances Signature n’y partent plus
+PASS C10l MUTANT (la carte retirée en Signature) : le juge VOIT la brèche — la relance de la facture contestée y part seule
+PASS C10m MUTANT (la borne d’émission retirée) : le juge VOIT la brèche — la contestation de mars 2025 y retient la relance
+
+── D. Sources et lanceur
+PASS D1 « fait tout seul » : la garde lit la liste du pilote (jamaisAutomatique, lib/pilote/regles.ts), aucune liste recopiée ici
+PASS D1c l’escalade du « fait tout seul » lit LE lexique du pilote (sujetEscalade, MESSAGES_ESCALADE_RELUS, LIBELLE_MOTIF.escalade), aucune liste recopiée
+PASS D1b l’envoi d’un devis lit LA règle des prix du pilote (prixSources, LIBELLE_MOTIF.prix_non_source), aucune règle recopiée
+PASS D2 le pilote lit la même liste (typePiloteDeOutil, decisionPilote)
+PASS D3 la vraie escalade relit les messages ENTRANTS (sens in, 10 au plus) avec sujetEscalade et les mots de Ma plateforme
+PASS D3c le pilote lit les réglages de la plateforme par getPlateformeConfigStrict, jamais par getPlateformeConfig (une erreur y vaut « défauts »)
+PASS D3b … et lit la conversation par leadDuCompteStrict (une erreur lève), jamais par leadDuCompte (une erreur y vaut « introuvable »)
+PASS D3d un contrat Entreprise s’ouvre sur SON portail Stripe (sans changement d’offre ni résiliation), jamais sur le portail par défaut ; portail non configuré : rien ne s’ouvre
+PASS D4 la suite est au tableau SUITES de scripts/tout-verifier.mjs (cout: gratuit), avant les suites qui appellent le modèle
+PASS D4b le garde-fou des envois (escalade avant le mode assisté) est au tableau SUITES : quelqu’un le joue (troisième audit 032-005)
+PASS D5 aucun appel réseau hors de la doublure : la base factice a servi les lectures, aucune autre adresse n’a été tentée
+
+244 PASS, 0 FAIL
+(node:3488775) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/pilote/regles.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

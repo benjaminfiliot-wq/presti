@@ -1,0 +1,59 @@
+── A. La décision (pure)
+PASS A1 délai commun : 3 jours, et l’assistant lit le même (RELANCE_DELAI_JOURS, un seul chiffre)
+PASS A2 relancé il y a 2 jours 23 h : refus « récente », avec la dernière trace
+PASS A3 relancé il y a 3 jours pile : permis (strictement moins de 3 jours)
+PASS A4 relancé il y a 4 jours : permis
+PASS A5 aucun historique : permis
+PASS A6 registre illisible : refus « illisible » (côté sûr)
+PASS A7 `sauf` : le chemin qui garde son propre rythme n’est pas bloqué par ses propres traces, mais l’est par celles des autres
+PASS A8 une date illisible compte comme récente (côté sûr)
+PASS A9 la phrase du refus nomme le chemin et la date, sans « Presti »
+
+── B. Le dossier, les 6 paires de chemins
+PASS B assistant puis crm : refusé à 1 jour, permis à 4 jours
+PASS B crm puis assistant : refusé à 1 jour, permis à 4 jours
+PASS B assistant puis impayes : refusé à 1 jour, permis à 4 jours
+PASS B impayes puis assistant : refusé à 1 jour, permis à 4 jours
+PASS B assistant puis conversation : refusé à 1 jour, permis à 4 jours
+PASS B conversation puis assistant : refusé à 1 jour, permis à 4 jours
+PASS B crm puis impayes : refusé à 1 jour, permis à 4 jours
+PASS B impayes puis crm : refusé à 1 jour, permis à 4 jours
+PASS B crm puis conversation : refusé à 1 jour, permis à 4 jours
+PASS B conversation puis crm : refusé à 1 jour, permis à 4 jours
+PASS B impayes puis conversation : refusé à 1 jour, permis à 4 jours
+PASS B conversation puis impayes : refusé à 1 jour, permis à 4 jours
+PASS B13 une relance d’un AUTRE dossier du même compte ne bloque pas celui-ci
+PASS B14 isolation : les traces d’un autre compte sur les mêmes identifiants ne comptent pas
+PASS B15 une relance de conversation PROPOSÉE (offre Studio, pas validée) ou écartée n’est pas partie : elle ne compte pas
+PASS B16 la seconde facture du même devis (acompte, solde) est du même dossier : sa relance bloque celle de F1 par l’assistant
+
+── B bis. Les lectures en erreur et les tables absentes
+PASS B17 lecture de « devis » en erreur : registre illisible, la relance est REFUSÉE
+PASS B17 lecture de « factures » en erreur : registre illisible, la relance est REFUSÉE
+PASS B17 lecture de « assistant_actions » en erreur : registre illisible, la relance est REFUSÉE
+PASS B17 lecture de « crm_rappels » en erreur : registre illisible, la relance est REFUSÉE
+PASS B17 lecture de « relances_impayes » en erreur : registre illisible, la relance est REFUSÉE
+PASS B17 lecture de « messages » en erreur : registre illisible, la relance est REFUSÉE
+PASS B18 une table absente (migration non collée) est ignorée et DITE ; les autres traces comptent toujours
+PASS B19 un objet absent du compte (ou d’un autre compte) : illisible, donc refus — jamais « jamais relancé »
+
+── C. Les appelants (lecture du source)
+PASS C assistant (proposition et réalisation) : le registre est lu AVANT l’envoi
+PASS C pilote (dejaRelance) : le registre est lu AVANT l’envoi
+PASS C CRM (route d’envoi) : le registre est lu AVANT l’envoi
+PASS C impayés (magasin et passage) : le registre est lu AVANT l’envoi
+PASS C conversation (cron du matin) : le registre est lu AVANT l’envoi
+PASS C6 la décision des impayés connaît la raison « deja_relancee_ailleurs » (lib/relancesImpayes.ts)
+PASS C7 ce juge est au tableau SUITES de scripts/tout-verifier.mjs (cout: gratuit)
+
+── D. Mutants : le correctif retiré, le juge doit le voir
+PASS D1 MUTANT (`<` devenu `<=`) : le juge VOIT la différence — relancé il y a 3 jours pile, le mutant refuse
+PASS D2 MUTANT (erreur de lecture avalée = la brèche d’avant) : le juge VOIT la brèche — le mutant laisse partir, l’original refuse
+PASS D3 MUTANT (l’appel ôté de la route du CRM) : le contrôle C du CRM rougit
+PASS D4 aucun appel réseau : le client en mémoire a servi toutes les lectures
+
+44 PASS, 0 FAIL
+(node:2972511) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/relancesRegistre.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

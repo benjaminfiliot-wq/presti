@@ -1,0 +1,25 @@
+# 035-000 — sorties des vérifications (02/11/2026, 20:52 UTC)
+
+## 1. node scripts/orchestre.mjs verifier 035-000 (commande de la tâche, telle quelle)
+✗ 035-000 : FAIL — /bin/sh: 1: Syntax error: Unterminated quoted string · 0s · 869 ligne(s) produite(s) · preuve : .orchestre/preuves/035-000/verifier.log
+
+Cause : la ligne verifier de .orchestre/en-cours/035-000.md a perdu ses barres obliques inverses ([sS] au lieu de [\s\S], ^s* au lieu de ^\s*) et porte un vrai saut de ligne à la place de \n : /bin/sh coupe la chaîne entre guillemets. Le défaut est dans l'en-tête de la tâche, hors du périmètre.
+
+## 2. La même vérification, correctement échappée (/tmp/verif-035-000.js)
+```
+const t=require('fs').readFileSync('.orchestre/preuves/035-000/rapport.md','utf8');
+const m=t.match(/## Ressources utilisées([\s\S]*?)(\n## |$)/);
+const n=m?(m[1].match(/^\s*[-*|] /gm)||[]).length:0;
+const v=/^VERDICT : (CONFORME|CONFORME SAUF)$/m.test(t), e=/^## Exigences/m.test(t), d=t.startsWith('## Ressources utilisées');
+console.log({ressources:n, verdict:v, exigences:e, commence_par_ressources:d});
+process.exit(m&&n>=3&&v&&e?0:1);
+```
+```
+{
+  ressources: 8,
+  verdict: true,
+  exigences: true,
+  commence_par_ressources: true
+}
+code de sortie : 0
+```

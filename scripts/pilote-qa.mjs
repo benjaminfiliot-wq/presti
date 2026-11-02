@@ -276,14 +276,72 @@ const carte = (f, type = 'envoi_devis', ref = U(1)) => f.inserer({ artisan_id: A
     && pdf.indexOf('export async function envoyerFactureServeur') < pdf.indexOf('async function envoyerFactureUneFois'))
 }
 
+// ═══════════════════════ B bis. Contre-audit 032-035 corrigé (tâche 032-036) : hors pilote (E1) et conversations du client (E2) ═══════════════════════
+{
+  // Le MUTANT : une copie de lib/pilote/file.ts hors du dépôt, une ligne retirée, l'import relatif repointé vers le vrai fichier.
+  const os = await import('node:os')
+  const TMPB = fs.mkdtempSync(path.join(os.tmpdir(), 'presti-pilote-qa-'))
+  let nB = 0
+  const fileMutant = async (avant, apres) => {
+    let code = lire('lib/pilote/file.ts')
+    if (!code.includes(avant)) throw new Error(`mutant de file.ts : motif introuvable « ${avant.slice(0, 80)} »`)
+    code = code.replace(avant, apres).replace(/from '\.\/regles'/g, `from '${pathToFileURL(path.join(RACINE, 'lib/pilote/regles.ts')).href}'`)
+    const f = path.join(TMPB, `file-mutant-${++nB}.ts`)
+    fs.writeFileSync(f, code)
+    return (await import(pathToFileURL(f).href)).traiterFile
+  }
+  /** Une carte de relance de devis en file, que carteDe décrit comme on le lui demande ; `escalade` : les conversations sensibles. */
+  const relance = (carteDe, sensibles = [], leve = null) => {
+    const f = fileEnMemoire()
+    f.deps.carteDe = async () => carteDe
+    f.deps.escalade = async (_l, leadId) => { if (leve && leadId === leve) throw new Error('conversation illisible'); return sensibles.includes(leadId) }
+    const id = carte(f, 'relance_devis')
+    return { f, id }
+  }
+  const HP = 'Le message vise plusieurs clients (ou tout le monde) : chaque relance attend le clic de l’artisan.'
+  {
+    const { f, id } = relance({ outil: 'relancer_devis', contenuClientLu: false, horsPilote: HP, leadId: U(51), leadsClient: [U(51)] })
+    await traiterFile(f.deps, plus(10 * MIN))
+    T('B30 E1 : une carte HORS PILOTE (ordre sur plusieurs clients, escalade…) revient à la main au départ, son motif inscrit dans la file ; rien ne part',
+      f.envois.length === 0 && f.lignes.get(id).statut === 'manuel' && f.lignes.get(id).motif === HP, JSON.stringify(f.lignes.get(id)))
+    const mut = relance({ outil: 'relancer_devis', contenuClientLu: false, horsPilote: HP, leadId: U(51), leadsClient: [U(51)] })
+    await (await fileMutant("        if (carte.horsPilote) { await fin('manuel', carte.horsPilote.slice(0, 300)); continue }\n", ''))(mut.f.deps, plus(10 * MIN))
+    T('B31 MUTANT (la marque non relue au départ) : le juge VOIT la brèche — la carte hors pilote part', mut.f.envois.length === 1 && mut.f.lignes.get(mut.id).statut === 'partie')
+  }
+  {
+    // E2 : la conversation du devis est propre ; le client écrit « litige » dans une AUTRE conversation (même e-mail).
+    const { f, id } = relance({ outil: 'relancer_devis', contenuClientLu: false, horsPilote: null, leadId: U(51), leadsClient: [U(51), U(52)] }, [U(52)])
+    await traiterFile(f.deps, plus(10 * MIN))
+    T('B32 E2 : une autre conversation du même client parle d’un sujet sensible : la relance revient à la main (escalade), rien ne part',
+      f.envois.length === 0 && f.lignes.get(id).statut === 'manuel' && f.lignes.get(id).motif === R.LIBELLE_MOTIF.escalade, JSON.stringify(f.lignes.get(id)))
+    const mut = relance({ outil: 'relancer_devis', contenuClientLu: false, horsPilote: null, leadId: U(51), leadsClient: [U(51), U(52)] }, [U(52)])
+    await (await fileMutant('      for (const autre of leadsCarte) if (autre !== leadId && d.escalade && (await d.escalade(l, autre, maintenant))) { autreSensible = true; break }\n', ''))(mut.f.deps, plus(10 * MIN))
+    T('B33 MUTANT (seule la conversation du devis relue) : le juge VOIT la brèche — la relance part chez le client en litige', mut.f.envois.length === 1)
+    const lv = relance({ outil: 'relancer_devis', contenuClientLu: false, horsPilote: null, leadId: U(51), leadsClient: [U(51), U(52)] }, [], U(52))
+    await traiterFile(lv.f.deps, plus(10 * MIN))
+    T('B34 E2 : une autre conversation du client illisible au départ : la ligne passe en échec, rien ne part', lv.f.envois.length === 0 && lv.f.lignes.get(lv.id).statut === 'echec', JSON.stringify(lv.f.lignes.get(lv.id)))
+    const ok2 = relance({ outil: 'relancer_devis', contenuClientLu: false, horsPilote: null, leadId: U(51), leadsClient: [U(51), U(52)] }, [])
+    await traiterFile(ok2.f.deps, plus(10 * MIN))
+    T('B35 témoin : toutes les conversations du client sont propres — la relance part, une fois', ok2.f.envois.length === 1 && ok2.f.lignes.get(ok2.id).statut === 'partie')
+  }
+  {
+    const srv = sansCommentaires(lire('lib/pilote/serveur.ts'))
+    const exe = sansCommentaires(lire('lib/pilote/executeur.ts'))
+    T('B36 E1/E2 (sources) : piloterCarte refuse la marque hors pilote d’entrée ; carteDe la rend avec l’ordre découpé et toutes les conversations du client ; chaque réalisateur la refuse',
+      /if \(motifHorsPilote\(fiche\.entrees\) !== null\) return null/.test(srv) && srv.indexOf('motifHorsPilote(fiche.entrees)') < srv.indexOf('const type = typePiloteDeOutil(fiche.outil)')
+      && /const horsPilote = motifHorsPilote\(f\.entrees\) \?\? await ordreDecoupe\(l\.artisan_id, f\)/.test(exe) && /leadsClient: leads/.test(exe)
+      && /R\[k\] = async \(e\) => \{ const motif = motifHorsPilote\(e\); return motif \? ko2\(motif\) : realiser\(e\) \}/.test(exe))
+  }
+}
+
 // ═══════════════════════ C. Sources ═══════════════════════
 {
   const srv = sansCommentaires(lire('lib/pilote/serveur.ts'))
   const exe = sansCommentaires(lire('lib/pilote/executeur.ts'))
   const tic = lire('app/api/agents/tic/route.ts')
   const act = sansCommentaires(lire('lib/assistant/actions-serveur.ts'))
-  T('C1 l’assistant : chaque carte « à confirmer » passe par piloterCarte APRÈS sa création (rien ne change si le pilote ne la prend pas)',
-    /const fiche = await ctx\.magasin\.creer\(\{[\s\S]{0,600}statut: 'en_attente'[\s\S]{0,400}const auto = await \(dep\.piloterCarte \?\? piloterCarte\)\(ctx\.uid, fiche\)/.test(act))
+  T('C1 l’assistant : chaque carte « à confirmer » passe par piloterCarte APRÈS sa création (rien ne change si le pilote ne la prend pas) — sauf une carte HORS PILOTE (ordre groupé, escalade : contre-audit 032-035), jamais présentée',
+    /const fiche = await ctx\.magasin\.creer\(\{[\s\S]{0,600}statut: 'en_attente'[\s\S]{0,400}const auto = horsPilote \? null : await \(dep\.piloterCarte \?\? piloterCarte\)\(ctx\.uid, fiche\)/.test(act))
   T('C2 les réponses proposées (/api/leads et /api/conversation/stream) passent par piloterProposition, après l’insertion de la proposition',
     /etat: 'proposition'[\s\S]{0,300}\.select\('id'\)[\s\S]{0,600}piloterProposition\(artisan\.id/.test(lire('app/api/leads/route.ts')) && /etat: 'proposition'[\s\S]{0,200}\.select\('id'\)[\s\S]{0,500}piloterProposition\(artisan\.id/.test(lire('app/api/conversation/stream/route.ts')))
   T('C3 le tic minute fait partir la file — seulement drapeau levé et HORS pause générale (pause illisible = active)',
@@ -308,8 +366,8 @@ const carte = (f, type = 'envoi_devis', ref = U(1)) => f.inserer({ artisan_id: A
   const noms = [...realis.matchAll(/R\.([a-z_]+) = async/g)].map((m) => m[1])
   T('C10 réalisateurs du pilote : EXACTEMENT les outils pilotables, aucun outil d’argent (encaisser, facturer, rembourser)',
     JSON.stringify(noms.slice().sort()) === JSON.stringify([...R.OUTILS_EXECUTABLES_PILOTE].sort()) && !/marquer_facture_payee|creer_facture|rembourser|factureMaj|statut: 'payee'/.test(realis), noms.join(','))
-  T('C11 une carte de l’assistant part par confirmerAction (même réclamation de la carte, même journal) ; une proposition par validerPropositionServeur',
-    /confirmerAction\(\{[\s\S]{0,300}realisateurs: realisateursPilote\(l\.artisan_id, fiche\.cree_le\)/.test(exe) && /validerPropositionServeur\(l\.artisan_id, lead, l\.ref_id, null, \{ automatique: true \}\)/.test(exe))
+  T('C11 une carte de l’assistant part par confirmerAction (même réclamation de la carte, même journal, même lecteur « ne plus relancer » que l’assistant : E9) ; une proposition par validerPropositionServeur',
+    /confirmerAction\(\{[\s\S]{0,300}realisateurs: realisateursPilote\(l\.artisan_id, fiche\.cree_le, exclusionsRelanceParDefaut\)/.test(exe) && /validerPropositionServeur\(l\.artisan_id, lead, l\.ref_id, null, \{ automatique: true \}\)/.test(exe))
   const env = sansCommentaires(lire('lib/envoisServeur.ts') + lire('lib/envoisPdfServeur.ts'))
   T('C12 UN chemin d’envoi : la route Devis « Envoyer » et Messages (valider, répondre) appellent les mêmes fonctions que le pilote',
     /envoyerDevisServeur\(userData\.user\.id, id\)/.test(lire('app/api/devis/[id]/envoyer/route.ts')) && /validerPropositionServeur\(uid, lead/.test(lire('app/api/messages/route.ts')) && /repondreServeur\(uid, lead, contenu\)/.test(lire('app/api/messages/route.ts'))

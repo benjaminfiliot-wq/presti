@@ -1007,3 +1007,21 @@ Ces tâches ne se déposent dans `.orchestre/file/` qu'après le « approuvé »
   nouvelle numérotation, en retrouvant la ligne citée mot pour mot.
 - `scripts/tout-verifier.mjs:196` n'est pas relu ici : la copie d'Oracle est antérieure à `49d22f09`. Le fait vient du contre-vérificateur
   n° 2 (`ecarts-contre-verification-2.md:7`, `:33`) et de la tâche 032-027.
+
+
+## Amendement B1 — contre-vérification n° 3 (035-000, 02/11/2026 vers 22 h 10)
+
+Verdict de 035-000 : **conforme sauf B1** (`.orchestre/preuves/035-000/rapport.md`, « Écarts bloquants »). Benj a dit : « si le plan respecte bien
+tout le prompt, c'est parti ». Avec cet amendement, les tâches 035-003 et suivantes partent.
+
+- **La liste « jamais en automatique » d'un client Entreprise** = la liste du code (`OUTILS_JAMAIS_AUTO`, `lib/pilote/regles.ts:79-82`) **plus** les
+  gestes de p5:226 : envoyer un devis signé (`envoi_devis`, `envoyer_devis` compris), déclarer à l'URSSAF ou aux impôts, supprimer des données,
+  passer ou prendre un appel téléphonique, inventer un créneau, un délai ou un fournisseur. Elle vit dans la porte du kit (`lib-porte-conformite`,
+  035-005) et dans l'annexe d'autonomie (`kit/annexe-autonomie.md`, déjà conforme, l.36-42), **pas** dans `lib/pilote/regles.ts` : rien ne change
+  pour Signature (p5:275).
+- **Le juge** vérifie que la liste du code est **incluse** dans celle du kit, pas qu'elles sont égales.
+- **Les motifs de la porte** gagnent : `delai_creneau_fournisseur_sans_source`, `devis_engageant`, `declaration_fiscale_ou_sociale`,
+  `suppression_de_donnees`, `appel_telephonique`.
+- **Le test p5:315** parcourt toute la liste de p5:226, chaque geste réglé « automatique » : chacun reste une carte.
+- **Question 29** (ajoutée) : « Envoyer un devis signé » (p5:226) vise-t-il tout envoi de devis par un client Entreprise ? **Défaut : oui**, l'envoi
+  d'un devis reste une carte chez un client Entreprise. À trancher par Benj.

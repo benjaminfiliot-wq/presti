@@ -8,7 +8,7 @@
 //    l'artisan a écrit ou d'une donnée lue — jamais du modèle seul ;
 //  • les lignes d'un devis chiffrées avec les tarifs de l'artisan (le prix vient de SES tarifs, le modèle ne le fixe pas).
 import { nombresDe, normaliser } from './cadrage'
-import { nombresASourcer, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
+import { LOT_RELANCES_MAX, nombresASourcer, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
 
 // ── Le cycle de vie d'une action ────────────────────────────────────────────────────────────────────
 
@@ -33,7 +33,15 @@ export type Apercu = {
   /** Vrai : une fois confirmée, l'action ne se défait pas (e-mail parti, facture scellée, encaissement). */
   irreversible: boolean
   lien: { href: string; libelle: string } | null
+  /** 02/11 (L16) — une carte de LOT : chaque relance retenue avec son texte exact, chaque exclu avec son motif. Absent : carte d'un objet. */
+  lot?: LotApercu
 }
+
+/** Une relance retenue dans un lot : le message EXACT qui partira chez ce client. */
+export type RetenuLot = { numero: string; client: string | null; montant_ttc: number | null; envoye_le: string | null; message: MessageCarte }
+/** Un devis visé par l'ordre, écarté du lot, et pourquoi (en clair, pour l'artisan). */
+export type ExcluLot = { numero: string; client: string | null; motif: string }
+export type LotApercu = { retenus: RetenuLot[]; exclus: ExcluLot[] }
 
 /** La carte telle que l'écran la reçoit : l'aperçu + l'état de l'action. */
 export type CarteAction = Apercu & {
@@ -150,6 +158,235 @@ export function texteRelanceFacture(p: { client: string | null; numero: string; 
     ? `La facture ${p.numero}${montant}${ech}, reste impayée à ce jour${p.joursRetard && p.joursRetard > 0 ? ` (${p.joursRetard} jour${p.joursRetard > 1 ? 's' : ''} après son échéance)` : ''}.\n\nJe vous remercie de bien vouloir la régler sans délai, ou de me contacter dès aujourd'hui si un point pose difficulté. Si le règlement vient de partir, merci de ne pas tenir compte de ce message.`
     : `Sauf erreur ou omission de ma part, la facture ${p.numero}${montant}${ech}, n'a pas encore été réglée.\n\nSi le règlement est déjà parti, merci de ne pas tenir compte de ce message. Sinon, pourriez-vous y procéder prochainement ? Je reste joignable si vous avez la moindre question.`
   return { objet: `Facture ${p.numero} — ${p.artisan}`, texte: `${salut(p.client)}\n\n${corps}\n\nBien cordialement,\n${p.artisan}` }
+}
+
+// ── Les relances groupées : UNE carte de lot (02/11, lot L16 du chantier 4) ───────────────────────────
+//
+// plans/011-cadrage-01-11/chantier-4-assistant-plan.md §0 bis, rang 4 et question 1 : « une consigne sur plusieurs clients donne une seule
+// carte de lot » — retenus, exclus et leur motif, validée d'un geste ; un objet seul garde le « fait tout seul ». Rang 8 : « une proposition
+// écartée ne revient pas » — les refus des 7 derniers jours (outil, objet, date) entrent au contexte du tour. Le prompt de Benj : « Relance
+// les devis envoyés il y a plus de 5 jours » (p3-assistant.md:160). Ici, les règles PURES ; les lectures sont dans actions-serveur.ts.
+
+/** Une carte écartée par l'artisan ne se repropose pas d'elle-même pendant ce délai (rang 8 ; même délai que le détecteur n8n). */
+export const REFUS_RETENUS_JOURS = 7
+
+/**
+ * L'ordre de l'artisan vise-t-il PLUSIEURS objets ? Deux numéros de pièce ou plus, un pluriel de pièces ou de clients (« les devis »,
+ * « mes factures », « ces clients »), ou un quantifieur (« tous », « chaque », « ceux qui »). Sert à refuser qu'un ordre groupé se relance
+ * devis par devis : il va dans une carte de lot. Un faux positif ne coûte qu'un clic (côté sûr). Un faux négatif (« Relance Leroy et
+ * Garnier », « tout le monde », « 0101 et 0102 »…) n'est PAS rattrapé par la règle du tour pour la PREMIÈRE relance du message (audit
+ * 032-028, D1) : c'est motifPasUnSeul, plus bas, qui l'empêche de partir d'office — la charge de la preuve est inversée.
+ */
+export function ordreGroupe(texte: string | null | undefined): boolean {
+  const brut = String(texte ?? '')
+  if (new Set((brut.toUpperCase().match(/\b(?:DEV|FAC)-\d{4}-\d{1,6}\b/g) ?? [])).size >= 2) return true
+  const n = normaliser(brut)
+  return / (?:tous|toutes|chaque|ceux|celles|plusieurs) /.test(n)
+    || / (?:les|ces|mes|ses|nos|vos|leurs|des) (?:\S+ ){0,2}(?:devis|factures|clients|impayes|relances) /.test(n)
+}
+
+/** Un numéro de pièce complet (DEV-2026-0012, FAC-2026-0003). */
+const NUMERO_PIECE = /\b(?:DEV|FAC)-\d{4}-\d{1,6}\b/gi
+/** Les numéros de pièce complets écrits dans ce message, en majuscules, sans doublon. */
+export function numerosDans(texte: string | null | undefined): string[] {
+  return [...new Set((String(texte ?? '').match(NUMERO_PIECE) ?? []).map((n) => n.toUpperCase()))]
+}
+
+/**
+ * Le numéro d'une pièce est-il écrit dans ce message ? (Un lot ne reprend une relance écartée que si l'artisan la nomme.) À ÉGALITÉ avec
+ * un numéro extrait du message (audit 032-028, D6 : par sous-chaîne, DEV-2026-1000 était « nommé » dans DEV-2026-10001). Un numéro d'une
+ * autre forme ne compte que borné de part et d'autre.
+ */
+export function nommeDans(texte: string | null | undefined, numero: string): boolean {
+  const n = String(numero ?? '').trim().toUpperCase()
+  if (!n) return false
+  if (/^(?:DEV|FAC)-\d{4}-\d{1,6}$/.test(n)) return numerosDans(texte).includes(n)
+  const motif = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return new RegExp(`(?<![A-Z0-9-])${motif}(?![A-Z0-9-])`).test(String(texte ?? '').toUpperCase())
+}
+
+// ── Une relance seule ne part d'office que si l'artisan a désigné UN SEUL objet, sans doute possible (audit 032-028, D1) ──────────────
+/** Les mots qui ne désignent personne : civilités, formes de société, articles. */
+const MOTS_NEUTRES_NOM = new Set(['m', 'mr', 'mme', 'mlle', 'mm', 'me', 'dr', 'monsieur', 'madame', 'mademoiselle', 'messieurs', 'mesdames', 'famille',
+  'ste', 'societe', 'sarl', 'sas', 'sasu', 'eurl', 'sci', 'ets', 'etablissements', 'le', 'la', 'les', 'l', 'de', 'du', 'des', 'd', 'et'])
+/** Les mots significatifs d'un nom de client (« M. Jean Leroy » → jean, leroy). */
+export function motsDuNom(nom: string | null | undefined): string[] {
+  return [...new Set(normaliser(String(nom ?? '')).trim().split(' ').filter((m) => m.length >= 2 && !/^\d+$/.test(m) && !MOTS_NEUTRES_NOM.has(m)))]
+}
+/**
+ * Ce qui, dans un message, vise PLUSIEURS objets ou personne en particulier (texte normalisé, mots entourés d'espaces). 02/11 (contre-audit
+ * 032-035, E4 et E6) : les mots qui ne font que RELIER (« et », « avec », « plus », la virgule) n'y sont plus — « Bonjour, relance M. Leroy »,
+ * « avec un ton ferme », « tout de suite », « plus fermement » désignent un seul client ; ils comptent seulement s'ils relient un AUTRE mot
+ * que ceux d'une consigne (CONNECTEURS, plus bas). L'anglais et l'allemand des ordres groupés y entrent (« and the others », « everyone »).
+ */
+const MARQUES_PLUSIEURS = / (?:tous|toutes|chaque|chacun|chacune|plusieurs|autres?|reste|restant|restants|restante|restantes|totalite|ensemble|gens|monde|clients|clientes|clientele|ceux|celles|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|dizaine|douzaine|aussi|egalement|pareil|idem|others?|everyone|everybody|all|both|rest|each|every|alle|beide) /
+/** Ce qui relie deux désignations (« Leroy et Garnier », « Leroy, Garnier », « Leroy and Garnier », « Leroy puis Garnier »). */
+const CONNECTEURS = / (?:et|puis|ou|avec|plus|ainsi|and|und|or|then|with) /
+const SEPARATEURS = /[,;&+/\n]/
+/**
+ * Les mots d'une CONSIGNE qui ne désignent personne : salutations, politesse, verbes et mots de la relance, ton, temps, mots-outils. Un
+ * message qui RELIE des mots (CONNECTEURS, SEPARATEURS) ne prouve « un seul client » que si tous ses autres mots sont d'ici ou du nom de
+ * SON client : « Relance Leroy and Garnier », Garnier absent des clients relus, ne passe plus (E6). Un mot inconnu donne une carte (côté sûr).
+ */
+const MOTS_DE_CONSIGNE = new Set(('bonjour bonsoir salut hello hi coucou merci thanks stp svp plait please ok oui daccord accord vite rapidement '
+  + 'relance relancer relancez relances relancer relanceras remind relaunch rappelle rappeler rappel envoie envoyer envoies renvoie renvoyer ecris ecrire '
+  + 'message mail email courriel devis facture piece mot gentil gentiment poli poliment courtois courtoisement cordial cordiale cordialement '
+  + 'ferme fermement fermete sec doux doucement ton style formule formulation phrase texte urgent urgence important '
+  + 'tout suite maintenant aujourd hui demain matin soir semaine mois jour jours depuis encore toujours deja bientot '
+  + 'il elle ils elles lui leur leurs on je j me m moi tu te t toi nous vous se s ce c ca cela ceci qui que qu quoi dont ou quand comment pourquoi '
+  + 'son sa ses mon ma mes ton ta tes notre votre nos vos un une le la les l de du d des au aux a en y '
+  + 'ne n pas plus jamais rien bien tres trop peu sans pour par sur sous dans chez vers apres avant entre '
+  + 'est etait sera serait a ont avait as ai fait faire fais dis dire dit peux peut pourrais pourriez veux voudrais merci '
+  + 'repondu repond repondre reponse nouvelles signe signer attend attendu attente oublie oublier paye payer regle regler '
+  + 'et puis ou avec plus ainsi and und or then with the to him her please').split(' '))
+/** Un nombre qui n'est pas un numéro de pièce : une durée, un montant, un pourcentage (« depuis 5 jours », « 1 200 € »), une date (E4). */
+const NOMBRE_QUI_MESURE = /\d+(?:[.,\s]\d+)*\s*(?:jours?|j\b|semaines?|sem\b|mois|ans?|années?|h\b|heures?|€|eur\b|euros?|%|ht\b|ttc\b)/gi
+const DATE_ECRITE = /\b\d{1,2}(?:er)?\s+(?:janvier|f[ée]vrier|mars|avril|mai|juin|juillet|ao[ûu]t|septembre|octobre|novembre|d[ée]cembre)(?:\s+\d{4})?\b|\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/gi
+
+/** Deux mots presque égaux (une faute de frappe : « Garnié » pour Garnier) : distance d'édition 1, 2 à partir de 7 lettres. */
+function presqueEgal(a: string, b: string): boolean {
+  if (a === b) return true
+  if (Math.min(a.length, b.length) < 4) return false
+  const max = Math.max(a.length, b.length) >= 7 ? 2 : 1
+  if (Math.abs(a.length - b.length) > max) return false
+  let prec = Array.from({ length: b.length + 1 }, (_, j) => j)
+  for (let i = 1; i <= a.length; i++) {
+    const cour = [i]
+    for (let j = 1; j <= b.length; j++) cour[j] = Math.min(prec[j] + 1, cour[j - 1] + 1, prec[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1))
+    prec = cour
+  }
+  return prec[b.length] <= max
+}
+
+/**
+ * 02/11 (contre-audit 032-035, E1 et E2) — la marque d'une carte qui ne part JAMAIS par le pilote automatique, posée dans ses entrées à sa
+ * création (comme `_contenu_client_lu`, lib/pilote/regles.ts) : sa valeur est le motif (« plusieurs clients », sujet d'escalade, désignation
+ * douteuse…). Le pilote la refuse à l'entrée (lib/pilote/serveur.ts piloterCarte), au départ (lib/pilote/executeur.ts carteDe) et dans ses
+ * réalisateurs. Au clic de l'artisan, elle ne change rien : la carte part comme les autres.
+ */
+export const MARQUE_HORS_PILOTE = '_hors_pilote'
+/** Le motif hors pilote porté par des entrées de carte, ou null. */
+export function motifHorsPilote(entrees: unknown): string | null {
+  const v = (entrees as Record<string, unknown> | null | undefined)?.[MARQUE_HORS_PILOTE]
+  if (v === undefined || v === null || v === false) return null
+  return typeof v === 'string' && v.trim() ? v.trim().slice(0, 280) : 'Cette carte attend le clic de l’artisan : elle ne part pas par le pilote automatique.'
+}
+
+/** Le motif d'un message qui vise plusieurs clients (repris par actions-serveur.ts pour la carte et le pilote). */
+export const MOTIF_PLUSIEURS_CLIENTS = 'Le message vise plusieurs clients (ou tout le monde) : chaque relance attend le clic de l’artisan, aucune ne part d’office ni par le pilote.'
+
+/**
+ * 02/11 (contre-audit 032-035, E1) — le message vise-t-il, à coup sûr, PLUSIEURS clients ? Un quantifieur ou un pluriel (« tout le monde »,
+ * « les deux », « and the others »), ou le nom d'un AUTRE client du compte, même à une faute près (« Garnié »). Rend le motif, ou null. Sert
+ * deux fois : à la preuve du « fait tout seul » (motifPasUnSeul) et, quel que soit le mode, à tenir la carte hors du pilote automatique.
+ */
+export function visePlusieursClients(texte: string | null | undefined, cible: { client: string | null }, autresClients: readonly (string | null)[]): string | null {
+  const n = normaliser(String(texte ?? ''))
+  if (MARQUES_PLUSIEURS.test(n)) return MOTIF_PLUSIEURS_CLIENTS
+  const mots = n.trim().split(' ').filter(Boolean)
+  const siens = motsDuNom(cible.client)
+  const leSien = new Set(siens)
+  const nomSien = siens.join(' ')
+  const autres = new Set(autresClients.map(motsDuNom).filter((m) => m.join(' ') !== nomSien).flat().filter((m) => !leSien.has(m)))
+  const nomme = (m: string) => [...autres].some((a) => presqueEgal(m, a))
+  // Le nom exact d'un autre client compte toujours ; à une faute près, seulement pour un mot qui n'est pas d'une consigne.
+  if (mots.some((m) => !leSien.has(m) && (autres.has(m) || (!MOTS_DE_CONSIGNE.has(m) && !MOTS_NEUTRES_NOM.has(m) && nomme(m))))) return MOTIF_PLUSIEURS_CLIENTS
+  return null
+}
+
+/**
+ * La PREUVE POSITIVE qu'une relance seule peut partir d'office : le message de l'artisan désigne CE devis (ou cette facture) et lui seul.
+ * Rend null si c'est prouvé, sinon le motif de la carte. Prouvé seulement si : aucun quantifieur ni autre client nommé (visePlusieursClients),
+ * aucun mot inconnu relié par « et », « avec », une virgule… (E6), aucun autre numéro (ni complet ni abrégé ; une date écrite n'en est pas
+ * un, E4), et soit le numéro complet de la pièce, soit un mot du nom de SON client qu'aucun autre client du compte ne porte — à condition que
+ * ce client n'ait qu'UNE pièce en attente (`piecesDuClient`, E7 : le nom désigne un client, pas un objet). Dans le doute : une carte (un clic).
+ * Ne lit pas ordreGroupe (refusé en amont, actions-serveur.ts) : les deux gardes se cumulent sans se masquer.
+ */
+export function motifPasUnSeul(texte: string | null | undefined, cible: { numero: string; client: string | null }, autresClients: readonly (string | null)[], piecesDuClient?: number): string | null {
+  const brut = String(texte ?? '')
+  const doute = 'Je n’ai pas pu être sûr du client visé : la relance attend le clic de l’artisan, elle ne part pas d’office.'
+  const plusieurs = visePlusieursClients(brut, cible, autresClients)
+  if (plusieurs) return plusieurs
+  const n = normaliser(brut)
+  const mots = n.trim().split(' ').filter(Boolean)
+  const siens = motsDuNom(cible.client)
+  const leSien = new Set(siens)
+  const numero = String(cible.numero ?? '').toUpperCase()
+  const leNumero = new Set(normaliser(numero).trim().split(' '))
+  if ((CONNECTEURS.test(n) || SEPARATEURS.test(brut.replace(DATE_ECRITE, ' ')))
+    && mots.some((m) => !leSien.has(m) && !leNumero.has(m) && !MOTS_DE_CONSIGNE.has(m) && !MOTS_NEUTRES_NOM.has(m))) {
+    return 'Je n’ai pas pu être sûr du client visé (le message relie le nom à d’autres mots) : la relance attend le clic de l’artisan.'
+  }
+  const numeros = numerosDans(brut)
+  if (numeros.length > 1 || (numeros.length === 1 && numeros[0] !== numero)) return 'Le numéro écrit par l’artisan n’est pas celui de cette pièce : la relance attend son clic.'
+  if (/\d/.test(brut.replace(NUMERO_PIECE, ' ').replace(DATE_ECRITE, ' ').replace(NOMBRE_QUI_MESURE, ' '))) return 'Le message porte un numéro incomplet ou abrégé : la relance attend le clic de l’artisan.'
+  if (numeros.length === 1) return null
+  const nomSien = siens.join(' ')
+  const autres = new Set(autresClients.map(motsDuNom).filter((m) => m.join(' ') !== nomSien).flat())
+  if (!siens.some((m) => mots.includes(m) && !autres.has(m))) return doute
+  if (piecesDuClient !== undefined && piecesDuClient !== 1) return `Ce client a ${piecesDuClient > 1 ? `${piecesDuClient} pièces` : 'des pièces'} en attente et le message ne dit pas laquelle : la relance attend le clic de l’artisan.`
+  return null
+}
+
+/**
+ * Les objets dont une carte a été ÉCARTÉE par l'artisan depuis `depuis` : une carte d'un objet (objet_id), ou une carte de lot (chacun de ses
+ * retenus, entrees.lot[].id). Rend id → date du refus la plus récente. `outil` : seules ses cartes comptent (le détecteur n8n fait de même).
+ */
+export function refusRecents(fiches: readonly { outil: string; statut: string; objet_id: string | null; entrees: unknown; maj_le: string }[], outil: string, depuis: Date): Map<string, string> {
+  const out = new Map<string, string>()
+  const garder = (idObjet: unknown, le: string) => {
+    if (typeof idObjet !== 'string' || !idObjet) return
+    const avant = out.get(idObjet)
+    if (!avant || avant < le) out.set(idObjet, le)
+  }
+  for (const f of fiches) {
+    if (f.outil !== outil || f.statut !== 'refusee') continue
+    const le = String(f.maj_le ?? '')
+    const t = Date.parse(le)
+    // Une date illisible compte comme récente (côté sûr : la relance n'est pas reproposée seule).
+    if (Number.isFinite(t) && t < depuis.getTime()) continue
+    garder(f.objet_id, le)
+    const lot = (f.entrees as { lot?: unknown } | null)?.lot
+    if (Array.isArray(lot)) for (const m of lot) garder((m as { id?: unknown } | null)?.id, le)
+  }
+  return out
+}
+
+/** La phrase d'un refus récent, pour l'artisan (motif d'un exclu, ou réponse au modèle). */
+export const phraseEcartee = (le: string): string => `relance écartée par vous${fmtDate(le) ? ` le ${fmtDate(le)}` : ''} : pas reproposée (nommez le devis pour la relancer quand même)`
+
+/** Le libellé d'une ligne de lot : numéro, client, montant, date d'envoi. */
+const ligneRetenu = (r: RetenuLot): string => [r.numero, r.client?.trim() || 'client sans nom', r.montant_ttc !== null ? `${fmtEuros(r.montant_ttc)} TTC` : null, r.envoye_le ? `envoyé le ${fmtDate(r.envoye_le)}` : null].filter(Boolean).join(' · ')
+
+/**
+ * L'aperçu d'une carte de LOT de relances de devis : ce que l'artisan lit avant son unique clic. Les retenus (avec le texte exact de chaque
+ * relance, dans `lot`, et le premier en entier dans `message`), les exclus et leur motif, le critère de l'ordre. Irréversible : une fois
+ * confirmé, les e-mails partent. Au plus LOT_RELANCES_MAX retenus (au-delà, le serveur refuse avant d'appeler cette fonction).
+ */
+export function apercuLotRelances(p: { lot: LotApercu; ton: string; critere: string; alertes?: readonly string[] }): Apercu {
+  const { retenus, exclus } = p.lot
+  if (!retenus.length) throw new Error('lot de relances sans retenu')
+  if (retenus.length > LOT_RELANCES_MAX) throw new Error('lot de relances trop grand')
+  const n = retenus.length, k = exclus.length
+  return {
+    titre: `Relancer ${n} devis${k ? ` · ${k} exclu${k > 1 ? 's' : ''}` : ''}`,
+    lignes: [
+      { label: 'Ordre', valeur: p.critere },
+      ...retenus.map((r) => ({ label: 'À relancer', valeur: ligneRetenu(r) })),
+      ...exclus.map((x) => ({ label: 'Exclu', valeur: `${x.numero}${x.client?.trim() ? ` · ${x.client.trim()}` : ''} — ${x.motif}` })),
+      { label: 'Ton', valeur: p.ton },
+    ],
+    avant_apres: [],
+    message: retenus[0].message,
+    alertes: [
+      n > 1 ? `Chaque client reçoit SA relance, à son nom, avec le numéro, le montant et la date de son devis (ci-dessus, celle de ${retenus[0].numero}).` : 'Un seul devis retenu : sa relance est ci-dessus.',
+      'Un lot ne part jamais d’office : rien n’est envoyé avant votre clic sur « Confirmer ». « Écarter » ne relance personne.',
+      ...(p.alertes ?? []),
+    ],
+    irreversible: true,
+    lien: { href: '/devis', libelle: 'Ouvrir les devis' },
+    lot: { retenus: retenus.map((r) => ({ ...r })), exclus: exclus.map((x) => ({ ...x })) },
+  }
 }
 
 // ── Les lignes d'un devis, chiffrées avec les tarifs de l'artisan ────────────────────────────────────

@@ -2,32 +2,26 @@
   "id": "2uovL6sfTnINC3ka",
   "name": "presti-garde-sauvegarde",
   "active": false,
+  "isArchived": false,
   "versionId": "f68c4b7e-2b62-4908-a02d-22f9bfe037c1",
+  "activeVersionId": null,
+  "triggerCount": 0,
   "nodeCount": 12,
   "createdAt": "2026-11-02T19:20:22.151Z",
-  "updatedAt": "2026-11-02T19:20:25.216Z",
+  "updatedAt": "2026-11-02T20:40:01.906Z",
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
     "timezone": "Europe/Paris",
     "saveDataErrorExecution": "all",
-    "saveDataSuccessExecution": "all",
-    "executionTimeout": 600
+    "saveDataSuccessExecution": "none",
+    "executionTimeout": 600,
+    "errorWorkflow": "AQeHiC58UgbMR4Kr"
   },
-  "description": "Chantier 4, lot L8 (tâche 032-023) : garde de la sauvegarde à 4 h (Europe/Paris) : archive du jour, relecture, tables non en baisse, battement ; alerte Slack #presti-auto en cas d'écart. Inactif jusqu'au « go » de Benj.",
-  "isArchived": false,
-  "activeVersionId": null,
-  "triggerCount": 0,
   "tags": [],
   "parentFolderId": null,
+  "description": "Chantier 4, lot L8 (tâche 032-023) : garde de la sauvegarde à 4 h (Europe/Paris) : archive du jour, relecture, tables non en baisse, battement ; alerte Slack #presti-auto en cas d'écart. Inactif jusqu'au « go » de Benj.",
   "canExecute": true,
-  "activeVersion": null,
-  "meta": {
-    "aiBuilderAssisted": true,
-    "builderVariant": "mcp"
-  },
-  "exporte_le": "2026-11-02T19:30:00Z",
-  "source": "MCP n8n-oracle get_workflow_details (tâche 032-023) ; export reconstitué des paramètres rendus par le MCP (mêmes identifiants, même code), jamais publié",
   "connections": {
     "Déclencheur 4 h": {
       "main": [
@@ -382,5 +376,12 @@
       }
     }
   ],
-  "nodeGroups": []
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-02T20:40:31.198Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 032-037), réponse enregistrée par le harnais (journal du harnais) puis recopiée par node, sans retouche ; « scopes » (droits de l'utilisateur du MCP) ôté"
 }

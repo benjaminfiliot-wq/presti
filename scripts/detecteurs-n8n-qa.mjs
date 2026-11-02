@@ -125,7 +125,12 @@ const OFFSET_ATTENDU = '={{ $pageCount * 1000 }}'
 const FIN_ATTENDUE = '={{ !Array.isArray($response.body) || $response.body.length < 1000 }}'
 const MAX_PAGES = 50
 const DELAI_MAX_MS = 30000
-const CLES_REGLAGES = new Set(['executionOrder', 'availableInMCP', 'timezone']) // pas d'`errorWorkflow` (032-010, M10, mutant C7)
+// 032-033 (audit 032-029, D-1 et D-M1) : la liste blanche s'ouvre à ces seules clés et valeurs — le workflow d'erreur commun
+// presti-erreurs (AQeHiC58UgbMR4Kr, l'alerte Slack sans donnée), les succès non gardés, les échecs gardés (leur durée est la purge de
+// l'instance, à régler par Benj). Toute autre valeur rougit (mutants « 032-033 »).
+const PRESTI_ERREURS = 'AQeHiC58UgbMR4Kr'
+const REGLAGES = { executionOrder: 'v1', availableInMCP: true, timezone: 'Europe/Paris', saveDataSuccessExecution: 'none', saveDataErrorExecution: 'all', errorWorkflow: PRESTI_ERREURS }
+const CLES_REGLAGES = new Set(Object.keys(REGLAGES))
 const CLES_CODE = ['mode', 'language', 'jsCode']
 
 // ─── É3 (a) : l'empreinte SHA-256 du code de chaque nœud Code (032-003, relu par 032-010 ; réépinglée par 032-019) ────────────────
@@ -239,6 +244,7 @@ function structure(wf) {
   if (wf.name !== 'presti-detecteurs') ko(`nom inattendu : ${wf.name}`)
   if (wf.settings?.timezone !== 'Europe/Paris') ko('fuseau du workflow : Europe/Paris attendu')
   for (const k of Object.keys(wf.settings ?? {})) if (!CLES_REGLAGES.has(k)) ko(`réglage du workflow non permis : settings.${k}`)
+  for (const [k, v] of Object.entries(REGLAGES)) if (wf.settings?.[k] !== v) ko(`réglage settings.${k} : ${JSON.stringify(v)} attendu (reçu ${JSON.stringify(wf.settings?.[k])})`)
   for (const n of wf.nodes) {
     if (!TYPES_PERMIS.has(n.type)) ko(`type de nœud interdit : ${n.name} (${n.type})`)
     if (n.disabled) ko(`nœud désactivé : ${n.name}`)
@@ -320,7 +326,7 @@ function structure(wf) {
   if (chaine.join('|') !== attendue.join('|')) ko(`chaîne des détecteurs inattendue : ${chaine.join(' → ')}`)
 
   // Rang 26 (plan §0 bis) : la branche d'erreur. Un seul Error Trigger, relié au seul « Message d échec », et rien après lui (aucun envoi
-  // dans ce lot : le message attend l'identifiant Telegram et le « go » de Benj). Pas d'`errorWorkflow` (settings en liste blanche).
+  // dans ce lot : le message attend l'identifiant Telegram et le « go » de Benj). L'alerte part par `errorWorkflow` = presti-erreurs (032-033).
   const erreurs = wf.nodes.filter((n) => n.type === 'n8n-nodes-base.errorTrigger')
   const branche = erreurs.length === 1 ? chaineDepuis(wf, erreurs[0].name) : []
   if (erreurs.length !== 1 || branche.length !== 2 || branche[1] !== 'Message d échec') ko(`branche d'erreur absente ou inattendue (rang 26) : un Error Trigger → « Message d échec », et rien après (${branche.join(' → ') || 'aucune'})`)
@@ -1183,7 +1189,12 @@ const MUTANTS = [
   ['É1 second identifiant (en-tête générique)', mutantNoeud('Lire tarifs', (n) => { n.credentials.httpHeaderAuth = { id: 'x', name: 'Autre' } }), { attendu: /un seul identifiant/ }],
   ['É1 paramètre HTTP hors gabarit (sendHeaders posé à faux)', mutantNoeud('Lire tarifs', (n) => { n.parameters.sendHeaders = false }), { attendu: /paramètres HTTP hors gabarit/ }],
   ['É1 option de nœud hors gabarit (onError)', mutantNoeud('Lire tarifs', (n) => { n.onError = 'continueErrorOutput' }), { attendu: /clé de nœud non permise/ }],
-  ['M10 (au passage) workflow d’erreur branché', (wf) => { const m = copie(wf); m.settings.errorWorkflow = 'AutreWorkflowQuiPosteSurSlack'; return m }, { attendu: /settings\.errorWorkflow/ }],
+  ['M10 (au passage) workflow d’erreur vers un autre workflow', (wf) => { const m = copie(wf); m.settings.errorWorkflow = 'AutreWorkflowQuiPosteSurSlack'; return m }, { attendu: /settings\.errorWorkflow/ }],
+  ['032-033 workflow d’erreur retiré', (wf) => { const m = copie(wf); delete m.settings.errorWorkflow; return m }, { attendu: /settings\.errorWorkflow/ }],
+  ['032-033 succès gardés (saveDataSuccessExecution: all)', (wf) => { const m = copie(wf); m.settings.saveDataSuccessExecution = 'all'; return m }, { attendu: /settings\.saveDataSuccessExecution/ }],
+  ['032-033 succès gardés (réglage ôté)', (wf) => { const m = copie(wf); delete m.settings.saveDataSuccessExecution; return m }, { attendu: /settings\.saveDataSuccessExecution/ }],
+  ['032-033 échecs non gardés', (wf) => { const m = copie(wf); m.settings.saveDataErrorExecution = 'none'; return m }, { attendu: /settings\.saveDataErrorExecution/ }],
+  ['032-033 réglage neuf (saveManualExecutions)', (wf) => { const m = copie(wf); m.settings.saveManualExecutions = true; return m }, { attendu: /settings\.saveManualExecutions/ }],
 
   // ── É2 (032-010, annexe A : D1-D6) — jugés sans les empreintes ──
   ['É2 D1 niveau 3 en Studio sur le n° 8 seulement', mutantCode('Niveau proposé selon l offre', 'if (peutPartirSeul) n = 3;', "if (peutPartirSeul || (c.numero === 8 && l.includes('relances'))) n = 3;"), { attendu: /plafond/ }],

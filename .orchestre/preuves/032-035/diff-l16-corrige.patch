@@ -1,0 +1,1174 @@
+diff --git a/lib/assistant/actions-serveur.ts b/lib/assistant/actions-serveur.ts
+index fbb24305..7c2cefc9 100644
+--- a/lib/assistant/actions-serveur.ts
++++ b/lib/assistant/actions-serveur.ts
+@@ -45,8 +45,8 @@ import { POST as noteCreer } from '@/app/api/crm/notes/route'
+ import { DELETE as noteSupprimer } from '@/app/api/crm/notes/[id]/route'
+ import { POST as membreCreer } from '@/app/api/crm/equipe/route'
+ import { DELETE as membreSupprimer } from '@/app/api/crm/equipe/[id]/route'
+-import { fmtDate, fmtEuros, fmtNombre, indicesARetirer, lienDe, prixEcrits, resoudreLignes, tauxTtcPossibles, texteRelanceDevis, texteRelanceFacture, trouverUnique, VALIDITE_CARTE_MS, type Annulation, type Apercu, type CarteAction, type TarifLu, type TypeObjet } from './cartes'
+-import { NOMS_ACTIONS, categorieDe, estNomAction, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
++import { apercuLotRelances, fmtDate, fmtEuros, fmtNombre, indicesARetirer, lienDe, motifPasUnSeul, nommeDans, ordreGroupe, phraseEcartee, prixEcrits, refusRecents, resoudreLignes, REFUS_RETENUS_JOURS, tauxTtcPossibles, texteRelanceDevis, texteRelanceFacture, trouverUnique, VALIDITE_CARTE_MS, type Annulation, type Apercu, type CarteAction, type ExcluLot, type RetenuLot, type TarifLu, type TypeObjet } from './cartes'
++import { LOT_RELANCES_MAX, NOMS_ACTIONS, categorieDe, estNomAction, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
+ import { encadrerClient } from './cadrage'
+ import { ecrireClasseur, type Cellule, type Feuille } from '@/lib/comptaXlsx'
+ import type { ResultatRecherche } from '@/lib/recherche-fournisseurs'
+@@ -84,6 +84,12 @@ export type DependancesActions = {
+   envoyerMail?: typeof sendEmail
+   /** 02/11 (S4) : le registre commun des relances (essais : en mémoire). */
+   historiqueRelances?: typeof historiqueRelances
++  /**
++   * 02/11 (L16) — « Ne plus relancer ce client » (rang 5 du §0 bis) : devis → motif. Sa table `relances_exclusions` (migration 0185) n'est
++   * pas posée : aucun client ne peut en porter la marque, le défaut ne lit donc rien et n'invente rien. L13 y branchera le lecteur de 0185 ;
++   * une lecture en erreur LÈVE (aucun lot n'est préparé, aucune relance de lot ne part). Essais : une doublure.
++   */
++  exclusionsRelance?: (artisanId: string, devisIds: readonly string[]) => Promise<ReadonlyMap<string, string>>
+   maintenant?: () => Date
+   /** L'appel des routes de l'interface (essais : une doublure qui enregistre la route atteinte, sans réseau). */
+   appeler?: (g: Gestionnaire, chemin: string, o: { methode?: string; corps?: unknown; params?: Record<string, string> }) => Promise<ReponseRoute>
+@@ -120,7 +126,8 @@ type Obj = Record<string, unknown>
+  * `horsAuto` (02/11, audit 032-001 D1) : la préparation refuse le mode « fait tout seul » pour SON objet et dit pourquoi (un devis
+  * dont un prix n'est pas sourcé) ; l'action reste alors une carte, comme un geste de OUTILS_JAMAIS_AUTO.
+  */
+-type Preparation = { ok: true; entrees: Obj; apercu: Apercu; objet?: { type: TypeObjet; id: string } | null; horsAuto?: string } | { ok: false; erreur: string }
++/** `cible` : la pièce d'une relance SEULE (numéro, client) — la preuve « un seul objet désigné » du « fait tout seul » (audit 032-028, D1). */
++type Preparation = { ok: true; entrees: Obj; apercu: Apercu; objet?: { type: TypeObjet; id: string } | null; horsAuto?: string; cible?: { numero: string; client: string | null } } | { ok: false; erreur: string }
+ 
+ const num = (v: unknown): number => { const n = Number(v); return Number.isFinite(n) ? n : 0 }
+ const txt = (v: unknown): string | null => (typeof v === 'string' && v.trim() ? v.trim() : null)
+@@ -371,7 +378,224 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
+     const r = await (dep.envoyerMail ?? sendEmail)({ to, subject: objet, text: texte, fromName: p.nom, replyTo: p.email ?? undefined, transactionnel: true })
+     return r.ok ? null : ko('L’e-mail n’a pas pu partir pour le moment. Rien n’a été envoyé : réessayez dans un instant.')
+   }
++  // ── 02/11 (L16, chantier 4) — les relances GROUPÉES : une seule carte de lot, jamais d'office ─────────────────────────────────
++  // « Relance les devis envoyés il y a plus de 5 jours » (P3:160) vise plusieurs clients : une carte qui nomme les retenus (avec le texte
++  // exact de chaque relance) et les exclus avec leur motif ; rien ne part avant le clic (§0 bis, rang 4, question 1). Une relance écartée
++  // par l'artisan depuis moins de REFUS_RETENUS_JOURS jours n'est pas reproposée d'elle-même (rang 8) : l'outil le dit au modèle, au tour.
++  /** Le message de CE tour (lib/assistant : la route met le message de l'artisan en tête de textesArtisan). Absent : vide. */
++  const messageArtisan = ctx.textesArtisan?.[0] ?? ''
++  const MOTIF_PAUSE = 'compte en pause (demandes en pause, Ma plateforme) : rien ne part tant qu’elle dure'
++  const exclusionsRelance = dep.exclusionsRelance ?? (async () => new Map<string, string>())
++  const estLot = (e: Obj): boolean => Array.isArray(e.lot) || (Array.isArray(e.numeros) && e.numeros.length > 0) || (typeof e.envoye_depuis_jours === 'number')
++  /** Les devis dont une carte de relance (seule ou de lot) a été écartée depuis REFUS_RETENUS_JOURS jours : id → date. Une erreur lève. */
++  async function devisEcartes(): Promise<Map<string, string>> {
++    const depuis = new Date(maintenant().getTime() - REFUS_RETENUS_JOURS * 86_400_000)
++    const { data, error } = await session.from('assistant_actions').select('outil, statut, objet_id, entrees, maj_le').eq('artisan_id', ctx.uid).eq('outil', 'relancer_devis').eq('statut', 'refusee').gte('maj_le', depuis.toISOString()).order('maj_le', { ascending: false }).limit(200)
++    if (error) throw new Error('cartes écartées illisibles')
++    return refusRecents((data ?? []) as unknown as Parameters<typeof refusRecents>[0], 'relancer_devis', depuis)
++  }
++  /** La pause de l'artisan (artisans.leads_pause, 0031), comme le pilote (lib/pilote/file.ts) : rien ne part tant qu'elle dure. Une erreur lève. */
++  async function compteEnPause(): Promise<boolean> {
++    const { data, error } = await session.from('artisans').select('leads_pause').eq('id', ctx.uid).maybeSingle()
++    if (error) throw new Error('réglages du compte illisibles')
++    return (data as { leads_pause?: unknown } | null)?.leads_pause === true
++  }
++  // ── 02/11 (audit 032-028, D2) — deux cartes sur les mêmes devis ne relancent jamais deux fois ──────────────────────────────────────
++  /** Une carte relancer_devis ouverte qui retient un devis : en attente du clic, ou en cours d'exécution (une réservation de lot comprise). */
++  type CarteOuverte = { statut: 'en_attente' | 'en_cours'; lot: boolean }
++  /**
++   * Les devis déjà retenus par une carte relancer_devis OUVERTE de ce compte : une carte seule (objet_id), une carte de lot (entrees.lot[].id),
++   * une relance de lot en train de partir (réservation, mode direct). Une carte en attente déjà expirée ne compte plus. Une erreur lève.
++   */
++  async function cartesRelanceOuvertes(): Promise<Map<string, CarteOuverte>> {
++    const { data, error } = await session.from('assistant_actions').select('id, mode, statut, objet_id, entrees, expire_le, maj_le').eq('artisan_id', ctx.uid).eq('outil', 'relancer_devis').in('statut', ['en_attente', 'en_cours']).limit(200)
++    if (error) throw new Error('cartes ouvertes illisibles')
++    const out = new Map<string, CarteOuverte>()
++    const garder = (idDevis: unknown, c: CarteOuverte) => { if (typeof idDevis !== 'string' || !idDevis) return; const avant = out.get(idDevis); if (!avant || (avant.statut === 'en_attente' && c.statut === 'en_cours') || (avant.lot && !c.lot && avant.statut === c.statut)) out.set(idDevis, c) }
++    const borne = maintenant().getTime() - RELANCE_DELAI_JOURS * 86_400_000
++    for (const f of (data ?? []) as { mode?: string; statut?: string; objet_id?: string | null; entrees?: unknown; expire_le?: string | null; maj_le?: string | null }[]) {
++      const statut = f.statut === 'en_cours' ? 'en_cours' : 'en_attente'
++      if (statut === 'en_attente' && f.expire_le && Date.parse(f.expire_le) <= maintenant().getTime()) continue
++      // Une réservation restée en_cours (envoi interrompu) bloque RELANCE_DELAI_JOURS jours, comme une relance partie — pas à vie.
++      if (statut === 'en_cours' && f.mode === 'direct' && f.maj_le && Date.parse(f.maj_le) < borne) continue
++      const lot = (f.entrees as { lot?: unknown } | null)?.lot
++      if (Array.isArray(lot)) { for (const m of lot) garder((m as { id?: unknown } | null)?.id, { statut, lot: true }) }
++      else garder(f.objet_id, { statut, lot: f.mode === 'direct' })
++    }
++    return out
++  }
++  /**
++   * Au clic, APRÈS avoir posé sa propre réservation (la trace `en_cours` du devis, `monId`) et AVANT l'envoi : une autre relance de ce devis
++   * est-elle en cours (réservation d'un autre lot, carte seule en train d'être exécutée) ou partie depuis moins de RELANCE_DELAI_JOURS jours ?
++   * Écrire puis relire : de deux clics simultanés, au moins un voit l'autre et s'abstient — s'ils se voient tous deux, aucun n'envoie (côté
++   * sûr : rien en double, la carte dit « non relancé »). Une réservation restée `en_cours` (envoi interrompu) compte comme partie. Erreur : lève.
++   */
++  async function relanceConcurrente(devisId: string, monId: string): Promise<string | null> {
++    const depuis = new Date(maintenant().getTime() - RELANCE_DELAI_JOURS * 86_400_000).toISOString()
++    const { data, error } = await session.from('assistant_actions').select('id, statut, maj_le').eq('artisan_id', ctx.uid).eq('outil', 'relancer_devis').eq('objet_id', devisId).in('statut', ['en_cours', 'executee']).gte('maj_le', depuis).limit(20)
++    if (error) throw new Error('journal des relances illisible')
++    const autres = ((data ?? []) as { id?: string; statut?: string; maj_le?: string }[]).filter((f) => f.id !== monId)
++    const partie = autres.find((f) => f.statut === 'executee')
++    if (partie) return `déjà relancé le ${fmtDate(jourParis(new Date(String(partie.maj_le))))} : pas avant ${RELANCE_DELAI_JOURS} jours`
++    return autres.length ? 'une autre relance de ce devis part au même moment (une autre carte) : pas de doublon' : null
++  }
++  /** Une relance de LOT de ce devis est-elle en train de partir (réservation `en_cours`, mode direct) ? Pour la relance seule. Erreur : lève. */
++  async function lotEnCoursSur(devisId: string): Promise<boolean> {
++    const depuis = new Date(maintenant().getTime() - RELANCE_DELAI_JOURS * 86_400_000).toISOString()
++    const { data, error } = await session.from('assistant_actions').select('id').eq('artisan_id', ctx.uid).eq('outil', 'relancer_devis').eq('objet_id', devisId).eq('statut', 'en_cours').eq('mode', 'direct').gte('maj_le', depuis).limit(1)
++    if (error) throw new Error('journal des relances illisible')
++    return (data ?? []).length > 0
++  }
++  /** Les noms des clients du compte (devis et factures) : la preuve « un seul client » (cartes.ts motifPasUnSeul) les compare. Erreur : lève. */
++  async function clientsDuCompte(): Promise<string[]> {
++    const [d, f] = await Promise.all([
++      session.from('devis').select('client_nom').eq('artisan_id', ctx.uid).limit(500),
++      session.from('factures').select('client_nom').eq('artisan_id', ctx.uid).limit(500),
++    ])
++    if (d.error || f.error) throw new Error('clients du compte illisibles')
++    return [...new Set([...(d.data ?? []), ...(f.data ?? [])].map((x) => txt((x as { client_nom?: unknown }).client_nom)).filter((x): x is string => !!x))]
++  }
++  const MOTIF_DESIGNATION_ILLISIBLE = 'Les clients du compte n’ont pas pu être relus : la relance attend le clic de l’artisan.'
++  const MOTIF_JOURNAL_ILLISIBLE = 'journal des relances illisible : exclu (rien ne part sans savoir s’il a déjà été relancé)'
++  const STATUT_LOT: Record<string, string> = { brouillon: 'brouillon', accepte: 'signé', refuse: 'refusé', expire: 'expiré' }
++  /**
++   * Pourquoi CE devis ne part pas dans un lot (ou null) : les contrôles d'une relance seule (statut, e-mail, journal des actions, registre
++   * commun des quatre chemins), plus « ne plus relancer », la relance écartée récemment (sauf devis nommé par l'artisan dans CE message) et
++   * le sujet d'escalade du fil, relu comme le pilote au départ — une lecture en erreur exclut (côté sûr). À la réalisation, `ecartes` est vide :
++   * le clic de l'artisan sur la carte du lot vaut sa demande.
++   */
++  async function motifExclusion(d: DevisRow, x: { ecartes: ReadonlyMap<string, string>; neplus: ReadonlyMap<string, string>; ouvertes?: ReadonlyMap<string, CarteOuverte> }): Promise<string | null> {
++    if (d.statut !== 'envoye') return `pas en attente de réponse (statut : ${STATUT_LOT[String(d.statut)] ?? d.statut})`
++    const to = txt(d.client_email)
++    if (!to || !EMAIL.test(to)) return 'pas d’e-mail client'
++    const neplus = x.neplus.get(d.id)
++    if (neplus) return neplus
++    const ecartee = x.ecartes.get(d.id)
++    if (ecartee && !nommeDans(messageArtisan, String(d.numero))) return phraseEcartee(ecartee)
++    // 02/11 (audit 032-028, D2) : à la préparation, un devis qu'une autre carte est en train de relancer n'entre pas dans ce lot. Un devis
++    // qu'une autre carte (seule ou de lot) ATTEND de relancer reste retenu, avec une alerte sur la carte : l'artisan peut vouloir ce lot-ci
++    // (essai A7k du banc 032-028), et la réservation au clic (realiserLotDevis, relanceConcurrente) ne le relance qu'une fois.
++    if (x.ouvertes?.get(d.id)?.statut === 'en_cours') return 'une relance de ce devis est en train de partir (une autre carte)'
++    // 02/11 (audit 032-028, D8) : un journal illisible n'est plus lu « jamais relancé » (côté ouvert) : le devis est exclu.
++    const dernier = await ctx.magasin.dernierEnvoi(ctx.uid, 'relancer_devis', d.id).then((v) => v, () => MOTIF_JOURNAL_ILLISIBLE)
++    if (dernier === MOTIF_JOURNAL_ILLISIBLE) return MOTIF_JOURNAL_ILLISIBLE
++    if (dernier && maintenant().getTime() - Date.parse(dernier) < RELANCE_DELAI_JOURS * 86_400_000) return `déjà relancé le ${fmtDate(jourParis(new Date(dernier)))} : pas avant ${RELANCE_DELAI_JOURS} jours`
++    const reg = await registre({ type: 'devis', id: d.id })
++    if (reg) return reg
++    return await escaladeDeLaCarte({ type: 'devis', id: d.id }, {}).then((m) => m, () => MOTIF_ESCALADE_ILLISIBLE)
++  }
++  const texteDuDevis = (d: DevisRow, artisan: string, ton: 'cordial' | 'ferme') => texteRelanceDevis({ client: d.client_nom, numero: String(d.numero), objet: d.objet, totalTtc: d.total_ttc === null ? null : num(d.total_ttc), envoyeLe: d.envoye_le, validiteJours: d.validite_jours, artisan, ton })
++  /** La carte de lot : les devis visés (numéros donnés, ou envoyés depuis plus de N jours), triés en retenus et exclus. Jamais d'office. */
++  async function preparerLotDevis(e: Obj): Promise<Preparation> {
++    const ton = (e.ton as 'cordial' | 'ferme') ?? 'cordial'
++    const numeros = Array.isArray(e.numeros) ? (e.numeros as string[]) : []
++    const jours = typeof e.envoye_depuis_jours === 'number' ? e.envoye_depuis_jours : null
++    const exclus: ExcluLot[] = []
++    let candidats: DevisRow[] = []
++    let enPlus = false
++    if (numeros.length) {
++      if (numeros.length > LOT_RELANCES_MAX) return ko(`Un lot nomme ${LOT_RELANCES_MAX} devis au plus.`)
++      for (const n of numeros) { const d = await devisDe(n); if (d) candidats.push(d); else exclus.push({ numero: n, client: null, motif: 'introuvable sur ce compte' }) }
++    } else if (jours !== null) {
++      const seuil = new Date(maintenant().getTime() - jours * 86_400_000).toISOString()
++      const { data, error } = await session.from('devis').select(COL_DEVIS).eq('artisan_id', ctx.uid).eq('statut', 'envoye').lt('envoye_le', seuil).order('envoye_le', { ascending: true }).limit(LOT_RELANCES_MAX + 1)
++      if (error) throw new Error('devis illisibles')
++      candidats = (data ?? []) as unknown as DevisRow[]
++      enPlus = candidats.length > LOT_RELANCES_MAX
++      candidats = candidats.slice(0, LOT_RELANCES_MAX)
++    } else return ko('Un lot de relances : numeros ou envoye_depuis_jours.')
++    const pause = await compteEnPause()
++    const ecartes = await devisEcartes()
++    const neplus = await exclusionsRelance(ctx.uid, candidats.map((d) => d.id))
++    const ouvertes = await cartesRelanceOuvertes()
++    const p = await profil()
++    const retenus: (RetenuLot & { id: string })[] = []
++    const aussiAilleurs: string[] = []
++    for (const d of candidats) {
++      const motif = pause ? MOTIF_PAUSE : await motifExclusion(d, { ecartes, neplus, ouvertes })
++      if (motif) { exclus.push({ numero: String(d.numero), client: d.client_nom, motif }); continue }
++      if (ouvertes.get(d.id)?.statut === 'en_attente') aussiAilleurs.push(String(d.numero))
++      const t = texteDuDevis(d, p.nom, ton)
++      retenus.push({ id: d.id, numero: String(d.numero), client: d.client_nom, montant_ttc: d.total_ttc === null ? null : num(d.total_ttc), envoye_le: d.envoye_le, message: { a: String(txt(d.client_email)), objet: t.objet, texte: t.texte } })
++    }
++    const critere = numeros.length ? `relancer ${numeros.join(', ')}` : `relancer les devis envoyés il y a plus de ${jours} jour${(jours ?? 0) > 1 ? 's' : ''}`
++    if (!retenus.length) {
++      return ko(`Aucun devis à relancer (${critere}) : ${exclus.length ? exclus.map((x) => `${x.numero}${x.client ? ` (${x.client})` : ''} — ${x.motif}`).join(' ; ') : 'aucun devis envoyé ne correspond'}. Rien n'a été préparé ni envoyé : dis-le à l'artisan, avec ces motifs.`)
++    }
++    const ap = apercuLotRelances({ lot: { retenus: retenus.map(({ id: _id, ...r }) => r), exclus }, ton, critere,
++      alertes: [
++        ...(enPlus ? [`D'autres devis correspondent au-delà des ${LOT_RELANCES_MAX} plus anciens : ils feront un second lot, une fois celui-ci traité.`] : []),
++        ...(aussiAilleurs.length ? [`${aussiAilleurs.join(', ')} : aussi dans une autre carte de relance qui attend votre clic. Chaque client n’est relancé qu’une fois, au premier clic ; l’autre carte le dira.`] : []),
++      ] })
++    return {
++      ok: true, objet: null, apercu: ap,
++      entrees: { lot: retenus.map((r) => ({ id: r.id, numero: r.numero })), ton, conversation_origine: ctx.conversationId, ...(numeros.length ? { numeros } : { envoye_depuis_jours: jours }) },
++      horsAuto: 'Un lot de relances (plusieurs devis, plusieurs clients) ne part jamais d’office : l’artisan relit les retenus et les exclus, puis valide d’un clic.',
++    }
++  }
++  /**
++   * La réalisation du lot, atteinte SEULEMENT par confirmerAction (le clic de l'artisan sur la carte) : chaque devis est relu et recontrôlé
++   * juste avant son envoi (statut, e-mail, registre, escalade, « ne plus relancer », pause), puis sa relance part et s'inscrit, objet par
++   * objet, au journal des actions — c'est là que le registre commun et l'anti-doublon la verront (lib/relancesRegistre.ts). Une inscription
++   * impossible arrête le lot (aucune relance suivante ne part sans trace). La carte réclamée une seule fois (confirmation.ts) : pas de doublon.
++   */
++  async function realiserLotDevis(e: Obj): Promise<Realisation> {
++    const lot = (Array.isArray(e.lot) ? e.lot : []).filter((m): m is { id: string; numero: string } => !!m && typeof (m as Obj).id === 'string' && typeof (m as Obj).numero === 'string')
++    if (!lot.length || lot.length > LOT_RELANCES_MAX) return ko('Ce lot de relances est vide ou trop grand : rien n’est parti.')
++    if (await compteEnPause()) return ko(`Aucune relance n’est partie : ${MOTIF_PAUSE}.`)
++    const ton = e.ton === 'ferme' ? 'ferme' as const : 'cordial' as const
++    const neplus = await exclusionsRelance(ctx.uid, lot.map((m) => m.id))
++    const p = await profil()
++    const conv = typeof e.conversation_origine === 'string' && UUID.test(e.conversation_origine) ? e.conversation_origine : ctx.conversationId
++    const partis: string[] = [], nonPartis: string[] = []
++    for (const [i, m] of lot.entries()) {
++      const d = await devisDe(m.numero)
++      if (!d || d.id !== m.id) { nonPartis.push(`${m.numero} : introuvable`); continue }
++      const motif = await motifExclusion(d, { ecartes: new Map(), neplus })
++      if (motif) { nonPartis.push(`${d.numero} : ${motif}`); continue }
++      const t = texteDuDevis(d, p.nom, ton)
++      // 02/11 (audit 032-028, D2) — la RÉSERVATION avant l'envoi : la trace du devis est posée `en_cours` (elle était écrite après), puis
++      // relue avec les autres traces de ce devis. Deux cartes cliquées en même temps ne relancent donc jamais deux fois le même client.
++      // Réservation impossible : le lot s'arrête (aucune relance ne part sans trace).
++      const resa = await ctx.magasin.creer({
++        artisan_id: ctx.uid, conversation_id: conv, tour: Math.max(1, ctx.tour()), outil: 'relancer_devis', mode: 'direct', statut: 'en_cours',
++        titre: `Relance du devis ${d.numero} (lot)`.slice(0, 200), entrees: { numero: d.numero, ton, du_lot: true },
++        apercu: apercu(`Relance du devis ${d.numero} (lot)`, { message: { a: String(txt(d.client_email)), objet: t.objet, texte: t.texte }, irreversible: true }),
++        annulation: null, resultat_resume: null, objet_type: 'devis', objet_id: d.id, expire_le: null,
++      }).then((f) => f, () => null)
++      if (!resa) {
++        const reste = lot.slice(i).map((x) => x.numero)
++        nonPartis.push(`${reste.join(', ')} : non tentés — le journal des actions est indisponible (rien n’est parti sans trace)`)
++        break
++      }
++      const lever = (pourquoi: string) => ctx.magasin.transiter(ctx.uid, resa.id, ['en_cours'], 'echec', { resultat_resume: `non envoyée : ${pourquoi}`.slice(0, 300) }).catch(() => null)
++      const concurrente = await relanceConcurrente(d.id, resa.id).then((m) => m, () => MOTIF_JOURNAL_ILLISIBLE)
++      if (concurrente) { await lever(concurrente); nonPartis.push(`${d.numero} : ${concurrente}`); continue }
++      const echec = await envoyerRelance(String(txt(d.client_email)), t.objet, t.texte)
++      if (echec && !echec.ok) {
++        await lever(echec.erreur)
++        nonPartis.push(`${d.numero} : ${echec.erreur}`)
++        if (/Limite d'envois/.test(echec.erreur)) { const reste = lot.slice(i + 1).map((x) => x.numero); if (reste.length) nonPartis.push(`${reste.join(', ')} : non tentés (limite d’envois du jour)`); break }
++        continue
++      }
++      partis.push(String(d.numero))
++      const inscrite = await ctx.magasin.transiter(ctx.uid, resa.id, ['en_cours'], 'executee', { resultat_resume: `relance du devis ${d.numero} envoyée au client (lot)` }).then((f) => !!f, () => false)
++      if (!inscrite) {
++        // La réservation reste `en_cours` : elle compte toujours comme partie (relanceConcurrente, lotEnCoursSur). Le lot s'arrête.
++        const reste = lot.slice(i + 1).map((x) => x.numero)
++        nonPartis.push(`${reste.length ? `${reste.join(', ')} : non tentés — ` : ''}la relance de ${d.numero} est partie mais n’a pas pu être inscrite au journal`)
++        break
++      }
++    }
++    if (!partis.length) return ko(`Aucune relance n’est partie : ${nonPartis.join(' ; ')}`.slice(0, 280))
++    return {
++      ok: true, objet: null, donnees: { relances_parties: partis, non_parties: nonPartis },
++      resume: `${partis.length} relance${partis.length > 1 ? 's' : ''} de devis envoyée${partis.length > 1 ? 's' : ''} (${partis.join(', ')})${nonPartis.length ? ` ; non relancé : ${nonPartis.join(' ; ')}` : ''}`.slice(0, 300),
++    }
++  }
++
+   R.relancer_devis = async (e) => {
++    if (estLot(e)) return realiserLotDevis(e)
+     const d = await devisDe(String(e.numero))
+     if (!d) return ko(`Devis ${e.numero} introuvable.`)
+     if (d.statut !== 'envoye') return ko(`Le devis ${d.numero} n'est pas « envoyé » (statut : ${d.statut}) : pas de relance.`)
+@@ -381,6 +605,12 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
+     const t = texteRelanceDevis({ client: d.client_nom, numero: String(d.numero), objet: d.objet, totalTtc: d.total_ttc === null ? null : num(d.total_ttc), envoyeLe: d.envoye_le, validiteJours: d.validite_jours, artisan: p.nom, ton: (e.ton as 'cordial' | 'ferme') ?? 'cordial' })
+     const reg = await registre({ type: 'devis', id: d.id })
+     if (reg) return ko(reg)
++    // 02/11 (audit 032-028, D3) : « ne plus relancer » vaut aussi pour la relance seule, au clic comme d'office. Lecture en erreur : refus.
++    const neplus = await exclusionsRelance(ctx.uid, [d.id]).then((m) => m.get(d.id) ?? null, () => 'la liste « ne plus relancer » n’a pas pu être relue')
++    if (neplus) return ko(`Pas de relance du devis ${d.numero} : ${neplus}.`)
++    // 02/11 (audit 032-028, D2) : une relance de LOT de ce devis est en train de partir (sa réservation est posée) : pas de doublon.
++    const lotEnCours = await lotEnCoursSur(d.id).then((v) => v, () => true)
++    if (lotEnCours) return ko(`Pas de relance du devis ${d.numero} : une autre relance de ce devis part au même moment (ou le journal est illisible). Rien n’est parti.`)
+     const echec = await envoyerRelance(to, t.objet, t.texte)
+     return echec ?? { ok: true, resume: `relance du devis ${d.numero} envoyée au client`, objet: { type: 'devis', id: d.id } }
+   }
+@@ -909,18 +1139,38 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
+   }
+ 
+   P.relancer_devis = async (e) => {
++    if (estLot(e)) return preparerLotDevis(e)
++    // 02/11 (L16) : un ordre groupé (plusieurs devis ou clients) ne se relance pas devis par devis — une seule carte de lot.
++    if (ordreGroupe(messageArtisan)) return ko("Ordre groupé (plusieurs devis ou plusieurs clients) : n'appelle pas relancer_devis une fois par devis. Appelle-le UNE seule fois, avec numeros (les numéros rendus par lire_devis) ou envoye_depuis_jours (le nombre de jours que l'artisan a écrit) : une seule carte de lot, que l'artisan valide d'un clic. Rien n'a été préparé.")
+     const d = await devisDe(String(e.numero))
+     if (!d) return ko(`Devis ${e.numero} introuvable.`)
+     if (d.statut !== 'envoye') return ko(`Le devis ${d.numero} n'a pas été envoyé ou n'attend plus de réponse (statut : ${d.statut}) : pas de relance.`)
+     const to = txt(d.client_email)
+     if (!to || !EMAIL.test(to)) return ko('Le devis n’a pas d’e-mail client : pas de relance par e-mail possible.')
+-    const dernier = await ctx.magasin.dernierEnvoi(ctx.uid, 'relancer_devis', d.id).catch(() => null)
++    // 02/11 (audit 032-028, D8) : un journal illisible n'est plus lu « jamais relancé » : rien n'est préparé.
++    const dernier = await ctx.magasin.dernierEnvoi(ctx.uid, 'relancer_devis', d.id).then((v) => v, () => MOTIF_JOURNAL_ILLISIBLE)
++    if (dernier === MOTIF_JOURNAL_ILLISIBLE) return ko(`Le journal des relances n'a pas pu être relu (devis ${d.numero}) : rien n'a été préparé. Réessaie dans un instant.`)
+     if (dernier && Date.now() - Date.parse(dernier) < RELANCE_DELAI_JOURS * 86_400_000) return ko(`Ce devis a déjà été relancé le ${fmtDate(jourParis(new Date(dernier)))} : on ne renvoie pas de message avant ${RELANCE_DELAI_JOURS} jours.`)
+     const regP = await registre({ type: 'devis', id: d.id })
+     if (regP) return ko(regP)
++    // 02/11 (audit 032-028, D3) : « ne plus relancer » (le point d'entrée de 0185) vaut pour la relance seule comme pour le lot.
++    const neplusP = await exclusionsRelance(ctx.uid, [d.id]).then((m) => m.get(d.id) ?? null, () => 'la liste « ne plus relancer » n’a pas pu être relue')
++    if (neplusP) return ko(`Pas de relance du devis ${d.numero} : ${neplusP}. Rien n'a été préparé : dis-le à l'artisan.`)
++    // 02/11 (audit 032-028, D2) : un devis déjà retenu par une carte de relance ouverte (seule ou de lot) ne fait pas une seconde carte.
++    const ouverteP = await cartesRelanceOuvertes().then((m) => m.get(d.id) ?? null, () => ({ statut: 'en_cours' as const, lot: false }))
++    if (ouverteP) return ko(`Une carte de relance du devis ${d.numero} ${ouverteP.statut === 'en_cours' ? 'est en train de partir (ou le journal est illisible)' : 'attend déjà le clic de l’artisan'} : ne la repropose pas. Rien n'a été préparé.`)
++    // 02/11 (L16, rang 8) : une relance que l'artisan a écartée depuis moins de REFUS_RETENUS_JOURS jours n'est pas reproposée d'elle-même ;
++    // redemandée par lui (son ordre, ou le numéro écrit dans son message), elle redevient une carte — jamais faite d'office. Journal illisible : carte.
++    const ecartee = await devisEcartes().then((m) => m.get(d.id) ?? null, () => 'illisible')
++    const redemandee = ctx.autonome?.() === true || nommeDans(messageArtisan, String(d.numero))
++    if (ecartee && ecartee !== 'illisible' && !redemandee) return ko(`L'artisan a écarté cette relance (devis ${d.numero}) le ${fmtDate(ecartee)} : ne la repropose pas. S'il la veut quand même, il te la redemande. Rien n'a été préparé.`)
++    const horsAutoEcartee = ecartee === 'illisible' ? 'Les cartes écartées n’ont pas pu être relues : à valider à la main.' : ecartee ? `Vous aviez écarté cette relance le ${fmtDate(ecartee)} : elle attend votre clic.` : undefined
++    // 02/11 (audit 032-028, D4) : compte en pause (le lot et le pilote s'arrêtent) : la relance seule ne part pas d'office non plus — une carte.
++    const pauseP = ctx.autonome?.() === true ? await compteEnPause().then((v) => v, () => true) : false
++    const horsAutoP = horsAutoEcartee ?? (pauseP ? `Le ${MOTIF_PAUSE} ; la relance attend votre clic (ou les réglages n’ont pas pu être relus).` : undefined)
+     const p = await profil()
+     const t = texteRelanceDevis({ client: d.client_nom, numero: String(d.numero), objet: d.objet, totalTtc: d.total_ttc === null ? null : num(d.total_ttc), envoyeLe: d.envoye_le, validiteJours: d.validite_jours, artisan: p.nom, ton: (e.ton as 'cordial' | 'ferme') ?? 'cordial' })
+-    return { ok: true, entrees: { ...e }, objet: { type: 'devis', id: d.id }, apercu: apercu(`Relancer ${d.client_nom ?? 'le client'} pour le devis ${d.numero}`, { lignes: [{ label: 'À', valeur: to }, { label: 'Devis', valeur: `${d.numero} — ${fmtEuros(d.total_ttc)} TTC` }, { label: 'Ton', valeur: String(e.ton ?? 'cordial') }], message: { a: to, objet: t.objet, texte: t.texte }, irreversible: true }) }
++    return { ok: true, ...(horsAutoP ? { horsAuto: horsAutoP } : {}), cible: { numero: String(d.numero), client: d.client_nom }, entrees: { ...e }, objet: { type: 'devis', id: d.id }, apercu: apercu(`Relancer ${d.client_nom ?? 'le client'} pour le devis ${d.numero}`, { lignes: [{ label: 'À', valeur: to }, { label: 'Devis', valeur: `${d.numero} — ${fmtEuros(d.total_ttc)} TTC` }, { label: 'Ton', valeur: String(e.ton ?? 'cordial') }], message: { a: to, objet: t.objet, texte: t.texte }, irreversible: true }) }
+   }
+ 
+   P.creer_facture = async (e) => {
+@@ -1002,7 +1252,7 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
+     if (regP) return ko(regP)
+     const p = await profil()
+     const t = texteRelanceFacture({ client: f.client_nom, numero: String(f.numero), totalTtc: f.total_ttc === null ? null : num(f.total_ttc), echeance: f.date_echeance, joursRetard: retard, artisan: p.nom, ton: (e.ton as 'cordial' | 'ferme') ?? 'cordial' })
+-    return { ok: true, entrees: { ...e }, objet: { type: 'facture', id: f.id }, apercu: apercu(`Relancer ${f.client_nom ?? 'le client'} — facture ${f.numero}`, { lignes: [{ label: 'À', valeur: to }, { label: 'Facture', valeur: `${f.numero} — ${fmtEuros(f.total_ttc)} TTC` }, { label: 'Retard', valeur: `${retard} jour${retard > 1 ? 's' : ''}` }, { label: 'Ton', valeur: String(e.ton ?? 'cordial') }], message: { a: to, objet: t.objet, texte: t.texte }, irreversible: true, lien: lienDe('facture', f.id) }) }
++    return { ok: true, cible: { numero: String(f.numero), client: f.client_nom }, entrees: { ...e }, objet: { type: 'facture', id: f.id }, apercu: apercu(`Relancer ${f.client_nom ?? 'le client'} — facture ${f.numero}`, { lignes: [{ label: 'À', valeur: to }, { label: 'Facture', valeur: `${f.numero} — ${fmtEuros(f.total_ttc)} TTC` }, { label: 'Retard', valeur: `${retard} jour${retard > 1 ? 's' : ''}` }, { label: 'Ton', valeur: String(e.ton ?? 'cordial') }], message: { a: to, objet: t.objet, texte: t.texte }, irreversible: true, lien: lienDe('facture', f.id) }) }
+   }
+ 
+   P.augmenter_tarifs = async (e) => {
+@@ -1431,15 +1681,26 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
+     if (objet?.type === 'conversation') ajout(objet.id)
+     ajout(entrees.conversation_id)
+     let devisId = objet?.type === 'devis' ? txt(objet.id) : null
++    // 02/11 (audit 032-028, D5) : les e-mails du client de la pièce — ses AUTRES conversations comptent aussi (un litige écrit ailleurs
++    // qu'au fil du devis, ou un devis créé à la main sans conversation), comme relancesImpayesMagasin. Lecture en erreur : lève (carte).
++    const emails = new Set<string>()
++    const email = (v: unknown) => { const t = txt(v); if (t) { emails.add(t); emails.add(t.toLowerCase()) } }
+     if (objet?.type === 'facture') {
+-      const { data, error } = await session.from('factures').select('devis_id').eq('artisan_id', ctx.uid).eq('id', objet.id).maybeSingle()
++      const { data, error } = await session.from('factures').select('devis_id, client_email').eq('artisan_id', ctx.uid).eq('id', objet.id).maybeSingle()
+       if (error) throw new Error('facture illisible')
+       devisId = txt((data as { devis_id?: unknown } | null)?.devis_id)
++      email((data as { client_email?: unknown } | null)?.client_email)
+     }
+     if (devisId) {
+-      const { data, error } = await session.from('devis').select('lead_id').eq('artisan_id', ctx.uid).eq('id', devisId).maybeSingle()
++      const { data, error } = await session.from('devis').select('lead_id, client_email').eq('artisan_id', ctx.uid).eq('id', devisId).maybeSingle()
+       if (error) throw new Error('devis illisible')
+       ajout((data as { lead_id?: unknown } | null)?.lead_id)
++      email((data as { client_email?: unknown } | null)?.client_email)
++    }
++    if (emails.size) {
++      const { data, error } = await session.from('leads').select('id').eq('artisan_id', ctx.uid).in('contact', [...emails]).limit(20)
++      if (error) throw new Error('conversations du client illisibles')
++      for (const l of data ?? []) ajout((l as { id?: unknown }).id)
+     }
+     if (!leads.size) return null
+     // Les mots de l'artisan (Ma plateforme), lus avec leur erreur, comme getPlateformeConfigStrict ; sans ligne ou table absente : les défauts.
+@@ -1458,10 +1719,56 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
+     }
+     return null
+   }
++  // 02/11 (L16) — les relances d'UN tour (actionsDeSession vit le temps d'un tour) : la première d'un message peut partir d'office (« un
++  // objet seul garde le fait tout seul ») ; une seconde, sur un autre objet, attend le clic — un ordre groupé mal repéré ne part pas en rafale.
++  const relancesDuTour = new Set<string>()
++  const MOTIF_PLUSIEURS = 'Plusieurs relances dans le même message (un ordre groupé) : chacune attend le clic de l’artisan, aucune ne part d’office.'
++  function horsAutoDuTour(nom: NomAction, objet: { type: TypeObjet; id: string } | null): string | null {
++    if ((nom !== 'relancer_devis' && nom !== 'relancer_facture') || !objet) return null
++    const autre = [...relancesDuTour].some((x) => x !== `${objet.type}:${objet.id}`)
++    relancesDuTour.add(`${objet.type}:${objet.id}`)
++    return autre || (nom === 'relancer_facture' && ordreGroupe(messageArtisan)) ? MOTIF_PLUSIEURS : null
++  }
++  /**
++   * 02/11 (L16) — ce que le modèle reçoit d'une carte de LOT : rien n'est parti, les retenus et les exclus avec leur motif (à redire à
++   * l'artisan), et pourquoi c'est une carte même demandée. Jamais le pilote : un lot ne part qu'au clic.
++   */
++  async function carteDeLot(p: Extract<Preparation, { ok: true }>): Promise<ResultatExecution> {
++    const lot = p.apercu.lot ?? { retenus: [], exclus: [] }
++    const fiche = await ctx.magasin.creer({
++      artisan_id: ctx.uid, conversation_id: ctx.conversationId, tour: Math.max(1, ctx.tour()), outil: 'relancer_devis', mode: 'confirmation', statut: 'en_attente',
++      titre: p.apercu.titre.slice(0, 200), entrees: p.entrees, apercu: p.apercu, annulation: null, resultat_resume: null,
++      objet_type: null, objet_id: null, expire_le: new Date(maintenant().getTime() + VALIDITE_CARTE_MS).toISOString(),
++    })
++    return {
++      donnees: {
++        ok: true, en_attente_de_confirmation: true, carte_de_lot: true, carte: p.apercu.titre,
++        retenus: lot.retenus.map((r) => `${r.numero}${r.client ? ` (${r.client})` : ''}`), exclus: lot.exclus.map((x) => `${x.numero}${x.client ? ` (${x.client})` : ''} — ${x.motif}`),
++        a_savoir: `RIEN n'a été envoyé. UNE carte de lot attend le clic de l'artisan (« Confirmer ») sous ta réponse : ${lot.retenus.length} relance${lot.retenus.length > 1 ? 's' : ''} retenue${lot.retenus.length > 1 ? 's' : ''}${lot.exclus.length ? `, ${lot.exclus.length} exclu${lot.exclus.length > 1 ? 's' : ''} (dis lesquels et pourquoi, en une phrase chacun)` : ''}. Un lot ne part jamais d'office, même demandé : ${p.horsAuto ?? 'il se valide d’un clic.'} Ne prétends jamais que c'est envoyé.`,
++        pas_d_office: true, pourquoi_une_carte: p.horsAuto ?? 'carte de lot',
++      },
++      resume: `proposée, en attente de confirmation : ${p.apercu.titre}`.slice(0, 280), objet: null, carte: versCarte(fiche),
++    }
++  }
+   const proposee = (nom: NomAction) => async (entree: EntreeAction): Promise<ResultatExecution> => {
+     if (!(await plafondJour())) return refusJour
+     const p = await P[nom](entree)
+     if (!p.ok) return { donnees: { ok: false, erreur: p.erreur }, resume: p.erreur.slice(0, 280), resultat: 'refus' }
++    // 02/11 (audit 032-028, D1) : la PREMIÈRE relance du message (aucun autre objet relancé avant dans ce tour) — lu avant la règle du tour.
++    const premiereDuTour = !!p.objet && ![...relancesDuTour].some((x) => x !== `${p.objet?.type}:${p.objet?.id}`)
++    // 02/11 (L16) : une seconde relance d'un AUTRE objet dans le même tour, ou une relance d'impayé d'un ordre groupé, attend le clic.
++    const tour = horsAutoDuTour(nom, p.objet ?? null)
++    if (tour && !p.horsAuto) p.horsAuto = tour
++    // 02/11 (audit 032-028, D1) — la charge de la preuve INVERSÉE : en « fait tout seul », une relance seule ne part d'office que si le
++    // message de l'artisan désigne CETTE pièce et elle seule (cartes.ts motifPasUnSeul : un seul numéro complet, ou le nom de SON client,
++    // sans « et », virgule, « tout le monde », numéro abrégé ni autre client nommé). Sinon : une carte. Trois gardes, trois domaines :
++    // l'ordre que ordreGroupe reconnaît est refusé en amont (P.relancer_devis) ; toute relance APRÈS la première suit la règle du tour ;
++    // celle-ci tient la première d'un ordre que ni l'une ni l'autre ne voit. Message absent de la session (textesArtisan non fourni : la
++    // route le fournit toujours, app/api/assistant/route.ts:130-131) : rien à prouver ici. Lecture des clients en erreur : carte.
++    if (!p.horsAuto && p.cible && premiereDuTour && ctx.autonome?.() === true && ctx.textesArtisan !== undefined && !ordreGroupe(messageArtisan)) {
++      const cible = p.cible
++      p.horsAuto = (await clientsDuCompte().then((autres) => motifPasUnSeul(messageArtisan, cible, autres), () => MOTIF_DESIGNATION_ILLISIBLE)) ?? undefined
++    }
+     // 29/10 — MODE « FAIT TOUT SEUL » (choix de Benj) : l'artisan a demandé l'action dans SON message et aucun texte de tiers n'a été lu
+     // dans ce tour → la proposition (mêmes contrôles, même aperçu) est exécutée aussitôt, avec SES entrées (TTC annoncé…),
+     // et inscrite au journal comme une action faite. Les plafonds d'envois et d'actions sont ceux des réalisations et de plafondJour.
+@@ -1488,6 +1795,8 @@ export function actionsDeSession(ctx: ContexteActions): ActionsServeur {
+         resume: `faite à la demande de l’artisan : ${r.resume}`.slice(0, 280), objet, ...(carte ? { carte } : {}), ...(r.brouillon ? { brouillon: r.brouillon } : {}),
+       }
+     }
++    // 02/11 (L16) : une carte de LOT de relances n'entre jamais dans la file du pilote — elle ne part qu'au clic de l'artisan (rang 4, question 1).
++    if (nom === 'relancer_devis' && p.apercu.lot) return carteDeLot(p)
+     // Audit du 21/10 (M4, injection de prompt indirecte) : une carte pilotable née d'une conversation où l'assistant a LU du texte
+     // écrit par un tiers (messages de prospects, demandes, fournisseurs) est MARQUÉE ; le pilote automatique ne la fait jamais partir.
+     const lu = typePiloteDeOutil(nom) ? await contenuTiersLu() : false
+diff --git a/lib/assistant/cartes.ts b/lib/assistant/cartes.ts
+index 7e785604..1856194c 100644
+--- a/lib/assistant/cartes.ts
++++ b/lib/assistant/cartes.ts
+@@ -8,7 +8,7 @@
+ //    l'artisan a écrit ou d'une donnée lue — jamais du modèle seul ;
+ //  • les lignes d'un devis chiffrées avec les tarifs de l'artisan (le prix vient de SES tarifs, le modèle ne le fixe pas).
+ import { nombresDe, normaliser } from './cadrage'
+-import { nombresASourcer, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
++import { LOT_RELANCES_MAX, nombresASourcer, type EntreeAction, type LigneEntree, type NomAction } from './outils-actions'
+ 
+ // ── Le cycle de vie d'une action ────────────────────────────────────────────────────────────────────
+ 
+@@ -33,8 +33,16 @@ export type Apercu = {
+   /** Vrai : une fois confirmée, l'action ne se défait pas (e-mail parti, facture scellée, encaissement). */
+   irreversible: boolean
+   lien: { href: string; libelle: string } | null
++  /** 02/11 (L16) — une carte de LOT : chaque relance retenue avec son texte exact, chaque exclu avec son motif. Absent : carte d'un objet. */
++  lot?: LotApercu
+ }
+ 
++/** Une relance retenue dans un lot : le message EXACT qui partira chez ce client. */
++export type RetenuLot = { numero: string; client: string | null; montant_ttc: number | null; envoye_le: string | null; message: MessageCarte }
++/** Un devis visé par l'ordre, écarté du lot, et pourquoi (en clair, pour l'artisan). */
++export type ExcluLot = { numero: string; client: string | null; motif: string }
++export type LotApercu = { retenus: RetenuLot[]; exclus: ExcluLot[] }
++
+ /** La carte telle que l'écran la reçoit : l'aperçu + l'état de l'action. */
+ export type CarteAction = Apercu & {
+   id: string
+@@ -152,6 +160,153 @@ export function texteRelanceFacture(p: { client: string | null; numero: string;
+   return { objet: `Facture ${p.numero} — ${p.artisan}`, texte: `${salut(p.client)}\n\n${corps}\n\nBien cordialement,\n${p.artisan}` }
+ }
+ 
++// ── Les relances groupées : UNE carte de lot (02/11, lot L16 du chantier 4) ───────────────────────────
++//
++// plans/011-cadrage-01-11/chantier-4-assistant-plan.md §0 bis, rang 4 et question 1 : « une consigne sur plusieurs clients donne une seule
++// carte de lot » — retenus, exclus et leur motif, validée d'un geste ; un objet seul garde le « fait tout seul ». Rang 8 : « une proposition
++// écartée ne revient pas » — les refus des 7 derniers jours (outil, objet, date) entrent au contexte du tour. Le prompt de Benj : « Relance
++// les devis envoyés il y a plus de 5 jours » (p3-assistant.md:160). Ici, les règles PURES ; les lectures sont dans actions-serveur.ts.
++
++/** Une carte écartée par l'artisan ne se repropose pas d'elle-même pendant ce délai (rang 8 ; même délai que le détecteur n8n). */
++export const REFUS_RETENUS_JOURS = 7
++
++/**
++ * L'ordre de l'artisan vise-t-il PLUSIEURS objets ? Deux numéros de pièce ou plus, un pluriel de pièces ou de clients (« les devis »,
++ * « mes factures », « ces clients »), ou un quantifieur (« tous », « chaque », « ceux qui »). Sert à refuser qu'un ordre groupé se relance
++ * devis par devis : il va dans une carte de lot. Un faux positif ne coûte qu'un clic (côté sûr). Un faux négatif (« Relance Leroy et
++ * Garnier », « tout le monde », « 0101 et 0102 »…) n'est PAS rattrapé par la règle du tour pour la PREMIÈRE relance du message (audit
++ * 032-028, D1) : c'est motifPasUnSeul, plus bas, qui l'empêche de partir d'office — la charge de la preuve est inversée.
++ */
++export function ordreGroupe(texte: string | null | undefined): boolean {
++  const brut = String(texte ?? '')
++  if (new Set((brut.toUpperCase().match(/\b(?:DEV|FAC)-\d{4}-\d{1,6}\b/g) ?? [])).size >= 2) return true
++  const n = normaliser(brut)
++  return / (?:tous|toutes|chaque|ceux|celles|plusieurs) /.test(n)
++    || / (?:les|ces|mes|ses|nos|vos|leurs|des) (?:\S+ ){0,2}(?:devis|factures|clients|impayes|relances) /.test(n)
++}
++
++/** Un numéro de pièce complet (DEV-2026-0012, FAC-2026-0003). */
++const NUMERO_PIECE = /\b(?:DEV|FAC)-\d{4}-\d{1,6}\b/gi
++/** Les numéros de pièce complets écrits dans ce message, en majuscules, sans doublon. */
++export function numerosDans(texte: string | null | undefined): string[] {
++  return [...new Set((String(texte ?? '').match(NUMERO_PIECE) ?? []).map((n) => n.toUpperCase()))]
++}
++
++/**
++ * Le numéro d'une pièce est-il écrit dans ce message ? (Un lot ne reprend une relance écartée que si l'artisan la nomme.) À ÉGALITÉ avec
++ * un numéro extrait du message (audit 032-028, D6 : par sous-chaîne, DEV-2026-1000 était « nommé » dans DEV-2026-10001). Un numéro d'une
++ * autre forme ne compte que borné de part et d'autre.
++ */
++export function nommeDans(texte: string | null | undefined, numero: string): boolean {
++  const n = String(numero ?? '').trim().toUpperCase()
++  if (!n) return false
++  if (/^(?:DEV|FAC)-\d{4}-\d{1,6}$/.test(n)) return numerosDans(texte).includes(n)
++  const motif = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
++  return new RegExp(`(?<![A-Z0-9-])${motif}(?![A-Z0-9-])`).test(String(texte ?? '').toUpperCase())
++}
++
++// ── Une relance seule ne part d'office que si l'artisan a désigné UN SEUL objet, sans doute possible (audit 032-028, D1) ──────────────
++/** Les mots qui ne désignent personne : civilités, formes de société, articles. */
++const MOTS_NEUTRES_NOM = new Set(['m', 'mr', 'mme', 'mlle', 'mm', 'me', 'dr', 'monsieur', 'madame', 'mademoiselle', 'messieurs', 'mesdames', 'famille',
++  'ste', 'societe', 'sarl', 'sas', 'sasu', 'eurl', 'sci', 'ets', 'etablissements', 'le', 'la', 'les', 'l', 'de', 'du', 'des', 'd', 'et'])
++/** Les mots significatifs d'un nom de client (« M. Jean Leroy » → jean, leroy). */
++export function motsDuNom(nom: string | null | undefined): string[] {
++  return [...new Set(normaliser(String(nom ?? '')).trim().split(' ').filter((m) => m.length >= 2 && !/^\d+$/.test(m) && !MOTS_NEUTRES_NOM.has(m)))]
++}
++/** Ce qui, dans un message, vise PLUSIEURS objets ou personne en particulier (texte normalisé, mots entourés d'espaces). */
++const MARQUES_PLUSIEURS = / (?:et|puis|ainsi|aussi|ou|avec|plus|tout|tous|toute|toutes|gens|monde|ensemble|chacun|chacune|chaque|plusieurs|autres?|reste|restant|restants|totalite|deux|trois|quatre|cinq|six|dizaine|ceux|celles|celui|celle) /
++/** Une ponctuation qui sépare des noms (« leroy, garnier », « Leroy / Garnier », « Leroy + Garnier », une liste à la ligne). */
++const SEPARATEURS = /[,;&+/\n]/
++/** Un nombre qui n'est pas un numéro de pièce : une durée, un montant, un pourcentage (« depuis 5 jours », « 1 200 € »). */
++const NOMBRE_QUI_MESURE = /\d+(?:[.,\s]\d+)*\s*(?:jours?|j\b|semaines?|sem\b|mois|ans?|années?|h\b|heures?|€|eur\b|euros?|%|ht\b|ttc\b)/gi
++
++/**
++ * La PREUVE POSITIVE qu'une relance seule peut partir d'office : le message de l'artisan désigne CE devis (ou cette facture) et lui seul.
++ * Rend null si c'est prouvé, sinon le motif de la carte. Prouvé seulement si : aucun mot ni signe de pluralité (« et », virgule, « tout le
++ * monde », « les gens »…), aucun autre numéro (ni complet ni abrégé), et soit le numéro complet de la pièce, soit un mot du nom de SON
++ * client qu'aucun autre client du compte ne porte — et aucun mot propre à un autre client. Dans le doute : une carte (un clic, côté sûr).
++ * Ne lit pas ordreGroupe (refusé en amont, actions-serveur.ts) : les deux gardes se cumulent sans se masquer.
++ */
++export function motifPasUnSeul(texte: string | null | undefined, cible: { numero: string; client: string | null }, autresClients: readonly (string | null)[]): string | null {
++  const brut = String(texte ?? '')
++  const doute = 'Le message ne désigne pas un seul client sans doute possible : la relance attend le clic de l’artisan, elle ne part pas d’office.'
++  const n = normaliser(brut)
++  if (MARQUES_PLUSIEURS.test(n) || SEPARATEURS.test(brut)) return 'Le message vise plusieurs clients (ou tout le monde) : chaque relance attend le clic de l’artisan, aucune ne part d’office.'
++  const numeros = numerosDans(brut)
++  const numero = String(cible.numero ?? '').toUpperCase()
++  if (numeros.length > 1 || (numeros.length === 1 && numeros[0] !== numero)) return 'Le numéro écrit par l’artisan n’est pas celui de cette pièce : la relance attend son clic.'
++  if (/\d/.test(brut.replace(NUMERO_PIECE, ' ').replace(NOMBRE_QUI_MESURE, ' '))) return 'Le message porte un numéro incomplet ou abrégé : la relance attend le clic de l’artisan.'
++  const mots = new Set(n.trim().split(' '))
++  const siens = motsDuNom(cible.client)
++  const leSien = new Set(siens)
++  const nomSien = siens.join(' ')
++  const autres = new Set(autresClients.map(motsDuNom).filter((m) => m.join(' ') !== nomSien).flat())
++  if ([...autres].some((m) => !leSien.has(m) && mots.has(m))) return 'Le message nomme aussi un autre client : la relance attend le clic de l’artisan.'
++  if (numeros.length === 1) return null
++  return siens.some((m) => mots.has(m) && !autres.has(m)) ? null : doute
++}
++
++/**
++ * Les objets dont une carte a été ÉCARTÉE par l'artisan depuis `depuis` : une carte d'un objet (objet_id), ou une carte de lot (chacun de ses
++ * retenus, entrees.lot[].id). Rend id → date du refus la plus récente. `outil` : seules ses cartes comptent (le détecteur n8n fait de même).
++ */
++export function refusRecents(fiches: readonly { outil: string; statut: string; objet_id: string | null; entrees: unknown; maj_le: string }[], outil: string, depuis: Date): Map<string, string> {
++  const out = new Map<string, string>()
++  const garder = (idObjet: unknown, le: string) => {
++    if (typeof idObjet !== 'string' || !idObjet) return
++    const avant = out.get(idObjet)
++    if (!avant || avant < le) out.set(idObjet, le)
++  }
++  for (const f of fiches) {
++    if (f.outil !== outil || f.statut !== 'refusee') continue
++    const le = String(f.maj_le ?? '')
++    const t = Date.parse(le)
++    // Une date illisible compte comme récente (côté sûr : la relance n'est pas reproposée seule).
++    if (Number.isFinite(t) && t < depuis.getTime()) continue
++    garder(f.objet_id, le)
++    const lot = (f.entrees as { lot?: unknown } | null)?.lot
++    if (Array.isArray(lot)) for (const m of lot) garder((m as { id?: unknown } | null)?.id, le)
++  }
++  return out
++}
++
++/** La phrase d'un refus récent, pour l'artisan (motif d'un exclu, ou réponse au modèle). */
++export const phraseEcartee = (le: string): string => `relance écartée par vous${fmtDate(le) ? ` le ${fmtDate(le)}` : ''} : pas reproposée (nommez le devis pour la relancer quand même)`
++
++/** Le libellé d'une ligne de lot : numéro, client, montant, date d'envoi. */
++const ligneRetenu = (r: RetenuLot): string => [r.numero, r.client?.trim() || 'client sans nom', r.montant_ttc !== null ? `${fmtEuros(r.montant_ttc)} TTC` : null, r.envoye_le ? `envoyé le ${fmtDate(r.envoye_le)}` : null].filter(Boolean).join(' · ')
++
++/**
++ * L'aperçu d'une carte de LOT de relances de devis : ce que l'artisan lit avant son unique clic. Les retenus (avec le texte exact de chaque
++ * relance, dans `lot`, et le premier en entier dans `message`), les exclus et leur motif, le critère de l'ordre. Irréversible : une fois
++ * confirmé, les e-mails partent. Au plus LOT_RELANCES_MAX retenus (au-delà, le serveur refuse avant d'appeler cette fonction).
++ */
++export function apercuLotRelances(p: { lot: LotApercu; ton: string; critere: string; alertes?: readonly string[] }): Apercu {
++  const { retenus, exclus } = p.lot
++  if (!retenus.length) throw new Error('lot de relances sans retenu')
++  if (retenus.length > LOT_RELANCES_MAX) throw new Error('lot de relances trop grand')
++  const n = retenus.length, k = exclus.length
++  return {
++    titre: `Relancer ${n} devis${k ? ` · ${k} exclu${k > 1 ? 's' : ''}` : ''}`,
++    lignes: [
++      { label: 'Ordre', valeur: p.critere },
++      ...retenus.map((r) => ({ label: 'À relancer', valeur: ligneRetenu(r) })),
++      ...exclus.map((x) => ({ label: 'Exclu', valeur: `${x.numero}${x.client?.trim() ? ` · ${x.client.trim()}` : ''} — ${x.motif}` })),
++      { label: 'Ton', valeur: p.ton },
++    ],
++    avant_apres: [],
++    message: retenus[0].message,
++    alertes: [
++      n > 1 ? `Chaque client reçoit SA relance, à son nom, avec le numéro, le montant et la date de son devis (ci-dessus, celle de ${retenus[0].numero}).` : 'Un seul devis retenu : sa relance est ci-dessus.',
++      'Un lot ne part jamais d’office : rien n’est envoyé avant votre clic sur « Confirmer ». « Écarter » ne relance personne.',
++      ...(p.alertes ?? []),
++    ],
++    irreversible: true,
++    lien: { href: '/devis', libelle: 'Ouvrir les devis' },
++    lot: { retenus: retenus.map((r) => ({ ...r })), exclus: exclus.map((x) => ({ ...x })) },
++  }
++}
++
+ // ── Les lignes d'un devis, chiffrées avec les tarifs de l'artisan ────────────────────────────────────
+ 
+ export type TarifLu = { id: string; designation: string; unite: string | null; prix_ht: number | string; tva_taux: number | string | null }
+diff --git a/lib/assistant/outils-actions.ts b/lib/assistant/outils-actions.ts
+index 83a6621a..05a8a4a5 100644
+--- a/lib/assistant/outils-actions.ts
++++ b/lib/assistant/outils-actions.ts
+@@ -43,6 +43,8 @@ export const STATUTS_DEMANDE = ['nouveau', 'en_discussion', 'repondu', 'gagne',
+ export const STATUTS_CHANTIER_ACTION = ['a_planifier', 'planifie', 'en_cours', 'en_pause', 'termine', 'annule'] as const
+ export const MOUVEMENTS_STOCK = ['entree', 'sortie', 'inventaire', 'perte'] as const
+ export const TONS_RELANCE = ['cordial', 'ferme'] as const
++/** 02/11 (L16, chantier 4) — une carte de lot de relances nomme au plus ce nombre de devis retenus (lib/assistant/cartes.ts). */
++export const LOT_RELANCES_MAX = 20
+ /** Les types de facture que l'assistant propose. « situation » et « solde » (0176) seulement drapeau `facturesSituation` levé :
+  *  baissé, l'outil ne les connaît pas (ni dans son schéma, ni à la validation). */
+ export const TYPES_FACTURE_TOUS = ['complete', 'acompte', 'situation', 'solde'] as const
+@@ -103,8 +105,13 @@ export const SPEC = {
+   },
+   relancer_devis: {
+     cat: 'confirmation', libelle: 'relancer un devis',
+-    desc: "Propose de RELANCER par e-mail un devis envoyé resté sans réponse. Le texte est fixe (deux tons : cordial, ferme) et s'affiche en entier sur la carte ; tu n'écris rien dedans. Rien ne part avant le clic de l'artisan.",
+-    champs: { numero: numeroDevis, ton: { t: 'enum', d: 'cordial (défaut) ou ferme.', valeurs: TONS_RELANCE } },
++    desc: "Propose de RELANCER par e-mail un devis envoyé resté sans réponse. Le texte est fixe (deux tons : cordial, ferme) et s'affiche en entier sur la carte ; tu n'écris rien dedans. Rien ne part avant le clic de l'artisan. Un seul devis : numero. PLUSIEURS devis ou plusieurs clients (« relance les devis envoyés il y a plus de 5 jours », « relance Dupont et Martin ») : appelle l'outil UNE SEULE fois, avec envoye_depuis_jours (le nombre de jours que l'artisan a écrit) ou numeros (les numéros rendus par lire_devis), jamais une fois par devis : c'est UNE carte de lot, qui nomme les devis retenus et les exclus avec leur motif (relancé il y a moins de 3 jours, sujet sensible, relance écartée récemment, compte en pause…). Un lot ne part JAMAIS d'office : l'artisan le valide d'un clic. Une relance que l'artisan a écartée ne se repropose pas d'elle-même.",
++    champs: {
++      numero: { ...numeroDevis, req: false, d: 'Numéro d’UN devis, tel que rendu par lire_devis (ex. DEV-2026-0011). Pour plusieurs : numeros ou envoye_depuis_jours.' },
++      numeros: { t: 'liste', d: `Lot : les numéros des devis à relancer (rendus par lire_devis), ${LOT_RELANCES_MAX} au plus.`, max: LOT_RELANCES_MAX },
++      envoye_depuis_jours: { t: 'nombre', d: 'Lot : relancer les devis envoyés il y a plus de ce nombre de jours — le nombre que l’artisan a écrit, jamais deviné.', min: 1, max: 365, sourcer: true },
++      ton: { t: 'enum', d: 'cordial (défaut) ou ferme.', valeurs: TONS_RELANCE },
++    },
+   },
+   // ── Factures ────────────────────────────────────────────────────────────────────────────────────
+   creer_facture: {
+@@ -631,6 +638,8 @@ export function validerAction(nom: NomAction, brut: unknown): ValidationAction {
+       entree[cle] = n
+     }
+   }
++  // 02/11 (L16) : les numéros d'un lot de relances, en majuscules et sans doublon (un devis cité deux fois n'est relancé qu'une fois).
++  if (Array.isArray(entree.numeros)) entree.numeros = [...new Set((entree.numeros as string[]).map((n) => n.toUpperCase()))]
+   const e = validerCoherence(nom, entree)
+   return e ? ko(e) : { ok: true, entree }
+ }
+@@ -651,6 +660,14 @@ function validerCoherence(nom: NomAction, e: EntreeAction): string | null {
+       if (e.type === 'situation' && (e.avancement_pct === null || e.avancement_pct === undefined)) return 'avancement_pct : obligatoire pour une situation de travaux'
+       if (e.type !== 'situation' && e.avancement_pct !== null && e.avancement_pct !== undefined) return 'avancement_pct : réservé à type=situation'
+       return null
++    // 02/11 (L16) : un devis (numero), OU un lot (numeros, ou envoye_depuis_jours) — jamais deux formes à la fois, jamais aucune.
++    case 'relancer_devis': {
++      const formes = [!!e.numero, !vide('numeros'), e.envoye_depuis_jours !== null && e.envoye_depuis_jours !== undefined].filter(Boolean).length
++      if (formes !== 1) return 'numero (un devis), numeros (un lot) ou envoye_depuis_jours (un lot) : exactement un des trois'
++      if (e.envoye_depuis_jours !== null && e.envoye_depuis_jours !== undefined && !Number.isInteger(e.envoye_depuis_jours)) return 'envoye_depuis_jours : un nombre entier de jours'
++      const faux = ((e.numeros as string[] | undefined) ?? []).filter((n) => !/^DEV-\d{4}-\d{1,6}$/i.test(n))
++      return faux.length ? `numeros : des numéros de devis DEV-AAAA-NNNN attendus (${faux.slice(0, 3).join(', ')})` : null
++    }
+     case 'modifier_article':
+       return e.seuil_alerte === null && !e.fournisseur_prefere && !e.categorie ? 'rien à modifier' : null
+     // 29/10 — sortie de stock rattachée à un chantier ; facture sans devis ; résultat de recherche ; export.
+diff --git a/lib/pilote/executeur.ts b/lib/pilote/executeur.ts
+index 54496d1a..80494699 100644
+--- a/lib/pilote/executeur.ts
++++ b/lib/pilote/executeur.ts
+@@ -67,7 +67,14 @@ async function conversationDeLaCarte(uid: string, f: Pick<FicheAction, 'objet_ty
+  * mêmes contrôles (objet du compte, statut, e-mail, plafond d'envois et délai entre deux relances de l'assistant), mêmes
+  * fonctions d'envoi (lib/envoisServeur.ts) et mêmes textes (lib/assistant/cartes.ts).
+  */
+-export function realisateursPilote(uid: string, carteCreeLe: string): Record<string, Realisateur> {
++/** Une carte de LOT de relances (entrees.lot, lot L16) : jamais réalisée par le pilote (audit 032-028, D7). */
++const estCarteDeLot = (entrees: Record<string, unknown> | null | undefined): boolean => Array.isArray(entrees?.lot)
++
++/**
++ * `exclusions` : « ne plus relancer » (le point d'entrée de 0185, audit 032-028, D3), comme `exclusionsRelance` de l'assistant. Absent :
++ * rien à lire tant que L13 n'a pas branché la table. Une lecture en erreur REFUSE la relance.
++ */
++export function realisateursPilote(uid: string, carteCreeLe: string, exclusions?: (artisanId: string, devisIds: readonly string[]) => Promise<ReadonlyMap<string, string>>): Record<string, Realisateur> {
+   const ko2 = (erreur: string): Realisation => ({ ok: false, erreur })
+   const peutEnvoyer = () => consommerLimite(`assistant-envois:${uid}`, ENVOIS_JOUR_MAX, 24 * 3600)
+   async function profil() {
+@@ -117,6 +124,7 @@ export function realisateursPilote(uid: string, carteCreeLe: string): Record<str
+     return r.status === 200 ? { ok: true, resume: `facture ${f.numero} envoyée au client (pilote automatique)`, objet: { type: 'facture', id: f.id } } : ko2(String(r.json.error ?? 'La facture n’a pas pu partir.'))
+   }
+   R.relancer_devis = async (e) => {
++    if (estCarteDeLot(e)) return ko2('Une carte de lot de relances ne part jamais par le pilote : seulement au clic de l’artisan.')
+     const d = await devisDe(String(e.numero))
+     if (!d) return ko2(`Devis ${e.numero} introuvable.`)
+     if (d.statut !== 'envoye') return ko2(`Le devis ${d.numero} n'attend plus de réponse (statut : ${d.statut}).`)
+@@ -124,6 +132,8 @@ export function realisateursPilote(uid: string, carteCreeLe: string): Record<str
+     if (!to || !EMAIL.test(to)) return ko2('Le devis n’a pas d’e-mail client.')
+     const dejaD = await dejaRelance('devis', d.id)
+     if (dejaD) return ko2(dejaD)
++    const neplus = exclusions ? await exclusions(uid, [d.id]).then((m) => m.get(d.id) ?? null, () => 'la liste « ne plus relancer » n’a pas pu être relue') : null
++    if (neplus) return ko2(`Pas de relance du devis ${d.numero} : ${neplus}.`)
+     const p = await profil()
+     const t = texteRelanceDevis({ client: d.client_nom, numero: String(d.numero), objet: d.objet, totalTtc: d.total_ttc === null ? null : num(d.total_ttc), envoyeLe: d.envoye_le, validiteJours: d.validite_jours, artisan: p.nom, ton: (e.ton as 'cordial' | 'ferme') ?? 'cordial' })
+     return (await mail(to, t.objet, t.texte)) ?? { ok: true, resume: `relance du devis ${d.numero} envoyée (pilote automatique)`, objet: { type: 'devis', id: d.id } }
+diff --git a/lib/pilote/serveur.ts b/lib/pilote/serveur.ts
+index 2854b38a..af4e60dc 100644
+--- a/lib/pilote/serveur.ts
++++ b/lib/pilote/serveur.ts
+@@ -100,6 +100,9 @@ export async function piloterCarte(uid: string, fiche: Pick<FicheAction, 'id' |
+   try {
+     if (!actif('piloteAutomatique')) return null
+     if (fiche.artisan_id !== uid || fiche.mode !== 'confirmation' || fiche.statut !== 'en_attente') return null
++    // 02/11 (audit 032-028, D7) : une carte de LOT de relances (plusieurs clients) ne part qu'au clic de l'artisan — jamais par le pilote,
++    // ici même, sans compter sur la seule ligne qui l'en tient à l'écart côté assistant (lib/assistant/actions-serveur.ts, carteDeLot).
++    if (Array.isArray((fiche.entrees as { lot?: unknown } | null)?.lot)) return null
+     const type = typePiloteDeOutil(fiche.outil)
+     if (!type) return null
+     // M4 : une carte née d'une conversation où l'assistant a lu du texte écrit par un tiers ne part jamais seule.
+diff --git a/scripts/assistant-qa.mjs b/scripts/assistant-qa.mjs
+index b16accc4..1b78a886 100644
+--- a/scripts/assistant-qa.mjs
++++ b/scripts/assistant-qa.mjs
+@@ -729,6 +729,90 @@ console.log('\n── E. Les actions : catalogue, schémas, validation, règles
+   ok('briefing : les nombres du briefing se retrouvent dans la donnée lue (garde-fou des chiffres)', cadrage.chiffresNonSources('Vous avez 2 factures échues pour 2 240,50 € et 3 urgences.', [JSON.stringify(b)]).length === 0)
+ }
+ 
++// 02/11 — lot L16 du chantier 4 : les relances GROUPÉES (une carte de lot, ses exclus et leur motif ; une carte écartée ne revient pas).
++// Les règles pures ici ; le serveur, la carte jamais d'office et ses mutants : scripts/securite-assistant-0211-qa.mjs, partie A7.
++console.log('\n── E2. Relances groupées (L16) : ordre groupé, carte de lot, refus récents, schéma')
++{
++  const v = oa.validerAction
++  const fs2 = await import('node:fs'), os2 = await import('node:os'), path2 = await import('node:path'), url2 = await import('node:url')
++  const dirCartes = path2.resolve('lib/assistant')
++  const TMP2 = fs2.mkdtempSync(path2.join(os2.tmpdir(), 'presti-l16-'))
++  /** Une copie de lib/assistant/cartes.ts avec UNE mutation (le motif doit exister), imports relatifs repointés : le juge doit y voir la brèche. */
++  const mutantCartes = async (avant, apres) => {
++    let code = fs2.readFileSync('lib/assistant/cartes.ts', 'utf8')
++    if (!code.includes(avant)) throw new Error(`mutant de cartes.ts : motif introuvable « ${avant.slice(0, 80)} »`)
++    code = code.replace(avant, apres).replace(/(from\s+)(['"])(\.{1,2}\/[^'"]+)\2/g, (_m, a, q, spec) => `${a}${q}${url2.pathToFileURL(path2.resolve(dirCartes, spec + (spec.endsWith('.ts') ? '' : '.ts'))).href}${q}`)
++    const f = path2.join(TMP2, `cartes-mutant-${Math.random().toString(36).slice(2)}.ts`)
++    fs2.writeFileSync(f, code)
++    return import(url2.pathToFileURL(f).href)
++  }
++  try {
++    // L'ordre groupé : plusieurs pièces, un pluriel de pièces ou de clients, un quantifieur. Un ordre sur UN objet n'en est pas un.
++    const GROUPES = ['Relance les devis envoyés il y a plus de 5 jours', 'Relance tous ceux qui n’ont pas signé', 'Relance DEV-2026-0011 et DEV-2026-0012',
++      'relance mes devis en attente', 'Relance les clients qui n’ont pas répondu', 'Relance chaque devis de plus de 15 jours', 'Relance toutes les factures impayées', 'Relance Dupont pour ses devis']
++    const SEULS = ['Relance Dupont', 'Relance le devis DEV-2026-0011', 'Relance le devis de M. Martin, ferme', 'Relance la facture FAC-2026-0004', 'Relance DEV-2026-0011, puis DEV-2026-0011 encore', '']
++    const faux = [...GROUPES.filter((m) => !cartes.ordreGroupe(m)), ...SEULS.filter((m) => cartes.ordreGroupe(m))]
++    ok(`L16a ordreGroupe : les ${GROUPES.length} ordres groupés (P3:160 compris) le sont, les ${SEULS.length} ordres sur un seul objet non`, faux.length === 0, faux.join(' | '))
++    const mutOG = await mutantCartes(" (?:tous|toutes|chaque|ceux|celles|plusieurs) /.test(n)\n    || ", ' __rien__ /.test(n)\n    && ')
++    ok('L16b MUTANT (le pluriel et les quantifieurs retirés) : le juge VOIT la brèche — « Relance les devis envoyés il y a plus de 5 jours » n’y est plus un ordre groupé',
++      mutOG.ordreGroupe('Relance les devis envoyés il y a plus de 5 jours') === false && cartes.ordreGroupe('Relance les devis envoyés il y a plus de 5 jours') === true)
++
++    // Les refus récents (rang 8) : même outil, statut « refusee », 7 jours ; une carte de lot écartée couvre chacun de ses retenus.
++    const depuis = new Date('2026-10-26T09:00:00Z')
++    const D = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`
++    const fiches = [
++      { outil: 'relancer_devis', statut: 'refusee', objet_id: D(1), entrees: {}, maj_le: '2026-11-01T10:00:00Z' },
++      { outil: 'relancer_devis', statut: 'refusee', objet_id: null, entrees: { lot: [{ id: D(2), numero: 'DEV-2026-0002' }, { id: D(3), numero: 'DEV-2026-0003' }] }, maj_le: '2026-10-30T10:00:00Z' },
++      { outil: 'relancer_devis', statut: 'refusee', objet_id: D(4), entrees: {}, maj_le: '2026-10-20T10:00:00Z' },
++      { outil: 'relancer_devis', statut: 'executee', objet_id: D(5), entrees: {}, maj_le: '2026-11-01T10:00:00Z' },
++      { outil: 'envoyer_devis', statut: 'refusee', objet_id: D(6), entrees: {}, maj_le: '2026-11-01T10:00:00Z' },
++      { outil: 'relancer_devis', statut: 'refusee', objet_id: D(7), entrees: {}, maj_le: 'pas une date' },
++    ]
++    const rr = cartes.refusRecents(fiches, 'relancer_devis', depuis)
++    ok('L16c refusRecents : la carte d’un objet et chaque retenu d’une carte de LOT écartées comptent ; plus de 7 jours, une carte exécutée, un autre outil non ; date illisible : récente (côté sûr)',
++      egal([...rr.keys()].sort(), [D(1), D(2), D(3), D(7)].sort()) && rr.get(D(2)) === '2026-10-30T10:00:00Z', JSON.stringify([...rr]))
++    const mutRR = await mutantCartes('    if (Array.isArray(lot)) for (const m of lot) garder((m as { id?: unknown } | null)?.id, le)\n', '\n')
++    ok('L16d MUTANT (les retenus d’une carte de lot oubliés) : le juge VOIT la brèche — un lot écarté y reviendrait en boucle',
++      !mutRR.refusRecents(fiches, 'relancer_devis', depuis).has(D(2)) && rr.has(D(2)))
++    ok('L16e nommeDans : un devis écarté n’est repris dans un lot que si l’artisan écrit son numéro', cartes.nommeDans('Relance quand même dev-2026-0002', 'DEV-2026-0002') && !cartes.nommeDans('Relance les devis', 'DEV-2026-0002') && !cartes.nommeDans('x', ''))
++
++    // La carte de lot : retenus (texte EXACT de chaque relance), exclus et motif, critère ; irréversible ; jamais vide ni au-delà de 20.
++    const msg = (n, c) => ({ a: `${c.toLowerCase().replace(/\W/g, '')}@essai.test`, objet: `Votre devis ${n} — Atelier Essai`, texte: `Bonjour ${c},\n\nJe me permets de revenir vers vous au sujet du devis ${n}.` })
++    const retenus = [['DEV-2026-0101', 'M. Leroy', 1200], ['DEV-2026-0102', 'Mme Garnier', 860], ['DEV-2026-0103', 'M. Roux', 2400]]
++      .map(([n, c, m]) => ({ numero: n, client: c, montant_ttc: m, envoye_le: '2026-10-20T10:00:00Z', message: msg(n, c) }))
++    const exclus = [{ numero: 'DEV-2026-0104', client: 'Mme Petit', motif: 'Ce client a déjà été relancé par l’assistant le 01/11/2026 : on ne renvoie pas de relance avant 3 jours.' }]
++    const ap = cartes.apercuLotRelances({ lot: { retenus, exclus }, ton: 'cordial', critere: 'relancer les devis envoyés il y a plus de 5 jours' })
++    ok('L16f carte de lot : un titre (3 retenus, 1 exclu), une ligne par retenu, une par exclu AVEC son motif, le critère ; irréversible',
++      ap.titre === 'Relancer 3 devis · 1 exclu' && ap.lignes.filter((l) => l.label === 'À relancer').length === 3 && ap.lignes.filter((l) => l.label === 'Exclu').length === 1
++      && /DEV-2026-0104 · Mme Petit — Ce client a déjà été relancé/.test(ap.lignes.find((l) => l.label === 'Exclu').valeur) && ap.lignes[0].valeur === 'relancer les devis envoyés il y a plus de 5 jours'
++      && /1\s200,00\s€ TTC · envoyé le 20\/10\/2026/.test(ap.lignes[1].valeur) && ap.irreversible === true, JSON.stringify(ap.lignes))
++    ok('L16g … le texte EXACT de CHAQUE relance est dans la carte (lot.retenus[].message), la première en entier sous les yeux ; « jamais d’office » écrit',
++      ap.lot.retenus.length === 3 && ap.lot.retenus.every((r, i) => egal(r.message, retenus[i].message)) && egal(ap.message, retenus[0].message) && ap.lot.exclus[0].motif === exclus[0].motif
++      && ap.alertes.some((a) => /ne part jamais d’office/.test(a)))
++    let vide = false, grand = false
++    try { cartes.apercuLotRelances({ lot: { retenus: [], exclus }, ton: 'cordial', critere: 'x' }) } catch { vide = true }
++    try { cartes.apercuLotRelances({ lot: { retenus: Array.from({ length: 21 }, () => retenus[0]), exclus: [] }, ton: 'cordial', critere: 'x' }) } catch { grand = true }
++    ok('L16h une carte de lot sans retenu, ou de plus de 20, ne se fabrique pas', vide && grand && oa.LOT_RELANCES_MAX === 20)
++
++    // Le schéma : un devis (numero), OU un lot (numeros, ou envoye_depuis_jours) ; le nombre de jours doit venir de l'artisan.
++    const n1 = v('relancer_devis', { numero: 'dev-2026-0011' })
++    const lotN = v('relancer_devis', { numeros: ['dev-2026-0011', 'DEV-2026-0012', 'DEV-2026-0011'] })
++    ok('L16i relancer_devis : numero seul, numeros seuls (majuscules, sans doublon) ou envoye_depuis_jours seul ; deux formes, aucune, une facture, 21 numéros, des jours non entiers : refus',
++      n1.ok && n1.entree.numero === 'DEV-2026-0011' && lotN.ok && egal(lotN.entree.numeros, ['DEV-2026-0011', 'DEV-2026-0012']) && v('relancer_devis', { envoye_depuis_jours: 5 }).ok
++      && !v('relancer_devis', {}).ok && !v('relancer_devis', { numero: 'DEV-2026-0011', envoye_depuis_jours: 5 }).ok && !v('relancer_devis', { numeros: ['FAC-2026-0001'] }).ok
++      && !v('relancer_devis', { numeros: Array.from({ length: 21 }, (_, i) => `DEV-2026-${String(i + 1).padStart(4, '0')}`) }).ok && !v('relancer_devis', { envoye_depuis_jours: 4.5 }).ok && !v('relancer_devis', { envoye_depuis_jours: 0 }).ok)
++    ok('L16i bis le modèle ne peut pas écrire lui-même le lot (identifiants des devis) ni l’origine de la carte : champs inconnus, refus — seul le serveur les pose',
++      !v('relancer_devis', { envoye_depuis_jours: 5, lot: [{ id: '00000000-0000-4000-8000-000000000001', numero: 'DEV-2026-0001' }] }).ok && !v('relancer_devis', { numero: 'DEV-2026-0001', conversation_origine: '00000000-0000-4000-8000-000000000001' }).ok)
++    const sch = oa.DEFINITIONS_ACTIONS.relancer_devis.input_schema
++    ok('L16j le modèle voit la forme lot (numeros, envoye_depuis_jours) et la consigne « UNE seule fois, jamais une fois par devis » ; numero n’est plus obligatoire',
++      !(sch.required ?? []).includes('numero') && sch.properties.numeros?.type === 'array' && sch.properties.envoye_depuis_jours?.type === 'number'
++      && /UNE SEULE fois/.test(oa.DEFINITIONS_ACTIONS.relancer_devis.description) && /jamais une fois par devis/.test(oa.DEFINITIONS_ACTIONS.relancer_devis.description))
++    ok('L16k le nombre de jours est un nombre à SOURCER : « plus de 5 jours » écrit par l’artisan → 5 admis, 7 refusé (jamais deviné)',
++      cartes.verifierSources('relancer_devis', v('relancer_devis', { envoye_depuis_jours: 5 }).entree, ['Relance les devis envoyés il y a plus de 5 jours']) === null
++      && /7/.test(cartes.verifierSources('relancer_devis', v('relancer_devis', { envoye_depuis_jours: 7 }).entree, ['Relance les devis envoyés il y a plus de 5 jours']) ?? ''))
++  } finally { try { fs2.rmSync(TMP2, { recursive: true, force: true }) } catch { /* dossier temporaire */ } }
++}
++
+ console.log('\n── F. Confirmer, refuser, annuler (orchestrateur avec un magasin en mémoire)')
+ {
+   const mk = (surcharge = {}) => {
+@@ -964,6 +1048,19 @@ console.log('\n── G. La boucle avec des actions (faux modèle)')
+   }
+ }
+ 
++{
++  // 02/11 (L16) : la boucle réelle, un faux modèle. « Plus de 5 jours » : un lot à 7 jours (deviné) est refusé avant l'exécuteur ; à 5, il
++  // atteint l'exécuteur (qui ne fait QUE la carte : scripts/securite-assistant-0211-qa.mjs, A7).
++  const appels = [], lignes = []
++  const ex = {}
++  for (const n of outils.NOMS_OUTILS) ex[n] = async (e) => { appels.push([n, e]); return { donnees: { ok: true, en_attente_de_confirmation: true }, resume: `${n} proposé` } }
++  const modele = fauxModele([reponse([appelOutil('t1', 'relancer_devis', { envoye_depuis_jours: 7 })]), reponse([appelOutil('t2', 'relancer_devis', { envoye_depuis_jours: 5 })]), reponse([texte('Une carte de lot attend votre clic.')])])
++  await boucle.executerTour({ client: modele, parametres: { model: 'faux', max_tokens: 100 }, systeme: 'S', historique: [], message: 'Relance les devis envoyés il y a plus de 5 jours', executeurs: ex, brouillonsAutorises: false, crm: false, actions: true, journaliser: async (a) => { lignes.push(a) } })
++  const rel = appels.filter(([n]) => n === 'relancer_devis')
++  ok('L16l boucle : « plus de 5 jours » — le lot à 7 jours (nombre deviné) est refusé et journalisé sans atteindre l’exécuteur ; le lot à 5 jours l’atteint, UNE fois',
++    rel.length === 1 && rel[0][1].envoye_depuis_jours === 5 && lignes[0]?.resultat === 'refus' && /nombre sans source/.test(lignes[0].resume) && lignes[1]?.resultat === 'ok', JSON.stringify(lignes.map((l) => [l.nom, l.resultat, l.resume])))
++}
++
+ console.log('\n── H. Qui passe : offre Studio et au-dessus, côté serveur')
+ {
+   const d = acces.decisionAssistant
+diff --git a/scripts/securite-assistant-0211-qa.mjs b/scripts/securite-assistant-0211-qa.mjs
+index 81ab506a..37d94735 100644
+--- a/scripts/securite-assistant-0211-qa.mjs
++++ b/scripts/securite-assistant-0211-qa.mjs
+@@ -638,6 +638,345 @@ try {
+       surPanne.parti === true && surPanne.mails.includes('dupont@essai.test'), JSON.stringify(surPanne.r.donnees).slice(0, 200))
+   }
+ 
++  // ═══════════════════════ A7. Les relances GROUPÉES : une carte de lot, jamais d'office (lot L16 du chantier 4, 02/11) ═══════════════════════
++  // plans/011-cadrage-01-11/chantier-4-assistant-plan.md §0 bis rangs 4 et 8, question 1, §14 L16 ; P3:160 « Relance les devis envoyés il y a
++  // plus de 5 jours ». Le vrai actionsDeSession sur la doublure de PostgREST : 4 devis visés (3 retenus, 1 exclu), 1 trop récent ; le
++  // réalisateur (l'envoi des e-mails) n'est atteint QUE par confirmerAction, comme la route /api/assistant/actions.
++  console.log('\n── A7. Relances groupées (L16) : UNE carte de lot, ses exclus et leur motif ; rien ne part avant le clic ; une carte écartée ne revient pas')
++  {
++    const P3 = 'Relance les devis envoyés il y a plus de 5 jours'
++    const LOT = [[101, 'M. Leroy', 'leroy', 1200, '2026-10-12'], [102, 'Mme Garnier', 'garnier', 860, '2026-10-15'], [103, 'M. Roux', 'roux', 2400, '2026-10-18'], [104, 'Mme Petit', 'petit', 540, '2026-10-20'], [105, 'M. Recent', 'recent', 300, '2026-10-31']]
++    const numDe = (n) => `DEV-2026-0${n}`
++    /** Le monde du lot : le compte A, cinq devis envoyés (le 105 il y a deux jours : hors du critère), chacun avec sa conversation. Mme Petit
++     *  (104) a été relancée hier depuis le CRM (registre commun). Options : pause du compte, sans la trace du CRM, messages d'un client. */
++    const mondeLot = ({ pause = false, crm = true, client = {} } = {}) => {
++      mondeA()
++      T.artisans[0].leads_pause = pause
++      for (const [n, c, mail, ttc, le] of LOT) T.devis.push({ id: id(n), artisan_id: A, numero: numDe(n), statut: 'envoye', objet: 'Travaux d’essai', client_nom: c, client_email: `${mail}@essai.test`, client_adresse: null, total_ht: ttc / 1.1, total_tva: ttc - ttc / 1.1, total_ttc: ttc, remise_pct: 0, acompte_pct: 0, validite_jours: 90, conditions: null, notes: null, lead_id: id(n + 50), envoye_le: `${le}T10:00:00Z` })
++      T.leads = LOT.map(([n, c, mail]) => ({ id: id(n + 50), artisan_id: A, nom_prospect: c, contact: `${mail}@essai.test`, statut: 'repondu', message: 'Bonjour, un devis pour des travaux' }))
++      T.messages = Object.entries(client).flatMap(([n, textes]) => textes.map((contenu, i) => ({ id: id(800 + Number(n) * 3 + i), lead_id: id(Number(n) + 50), sens: 'in', contenu, sent_at: `2026-10-2${i}T10:00:00Z`, etat: null, type: null })))
++      T.crm_rappels = crm ? [{ id: id(990), artisan_id: A, devis_id: id(104), type: 'relancer_devis', envoye_le: '2026-11-01T08:00:00Z' }] : []
++      T.assistant_actions = []
++    }
++    /** Le magasin des cartes, MIROIR de la table assistant_actions de la doublure (en production, magasin et session lisent la même table). */
++    const magasinMiroir = () => {
++      const m = conf.magasinEnMemoire()
++      const refleter = (f) => { if (!f) return f; T.assistant_actions = [...(T.assistant_actions ?? []).filter((x) => x.id !== f.id), { ...f }]; return f }
++      return { ...m, creer: async (f) => refleter(await m.creer(f)), transiter: async (...a) => refleter(await m.transiter(...a)) }
++    }
++    /** Un tour de l'assistant (message, « fait tout seul » ou non) et la route des clics, sur le MÊME magasin et les mêmes doublures. */
++    const sessionLot = ({ message = P3, autonome = true, mod = srvMod, exclusions = null } = {}) => {
++      const mails = [], piloteAppels = []
++      const magasin = magasinMiroir()
++      const dependances = {
++        appeler: async () => ({ status: 200, json: { ok: true } }), envoyerMail: async (m) => { mails.push(m.to); return { ok: true } },
++        piloterCarte: async (_uid, fiche) => { piloteAppels.push(fiche); return { part_le: '2026-11-02T09:10:00Z' } }, maintenant: () => new Date('2026-11-02T09:00:00Z'),
++        ...(exclusions ? { exclusionsRelance: exclusions } : {}),
++      }
++      const commun = { uid: A, jeton: 'jeton-essai', origine: 'http://localhost', isFounder: false, crm: false, meilleursClients: false, tour: () => 1, magasin, dependances }
++      const srv = mod.actionsDeSession({ ...commun, conversationId: id(906), autonome: () => autonome, textesArtisan: [message] })
++      // La route /api/assistant/actions : sa propre fabrique, sans message ni « fait tout seul » (app/api/assistant/actions/route.ts:44-47).
++      const clic = mod.actionsDeSession({ ...commun, conversationId: id(907) })
++      const deps = { magasin, realisateurs: clic.realisateurs, inverses: clic.inverses, journaliser: async () => {} }
++      return { srv, magasin, mails, piloteAppels, deps, autreTour: (o = {}) => mod.actionsDeSession({ ...commun, conversationId: id(906), autonome: () => o.autonome ?? true, textesArtisan: [o.message ?? P3] }) }
++    }
++    const lotDe = (r) => r.carte?.lot ?? null
++    const numeros = (xs) => (xs ?? []).map((x) => x.numero).join(',')
++
++    // A7a — P3:160, en mode « fait tout seul » (l'artisan l'a demandé lui-même) : UNE carte, aucun e-mail, aucun pilote.
++    mondeLot()
++    const s1 = sessionLot()
++    const r1 = await s1.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++    const l1 = lotDe(r1)
++    ok('A7a « Relance les devis envoyés il y a plus de 5 jours », demandé (fait tout seul) : UNE carte de lot en attente — 3 retenus (101, 102, 103), 1 exclu (104), le devis de 2 jours hors du lot',
++      r1.carte?.statut === 'en_attente' && r1.carte?.outil === 'relancer_devis' && r1.donnees?.carte_de_lot === true && numeros(l1?.retenus) === 'DEV-2026-0101,DEV-2026-0102,DEV-2026-0103'
++      && numeros(l1?.exclus) === 'DEV-2026-0104' && !JSON.stringify(l1).includes('DEV-2026-0105'), JSON.stringify(r1.donnees).slice(0, 400))
++    ok('A7b … le RÉALISATEUR n’est jamais appelé avant la validation : aucun e-mail, aucune relance inscrite, rien dans la file du pilote, jamais « c’est fait »',
++      s1.mails.length === 0 && s1.piloteAppels.length === 0 && s1.magasin.toutes().length === 1 && s1.magasin.toutes().every((f) => f.statut === 'en_attente')
++      && r1.donnees?.fait_tout_seul !== true && /RIEN n'a été envoyé/.test(r1.donnees?.a_savoir ?? '') && r1.donnees?.pas_d_office === true, JSON.stringify({ mails: s1.mails, pilote: s1.piloteAppels.length, fiches: s1.magasin.toutes().map((f) => f.statut) }))
++    const textes = LOT.slice(0, 3).map(([n, c, , ttc, le]) => cartesMod.texteRelanceDevis({ client: c, numero: numDe(n), objet: 'Travaux d’essai', totalTtc: ttc, envoyeLe: `${le}T10:00:00Z`, validiteJours: 90, artisan: 'Atelier Essai', ton: 'cordial' }))
++    ok('A7c … la carte nomme l’exclu ET son motif (relancé hier depuis le CRM, registre commun), et porte le texte EXACT de chacune des 3 relances',
++      /déjà été relancé depuis le CRM le 01\/11\/2026/.test(l1?.exclus?.[0]?.motif ?? '') && r1.carte.lignes.some((l) => l.label === 'Exclu' && /DEV-2026-0104 · Mme Petit — Ce client a déjà été relancé/.test(l.valeur))
++      && (l1?.retenus ?? []).every((x, i) => x.message.texte === textes[i].texte && x.message.objet === textes[i].objet && x.message.a === `${LOT[i][2]}@essai.test`) && (r1.donnees?.exclus ?? []).some((x) => /DEV-2026-0104.*relancé/.test(x)),
++      JSON.stringify(l1?.exclus))
++    // A7d — le clic de l'artisan (la route des clics) : les 3 relances partent, chacune inscrite au journal, objet par objet.
++    const c1 = await conf.confirmerAction(s1.deps, A, r1.carte.id)
++    const traces = s1.magasin.toutes().filter((f) => f.statut === 'executee' && f.objet_type === 'devis')
++    ok('A7d … au clic seulement : 3 e-mails, aux 3 retenus ; chaque relance inscrite au journal des actions par devis (le registre commun et l’anti-doublon la voient)',
++      c1.ok && c1.statut === 'executee' && s1.mails.join() === 'leroy@essai.test,garnier@essai.test,roux@essai.test' && traces.map((f) => f.objet_id).join() === [id(101), id(102), id(103)].join()
++      && traces.every((f) => f.outil === 'relancer_devis' && f.entrees.du_lot === true), JSON.stringify({ c1, mails: s1.mails }))
++    const c1b = await conf.confirmerAction(s1.deps, A, r1.carte.id)
++    const r1b = await s1.autreTour().executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++    ok('A7e … un second clic ne renvoie rien (carte réclamée une fois) ; le même ordre au tour suivant ne prépare aucun lot : les 4 sont exclus, chacun avec son motif',
++      !c1b.ok && c1b.code === 'deja_traitee' && s1.mails.length === 3 && r1b.resultat === 'refus' && /Aucun devis à relancer/.test(r1b.donnees?.erreur ?? '') && (r1b.donnees?.erreur.match(/relancé/g) ?? []).length >= 4,
++      JSON.stringify(r1b.donnees).slice(0, 400))
++
++    // A7f — les autres motifs : « ne plus relancer » (le point d'entrée de 0185), sujet d'escalade, pas d'e-mail ; puis la pause du compte.
++    mondeLot({ crm: false, client: { 102: ['Litige : votre chantier a inondé ma cuisine, mon avocat vous écrira'] } })
++    T.devis.find((d) => d.id === id(103)).client_email = null
++    const s2 = sessionLot({ exclusions: async (_uid, ids) => new Map(ids.filter((x) => x === id(101)).map((x) => [x, 'ne plus relancer ce client (demandé par vous)'])) })
++    const r2 = await s2.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++    const ex2 = Object.fromEntries((lotDe(r2)?.exclus ?? []).map((x) => [x.numero, x.motif]))
++    ok('A7f motifs d’exclusion : « ne plus relancer », sujet d’escalade (le motif du pilote), pas d’e-mail — seul 104 est retenu ; rien n’est parti',
++      numeros(lotDe(r2)?.retenus) === 'DEV-2026-0104' && /ne plus relancer/.test(ex2['DEV-2026-0101'] ?? '') && ex2['DEV-2026-0102'] === R.LIBELLE_MOTIF.escalade && /pas d’e-mail/.test(ex2['DEV-2026-0103'] ?? '') && s2.mails.length === 0,
++      JSON.stringify(ex2))
++    mondeLot({ pause: true })
++    const s3 = sessionLot()
++    const r3 = await s3.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++    ok('A7g compte en pause : aucun lot, les 4 devis exclus avec le motif « compte en pause », rien n’est parti',
++      r3.resultat === 'refus' && (r3.donnees?.erreur.match(/compte en pause/g) ?? []).length === 4 && s3.mails.length === 0 && s3.magasin.toutes().length === 0, r3.donnees?.erreur)
++    mondeLot()
++    const s4 = sessionLot({ exclusions: async () => { throw new Error('relances_exclusions : lecture refusée (essai)') } })
++    const r4 = await s4.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 })).then((x) => x, (e) => ({ leve: String(e?.message ?? e) }))
++    ok('A7h « ne plus relancer » illisible : aucun lot n’est préparé (fail-closed), rien n’est parti', /lecture refusée/.test(r4.leve ?? '') && s4.magasin.toutes().length === 0 && s4.mails.length === 0, JSON.stringify(r4).slice(0, 200))
++
++    // A7i — rang 8 : la carte de lot ÉCARTÉE ne revient pas ; une relance seule écartée n'est pas reproposée d'elle-même.
++    mondeLot()
++    const s5 = sessionLot()
++    const r5 = await s5.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++    const ecart = await conf.refuserAction(s5.deps, A, r5.carte.id)
++    const r5b = await s5.autreTour().executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++    ok('A7i rang 8 : la carte de lot écartée par l’artisan ne revient pas — le même ordre ne prépare aucune carte ; chaque devis du lot porte « relance écartée par vous le 02/11 »',
++      ecart.ok && r5b.resultat === 'refus' && (r5b.donnees?.erreur.match(/relance écartée par vous/g) ?? []).length === 3 && s5.magasin.toutes().filter((f) => f.statut === 'en_attente').length === 0 && s5.mails.length === 0,
++      JSON.stringify(r5b.donnees).slice(0, 400))
++    const q = await s5.autreTour({ message: 'Quels devis dois-je relancer ?', autonome: false }).executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
++    const nomme = await s5.autreTour({ message: 'Relance quand même DEV-2026-0101', autonome: true }).executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
++    ok('A7j … la relance seule d’un devis écarté : reproposée d’elle-même (une question), refus « ne la repropose pas » ; redemandée par l’artisan, une CARTE (jamais d’office), aucun e-mail',
++      q.resultat === 'refus' && /ne la repropose pas/.test(q.donnees?.erreur ?? '') && nomme.carte?.statut === 'en_attente' && nomme.donnees?.pas_d_office === true && /Vous aviez écarté cette relance/.test(nomme.donnees?.pourquoi_une_carte ?? '') && s5.mails.length === 0,
++      `${JSON.stringify(q.donnees).slice(0, 200)} | ${JSON.stringify(nomme.donnees).slice(0, 200)}`)
++    const repris = await s5.autreTour({ message: 'Relance DEV-2026-0101 et DEV-2026-0102' }).executeurs.relancer_devis(vrai('relancer_devis', { numeros: ['DEV-2026-0101', 'DEV-2026-0102'] }))
++    ok('A7k … un lot qui NOMME les devis écartés (numéros écrits par l’artisan) les reprend, en carte', numeros(lotDe(repris)?.retenus) === 'DEV-2026-0101,DEV-2026-0102' && repris.carte?.statut === 'en_attente' && s5.mails.length === 0, JSON.stringify(repris.donnees).slice(0, 300))
++
++    // A7l — un ordre groupé ne se relance pas devis par devis ; un objet seul garde le « fait tout seul », pas le second du même message.
++    mondeLot({ crm: false })
++    const s6 = sessionLot()
++    const seulDansLot = await s6.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
++    ok('A7l ordre groupé (P3:160) mais relance d’un seul devis : refus « une seule carte de lot », rien n’est parti ni préparé',
++      seulDansLot.resultat === 'refus' && /Ordre groupé/.test(seulDansLot.donnees?.erreur ?? '') && s6.mails.length === 0 && s6.magasin.toutes().length === 0, JSON.stringify(seulDansLot.donnees).slice(0, 200))
++    const s7 = sessionLot({ message: 'Relance M. Leroy' })
++    const un = await s7.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
++    const deux = await s7.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0102' }))
++    ok('A7m témoin : « Relance M. Leroy » (un objet seul) part d’office comme avant (choix du 29/10) ; une SECONDE relance du même message, sur un autre devis, attend le clic',
++      un.donnees?.fait_tout_seul === true && deux.carte?.statut === 'en_attente' && deux.donnees?.pas_d_office === true && /Plusieurs relances dans le même message/.test(deux.donnees?.pourquoi_une_carte ?? '') && s7.mails.join() === 'leroy@essai.test',
++      `${JSON.stringify(un.donnees).slice(0, 150)} | ${JSON.stringify(deux.donnees).slice(0, 200)}`)
++
++    // A7n — au clic, chaque devis est recontrôlé : un litige écrit APRÈS la carte, ou une conversation illisible, retient la relance.
++    mondeLot({ crm: false })
++    const s8 = sessionLot()
++    const r8 = await s8.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++    T.messages.push({ id: id(899), lead_id: id(152), sens: 'in', contenu: 'Je conteste le devis, litige en cours', sent_at: '2026-11-02T08:59:00Z', etat: null, type: null })
++    const c8 = await conf.confirmerAction(s8.deps, A, r8.carte.id)
++    ok('A7n au clic, chaque devis est relu : le litige écrit après la carte retient 102 (motif dit dans le résultat) ; les autres partent',
++      numeros(lotDe(r8)?.retenus) === 'DEV-2026-0101,DEV-2026-0102,DEV-2026-0103,DEV-2026-0104' && c8.ok && s8.mails.join() === 'leroy@essai.test,roux@essai.test,petit@essai.test' && /DEV-2026-0102 : Le client parle/.test(c8.resume ?? ''),
++      JSON.stringify({ c8, mails: s8.mails }).slice(0, 400))
++    mondeLot({ crm: false })
++    const s9 = sessionLot()
++    const r9 = await s9.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++    PANNES.add('leads')
++    const c9 = await conf.confirmerAction(s9.deps, A, r9.carte.id).finally(() => PANNES.delete('leads'))
++    ok('A7o … conversations illisibles au clic : aucune relance ne part, la carte passe en « non exécutée » avec le motif (côté sûr)',
++      !c9.ok && c9.code === 'echec' && s9.mails.length === 0 && /pas pu être relus/.test(c9.erreur ?? ''), JSON.stringify(c9).slice(0, 300))
++
++    // Les MUTANTS : chaque garde retirée, le juge doit voir la brèche.
++    const jouerMut = async (mod, o = {}) => { mondeLot({ crm: false, ...(o.monde ?? {}) }); const s = sessionLot({ mod, ...(o.session ?? {}) }); return { s, r: await s.srv.executeurs.relancer_devis(vrai('relancer_devis', o.entree ?? { envoye_depuis_jours: 5 })) } }
++    const m1 = await jouerMut(await mutant('lib/assistant/actions-serveur.ts', "      horsAuto: 'Un lot de relances", "      horsAutoRetire: 'Un lot de relances"))
++    ok('A7p MUTANT (le lot sans sa garde « jamais d’office ») : le juge VOIT la brèche — en « fait tout seul », le réalisateur part AVANT tout clic : 4 e-mails',
++      m1.s.mails.length === 4 && m1.r.donnees?.fait_tout_seul === true, JSON.stringify({ mails: m1.s.mails, d: m1.r.donnees }).slice(0, 300))
++    const m2 = await jouerMut(await mutant('lib/assistant/actions-serveur.ts', "    if (nom === 'relancer_devis' && p.apercu.lot) return carteDeLot(p)\n", '\n'), { session: { autonome: false } })
++    const vrai2 = await jouerMut(srvMod, { session: { autonome: false } })
++    ok('A7q MUTANT (la carte de lot passée au pilote) : le juge VOIT la brèche — la carte entre dans la file du pilote, qui la ferait partir sans clic ; le vrai code, jamais',
++      m2.s.piloteAppels.length === 1 && !!m2.r.donnees?.pilote_automatique && vrai2.s.piloteAppels.length === 0 && !vrai2.r.donnees?.pilote_automatique, `${m2.s.piloteAppels.length}/${vrai2.s.piloteAppels.length}`)
++    const ecarterPuisRedemander = async (mod) => {
++      mondeLot({ crm: false })
++      const s = sessionLot({ mod })
++      const r = await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++      await conf.refuserAction(s.deps, A, r.carte.id)
++      return { s, lot: await s.autreTour().executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 })), seul: await s.autreTour({ message: 'Quels devis dois-je relancer ?', autonome: false }).executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' })) }
++    }
++    const m3 = await ecarterPuisRedemander(await mutant('lib/assistant/actions-serveur.ts', '    if (ecartee && !nommeDans(messageArtisan, String(d.numero))) return phraseEcartee(ecartee)\n', '\n'))
++    ok('A7r MUTANT (les refus oubliés dans le lot) : le juge VOIT la brèche — le lot écarté revient tel quel, en boucle (4 retenus)', numeros(lotDe(m3.lot)?.retenus).split(',').length === 4 && m3.lot.carte?.statut === 'en_attente', JSON.stringify(m3.lot.donnees).slice(0, 200))
++    const m4 = await ecarterPuisRedemander(await mutant('lib/assistant/actions-serveur.ts', "    if (ecartee && ecartee !== 'illisible' && !redemandee) return ko(", '    if (false) return ko('))
++    ok('A7s MUTANT (le refus oublié pour une relance seule) : le juge VOIT la brèche — l’assistant repropose d’elle-même la relance écartée', m4.seul.carte?.statut === 'en_attente' && m4.seul.resultat !== 'refus', JSON.stringify(m4.seul.donnees).slice(0, 200))
++    const m5 = await jouerMut(await mutant('lib/assistant/actions-serveur.ts', '    if (ordreGroupe(messageArtisan)) return ko("Ordre groupé', '    if (false) return ko("Ordre groupé'), { entree: { numero: 'DEV-2026-0101' } })
++    ok('A7t MUTANT (l’ordre groupé relancé devis par devis) : le juge VOIT la brèche — sous P3:160, la relance d’un seul devis part d’office', m5.r.donnees?.fait_tout_seul === true && m5.s.mails.length === 1, JSON.stringify(m5.r.donnees).slice(0, 200))
++    const mut6 = await mutant('lib/assistant/actions-serveur.ts', "    return autre || (nom === 'relancer_facture'", "    return false && (nom === 'relancer_facture'")
++    mondeLot({ crm: false })
++    const s10 = sessionLot({ mod: mut6, message: 'Relance M. Leroy' })
++    await s10.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
++    await s10.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0102' }))
++    mondeLot({ crm: false })
++    const s10f = sessionLot({ mod: mut6, message: 'Relance toutes les factures impayées' })
++    const f10 = await s10f.srv.executeurs.relancer_facture(vrai('relancer_facture', { numero: 'FAC-2026-0021' }))
++    ok('A7u MUTANT (la règle du tour retirée) : le juge VOIT la brèche — deux relances du même message partent d’office, en rafale ; et l’impayé d’un ordre groupé aussi',
++      s10.mails.length === 2 && f10.donnees?.fait_tout_seul === true && s10f.mails.length === 1, `${s10.mails.join()} | ${JSON.stringify(f10.donnees).slice(0, 150)}`)
++    mondeLot({ crm: false })
++    const s12 = sessionLot({ message: 'Relance toutes les factures impayées' })
++    const f12 = await s12.srv.executeurs.relancer_facture(vrai('relancer_facture', { numero: 'FAC-2026-0021' }))
++    ok('A7w les impayés d’un ordre groupé (« Relance toutes les factures impayées ») : chaque relance attend le clic, aucune ne part d’office',
++      f12.carte?.statut === 'en_attente' && f12.donnees?.pas_d_office === true && s12.mails.length === 0, JSON.stringify(f12.donnees).slice(0, 200))
++    const mut7 = await mutant('lib/assistant/actions-serveur.ts', '      const motif = await motifExclusion(d, { ecartes: new Map(), neplus })', '      const motif = null')
++    mondeLot({ crm: false })
++    const s11 = sessionLot({ mod: mut7 })
++    const r11 = await s11.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++    T.messages.push({ id: id(898), lead_id: id(152), sens: 'in', contenu: 'Je conteste le devis, litige en cours', sent_at: '2026-11-02T08:59:00Z', etat: null, type: null })
++    await conf.confirmerAction(s11.deps, A, r11.carte.id)
++    ok('A7v MUTANT (aucun recontrôle au clic) : le juge VOIT la brèche — le client en litige depuis la carte reçoit quand même sa relance', s11.mails.includes('garnier@essai.test'), s11.mails.join())
++
++    // ═══════════════════════ A8. Les défauts de l'audit offensif 032-028, corrigés (tâche 032-030) — chaque essai a son MUTANT ═══════════════════════
++    console.log('\n── A8. Audit 032-028 corrigé (032-030) : la preuve « un seul client », la réservation au clic, « ne plus relancer », la pause, l’autre conversation')
++    const ACT = 'lib/assistant/actions-serveur.ts'
++    const parAdresseDe = (mails) => mails.reduce((m, x) => (m[x] = (m[x] ?? 0) + 1, m), {})
++    /** Un tour : le message de l'artisan, puis les appels relancer_devis du modèle (devis par devis). */
++    const tourLot = async (message, appels, o = {}) => {
++      mondeLot({ crm: false, ...(o.monde ?? {}) })
++      const s = sessionLot({ message, autonome: o.autonome ?? true, mod: o.mod ?? srvMod, exclusions: o.exclusions ?? null })
++      const rs = []
++      for (const e of appels) rs.push(await s.srv.executeurs.relancer_devis(vrai('relancer_devis', e)))
++      return { s, rs }
++    }
++    // A8a — D1 : un ordre groupé que ordreGroupe ne reconnaît pas ; la PREMIÈRE relance devis par devis ne part plus d'office.
++    const ORDRES_NON_VUS = ['Relance M. Leroy et Mme Garnier', 'Relance tout le monde', 'Relance DEV-2026-0101 et 0102', 'relance leroy, garnier, roux', 'Relance Leroy Garnier', 'Relancez les gens qui n’ont pas répondu']
++    const sortsD1 = []
++    for (const m of ORDRES_NON_VUS) sortsD1.push([m, await tourLot(m, [{ numero: 'DEV-2026-0101' }])])
++    ok('A8a D1 : six ordres groupés que ordreGroupe ne voit pas (« et », « tout le monde », numéro abrégé, virgules, deux noms collés, « les gens ») — la 1re relance devis par devis est une CARTE, aucun e-mail',
++      sortsD1.every(([, x]) => x.s.mails.length === 0 && x.rs[0].carte?.statut === 'en_attente' && x.rs[0].donnees?.pas_d_office === true && x.rs[0].donnees?.fait_tout_seul !== true),
++      sortsD1.map(([m, x]) => `${m}=${x.s.mails.length}/${x.rs[0].donnees?.pourquoi_une_carte ?? JSON.stringify(x.rs[0].donnees).slice(0, 80)}`).join(' | '))
++    const temoinsD1 = []
++    for (const [m, n] of [['Relance M. Leroy', 'DEV-2026-0101'], ['Relance le devis DEV-2026-0101', 'DEV-2026-0101'], ['relance garnier', 'DEV-2026-0102']]) temoinsD1.push([m, await tourLot(m, [{ numero: n }])])
++    ok('A8b D1 témoin : un seul client nommé, ou le numéro complet seul — la relance part d’office comme avant (choix de Benj du 29/10), une fois',
++      temoinsD1.every(([, x]) => x.rs[0].donnees?.fait_tout_seul === true && x.s.mails.length === 1), temoinsD1.map(([m, x]) => `${m}=${x.s.mails.join()}`).join(' | '))
++    const nomAutre = await tourLot('Relance Mme Garnier', [{ numero: 'DEV-2026-0101' }])
++    ok('A8c D1 : le modèle relance le devis d’un AUTRE client que celui nommé (« Relance Mme Garnier » → devis de M. Leroy) : une carte, rien ne part',
++      nomAutre.s.mails.length === 0 && nomAutre.rs[0].carte?.statut === 'en_attente', JSON.stringify(nomAutre.rs[0].donnees).slice(0, 200))
++    const mutD1 = await mutant(ACT, '    if (!p.horsAuto && p.cible && premiereDuTour', '    if (false && p.cible && premiereDuTour')
++    const surMutD1 = await tourLot('Relance M. Leroy et Mme Garnier', [{ numero: 'DEV-2026-0101' }], { mod: mutD1 })
++    ok('A8d MUTANT (la preuve « un seul client » retirée : la version du lot L16) : le juge VOIT la brèche — « Relance M. Leroy et Mme Garnier » relance M. Leroy sans clic',
++      surMutD1.s.mails.join() === 'leroy@essai.test' && surMutD1.rs[0].donnees?.fait_tout_seul === true, surMutD1.s.mails.join())
++
++    // A8e — D2 : deux cartes de lot sur les mêmes devis, cliquées EN MÊME TEMPS : la réservation avant l'envoi, chaque client une fois au plus.
++    const doubleClic = async (mod) => {
++      mondeLot({ crm: false })
++      const s = sessionLot({ mod })
++      const r1 = await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++      const r2 = await s.autreTour().executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++      const cs = await Promise.all([conf.confirmerAction(s.deps, A, r1.carte.id), conf.confirmerAction(s.deps, A, r2.carte.id)])
++      return { s, r2, cs, par: parAdresseDe(s.mails) }
++    }
++    const dc = await doubleClic(srvMod)
++    ok('A8e D2 : deux cartes de lot sur les mêmes devis, cliquées en même temps — aucun client relancé deux fois ; la 2e carte annonce l’autre (alerte)',
++      Object.values(dc.par).every((n) => n === 1) && JSON.stringify(dc.r2.carte ?? {}).includes('aussi dans une autre carte de relance'),
++      `${JSON.stringify(dc.par)} | ${dc.cs.map((c) => c.resume ?? c.erreur).join(' || ').slice(0, 300)}`)
++    const tracesDc = dc.s.magasin.toutes().filter((f) => f.objet_type === 'devis' && f.entrees?.du_lot === true)
++    ok('A8f D2 : chaque relance partie a UNE trace « executee » ; une réservation perdante passe en « echec » (jamais en_cours oubliée)',
++      tracesDc.filter((f) => f.statut === 'executee').length === dc.s.mails.length && tracesDc.every((f) => f.statut === 'executee' || f.statut === 'echec'),
++      JSON.stringify(tracesDc.map((f) => `${f.entrees.numero}:${f.statut}`)))
++    const mutD2 = await mutant(ACT, '      if (concurrente) { await lever(concurrente);', '      if (false) { await lever(concurrente);')
++    const dcMut = await doubleClic(mutD2)
++    ok('A8g MUTANT (la relecture après réservation retirée : la version du lot L16) : le juge VOIT la brèche — un client reçoit deux relances',
++      Object.values(dcMut.par).some((n) => n >= 2), JSON.stringify(dcMut.par))
++    // A8h — D2, à la préparation : un devis qu'un autre lot est en train de relancer (réservation en_cours) n'entre pas dans un lot neuf.
++    const enCoursAilleurs = async (mod) => {
++      mondeLot({ crm: false })
++      const s = sessionLot({ mod })
++      await s.magasin.creer({ artisan_id: A, conversation_id: id(906), tour: 1, outil: 'relancer_devis', mode: 'direct', statut: 'en_cours', titre: 'Relance du devis DEV-2026-0101 (lot)', entrees: { numero: 'DEV-2026-0101', du_lot: true }, apercu: { titre: 'x', lignes: [], avant_apres: [], alertes: [], irreversible: true }, annulation: null, resultat_resume: null, objet_type: 'devis', objet_id: id(101), expire_le: null })
++      return { s, r: await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 })) }
++    }
++    const eca = await enCoursAilleurs(srvMod)
++    ok('A8h D2 : un devis en train de partir par une autre carte (réservation en_cours) est EXCLU du lot neuf, motif dit',
++      !numeros(lotDe(eca.r)?.retenus).includes('0101') && (lotDe(eca.r)?.exclus ?? []).some((x) => x.numero === 'DEV-2026-0101' && /en train de partir/.test(x.motif)), JSON.stringify(lotDe(eca.r)?.exclus))
++    const ecaMut = await enCoursAilleurs(await mutant(ACT, "    if (x.ouvertes?.get(d.id)?.statut === 'en_cours') return", '    if (false) return'))
++    ok('A8i MUTANT (l’exclusion à la préparation retirée) : le juge VOIT la brèche — le devis en cours d’envoi revient dans le lot neuf', numeros(lotDe(ecaMut.r)?.retenus).includes('0101'), numeros(lotDe(ecaMut.r)?.retenus))
++    // A8j — D2 : la relance SEULE d'un devis qu'une carte de lot attend déjà de relancer : pas de seconde carte.
++    const seulSurLot = async (mod) => {
++      mondeLot({ crm: false })
++      const s = sessionLot({ mod })
++      await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++      return { s, r: await s.autreTour({ message: 'Quels devis dois-je relancer ?', autonome: false }).executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' })) }
++    }
++    const ssl = await seulSurLot(srvMod)
++    ok('A8j D2 : la relance seule d’un devis déjà dans une carte de lot en attente : refus « attend déjà le clic », aucune seconde carte',
++      ssl.r.resultat === 'refus' && /attend déjà le clic/.test(ssl.r.donnees?.erreur ?? '') && ssl.s.magasin.toutes().filter((f) => f.statut === 'en_attente').length === 1, JSON.stringify(ssl.r.donnees).slice(0, 200))
++    const sslMut = await seulSurLot(await mutant(ACT, '    if (ouverteP) return ko(', '    if (false) return ko('))
++    ok('A8k MUTANT (le contrôle des cartes ouvertes retiré) : le juge VOIT la brèche — une seconde carte relance le même devis', sslMut.r.carte?.statut === 'en_attente', JSON.stringify(sslMut.r.donnees).slice(0, 160))
++
++    // A8l — D3 : « ne plus relancer » sur la relance SEULE — d'office comme au clic.
++    const NEPLUS = async (_u, ids) => new Map(ids.filter((x) => x === id(101)).map((x) => [x, 'ne plus relancer ce client']))
++    const np = await tourLot('Relance M. Leroy', [{ numero: 'DEV-2026-0101' }], { exclusions: NEPLUS })
++    ok('A8l D3 : « ne plus relancer » sur une relance seule en « fait tout seul » : refus, motif dit, aucun e-mail', np.s.mails.length === 0 && np.rs[0].resultat === 'refus' && /ne plus relancer/.test(np.rs[0].donnees?.erreur ?? ''), JSON.stringify(np.rs[0].donnees).slice(0, 200))
++    const mutNp = await copie(ACT, { remplacer: [['    if (neplusP) return ko(', '    if (false) return ko('], ['    if (neplus) return ko(`Pas de relance du devis', '    if (false) return ko(`Pas de relance du devis']] })
++    const npMut = await tourLot('Relance M. Leroy', [{ numero: 'DEV-2026-0101' }], { exclusions: NEPLUS, mod: mutNp })
++    ok('A8m MUTANT (« ne plus relancer » ignoré par la relance seule : la version du lot L16) : le juge VOIT la brèche — M. Leroy relancé', npMut.s.mails.join() === 'leroy@essai.test', npMut.s.mails.join())
++    const auClic = async (mod) => {
++      mondeLot({ crm: false })
++      let marque = false
++      const s = sessionLot({ message: 'Quels devis dois-je relancer ?', autonome: false, mod, exclusions: async (_u, ids) => new Map(marque ? ids.map((x) => [x, 'ne plus relancer ce client']) : []) })
++      const r = await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { numero: 'DEV-2026-0101' }))
++      marque = true
++      const c = await conf.confirmerAction(s.deps, A, r.carte.id)
++      return { s, r, c }
++    }
++    const clicNp = await auClic(srvMod)
++    ok('A8n D3 : « ne plus relancer » posé APRÈS la carte d’une relance seule : au clic, rien ne part, la carte dit pourquoi', clicNp.r.carte?.statut === 'en_attente' && !clicNp.c.ok && clicNp.s.mails.length === 0 && /ne plus relancer/.test(clicNp.c.erreur ?? ''), JSON.stringify(clicNp.c).slice(0, 200))
++    const clicNpMut = await auClic(await mutant(ACT, '    if (neplus) return ko(`Pas de relance du devis', '    if (false) return ko(`Pas de relance du devis'))
++    ok('A8o MUTANT (« ne plus relancer » non relu au clic) : le juge VOIT la brèche — la relance part au clic', clicNpMut.s.mails.join() === 'leroy@essai.test', clicNpMut.s.mails.join())
++
++    // A8p — D4 : le compte en pause, relance SEULE en « fait tout seul » : une carte, jamais d'office.
++    const pz = await tourLot('Relance M. Leroy', [{ numero: 'DEV-2026-0101' }], { monde: { pause: true } })
++    ok('A8p D4 : compte en pause, « Relance M. Leroy » (fait tout seul) : une carte qui le dit, aucun e-mail', pz.s.mails.length === 0 && pz.rs[0].carte?.statut === 'en_attente' && /compte en pause/.test(pz.rs[0].donnees?.pourquoi_une_carte ?? ''), JSON.stringify(pz.rs[0].donnees).slice(0, 200))
++    const pzMut = await tourLot('Relance M. Leroy', [{ numero: 'DEV-2026-0101' }], { monde: { pause: true }, mod: await mutant(ACT, '    const pauseP = ctx.autonome?.() === true ? await compteEnPause()', '    const pauseP = false && ctx.autonome?.() === true ? await compteEnPause()') })
++    ok('A8q MUTANT (la pause ignorée par la relance seule : la version du lot L16) : le juge VOIT la brèche — M. Leroy relancé pendant la pause', pzMut.s.mails.join() === 'leroy@essai.test', pzMut.s.mails.join())
++
++    // A8r — D5 : le client en litige dans une AUTRE conversation (même e-mail), son devis sans conversation : exclu du lot.
++    const autreConv = async (mod) => {
++      mondeLot({ crm: false })
++      T.devis.find((d) => d.id === id(102)).lead_id = null
++      T.leads.push({ id: id(160), artisan_id: A, nom_prospect: 'Mme Garnier', contact: 'Garnier@Essai.test'.toLowerCase(), statut: 'repondu', message: 'Litige : malfaçon, mon avocat vous écrira' })
++      const s = sessionLot({ mod })
++      return lotDe(await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 })))
++    }
++    const ac = await autreConv(srvMod)
++    ok('A8r D5 : litige écrit dans une autre conversation du même client (même e-mail), devis sans conversation : 102 exclu du lot, motif d’escalade',
++      !numeros(ac?.retenus).includes('0102') && (ac?.exclus ?? []).some((x) => x.numero === 'DEV-2026-0102' && x.motif === R.LIBELLE_MOTIF.escalade), JSON.stringify(ac?.exclus))
++    const acMut = await autreConv(await mutant(ACT, '    if (emails.size) {', '    if (false) {'))
++    ok('A8s MUTANT (seule la conversation du devis relue : la version du lot L16) : le juge VOIT la brèche — 102 retenu sans un mot', numeros(acMut?.retenus).includes('0102'), numeros(acMut?.retenus))
++
++    // A8t — D6 : un numéro « nommé » se compare à égalité, plus par sous-chaîne.
++    const cartesVrai = await imp('lib/assistant/cartes.ts')
++    ok('A8t D6 : DEV-2026-1000 n’est pas « nommé » dans « relance DEV-2026-10001 » ; il l’est dans « relance dev-2026-1000 vite »',
++      cartesVrai.nommeDans('relance DEV-2026-10001', 'DEV-2026-1000') === false && cartesVrai.nommeDans('relance dev-2026-1000 vite', 'DEV-2026-1000') === true)
++    const cartesMut = await mutant('lib/assistant/cartes.ts', '  if (/^(?:DEV|FAC)-\\d{4}-\\d{1,6}$/.test(n)) return numerosDans(texte).includes(n)\n', '  return String(texte ?? \'\').toUpperCase().includes(n)\n')
++    ok('A8u MUTANT (la recherche par sous-chaîne : la version du lot L16) : le juge VOIT la brèche — DEV-2026-1000 « nommé » dans DEV-2026-10001', cartesMut.nommeDans('relance DEV-2026-10001', 'DEV-2026-1000') === true)
++
++    // A8v — D7 : le pilote refuse lui-même une carte de lot (piloterCarte), sans même lire ses réglages.
++    const pilSrv = await imp('lib/pilote/serveur.ts')
++    const ficheLot = { id: id(950), artisan_id: A, outil: 'relancer_devis', titre: 'Relancer 4 devis', entrees: { lot: [{ id: id(101), numero: 'DEV-2026-0101' }], ton: 'cordial' }, mode: 'confirmation', statut: 'en_attente' }
++    mondeLot({ crm: false })
++    const n0 = requetes.length
++    const enFile = await pilSrv.piloterCarte(A, ficheLot)
++    const lusPilote = requetes.slice(n0).length
++    ok('A8v D7 : une carte de lot présentée au pilote (piloterCarte) : refusée d’entrée, aucune lecture, rien en file', enFile === null && lusPilote === 0, `${JSON.stringify(enFile)} / ${lusPilote} requêtes`)
++    const pilMut = await mutant('lib/pilote/serveur.ts', '    if (Array.isArray((fiche.entrees as { lot?: unknown } | null)?.lot)) return null\n', '')
++    const n1 = requetes.length
++    await pilMut.piloterCarte(A, ficheLot)
++    ok('A8w MUTANT (la garde du pilote retirée : la version du lot L16) : le juge VOIT la brèche — la carte de lot atteint la décision du pilote (ses réglages sont lus)', requetes.slice(n1).length > 0, `${requetes.slice(n1).length} requêtes`)
++    ok('A8x D7 : le réalisateur du pilote refuse une carte de lot avant toute lecture (source : lib/pilote/executeur.ts, avant devisDe)',
++      /R\.relancer_devis = async \(e\) => \{\n    if \(estCarteDeLot\(e\)\) return ko2\(/.test(lire('lib/pilote/executeur.ts')) && /const estCarteDeLot = \(entrees[^)]*\): boolean => Array\.isArray\(entrees\?\.lot\)/.test(lire('lib/pilote/executeur.ts')))
++
++    // A8y — D8 : le journal des actions illisible n'est plus lu « jamais relancé » : le devis sort du lot.
++    const journalPanne = async (mod) => {
++      mondeLot({ crm: false })
++      const s = sessionLot({ mod })
++      s.magasin.dernierEnvoi = async () => { throw new Error('panne du journal (essai)') }
++      const r = await s.srv.executeurs.relancer_devis(vrai('relancer_devis', { envoye_depuis_jours: 5 }))
++      return { ...(lotDe(r) ?? { retenus: [], exclus: [] }), r, mails: s.mails }
++    }
++    const jp = await journalPanne(srvMod)
++    ok('A8y D8 : journal des actions illisible à la préparation : aucun devis retenu, chacun des 4 exclu avec le motif « journal des relances illisible », aucun e-mail',
++      (jp.retenus ?? []).length === 0 && jp.r.resultat === 'refus' && ((jp.r.donnees?.erreur ?? '').match(/journal des relances illisible/g) ?? []).length === 4 && jp.mails.length === 0, JSON.stringify(jp.r.donnees).slice(0, 300))
++    const jpMut = await journalPanne(await mutant(ACT, '.then((v) => v, () => MOTIF_JOURNAL_ILLISIBLE)', '.then((v) => v, () => null)'))
++    ok('A8z MUTANT (la panne lue « jamais relancé » : la version du lot L16) : le juge VOIT la brèche — les devis sont retenus malgré le journal illisible', (jpMut.retenus ?? []).length > 0, numeros(jpMut.retenus))
++  }
++
+   // ═══════════════════════ B. La règle « tout auto » : jamais un prix sans source ═══════════════════════
+   console.log('\n── B. Règle « tout auto » : un devis à prix estimé ne part pas')
+   const L = id(600)

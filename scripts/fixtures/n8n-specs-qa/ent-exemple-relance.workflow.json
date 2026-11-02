@@ -1,0 +1,318 @@
+{
+  "name": "ent-exemple-relance",
+  "description": "Exemple. Export fictif du juge n8n-specs-qa, jamais dans n8n.",
+  "active": false,
+  "activeVersionId": null,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "errorWorkflow": "ErreurCommuneFictif01",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "ParentExempleFictif01"
+  },
+  "nodes": [
+    {
+      "id": "de",
+      "name": "Appelé par la chaîne",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "Contrat d'entrée",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée — gabarit commun (enveloppe@1). Toute entrée hors schéma arrête l'exécution : ni écriture ni envoi derrière.\nconst CONTRAT = 'ent-exemple-relance@1';\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nreturn $input.all().map((item) => {\n  const e = item.json;\n  const manque = REQUIS.filter((k) => !(k in e));\n  const enTrop = Object.keys(e).filter((k) => !REQUIS.includes(k));\n  if (manque.length || enTrop.length) throw new Error('contrat ' + CONTRAT + ' : manquants [' + manque.join(',') + '] en trop [' + enTrop.join(',') + ']');\n  if (e.contrat !== CONTRAT) throw new Error('contrat attendu : ' + CONTRAT);\n  if (!UUID.test(String(e.organisation_id))) throw new Error('organisation_id : uuid attendu');\n  if (typeof e.simulation !== 'boolean') throw new Error('simulation : booléen attendu');\n  if (typeof e.cle_idempotence !== 'string' || !e.cle_idempotence || e.cle_idempotence.length > 80) throw new Error('cle_idempotence : 1 à 80 caractères');\n  if (!e.trace || typeof e.trace !== 'object' || !e.config || typeof e.config !== 'object' || !e.donnees || typeof e.donnees !== 'object') throw new Error('trace, config et donnees : objets attendus');\n  return { json: e };\n});"
+      },
+      "notes": "contrat: ent-exemple-relance@1"
+    },
+    {
+      "id": "ag",
+      "name": "Rédiger la relance",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($('Contrat d\\'entrée').first().json.donnees.faits) }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Exemple. Rédige une relance courte à partir des seuls faits fournis ; aucun prix, délai ni créneau absent des faits.",
+          "maxIterations": 3,
+          "passthroughBinaryImages": false
+        }
+      }
+    },
+    {
+      "id": "mo",
+      "name": "Modèle Claude",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "IdentifiantFictif04",
+          "name": "Anthropic essai"
+        }
+      },
+      "parameters": {
+        "options": {
+          "maxTokensToSample": 600
+        }
+      }
+    },
+    {
+      "id": "sc",
+      "name": "Schéma du message",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"texte\",\"faits_cites\"],\"properties\":{\"texte\":{\"type\":\"string\",\"maxLength\":1500},\"faits_cites\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}}",
+        "autoFix": false
+      }
+    },
+    {
+      "id": "Revalider le message",
+      "name": "Revalider le message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Revalidation du message : le parseur n'est pas le contrat (fiche-methode-n8n.md:312-313). Hors schéma : rejet, rien ne part.\nconst e = $('Contrat d\\'entrée').first().json;\nreturn $input.all().map((i) => {\n  const m = i.json.output ?? {};\n  if (typeof m.texte !== 'string' || !m.texte.trim() || m.texte.length > 1500) throw new Error('message hors schéma : texte');\n  if (!Array.isArray(m.faits_cites)) throw new Error('message hors schéma : faits_cites');\n  return { json: { texte: m.texte, artisan: e.donnees.signature ?? '', destinataire: e.donnees.destinataire ?? '', organisation_id: e.organisation_id } };\n});"
+      }
+    },
+    {
+      "id": "po",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel.",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "sim",
+              "leftValue": "={{ $('Contrat d\\'entrée').first().json.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "Effets prévus",
+      "name": "Effets prévus",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Branche « simulation » : rien n'est écrit ni envoyé, l'effet prévu part au journal.\nconst e = $('Contrat d\\'entrée').first().json;\nreturn [{ json: { effets_prevus: [{ cible: e.donnees.cible ?? null, cle_idempotence: e.cle_idempotence }] } }];"
+      }
+    },
+    {
+      "id": "en",
+      "name": "Envoyer la relance",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "pied: mention",
+      "credentials": {
+        "smtp": {
+          "id": "IdentifiantFictif02",
+          "name": "SMTP essai"
+        }
+      },
+      "parameters": {
+        "fromEmail": "={{ $json.expediteur }}",
+        "toEmail": "={{ $json.destinataire }}",
+        "subject": "Votre devis",
+        "emailFormat": "text",
+        "text": "={{ $json.texte }}\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de {{ $json.artisan }}.",
+        "options": {}
+      }
+    },
+    {
+      "id": "Contrat de sortie",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie — gabarit commun (enveloppe@1) : le seul nœud final. effets_faits reste vide en simulation.\nconst CONTRAT = 'ent-exemple-relance@1';\nconst e = $('Contrat d\\'entrée').first().json;\nconst passes = $input.all().map((i) => i.json);\nconst effetsPrevus = passes.flatMap((p) => Array.isArray(p.effets_prevus) ? p.effets_prevus : []);\nconst effetsFaits = e.simulation === true ? [] : passes.filter((p) => p.id || p.ref_id).map((p) => ({ ref_id: p.id ?? p.ref_id ?? null }));\nreturn [{ json: {\n  'contrat': CONTRAT,\n  'statut': effetsFaits.length || effetsPrevus.length ? 'ok' : 'rien_a_faire',\n  'cle_idempotence': e.cle_idempotence,\n  'simulation': e.simulation,\n  'resultat': null,\n  'effets_prevus': effetsPrevus,\n  'effets_faits': effetsFaits,\n  'journal': [],\n  'erreurs': [],\n} }];"
+      }
+    }
+  ],
+  "connections": {
+    "Appelé par la chaîne": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Rédiger la relance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modèle Claude": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rédiger la relance",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schéma du message": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Rédiger la relance",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rédiger la relance": {
+      "main": [
+        [
+          {
+            "node": "Revalider le message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revalider le message": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Effets prévus",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envoyer la relance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Effets prévus": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoyer la relance": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -203,6 +203,12 @@ const SUITES = [
   // 0185 à 0187 préparées mais NON appliquées (RLS, gardes, anon retiré, unicités), lues hors ligne.
   { nom: 'SMS à blanc (L7, 032-024) — rien ne sort, STOP obligatoire, plages et jours fériés, plafonds, tarif inconnu = pas de réel (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/sms-qa.mjs'], cout: 'gratuit' },
   { nom: 'Schéma de l’automatisation 0185 à 0187, non appliqué (L6a, 032-025) — RLS, gardes de session, anon retiré, unicités (mutants)', cmd: 'node', args: ['scripts/automatisation-schema-qa.mjs'], cout: 'gratuit' },
+  // 02/11 au soir (chantier 4, L18, L19, L6b ; prompt 5) : l'après-chantier refait dans n8n et comparé à l'ancien code, les demandes de démo
+  // derrière demandesDemo, les organisations 0183, 0184 et 0188 non appliquées (partie statique ; PGlite si PGLITE_DIR), le kit Entreprise.
+  { nom: 'Après-chantier dans n8n (L18, 032-031) — même résultat que tourApresChantier sur les mêmes données fictives, cas par cas (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/apres-chantier-n8n-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Demandes de démo Entreprise (L19, 032-026) — drapeau baissé = rien de neuf, l’e-mail part même si l’écriture échoue, onglet fondateur seulement (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/demandes-demo-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Organisations multi-membres 0183, 0184, 0188, non appliquées (L6b, 032-032) — RLS, gardes, interrupteur faux, matrice des rôles (partie statique, mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/organisations-qa.mjs', '--statique'], cout: 'gratuit' },
+  { nom: 'Kit « Presti pour l’entreprise » du mode A (prompt 5, 035-002) — huit parties, « Exemple. » partout, aucun prix de l’offre, aucune phrase interdite (mutants)', cmd: 'node', args: ['scripts/kit-entreprise-qa.mjs'], cout: 'gratuit' },
   { nom: 'Garde des sessions lancées par Orca (défaut E de 031-012) — ni commit, ni push, ni déploiement, ni migration, ni build partagé ; la session principale jamais bloquée (mutant)', cmd: 'node', args: ['scripts/garde-agents-orca-qa.mjs'], cout: 'gratuit' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },

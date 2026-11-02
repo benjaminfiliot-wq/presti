@@ -16,6 +16,7 @@ import { envoyerPushArtisan } from '@/lib/push'
 import { piloteInterdit } from '@/lib/canaux/regles'
 import { peut } from '@/lib/plans'
 import type { FicheAction } from '@/lib/assistant/confirmation'
+import { motifHorsPilote } from '@/lib/assistant/cartes'
 import {
   DELAI_ANNULATION_MIN, MARQUE_CONTENU_TIERS, PLAFOND_AUTO_JOUR, cleIdempotence, decisionPilote, lireReglagesPilote, partLe, typePiloteDeOutil,
   REGLAGES_PILOTE_DEFAUT, LIBELLE_TYPE, type LigneFile, type LignePrix, type MotifManuel, type ReglagesPilote, type TypePilote,
@@ -100,6 +101,12 @@ export async function piloterCarte(uid: string, fiche: Pick<FicheAction, 'id' | 
   try {
     if (!actif('piloteAutomatique')) return null
     if (fiche.artisan_id !== uid || fiche.mode !== 'confirmation' || fiche.statut !== 'en_attente') return null
+    // 02/11 (audit 032-028, D7) : une carte de LOT de relances (plusieurs clients) ne part qu'au clic de l'artisan — jamais par le pilote,
+    // ici même, sans compter sur la seule ligne qui l'en tient à l'écart côté assistant (lib/assistant/actions-serveur.ts, carteDeLot).
+    if (Array.isArray((fiche.entrees as { lot?: unknown } | null)?.lot)) return null
+    // 02/11 (contre-audit 032-035, E1 et E2) : une carte marquée HORS PILOTE (née d'un ordre sur plusieurs clients, d'une désignation douteuse,
+    // d'un sujet d'escalade — le pas_d_office / pourquoi_une_carte de l'assistant) ne part qu'au clic de l'artisan : refusée ici même, sans rien lire.
+    if (motifHorsPilote(fiche.entrees) !== null) return null
     const type = typePiloteDeOutil(fiche.outil)
     if (!type) return null
     // M4 : une carte née d'une conversation où l'assistant a lu du texte écrit par un tiers ne part jamais seule.

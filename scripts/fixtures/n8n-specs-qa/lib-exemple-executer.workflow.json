@@ -1,0 +1,275 @@
+{
+  "name": "lib-exemple-executer",
+  "description": "Exemple. Export fictif du juge n8n-specs-qa, jamais dans n8n.",
+  "active": false,
+  "activeVersionId": null,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "errorWorkflow": "ErreurCommuneFictif01",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "ChaineRelanceFictif01"
+  },
+  "tags": [
+    {
+      "name": "lib"
+    },
+    {
+      "name": "couche-execution"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "de",
+      "name": "Appelé par la chaîne",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "Contrat d'entrée",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée — gabarit commun (enveloppe@1). Toute entrée hors schéma arrête l'exécution : ni écriture ni envoi derrière.\nconst CONTRAT = 'lib-exemple-executer@1';\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nreturn $input.all().map((item) => {\n  const e = item.json;\n  const manque = REQUIS.filter((k) => !(k in e));\n  const enTrop = Object.keys(e).filter((k) => !REQUIS.includes(k));\n  if (manque.length || enTrop.length) throw new Error('contrat ' + CONTRAT + ' : manquants [' + manque.join(',') + '] en trop [' + enTrop.join(',') + ']');\n  if (e.contrat !== CONTRAT) throw new Error('contrat attendu : ' + CONTRAT);\n  if (!UUID.test(String(e.organisation_id))) throw new Error('organisation_id : uuid attendu');\n  if (typeof e.simulation !== 'boolean') throw new Error('simulation : booléen attendu');\n  if (typeof e.cle_idempotence !== 'string' || !e.cle_idempotence || e.cle_idempotence.length > 80) throw new Error('cle_idempotence : 1 à 80 caractères');\n  if (!e.trace || typeof e.trace !== 'object' || !e.config || typeof e.config !== 'object' || !e.donnees || typeof e.donnees !== 'object') throw new Error('trace, config et donnees : objets attendus');\n  return { json: e };\n});"
+      },
+      "notes": "contrat: lib-exemple-executer@1"
+    },
+    {
+      "id": "Relire l'interrupteur",
+      "name": "Relire l'interrupteur",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "IdentifiantFictif01",
+          "name": "Supabase account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/configuration_organisation",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,interrupteur_general,simulation"
+            },
+            {
+              "name": "organisation_id",
+              "value": "=eq.{{ $('Contrat d\\'entrée').first().json.organisation_id }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "id": "po",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel.",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "sim",
+              "leftValue": "={{ $('Contrat d\\'entrée').first().json.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "Effets prévus",
+      "name": "Effets prévus",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Branche « simulation » : rien n'est écrit ni envoyé, l'effet prévu part au journal.\nconst e = $('Contrat d\\'entrée').first().json;\nreturn [{ json: { effets_prevus: [{ cible: e.donnees.cible ?? null, cle_idempotence: e.cle_idempotence }] } }];"
+      }
+    },
+    {
+      "id": "ec",
+      "name": "Écrire la carte",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "IdentifiantFictif01",
+          "name": "Supabase account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "parameters": {
+        "method": "POST",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/assistant_actions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation,resolution=ignore-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ organisation_id: $('Contrat d\\'entrée').first().json.organisation_id, cle: $('Contrat d\\'entrée').first().json.cle_idempotence, type_action: $('Contrat d\\'entrée').first().json.donnees.cible }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "id": "Contrat de sortie",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie — gabarit commun (enveloppe@1) : le seul nœud final. effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-exemple-executer@1';\nconst e = $('Contrat d\\'entrée').first().json;\nconst passes = $input.all().map((i) => i.json);\nconst effetsPrevus = passes.flatMap((p) => Array.isArray(p.effets_prevus) ? p.effets_prevus : []);\nconst effetsFaits = e.simulation === true ? [] : passes.filter((p) => p.id || p.ref_id).map((p) => ({ ref_id: p.id ?? p.ref_id ?? null }));\nreturn [{ json: {\n  'contrat': CONTRAT,\n  'statut': effetsFaits.length || effetsPrevus.length ? 'ok' : 'rien_a_faire',\n  'cle_idempotence': e.cle_idempotence,\n  'simulation': e.simulation,\n  'resultat': null,\n  'effets_prevus': effetsPrevus,\n  'effets_faits': effetsFaits,\n  'journal': [],\n  'erreurs': [],\n} }];"
+      }
+    }
+  ],
+  "connections": {
+    "Appelé par la chaîne": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Relire l'interrupteur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Relire l'interrupteur": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Effets prévus",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Écrire la carte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Effets prévus": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Écrire la carte": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,182 @@
+[
+  {
+    "id": "00000000-0000-4000-8000-000000000201",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000101",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-08-02T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000202",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000103",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-08-08T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000203",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000105",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-08-14T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000204",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000107",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-08-20T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000205",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000109",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-08-26T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000206",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000111",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-09-01T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000207",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000113",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-09-07T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000208",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000115",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-09-13T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000209",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000117",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-09-19T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000210",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000119",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-09-25T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000211",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000121",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-10-01T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000212",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000123",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-10-07T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000213",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000125",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-10-13T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000214",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000127",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-10-19T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000215",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000129",
+    "sens": "sortant",
+    "type": "email",
+    "contenu": "Exemple. Bonjour, merci pour votre demande. Je vous rappelle sous 48 h.",
+    "sent_at": "2026-10-25T10:00:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000216",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000104",
+    "sens": "entrant",
+    "type": "email",
+    "contenu": "Exemple. Stop, ne me relancez plus, merci.",
+    "sent_at": "2026-09-18T18:12:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000217",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000106",
+    "sens": "entrant",
+    "type": "email",
+    "contenu": "Exemple. Je conteste ce montant : la prestation n'est pas conforme au devis. Litige.",
+    "sent_at": "2026-09-22T10:05:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000218",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000120",
+    "sens": "entrant",
+    "type": "sms",
+    "contenu": "Exemple. Dégât des eaux dans la cuisine, il faut venir ce soir.",
+    "sent_at": "2026-10-12T07:40:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000219",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000121",
+    "sens": "entrant",
+    "type": "email",
+    "contenu": "Exemple. Mon avocat va prendre contact avec vous au sujet du chantier.",
+    "sent_at": "2026-10-14T16:20:00Z"
+  },
+  {
+    "id": "00000000-0000-4000-8000-000000000220",
+    "artisan_id": "00000000-0000-4000-8000-000000000001",
+    "lead_id": "00000000-0000-4000-8000-000000000122",
+    "sens": "entrant",
+    "type": "email",
+    "contenu": "Exemple. Déclaration de sinistre faite auprès de notre assurance.",
+    "sent_at": "2026-10-15T11:00:00Z"
+  }
+]

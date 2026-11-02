@@ -8,12 +8,14 @@
   "triggerCount": 0,
   "nodeCount": 15,
   "createdAt": "2026-11-02T18:03:23.677Z",
-  "updatedAt": "2026-11-02T18:03:43.090Z",
+  "updatedAt": "2026-11-02T20:39:55.970Z",
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
     "timezone": "Europe/Paris",
-    "saveDataSuccessExecution": "none"
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "AQeHiC58UgbMR4Kr"
   },
   "tags": [],
   "parentFolderId": null,
@@ -714,6 +716,6 @@
     "aiBuilderAssisted": true,
     "builderVariant": "mcp"
   },
-  "exporte_le": "2026-11-02T18:05:36.522Z",
-  "source": "MCP n8n-oracle get_workflow_details (tâche 032-014)"
+  "exporte_le": "2026-11-02T20:40:31.198Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 032-037), réponse enregistrée par le harnais (journal du harnais) puis recopiée par node, sans retouche ; « scopes » (droits de l'utilisateur du MCP) ôté"
 }

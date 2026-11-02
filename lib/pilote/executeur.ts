@@ -19,8 +19,8 @@ import { jourParis } from '@/lib/comptaTableau'
 import { confirmerAction, type FicheAction, type Realisateur, type Realisation } from '@/lib/assistant/confirmation'
 import { magasinSupabase } from '@/lib/assistant/magasin'
 import { journalEnBase } from '@/lib/assistant/executeurs'
-import { texteRelanceDevis, texteRelanceFacture } from '@/lib/assistant/cartes'
-import { ENVOIS_JOUR_MAX } from '@/lib/assistant/actions-serveur'
+import { motifHorsPilote, texteRelanceDevis, texteRelanceFacture } from '@/lib/assistant/cartes'
+import { ENVOIS_JOUR_MAX, exclusionsRelanceParDefaut } from '@/lib/assistant/actions-serveur'
 import { historiqueRelances, relanceRecente, RELANCE_DELAI_JOURS } from '@/lib/relancesRegistre'
 import { leadDuCompte, leadDuCompteStrict, repondreServeur, validerPropositionServeur } from '@/lib/envoisServeur'
 import { envoyerDevisServeur, envoyerFactureServeur } from '@/lib/envoisPdfServeur'
@@ -41,33 +41,70 @@ const txt = (v: unknown): string | null => (typeof v === 'string' && v.trim() ? 
 const ko = (erreur: string, deja = false): Issue => ({ ok: false, deja, erreur })
 
 /**
- * §3.2 (02/11) — la CONVERSATION où écrit une carte de l'assistant, pour relire les messages du client avant le départ : la
- * conversation elle-même (réponse, réponse préparée), celle du devis (relance, envoi), celle du devis de la facture (relance
- * d'impayé, envoi). Chaque lecture est filtrée par le compte ; illisible : lever (la ligne passe en échec, rien ne part). null : la
- * carte n'écrit dans aucune conversation connue (elle n'est pas bloquée pour autant).
+ * §3.2 (02/11) — les CONVERSATIONS où écrit une carte de l'assistant, pour relire les messages du client avant le départ : la conversation
+ * elle-même (réponse, réponse préparée), celle du devis (relance, envoi), celle du devis de la facture (relance d'impayé, envoi).
+ * 02/11 (contre-audit 032-035, E2) — TOUTES les conversations à relire avant le départ d'une carte : sa conversation (ou celle de son devis,
+ * du devis de sa facture), PUIS les autres conversations du même e-mail client (un litige écrit ailleurs qu'au fil du devis, un devis créé à
+ * la main sans conversation), comme l'assistant (escaladeDeLaCarte) et relancesImpayesMagasin. Chaque lecture est filtrée par le compte ;
+ * une lecture en erreur LÈVE (la ligne passe en échec, rien ne part). La première est la conversation de la carte.
  */
-async function conversationDeLaCarte(uid: string, f: Pick<FicheAction, 'objet_type' | 'objet_id' | 'entrees'>): Promise<string | null> {
-  const directe = f.objet_type === 'conversation' ? txt(f.objet_id) : txt(f.entrees?.conversation_id)
-  if (directe) return directe
+async function conversationsDeLaCarte(uid: string, f: Pick<FicheAction, 'objet_type' | 'objet_id' | 'entrees'>): Promise<string[]> {
+  const leads: string[] = []
+  const ajout = (v: unknown) => { const t = txt(v); if (t && !leads.includes(t)) leads.push(t) }
+  const emails = new Set<string>()
+  const email = (v: unknown) => { const t = txt(v); if (t) { emails.add(t); emails.add(t.toLowerCase()) } }
+  ajout(f.objet_type === 'conversation' ? f.objet_id : f.entrees?.conversation_id)
   let devisId = f.objet_type === 'devis' ? txt(f.objet_id) : null
   const factureId = f.objet_type === 'facture' ? txt(f.objet_id) : null
   if (factureId) {
-    const { data, error } = await supabaseAdmin.from('factures').select('devis_id').eq('artisan_id', uid).eq('id', factureId).maybeSingle()
+    const { data, error } = await supabaseAdmin.from('factures').select('devis_id, client_email').eq('artisan_id', uid).eq('id', factureId).maybeSingle()
     if (error) throw new Error('facture illisible : rien ne part')
     devisId = txt(data?.devis_id)
+    email(data?.client_email)
   }
-  if (!devisId) return null
-  const { data, error } = await supabaseAdmin.from('devis').select('lead_id').eq('artisan_id', uid).eq('id', devisId).maybeSingle()
-  if (error) throw new Error('devis illisible : rien ne part')
-  return txt(data?.lead_id)
+  if (devisId) {
+    const { data, error } = await supabaseAdmin.from('devis').select('lead_id, client_email').eq('artisan_id', uid).eq('id', devisId).maybeSingle()
+    if (error) throw new Error('devis illisible : rien ne part')
+    ajout(data?.lead_id)
+    email(data?.client_email)
+  }
+  if (emails.size) {
+    const { data, error } = await supabaseAdmin.from('leads').select('id').eq('artisan_id', uid).in('contact', [...emails]).limit(20)
+    if (error) throw new Error('conversations du client illisibles : rien ne part')
+    for (const l of data ?? []) ajout((l as { id?: unknown }).id)
+  }
+  return leads
 }
+
+/**
+ * 02/11 (contre-audit 032-035, E1) — la carte est-elle née d'un ordre découpé en cartes seules ? Une AUTRE carte de relance (devis ou impayé,
+ * mode confirmation, autre objet) dans la même conversation et le même tour de l'assistant : l'ordre visait plusieurs clients, il attend le
+ * clic (la carte la plus ancienne a pu entrer en file avant que la suivante ne le révèle). Lecture en erreur : lève (rien ne part).
+ */
+const OUTILS_RELANCE = ['relancer_devis', 'relancer_facture']
+async function ordreDecoupe(uid: string, f: Pick<FicheAction, 'id' | 'outil' | 'conversation_id' | 'tour' | 'objet_id'>): Promise<string | null> {
+  if (!OUTILS_RELANCE.includes(f.outil) || !txt(f.conversation_id)) return null
+  const { data, error } = await supabaseAdmin.from('assistant_actions').select('id, objet_id').eq('artisan_id', uid).eq('conversation_id', String(f.conversation_id))
+    .eq('tour', f.tour).eq('mode', 'confirmation').in('outil', OUTILS_RELANCE).limit(LOT_RELANCES_TOUR)
+  if (error) throw new Error('cartes du tour illisibles : rien ne part')
+  const autre = (data ?? []).some((x) => (x as { id?: unknown }).id !== f.id && (x as { objet_id?: unknown }).objet_id !== f.objet_id)
+  return autre ? 'Née d’un message qui demandait plusieurs relances (un ordre groupé) : elle attend le clic de l’artisan, jamais le pilote.' : null
+}
+const LOT_RELANCES_TOUR = 50
 
 /**
  * Les réalisateurs du pilote pour les cartes de l'assistant : ceux de lib/assistant/actions-serveur.ts, sans la session —
  * mêmes contrôles (objet du compte, statut, e-mail, plafond d'envois et délai entre deux relances de l'assistant), mêmes
  * fonctions d'envoi (lib/envoisServeur.ts) et mêmes textes (lib/assistant/cartes.ts).
  */
-export function realisateursPilote(uid: string, carteCreeLe: string): Record<string, Realisateur> {
+/** Une carte de LOT de relances (entrees.lot, lot L16) : jamais réalisée par le pilote (audit 032-028, D7). */
+const estCarteDeLot = (entrees: Record<string, unknown> | null | undefined): boolean => Array.isArray(entrees?.lot)
+
+/**
+ * `exclusions` : « ne plus relancer » (le point d'entrée de 0185, audit 032-028, D3), comme `exclusionsRelance` de l'assistant. Absent :
+ * rien à lire tant que L13 n'a pas branché la table. Une lecture en erreur REFUSE la relance.
+ */
+export function realisateursPilote(uid: string, carteCreeLe: string, exclusions?: (artisanId: string, devisIds: readonly string[]) => Promise<ReadonlyMap<string, string>>): Record<string, Realisateur> {
   const ko2 = (erreur: string): Realisation => ({ ok: false, erreur })
   const peutEnvoyer = () => consommerLimite(`assistant-envois:${uid}`, ENVOIS_JOUR_MAX, 24 * 3600)
   async function profil() {
@@ -117,6 +154,7 @@ export function realisateursPilote(uid: string, carteCreeLe: string): Record<str
     return r.status === 200 ? { ok: true, resume: `facture ${f.numero} envoyée au client (pilote automatique)`, objet: { type: 'facture', id: f.id } } : ko2(String(r.json.error ?? 'La facture n’a pas pu partir.'))
   }
   R.relancer_devis = async (e) => {
+    if (estCarteDeLot(e)) return ko2('Une carte de lot de relances ne part jamais par le pilote : seulement au clic de l’artisan.')
     const d = await devisDe(String(e.numero))
     if (!d) return ko2(`Devis ${e.numero} introuvable.`)
     if (d.statut !== 'envoye') return ko2(`Le devis ${d.numero} n'attend plus de réponse (statut : ${d.statut}).`)
@@ -124,6 +162,8 @@ export function realisateursPilote(uid: string, carteCreeLe: string): Record<str
     if (!to || !EMAIL.test(to)) return ko2('Le devis n’a pas d’e-mail client.')
     const dejaD = await dejaRelance('devis', d.id)
     if (dejaD) return ko2(dejaD)
+    const neplus = exclusions ? await exclusions(uid, [d.id]).then((m) => m.get(d.id) ?? null, () => 'la liste « ne plus relancer » n’a pas pu être relue') : null
+    if (neplus) return ko2(`Pas de relance du devis ${d.numero} : ${neplus}.`)
     const p = await profil()
     const t = texteRelanceDevis({ client: d.client_nom, numero: String(d.numero), objet: d.objet, totalTtc: d.total_ttc === null ? null : num(d.total_ttc), envoyeLe: d.envoye_le, validiteJours: d.validite_jours, artisan: p.nom, ton: (e.ton as 'cordial' | 'ferme') ?? 'cordial' })
     return (await mail(to, t.objet, t.texte)) ?? { ok: true, resume: `relance du devis ${d.numero} envoyée (pilote automatique)`, objet: { type: 'devis', id: d.id } }
@@ -160,6 +200,11 @@ export function realisateursPilote(uid: string, carteCreeLe: string): Record<str
   }
   // Rien d'autre : un outil absent d'ici ne part jamais automatiquement (argent, comptabilité, routes à session).
   for (const k of Object.keys(R)) if (!OUTILS_EXECUTABLES_PILOTE.includes(k)) delete R[k]
+  // 02/11 (contre-audit 032-035, E1 et E2) : une carte marquée HORS PILOTE n'est réalisée par aucun réalisateur du pilote, avant toute lecture.
+  for (const k of Object.keys(R)) {
+    const realiser = R[k]
+    R[k] = async (e) => { const motif = motifHorsPilote(e); return motif ? ko2(motif) : realiser(e) }
+  }
   return R
 }
 
@@ -207,7 +252,11 @@ export function dependancesSupabase(): DependancesFile {
     async carteDe(l) {
       const f = await magasin.lire(l.artisan_id, l.ref_id).catch(() => null)
       if (!f || f.mode !== 'confirmation' || f.statut !== 'en_attente') return null
-      return { outil: f.outil, contenuClientLu: f.entrees?.[MARQUE_CONTENU_TIERS] === true, leadId: await conversationDeLaCarte(l.artisan_id, f) }
+      // 02/11 (contre-audit 032-035, E1 et E2) : la marque hors pilote, ou un ordre découpé en cartes seules dans le même tour ; et toutes les
+      // conversations du client (même e-mail) à relire, pas seulement celle du devis.
+      const leads = await conversationsDeLaCarte(l.artisan_id, f)
+      const horsPilote = motifHorsPilote(f.entrees) ?? await ordreDecoupe(l.artisan_id, f)
+      return { outil: f.outil, contenuClientLu: f.entrees?.[MARQUE_CONTENU_TIERS] === true, horsPilote, leadId: leads[0] ?? null, leadsClient: leads }
     },
     async etatConversation(l, maintenant) {
       if (!l.lead_id) return 'prise_en_main'
@@ -249,8 +298,9 @@ export function dependancesSupabase(): DependancesFile {
       }
       const fiche = await magasin.lire(l.artisan_id, l.ref_id).catch(() => null)
       if (!fiche) return ko('carte introuvable', true)
+      // 02/11 (contre-audit 032-035, E9) : « ne plus relancer » — le MÊME lecteur que l'assistant (actions-serveur.ts exclusionsRelanceParDefaut).
       const r = await confirmerAction({
-        magasin, realisateurs: realisateursPilote(l.artisan_id, fiche.cree_le), inverses: {},
+        magasin, realisateurs: realisateursPilote(l.artisan_id, fiche.cree_le, exclusionsRelanceParDefaut), inverses: {},
         journaliser: (j) => journalEnBase({ uid: l.artisan_id, conversationId: j.conversationId, tour: j.tour })({ nom: j.nom, entree: j.entree, resultat: j.resultat, resume: `pilote automatique — ${j.resume}`.slice(0, 300), objet: j.objet ?? null }),
       }, l.artisan_id, l.ref_id)
       if (r.ok) return { ok: true, resume: r.resume }

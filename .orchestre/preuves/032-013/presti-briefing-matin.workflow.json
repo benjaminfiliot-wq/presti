@@ -8,15 +8,19 @@
   "triggerCount": 0,
   "nodeCount": 19,
   "createdAt": "2026-11-02T18:24:22.045Z",
-  "updatedAt": "2026-11-02T18:27:01.768Z",
+  "updatedAt": "2026-11-02T20:39:59.464Z",
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": true,
-    "timezone": "Europe/Paris"
+    "timezone": "Europe/Paris",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "errorWorkflow": "AQeHiC58UgbMR4Kr"
   },
   "tags": [],
   "parentFolderId": null,
   "description": "Point du jour de chaque compte à 7 h 30 (Paris), trois priorités, en simulation : lit Supabase en GET, n'écrit et n'envoie rien. Inactif. Juge : scripts/briefing-n8n-qa.mjs (tâche 032-013).",
+  "canExecute": true,
   "connections": {
     "Déclencheur 7 h 30": {
       "main": [
@@ -920,6 +924,6 @@
     "aiBuilderAssisted": true,
     "builderVariant": "mcp"
   },
-  "source": "get_workflow_details (MCP n8n-oracle), workflow xPIDCvkp8Gk08A2E ; recopié par la session de la tâche 032-013 (le résultat du MCP ne s’écrit pas seul sur le disque)",
-  "exporte_le": "2026-11-02T18:28:00Z"
+  "exporte_le": "2026-11-02T20:40:31.198Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 032-037), réponse enregistrée par le harnais (journal du harnais) puis recopiée par node, sans retouche ; « scopes » (droits de l'utilisateur du MCP) ôté"
 }

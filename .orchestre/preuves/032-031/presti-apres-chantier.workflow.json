@@ -1,0 +1,620 @@
+{
+ "source": "MCP n8n-oracle get_workflow_details 18cmxK4gy1ceqFYD, 02/11/2026 20:05 UTC (versionId e4061868) ; nœuds, paramètres et code écrits depuis la source de création, identiques au rendu du MCP ; rejeu de l essai 355 : scripts/apres-chantier-n8n-qa.mjs (E3)",
+ "workflow": {
+  "id": "18cmxK4gy1ceqFYD",
+  "name": "presti-apres-chantier",
+  "active": false,
+  "isArchived": false,
+  "versionId": "e4061868-5ecc-49c7-8390-20bca2c3f92a",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 12,
+  "createdAt": "2026-11-02T20:04:20.901Z",
+  "updatedAt": "2026-11-02T20:04:20.901Z",
+  "settings": {
+   "executionOrder": "v1",
+   "timezone": "Europe/Paris",
+   "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "Chantier 4, lot L18 (tâche 032-031) : l'après-chantier refait dans n8n (tourApresChantier) — rappels d'avis et d'entretien à 8 h (Paris), lectures GET seulement, écriture en simulation, rien n'est envoyé. Inactif jusqu'au « go » de Benj.",
+  "connections": {
+   "Déclencheur 8 h": {
+    "main": [
+     [
+      {
+       "node": "Contexte du passage",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Contexte du passage": {
+    "main": [
+     [
+      {
+       "node": "Lire pause generale",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Lire pause generale": {
+    "main": [
+     [
+      {
+       "node": "Lire reglages",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Lire reglages": {
+    "main": [
+     [
+      {
+       "node": "Lire comptes",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Lire comptes": {
+    "main": [
+     [
+      {
+       "node": "Lire chantiers",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Lire chantiers": {
+    "main": [
+     [
+      {
+       "node": "Lire signaux",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Lire signaux": {
+    "main": [
+     [
+      {
+       "node": "Lire cles",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Lire cles": {
+    "main": [
+     [
+      {
+       "node": "Rappels a poser",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Rappels a poser": {
+    "main": [
+     [
+      {
+       "node": "Poser les rappels (simulation)",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Échec du passage": {
+    "main": [
+     [
+      {
+       "node": "Message d echec",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   }
+  },
+  "nodes": [
+   {
+    "id": "24f4e182-9817-4fad-81b1-f9378887ebbb",
+    "name": "Déclencheur 8 h",
+    "type": "n8n-nodes-base.scheduleTrigger",
+    "typeVersion": 1.2,
+    "position": [
+     0,
+     0
+    ],
+    "parameters": {
+     "rule": {
+      "interval": [
+       {
+        "field": "days",
+        "daysInterval": 1,
+        "triggerAtHour": 8,
+        "triggerAtMinute": 0
+       }
+      ]
+     }
+    }
+   },
+   {
+    "id": "8f781bad-349d-4b01-9e94-34b1b39ef3be",
+    "name": "Contexte du passage",
+    "type": "n8n-nodes-base.code",
+    "typeVersion": 2,
+    "position": [
+     224,
+     0
+    ],
+    "parameters": {
+     "mode": "runOnceForAllItems",
+     "language": "javaScript",
+     "jsCode": "// Le jour de Paris, le mode et la COPIE FIGÉE des règles du code (scripts/apres-chantier-n8n-qa.mjs rougit si elle s'en écarte) :\n// lib/apresChantier.ts (DELAI_AVIS_JOURS, RATTRAPAGE_JOURS, PREAVIS_JOURS, ENTRETIEN_ANS_MAX, EQUIPEMENTS), lib/apresChantierTour.ts\n// (MAX_POSES_PAR_PASSAGE), lib/plans.ts (offres qui portent « crm ») et lib/flags.ts (crmApresChantier). Aucune donnée lue ici.\nconst jour = $now.setZone('Europe/Paris').toISODate();\nconst ajouterMois = (j, n) => {\n  const a = +j.slice(0, 4), m = +j.slice(5, 7) - 1 + n, d = +j.slice(8, 10);\n  const an = a + Math.floor(m / 12), mo = ((m % 12) + 12) % 12;\n  const dernier = new Date(Date.UTC(an, mo + 1, 0)).getUTCDate();\n  return new Date(Date.UTC(an, mo, Math.min(d, dernier))).toISOString().slice(0, 10);\n};\nreturn [{ json: {\n  jour,\n  depuis: ajouterMois(jour, -12 * 3),\n  mode: 'simulation',\n  drapeau_crmApresChantier: true,\n  offres_crm: ['signature', 'entreprise'],\n  seuils: { delai_avis_jours: 2, rattrapage_jours: 14, preavis_jours: 15, entretien_ans_max: 3, max_poses_par_passage: 20 },\n  equipements: {\n    chaudiere: { nom: 'chaudière', mois: 12 },\n    pompe_a_chaleur: { nom: 'pompe à chaleur', mois: 24 },\n    conduit_de_fumee: { nom: 'conduit de fumée', mois: 12 }\n  }\n} }];"
+    }
+   },
+   {
+    "id": "e5d612f5-d6af-430b-ae54-034e68a1e220",
+    "name": "Lire pause generale",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.5,
+    "position": [
+     448,
+     0
+    ],
+    "parameters": {
+     "method": "GET",
+     "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/rpc/n8n_pause_generale",
+     "authentication": "predefinedCredentialType",
+     "nodeCredentialType": "supabaseApi",
+     "sendQuery": true,
+     "specifyQuery": "keypair",
+     "queryParameters": {
+      "parameters": [
+       {
+        "name": "select",
+        "value": "pause_generale"
+       }
+      ]
+     },
+     "options": {
+      "timeout": 30000
+     }
+    },
+    "executeOnce": true,
+    "alwaysOutputData": true,
+    "credentials": {
+     "supabaseApi": {
+      "id": "dTewDK98MLrNckNG",
+      "name": "Supabase account"
+     }
+    }
+   },
+   {
+    "id": "2dcac7c9-38f7-4af7-bd9a-5c177025e19a",
+    "name": "Lire reglages",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.5,
+    "position": [
+     672,
+     0
+    ],
+    "parameters": {
+     "method": "GET",
+     "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/crm_apres_chantier",
+     "authentication": "predefinedCredentialType",
+     "nodeCredentialType": "supabaseApi",
+     "sendQuery": true,
+     "specifyQuery": "keypair",
+     "queryParameters": {
+      "parameters": [
+       {
+        "name": "select",
+        "value": "artisan_id,avis,entretien,actif_depuis"
+       },
+       {
+        "name": "or",
+        "value": "(avis.eq.true,entretien.eq.true)"
+       },
+       {
+        "name": "order",
+        "value": "artisan_id"
+       },
+       {
+        "name": "limit",
+        "value": "1000"
+       }
+      ]
+     },
+     "options": {
+      "timeout": 30000,
+      "pagination": {
+       "pagination": {
+        "paginationMode": "updateAParameterInEachRequest",
+        "parameters": {
+         "parameters": [
+          {
+           "type": "qs",
+           "name": "offset",
+           "value": "={{ $pageCount * 1000 }}"
+          }
+         ]
+        },
+        "paginationCompleteWhen": "other",
+        "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+        "limitPagesFetched": true,
+        "maxRequests": 50
+       }
+      }
+     }
+    },
+    "executeOnce": true,
+    "alwaysOutputData": true,
+    "credentials": {
+     "supabaseApi": {
+      "id": "dTewDK98MLrNckNG",
+      "name": "Supabase account"
+     }
+    }
+   },
+   {
+    "id": "3587ad7f-c7b4-4a0a-8f73-f009a151069e",
+    "name": "Lire comptes",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.5,
+    "position": [
+     896,
+     0
+    ],
+    "parameters": {
+     "method": "GET",
+     "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans",
+     "authentication": "predefinedCredentialType",
+     "nodeCredentialType": "supabaseApi",
+     "sendQuery": true,
+     "specifyQuery": "keypair",
+     "queryParameters": {
+      "parameters": [
+       {
+        "name": "select",
+        "value": "id,plan,is_founder"
+       },
+       {
+        "name": "id",
+        "value": "={{ 'in.(' + ($('Lire reglages').all().map(i => i.json.artisan_id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+       },
+       {
+        "name": "order",
+        "value": "id"
+       },
+       {
+        "name": "limit",
+        "value": "1000"
+       }
+      ]
+     },
+     "options": {
+      "timeout": 30000,
+      "pagination": {
+       "pagination": {
+        "paginationMode": "updateAParameterInEachRequest",
+        "parameters": {
+         "parameters": [
+          {
+           "type": "qs",
+           "name": "offset",
+           "value": "={{ $pageCount * 1000 }}"
+          }
+         ]
+        },
+        "paginationCompleteWhen": "other",
+        "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+        "limitPagesFetched": true,
+        "maxRequests": 50
+       }
+      }
+     }
+    },
+    "executeOnce": true,
+    "alwaysOutputData": true,
+    "credentials": {
+     "supabaseApi": {
+      "id": "dTewDK98MLrNckNG",
+      "name": "Supabase account"
+     }
+    }
+   },
+   {
+    "id": "bca8daec-8e94-4920-a34d-fe2dd8bad4fd",
+    "name": "Lire chantiers",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.5,
+    "position": [
+     1120,
+     0
+    ],
+    "parameters": {
+     "method": "GET",
+     "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/chantiers",
+     "authentication": "predefinedCredentialType",
+     "nodeCredentialType": "supabaseApi",
+     "sendQuery": true,
+     "specifyQuery": "keypair",
+     "queryParameters": {
+      "parameters": [
+       {
+        "name": "select",
+        "value": "id,artisan_id,statut,date_fin_reelle"
+       },
+       {
+        "name": "artisan_id",
+        "value": "={{ 'in.(' + ($('Lire reglages').all().map(i => i.json.artisan_id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+       },
+       {
+        "name": "statut",
+        "value": "eq.termine"
+       },
+       {
+        "name": "date_fin_reelle",
+        "value": "={{ 'gte.' + $('Contexte du passage').first().json.depuis }}"
+       },
+       {
+        "name": "order",
+        "value": "id"
+       },
+       {
+        "name": "limit",
+        "value": "1000"
+       }
+      ]
+     },
+     "options": {
+      "timeout": 30000,
+      "pagination": {
+       "pagination": {
+        "paginationMode": "updateAParameterInEachRequest",
+        "parameters": {
+         "parameters": [
+          {
+           "type": "qs",
+           "name": "offset",
+           "value": "={{ $pageCount * 1000 }}"
+          }
+         ]
+        },
+        "paginationCompleteWhen": "other",
+        "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+        "limitPagesFetched": true,
+        "maxRequests": 50
+       }
+      }
+     }
+    },
+    "executeOnce": true,
+    "alwaysOutputData": true,
+    "credentials": {
+     "supabaseApi": {
+      "id": "dTewDK98MLrNckNG",
+      "name": "Supabase account"
+     }
+    }
+   },
+   {
+    "id": "50070f34-0384-4fe9-b2d9-9f17df8d4111",
+    "name": "Lire signaux",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.5,
+    "position": [
+     1344,
+     0
+    ],
+    "parameters": {
+     "method": "GET",
+     "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/apres_chantier_signaux",
+     "authentication": "predefinedCredentialType",
+     "nodeCredentialType": "supabaseApi",
+     "sendQuery": true,
+     "specifyQuery": "keypair",
+     "queryParameters": {
+      "parameters": [
+       {
+        "name": "select",
+        "value": "artisan_id,chantier_id,equipement,oppose"
+       },
+       {
+        "name": "artisan_id",
+        "value": "={{ 'in.(' + ($('Lire reglages').all().map(i => i.json.artisan_id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+       },
+       {
+        "name": "order",
+        "value": "chantier_id"
+       },
+       {
+        "name": "limit",
+        "value": "1000"
+       }
+      ]
+     },
+     "options": {
+      "timeout": 30000,
+      "pagination": {
+       "pagination": {
+        "paginationMode": "updateAParameterInEachRequest",
+        "parameters": {
+         "parameters": [
+          {
+           "type": "qs",
+           "name": "offset",
+           "value": "={{ $pageCount * 1000 }}"
+          }
+         ]
+        },
+        "paginationCompleteWhen": "other",
+        "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+        "limitPagesFetched": true,
+        "maxRequests": 50
+       }
+      }
+     }
+    },
+    "executeOnce": true,
+    "alwaysOutputData": true,
+    "credentials": {
+     "supabaseApi": {
+      "id": "dTewDK98MLrNckNG",
+      "name": "Supabase account"
+     }
+    }
+   },
+   {
+    "id": "ef859a3c-7f74-4081-9230-1d0a21007d17",
+    "name": "Lire cles",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.5,
+    "position": [
+     1568,
+     0
+    ],
+    "parameters": {
+     "method": "GET",
+     "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/crm_rappels",
+     "authentication": "predefinedCredentialType",
+     "nodeCredentialType": "supabaseApi",
+     "sendQuery": true,
+     "specifyQuery": "keypair",
+     "queryParameters": {
+      "parameters": [
+       {
+        "name": "select",
+        "value": "id,artisan_id,cle"
+       },
+       {
+        "name": "artisan_id",
+        "value": "={{ 'in.(' + ($('Lire reglages').all().map(i => i.json.artisan_id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+       },
+       {
+        "name": "or",
+        "value": "(cle.like.avis:*,cle.like.entretien:*)"
+       },
+       {
+        "name": "order",
+        "value": "id"
+       },
+       {
+        "name": "limit",
+        "value": "1000"
+       }
+      ]
+     },
+     "options": {
+      "timeout": 30000,
+      "pagination": {
+       "pagination": {
+        "paginationMode": "updateAParameterInEachRequest",
+        "parameters": {
+         "parameters": [
+          {
+           "type": "qs",
+           "name": "offset",
+           "value": "={{ $pageCount * 1000 }}"
+          }
+         ]
+        },
+        "paginationCompleteWhen": "other",
+        "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+        "limitPagesFetched": true,
+        "maxRequests": 50
+       }
+      }
+     }
+    },
+    "executeOnce": true,
+    "alwaysOutputData": true,
+    "credentials": {
+     "supabaseApi": {
+      "id": "dTewDK98MLrNckNG",
+      "name": "Supabase account"
+     }
+    }
+   },
+   {
+    "id": "b0af52a6-8d4b-44ac-b932-e0fddfcd848e",
+    "name": "Rappels a poser",
+    "type": "n8n-nodes-base.code",
+    "typeVersion": 2,
+    "position": [
+     1792,
+     0
+    ],
+    "parameters": {
+     "mode": "runOnceForAllItems",
+     "language": "javaScript",
+     "jsCode": "// La règle de tourApresChantier (lib/apresChantierTour.ts:29-55) et de propositions (lib/apresChantier.ts:131-160), en code pur :\n// pour chaque compte qui a coché « Demander un avis » ou « Proposer l'entretien » et dont l'offre porte le CRM (ou fondateur), les\n// rappels de ses chantiers TERMINÉS, à la date de fin RÉELLE ; clé « avis:<chantier> » ou « entretien:<chantier>:<n> », jamais deux\n// fois la même ; au plus 20 par compte, par échéance. Écarts voulus (brief c4-n8n-apres-chantier.md, « Comparaison ») :\n//  É1 aucun nom de client lu : le texte dit « le client » ; É2 un chantier dont le client s'est opposé (0171) n'a plus de rappel ;\n//  É4 un chantier sans ligne de signaux n'a aucun rappel (doute : rien). Pause générale illisible = active : rien n'est posé.\nconst ctx = $('Contexte du passage').first().json;\nconst S = ctx.seuils;\nconst JOUR = ctx.jour;\nconst lignes = (nom) => $(nom).all().map((i) => i.json).filter((r) => r && typeof r === 'object' && Object.keys(r).length > 0);\nconst jourMs = (j) => Date.UTC(+j.slice(0, 4), +j.slice(5, 7) - 1, +j.slice(8, 10));\nconst ajouterJours = (j, n) => new Date(jourMs(j) + n * 86400000).toISOString().slice(0, 10);\nconst ajouterMois = (j, n) => {\n  const a = +j.slice(0, 4), m = +j.slice(5, 7) - 1 + n, d = +j.slice(8, 10);\n  const an = a + Math.floor(m / 12), mo = ((m % 12) + 12) % 12;\n  const dernier = new Date(Date.UTC(an, mo + 1, 0)).getUTCDate();\n  return new Date(Date.UTC(an, mo, Math.min(d, dernier))).toISOString().slice(0, 10);\n};\nconst finDe = (c) => c.statut === 'termine' && typeof c.date_fin_reelle === 'string' && /^\\d{4}-\\d{2}-\\d{2}$/.test(c.date_fin_reelle.slice(0, 10)) ? c.date_fin_reelle.slice(0, 10) : null;\n// M2 (032-010) : toute jointure entre deux lectures passe par le compte ET l'identifiant.\nconst paire = (artisanId, id) => artisanId + '|' + id;\nconst pause = lignes('Lire pause generale');\nconst bilan = { jour: JOUR, mode: ctx.mode, pause: !(pause.length === 1 && pause[0].pause_generale === false), comptes: 0, poses: 0, sans_signal: 0, opposes: 0, a_poser: [] };\nif (bilan.pause || ctx.drapeau_crmApresChantier !== true) return [{ json: bilan }];\nconst comptes = new Map(lignes('Lire comptes').map((a) => [a.id, a]));\nconst signaux = new Map(lignes('Lire signaux').map((s) => [paire(s.artisan_id, s.chantier_id), s]));\nconst chantiersDe = new Map(), clesDe = new Map();\nfor (const c of lignes('Lire chantiers')) { if (!chantiersDe.has(c.artisan_id)) chantiersDe.set(c.artisan_id, []); chantiersDe.get(c.artisan_id).push(c); }\nfor (const k of lignes('Lire cles')) { if (!clesDe.has(k.artisan_id)) clesDe.set(k.artisan_id, new Set()); if (typeof k.cle === 'string') clesDe.get(k.artisan_id).add(k.cle); }\nfor (const reg of lignes('Lire reglages').filter((x) => x.avis === true || x.entretien === true)) {\n  const p = comptes.get(reg.artisan_id);\n  if (!p || (p.is_founder !== true && !ctx.offres_crm.includes(p.plan))) continue;\n  bilan.comptes++;\n  const existantes = clesDe.get(reg.artisan_id) || new Set();\n  const activation = (typeof reg.actif_depuis === 'string' ? reg.actif_depuis : '').slice(0, 10) || JOUR;\n  const qui = 'le client';\n  const out = [];\n  for (const c of chantiersDe.get(reg.artisan_id) || []) {\n    const fin = finDe(c);\n    if (!fin || fin > JOUR) continue;\n    const sig = signaux.get(paire(reg.artisan_id, c.id));\n    if (!sig) { bilan.sans_signal++; continue; }\n    if (sig.oppose !== false) { bilan.opposes++; continue; }\n    if (reg.avis === true && fin >= ajouterJours(activation, -S.rattrapage_jours)) {\n      const cle = 'avis:' + c.id;\n      if (!existantes.has(cle)) {\n        const due = ajouterJours(fin, S.delai_avis_jours);\n        out.push({ cle, chantier_id: c.id, type: 'demande_avis', echeance: due > JOUR ? due : JOUR, texte: ('Demander un avis à ' + qui).slice(0, 300) });\n      }\n    }\n    const eq = reg.entretien === true && typeof sig.equipement === 'string' ? ctx.equipements[sig.equipement] || null : null;\n    if (eq && fin >= ajouterMois(JOUR, -12 * S.entretien_ans_max)) {\n      let n = 1;\n      while (ajouterJours(ajouterMois(fin, n * eq.mois), -S.preavis_jours) < JOUR && n < 100) n++;\n      const cle = 'entretien:' + c.id + ':' + n;\n      if (!existantes.has(cle) && ![...existantes].some((k) => k.startsWith('entretien:' + c.id + ':') && Number(k.split(':')[2]) >= n)) {\n        out.push({ cle, chantier_id: c.id, type: 'entretien', echeance: ajouterJours(ajouterMois(fin, n * eq.mois), -S.preavis_jours), texte: ('Proposer l’entretien (' + eq.nom + ') à ' + qui).slice(0, 300) });\n      }\n    }\n  }\n  const aPoser = out.sort((a, b) => a.echeance.localeCompare(b.echeance)).slice(0, S.max_poses_par_passage);\n  for (const x of aPoser) bilan.a_poser.push(Object.assign({ artisan_id: reg.artisan_id }, x));\n  bilan.poses += aPoser.length;\n}\nreturn [{ json: bilan }];"
+    }
+   },
+   {
+    "id": "5b8723e2-f92f-4cde-b9b6-e3f9845b17e0",
+    "name": "Poser les rappels (simulation)",
+    "type": "n8n-nodes-base.code",
+    "typeVersion": 2,
+    "position": [
+     2016,
+     0
+    ],
+    "parameters": {
+     "mode": "runOnceForAllItems",
+     "language": "javaScript",
+     "jsCode": "// L'ÉCRITURE, EN SIMULATION (tâche 032-031) : les lignes que l'ancien code envoie à crm_rappels (upsert, conflit artisan_id,cle,\n// doublons ignorés : app/api/cron/relances/route.ts, poser), préparées ici et NON écrites. Aucune requête ne part de ce nœud.\n// L'écriture réelle est un pas de la bascule, sur le « go » de Benj (brief c4-n8n-apres-chantier.md, « Avant la bascule »).\nconst b = $input.first().json;\nconst lignes = (b.a_poser || []).map((p) => ({ artisan_id: p.artisan_id, chantier_id: p.chantier_id, type: p.type, echeance: p.echeance, origine: 'systeme', cle: p.cle, texte: p.texte }));\nreturn [{ json: { mode: 'simulation', ecrit: false, table: 'crm_rappels', conflit: 'artisan_id,cle', doublons: 'ignores', jour: b.jour, pause: b.pause, comptes: b.comptes, poses: lignes.length, sans_signal: b.sans_signal, opposes: b.opposes, lignes } }];"
+    }
+   },
+   {
+    "id": "594a1304-3a1f-4d5c-97b3-609b011a1224",
+    "name": "Échec du passage",
+    "type": "n8n-nodes-base.errorTrigger",
+    "typeVersion": 1,
+    "position": [
+     0,
+     224
+    ],
+    "parameters": {}
+   },
+   {
+    "id": "c85a3c74-db59-42fd-9087-ee16b32f1652",
+    "name": "Message d echec",
+    "type": "n8n-nodes-base.code",
+    "typeVersion": 2,
+    "position": [
+     224,
+     224
+    ],
+    "parameters": {
+     "mode": "runOnceForAllItems",
+     "language": "javaScript",
+     "jsCode": "// Branche d'erreur (plan §0 bis, rang 26) : le message d'alerte, sans aucune donnée lue ni texte d'erreur (qui pourrait en porter).\n// L'envoi vers #presti-auto attend l'identifiant et le « go » de Benj : aucun nœud d'envoi ici. Une lecture en erreur arrête tout le\n// passage : rien n'est posé (au lieu de sauter le seul compte fautif, comme l'ancien code : écart É5 du brief).\nconst e = $input.first().json || {};\nconst x = e.execution && typeof e.execution === 'object' ? e.execution : {};\nconst propre = (v, n) => String(v === undefined || v === null ? '' : v).replace(/[^A-Za-z0-9 _()'éèêàâçôîûù-]/g, '').slice(0, n);\nreturn [{ json: { alerte: 'presti-apres-chantier a échoué', noeud: propre(x.lastNodeExecuted, 80) || 'inconnu', execution: propre(x.id, 40), mode: propre(x.mode, 20) } }];"
+    }
+   }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+   "aiBuilderAssisted": true,
+   "builderVariant": "mcp"
+  }
+ }
+}

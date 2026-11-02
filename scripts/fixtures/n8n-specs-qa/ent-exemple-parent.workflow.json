@@ -1,0 +1,185 @@
+{
+  "name": "ent-exemple-parent",
+  "description": "Exemple. Export fictif du juge n8n-specs-qa, jamais dans n8n.",
+  "active": false,
+  "activeVersionId": null,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "errorWorkflow": "ErreurCommuneFictif01",
+    "executionTimeout": 300,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "callerPolicy": "none"
+  },
+  "nodes": [
+    {
+      "id": "ho",
+      "name": "Toutes les 5 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "lc",
+      "name": "Lire la configuration",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "IdentifiantFictif01",
+          "name": "Supabase account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/configuration_organisation",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "organisation_id,interrupteur_general,simulation"
+            },
+            {
+              "name": "organisation_id",
+              "value": "eq.00000000-0000-4000-8000-000000000001"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "id": "Préparer l'enveloppe",
+      "name": "Préparer l'enveloppe",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Construit l'enveloppe@1 de l'enfant à partir de la configuration lue (une fois par passage).\nconst c = $input.first().json;\nreturn [{ json: { contrat: 'ent-exemple-relance@1', organisation_id: c.organisation_id, simulation: c.simulation !== false, cle_idempotence: 'exemple:relance:' + $execution.id, trace: { execution_parent: $execution.id, declencheur: 'horaire', tentative: 1 }, config: {}, donnees: {} } }];"
+      }
+    },
+    {
+      "id": "ar",
+      "name": "Appeler la relance",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "onError": "continueErrorOutput",
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "RelanceExempleFictif01"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "Bilan",
+      "name": "Bilan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Bilan agrégé du passage, sans donnée personnelle.\nconst passes = $input.all().map((i) => i.json);\nreturn [{ json: { passes: passes.length, statuts: passes.map((p) => p.statut ?? null) } }];"
+      }
+    }
+  ],
+  "connections": {
+    "Toutes les 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "Lire la configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire la configuration": {
+      "main": [
+        [
+          {
+            "node": "Préparer l'enveloppe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer l'enveloppe": {
+      "main": [
+        [
+          {
+            "node": "Appeler la relance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler la relance": {
+      "main": [
+        [
+          {
+            "node": "Bilan",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bilan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
