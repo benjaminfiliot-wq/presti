@@ -15,6 +15,7 @@ export default function PublicPied({ accueil = false }: { accueil?: boolean }) {
             <a className="lp-btn lp-btn--p" href="/signup">Essayer gratuitement</a>
           </div>
           <nav aria-label="Produit"><b>Produit</b><a href={ancre('fonctionnalites')}>Fonctionnalités</a><a href={ancre('chiffres')}>Vos chiffres</a><a href={ancre('compta')}>Comptabilité</a><a href={ancre('tarifs')}>Tarifs</a></nav>
+          <nav aria-label="Ressources"><b>Ressources</b><a href="/generateur-devis">Générateur de devis</a><a href="/modele-devis">Modèles de devis</a><a href="/comment-faire-un-devis">Faire un devis</a><a href="/logiciel-devis-artisan">Logiciel de devis</a></nav>
           <nav aria-label="Aide"><b>Aide</b><a href="/faq">Questions fréquentes</a><a href="/contact">Nous écrire</a><a href="/login">Se connecter</a></nav>
           <nav aria-label="Informations légales"><b>Légal</b><a href="/cgu">Conditions générales</a><a href="/confidentialite">Confidentialité</a><a href="/mentions-legales">Mentions légales</a></nav>
         </div>

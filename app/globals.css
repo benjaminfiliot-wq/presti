@@ -1343,7 +1343,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 
 /* — Pied de page — */
 .lp-foot{position:relative;overflow:hidden;border-top:1px solid var(--line);color:var(--faint);padding:clamp(3rem,6vw,4.5rem) 0 0;background:linear-gradient(180deg,transparent,rgba(217,119,87,.045))}
-.lp-foot-haut{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:2rem 2.5rem}
+.lp-foot-haut{display:grid;grid-template-columns:minmax(0,1.5fr) repeat(4,minmax(0,1fr));gap:2rem 2.2rem}
 .lp-foot .lp-brand{font-size:1.15rem}
 .lp-foot-marque p{color:var(--muted);font-size:.93rem;line-height:1.6;max-width:34ch;margin:.9rem 0 1.3rem}
 .lp-foot nav{display:flex;flex-direction:column;gap:.7rem;font-size:.93rem}
