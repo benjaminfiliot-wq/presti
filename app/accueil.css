@@ -118,3 +118,20 @@
   .lp-cpt-scene{grid-template-columns:1fr}
   .lp-cpt-kpis{grid-template-columns:1fr 1fr}
 }
+
+/* — Tarifs, 02/11 (Benj : « trop d'informations sur les offres, pas assez sur l'entreprise ») : trois cartes côte à côte, comme
+   celles de claude.com ; l'offre sur mesure à droite, sans halo, « Sur mesure » à la place du prix ; puis ses trois temps. — */
+.lp .lp-plans.lp-plans--3{grid-template-columns:repeat(3,minmax(0,1fr));max-width:1180px}
+@media(max-width:1060px){.lp .lp-plans.lp-plans--3{grid-template-columns:1fr;max-width:560px}}
+.lp .lp-plan--ent{background:linear-gradient(180deg,var(--surf),#0c0b10);border-color:var(--line)}
+.lp .lp-plan--ent .lp-pp--mesure{font-size:2.3rem;line-height:1.15}
+.lp .lp-plan--ent .lp-credits{background:transparent;border-color:var(--line);color:var(--ink2)}
+.lp .lp-plan--ent .lp-for{color:var(--ink2)}
+.lp .lp-plan--ent .lp-btn{margin-top:auto}
+.lp .lp-ent-temps{max-width:1180px;margin:1.2rem auto 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.1rem}
+@media(max-width:1060px){.lp .lp-ent-temps{grid-template-columns:1fr;max-width:560px}}
+.lp .lp-et{position:relative;display:grid;grid-template-columns:auto 1fr;gap:.25rem .8rem;align-items:baseline;background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:1.1rem 1.2rem}
+.lp .lp-et span{grid-row:span 2;font-family:var(--font-mono);font-size:.8rem;color:var(--co2);border:1px solid rgba(217,119,87,.35);border-radius:999px;width:1.7rem;height:1.7rem;display:grid;place-items:center}
+.lp .lp-et b{font-family:var(--font-display);font-weight:600;font-size:1.02rem;color:var(--ink)}
+.lp .lp-et em{font-style:normal;font-size:.86rem;line-height:1.5;color:var(--ink2)}
+.lp .lp-cmp-intro{max-width:720px;margin:1rem auto 1.2rem;color:var(--ink2);font-size:.92rem;text-align:center}

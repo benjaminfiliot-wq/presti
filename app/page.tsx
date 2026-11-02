@@ -13,7 +13,6 @@ import DemoVideo from '@/app/DemoVideo'
 import DemoSite from '@/app/DemoSite'
 import DemoGestion from '@/app/DemoGestion'
 import DemoChiffres from '@/app/DemoChiffres'
-import DemoCompta from '@/app/DemoCompta'
 import MaquetteForm from '@/app/MaquetteForm'
 import { METIERS } from '@/lib/agents/acquisition/contrat'
 import { FLAGS, actif } from '@/lib/flags'
@@ -26,7 +25,17 @@ import { FAQ } from '@/lib/faq'
 
 // Google Search Console : la balise de vérification n'est posée QUE sur la landing — jamais sur
 // /site ni /p, qui vivent sur le domaine de l'artisan (marque blanche).
-export const metadata: Metadata = process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}
+//
+// 27/10 (SEO « devis ») : le titre et la description de l'ACCUEIL portent enfin la requête visée (« logiciel de devis artisan ») ;
+// le layout racine garde les siens pour les pages sans titre. `absolute` : pas de suffixe « · Presti », le nom est déjà en tête.
+// 02/11 (Benj) : la landing dit ce que Presti apporte (« les bénéfices, pas les features ») : un assistant qui tient le bureau.
+// La requête du 27/10 reste en tête du titre.
+export const metadata: Metadata = {
+  title: { absolute: 'Presti — Logiciel de devis artisan : votre assistant tient le bureau' },
+  description: 'Chaque demande faite par votre lien a sa réponse prête en moins d’une minute, puis son devis sur vos prix, ses relances et sa facture.',
+  alternates: { canonical: '/' },
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
+}
 
 /* Icônes SVG (Lucide-style) — jamais d'emoji comme icône. */
 const I = {
@@ -52,31 +61,8 @@ const OFFRE_AUTO = (() => { const o = offreMinimale('plateforme.ia.auto'); retur
 // Le prix d'appel se lit dans la grille (lib/plans.ts), jamais recopié à la main.
 const PRIX_MIN = Math.min(...OFFRES.map((o) => o.prix))
 
-// « Pour qui » : les quatre métiers de la première cible (docs/presti/STRATEGIE-GLOBALE-0610.md §1). Chaque demande est une
-// demande TYPE, écrite pour l'exemple — pas un client, et l'écran le dit. Aucun chiffre ; aucun mot d'escalade (« fuite »,
-// « urgence »… : lib/plateformeConfig.ts, escalade_mots), sur lesquels Presti alerte l'artisan au lieu de préparer seul.
-const POUR_QUI: { metier: string; demande: string; regle: string }[] = [
-  {
-    metier: 'Plombier-chauffagiste',
-    demande: 'Mon chauffe-eau ne chauffe plus depuis hier soir.',
-    regle: "Elle arrive quand vous êtes sous un évier. La réponse est prête dans votre ton : vous l'envoyez entre deux interventions, avant qu'il appelle un autre plombier.",
-  },
-  {
-    metier: 'Électricien',
-    demande: 'Je vends ma maison, il faut remettre le tableau aux normes.',
-    regle: "La réponse préparée pose les questions qui manquent, puis le devis se prépare sur vos prix. Vous relisez avant d'envoyer.",
-  },
-  {
-    metier: 'Menuisier',
-    demande: "Un escalier en chêne pour remplacer l'ancien, c'est possible ?",
-    regle: "Le devis sur mesure, c'est souvent le soir, après le chantier. Presti le prépare sur vos prix : vous l'ajustez, vous l'envoyez.",
-  },
-  {
-    metier: 'Couvreur',
-    demande: 'Il manque des tuiles depuis le coup de vent, vous pouvez venir voir ?',
-    regle: "Votre réponse envoyée, trois relances sont prévues (J+2, J+5, J+10) : le client n'est pas oublié pendant que vous êtes sur un toit.",
-  },
-]
+// 02/11 (Benj) : l'offre sur mesure se nomme par lib/plans.ts, jamais recopiée ; elle mène au contact, sans démonstration.
+const OFFRE_ENTREPRISE = PLANS.entreprise.label
 
 // « La chaîne complète » : quatre étapes, quatre cartes empilées. Les heures reprennent la démonstration plus bas
 // (« de 22 h 14 à 7 h 52 »). Les visuels sont des fragments d'interface en code, pas des captures : aucun montant
@@ -84,20 +70,20 @@ const POUR_QUI: { metier: string; demande: string; regle: string }[] = [
 const CHAINE: { heure: string; titre: string; texte: string; visuel: ReactNode }[] = [
   {
     heure: '22 h 14',
-    titre: 'La demande arrive.',
+    titre: 'Le client écrit le soir.',
     texte: 'Par votre lien, sur votre fiche Google, votre page Facebook ou votre signature mail. Le client écrit le soir, vous êtes encore sur le chantier : elle vous attend dans Presti.',
     visuel: <div className="lp-cpv lp-cpv-msg"><span className="lp-cpv-chip">Nouvelle demande · exemple</span><p>Bonjour, mon chauffe-eau ne chauffe plus depuis hier soir. Vous pouvez passer cette semaine&nbsp;?</p><em>Mme Garnier</em></div>,
   },
   {
     heure: '22 h 15',
-    titre: 'La réponse est prête.',
-    texte: "Prête en moins d'une minute, dans votre ton. Elle pose les questions qui manquent, sans inventer de prix ni de créneau. Vous la relisez, vous l'envoyez.",
+    titre: 'Sa réponse est prête avant qu’il appelle ailleurs.',
+    texte: `Prête en moins d'une minute, dans votre ton. Elle pose les questions qui manquent, sans inventer de prix ni de créneau. Validée d'un clic, ou envoyée seule avec ${OFFRE_AUTO}.`,
     visuel: <div className="lp-cpv lp-cpv-rep"><span className="lp-cpv-chip ia">Préparée par l&apos;IA · à relire</span><p>Bonjour Madame Garnier, merci pour votre message. Pour bien préparer mon passage&nbsp;: de quelle marque est votre chauffe-eau, et quelle est sa capacité&nbsp;?<span className="lp-curseur" /></p><b>Envoyer</b></div>,
   },
   {
     heure: '7 h 31',
-    titre: 'Le devis, sur vos prix.',
-    texte: "Presti le chiffre à partir de vos tarifs. Vous ajustez une ligne si besoin, le PDF conforme part au client, qui l'accepte en ligne.",
+    titre: 'Le devis est prêt le matin, pas le dimanche soir.',
+    texte: "Votre assistant le chiffre à partir de vos tarifs, jamais d'un prix deviné. Vous ajustez une ligne si besoin, le PDF conforme part au client, qui l'accepte en ligne.",
     visuel: <div className="lp-cpv lp-cpv-devis"><span className="lp-cpv-chip">Devis · exemple fictif</span><ul><li><span>Chauffe-eau 200 L</span><i /></li><li><span>Groupe de sécurité</span><i /></li><li><span>Dépose de l&apos;ancien appareil</span><i /></li><li><span>Main-d&apos;œuvre</span><i /></li></ul><p><span>Total TTC</span><b>1 240,00 €</b></p></div>,
   },
   {
@@ -105,7 +91,7 @@ const CHAINE: { heure: string; titre: string; texte: string; visuel: ReactNode }
     // (13/10) Les relances sont celles de la CONVERSATION (lib/relances.ts) : armées par la réponse envoyée ou le devis envoyé
     // depuis la conversation (app/api/messages, app/api/devis/[id]/envoyer). Le fil montrait « Facture émise » puis « Relance J+2 » : il
     // laissait croire à des relances de facture impayée, qui n'existent pas (audit des promesses, produit, ligne 90).
-    titre: 'Relances, facture, compta.',
+    titre: 'Rien ne tombe entre deux chantiers.',
     texte: "Trois relances prévues (J+2, J+5, J+10) après la réponse au client, la facture en un clic quand il accepte, et vos fichiers de compta rangés par l'IA.",
     visuel: <div className="lp-cpv lp-cpv-fil"><span className="lp-cpv-chip">Ce qui suit</span><ol><li className="ok">Relances J+2, J+5, J+10 planifiées</li><li className="ok">Devis accepté</li><li className="ok">Facture émise</li><li className="ok">Compta rangée</li></ol></div>,
   },
@@ -172,16 +158,18 @@ export default function Home() {
           <span className="lp-objet-fondu" aria-hidden="true" />
           <div className="container">
             <span className="lp-eyebrow"><b />Assistant IA pour les artisans du bâtiment</span>
-            <h1>Le premier qui répond <span className="g">décroche le chantier.</span></h1>
+            {/* 02/11 (Benj) : ce que Presti apporte d'abord — le bureau tenu pendant que l'artisan est sur le chantier ; l'artisan valide
+                (Studio) ou laisse partir (Signature). « Assistant », pas « agents IA » (Benj, 03/11 à 0 h 45). */}
+            <h1>Votre assistant tient le bureau. <span className="g">Vous, le chantier.</span></h1>
             {/* Deux versions de la même promesse : en 390 px, la longue faisait 6 lignes et repoussait l'appel à l'action
                 (mesure du 06/10). La courte tient en deux lignes ; la longue reste sur les écrans larges. */}
             <p className="lp-lede">
-              <span className="lp-lede-court">Chaque demande faite par votre lien a sa réponse prête en moins d&apos;une minute : vous la validez d&apos;un clic, ou elle part seule avec {OFFRE_AUTO}.</span>
-              <span className="lp-lede-long">Votre lien sur Google, Facebook ou dans votre signature mail : chaque demande faite par ce lien arrive dans Presti, la réponse est prête en moins d&apos;une minute dans votre ton, puis le devis sur vos prix, trois relances (J+2, J+5, J+10) après la réponse au client, et la facture. Avec {OFFRE_PLATEFORME}, tout est préparé et vous validez d&apos;un clic ; avec {OFFRE_AUTO}, tout part automatiquement, jamais un prix estimé ni un paiement sans vous.</span>
+              <span className="lp-lede-court">Chaque demande faite par votre lien a sa réponse prête en moins d&apos;une minute. Vous validez d&apos;un clic, ou tout part seul avec {OFFRE_AUTO}.</span>
+              <span className="lp-lede-long">Fini les demandes qui attendent et les devis du dimanche soir. Une demande arrive par votre lien (Google, Facebook, votre signature mail) : votre assistant prépare la réponse dans votre ton en moins d&apos;une minute, chiffre le devis sur vos prix, relance le client (J+2, J+5, J+10) et prépare la facture. Avec {OFFRE_PLATEFORME}, tout est prêt et vous validez d&apos;un clic ; avec {OFFRE_AUTO}, tout part seul. Jamais un prix estimé ni un paiement sans vous.</span>
             </p>
             <div className="lp-cta">
               <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
-              <a className="lp-btn lp-btn--g lp-btn--lg" href="#fonctionnalites">Voir ce que ça fait</a>
+              <a className="lp-btn lp-btn--g lp-btn--lg" href="#fonctionnalites">Voir votre assistant travailler</a>
             </div>
             <p className="lp-trust">3 crédits offerts · sans carte bancaire · ensuite dès {PRIX_MIN} € par mois, sans engagement</p>
           </div>
@@ -215,7 +203,7 @@ export default function Home() {
           <div className="container lp-proof-in">
             <div className="lp-bignum count" data-to="7" data-suffix="×">7×</div>
             <div>
-            <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Presti prépare la réponse dans votre ton en moins d&apos;une minute : avec {OFFRE_PLATEFORME}, vous la validez d&apos;un clic ; avec {OFFRE_AUTO}, elle part seule, jour et nuit.</p>
+            <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Votre assistant prépare la réponse dans votre ton en moins d&apos;une minute : avec {OFFRE_PLATEFORME}, vous la validez d&apos;un clic ; avec {OFFRE_AUTO}, elle part seule, jour et nuit.</p>
             <div className="src">Source : Harvard Business Review, « The Short Life of Online Sales Leads » (étude sur 2 241 entreprises)</div>
             </div>
           </div>
@@ -226,7 +214,7 @@ export default function Home() {
             la réponse et les relances partent seules (capacité `plateforme.ia.auto`, modeEffectif). */}
         <section className="lp-blk lp-chaine" id="comment">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick">La chaîne complète</span><h2>De la demande à la compta, tout est automatisé.</h2><p>Avec {OFFRE_PLATEFORME}, l&apos;IA prépare chaque étape (la réponse, le devis sur vos prix, les relances) et rien ne part sans votre clic. Avec {OFFRE_AUTO}, les réponses et les relances partent seules{FLAGS.piloteAutomatique ? <>, et le Pilote automatique envoie ce que vous lui confiez après 10 minutes pour annuler</> : null}. Jamais un prix estimé, jamais un paiement sans vous.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick">Ce que fait votre assistant</span><h2>De la demande à la compta, votre assistant s&apos;en charge.</h2><p>Avec {OFFRE_PLATEFORME}, il prépare chaque étape (la réponse, le devis sur vos prix, les relances) et rien ne part sans votre clic. Avec {OFFRE_AUTO}, les réponses et les relances partent seules{FLAGS.piloteAutomatique ? <>, et le Pilote automatique envoie ce que vous lui confiez après 10 minutes pour annuler</> : null}. Jamais un prix estimé, jamais un paiement sans vous.</p></div>
             <ol className="lp-pile">
               {CHAINE.map((e, i) => (
                 <li key={e.titre} className="lp-carte-pile" style={{ ['--i' as string]: i }}>
@@ -246,7 +234,7 @@ export default function Home() {
         {/* FONCTIONNALITÉS : vitrine interactive (clique → la démo se joue) */}
         <section className="lp-blk" id="fonctionnalites">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>01</i>Une demande arrive</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir. Le lendemain matin, vous lancez le devis d&apos;un clic (avec Signature, une règle l&apos;a déjà préparé), il l&apos;accepte. Des scènes prises sur le vrai produit. La plateforme de conversation commence avec l&apos;offre {OFFRE_PLATEFORME}.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>01</i>En vrai</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir ; le lendemain matin, le devis se lance d&apos;un clic (avec Signature, une règle l&apos;a déjà préparé) et il l&apos;accepte. Des scènes prises sur le vrai produit. La plateforme de conversation commence avec l&apos;offre {OFFRE_PLATEFORME}.</p></div>
             {FLAGS.landingVideo ? <DemoVideo /> : <DemoSequence />}
             {FLAGS.assistant && FLAGS.crm ? <DemoGestion /> : null}
             {FLAGS.landingDemoSite ? <DemoSite /> : null}
@@ -257,35 +245,9 @@ export default function Home() {
             nourri par le vrai calcul, sur un artisan fictif (app/DemoChiffres.tsx). */}
         <section className="lp-blk" id="chiffres">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>02</i>Fin de mois</span><h2>Vos chiffres, sans tableur.</h2><p>Ce que vous avez facturé, ce qui est encaissé, ce qui traîne, les devis à relancer. Calculé à partir de vos devis et de vos factures : rien à saisir. Dès l&apos;offre {OFFRE_CHIFFRES}.</p></div>
+            {/* 02/11 (Benj, « plus court ») : la compta (le tableur de DemoCompta) tient en une phrase ici, plus en section à part. */}
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>02</i>Gestion</span><h2>Vous savez où vous en êtes, sans tableur.</h2><p>Ce que vous avez facturé, ce qui est encaissé, ce qui traîne, les devis à relancer : calculé à partir de vos devis et de vos factures, rien à saisir. Vos relevés et vos Excel, déposés tels quels, sont classés par l&apos;IA ; les montants sont calculés, jamais devinés. Dès l&apos;offre {OFFRE_CHIFFRES}.</p></div>
             <DemoChiffres />
-          </div>
-        </section>
-
-        {/* COMPTABILITÉ — le tableur façon Excel de /chiffres (PR #10, 11/10) : le vrai composant, en lecture seule,
-            sur un plombier fictif (app/DemoCompta.tsx, lib/compta-exemple.ts). */}
-        <section className="lp-blk lp-clair" id="compta">
-          <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>03</i>Comptabilité</span><h2>Votre compta, rangée par l&apos;IA.</h2><p>Déposez vos relevés et vos Excel tels quels, même en désordre. L&apos;IA comprend les colonnes, écarte les lignes de total, classe les dépenses. Les montants, eux, sont calculés, jamais devinés. Dès l&apos;offre {OFFRE_CHIFFRES}.</p></div>
-            <DemoCompta />
-          </div>
-        </section>
-
-        {/* POUR QUI — les quatre métiers de la cible, une demande type chacun et ce que Presti en fait (vague 2, 06/10).
-            Placée APRÈS le produit (démo, site, chiffres) le 07/10 : entre la preuve et la démo, elle retardait la démo d'un écran
-            entier en 390 px ; l'ordre de la stratégie (§5) met le produit montré tel quel juste après la promesse. */}
-        <section className="lp-blk" id="pour-qui">
-          <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>04</i>Pour qui</span><h2>Pour l&apos;artisan qui est sur le chantier quand le client écrit.</h2><p>Quatre métiers, quatre demandes types, écrites pour l&apos;exemple : ce ne sont pas des clients.</p></div>
-            <ul className="lp-pq-rang reveal-kids">
-              {POUR_QUI.map((c) => (
-                <li key={c.metier} className="lp-pq lp-spot">
-                  <b>{c.metier}</b>
-                  <q>{c.demande}</q>
-                  <span>{c.regle}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </section>
 
@@ -295,7 +257,7 @@ export default function Home() {
           <section className="lp-blk lp-conf lp-clair" id="confiance">
             <div className="container">
               <div className="lp-head2 c reveal">
-                <span className="lp-kick"><i>05</i>Et nous, on voit quoi&nbsp;?</span>
+                <span className="lp-kick"><i>03</i>Et nous, on voit quoi&nbsp;?</span>
                 <h2>Rien. Sauf si vous ouvrez vous-même.</h2>
                 <p>Vos clients vous écrivent des choses qu&apos;ils ne diraient pas à un inconnu. Voilà ce que Presti s&apos;interdit, et comment.</p>
               </div>
@@ -313,11 +275,13 @@ export default function Home() {
         {/* TARIFS */}
         <section className="lp-blk" id="tarifs">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>06</i>Abonnements</span><h2>Deux formules : tout préparé, ou tout automatique.</h2><p>Avec {OFFRE_PLATEFORME}, tout est automatisé et préparé pour vous, et rien ne part sans votre clic. Avec {OFFRE_AUTO}, tout part automatiquement. Chaque formule vous donne des crédits chaque mois ; il n&apos;y a pas de recharge à l&apos;unité.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>04</i>Abonnements</span><h2>Choisissez ce que votre assistant fait seul.</h2><p>Avec {OFFRE_PLATEFORME}, il prépare tout et rien ne part sans votre clic. Avec {OFFRE_AUTO}, tout part seul. Pour une entreprise qui veut ses propres automatisations : {OFFRE_ENTREPRISE}, sur mesure. Chaque formule donne des crédits chaque mois ; il n&apos;y a pas de recharge à l&apos;unité.</p></div>
 
             {/* Les prix d'abord : mesuré le 06/10 en 390 px, l'explication des crédits (529 px) passait
-                avant la première formule. Elle suit maintenant la grille. */}
-            <div className="lp-plans reveal-kids">
+                avant la première formule. Elle suit maintenant la grille. 02/11 (Benj, « trop d'informations sur les offres, pas assez sur
+                l'entreprise ») : trois cartes côte à côte comme celles de claude.com, une ligne par groupe (OffreDetail court), et l'offre
+                sur mesure à droite, sans prix, avec un contact. Le détail complet reste dans « Qui a quoi, ligne par ligne ». */}
+            <div className="lp-plans lp-plans--3 reveal-kids">
               {OFFRES.map((o) => (
                 <div key={o.id} className={`lp-plan lp-spot${o.id === 'studio' ? ' lp-plan--feat' : ''}`}>
                   <div className="lp-pn">{o.label}</div>
@@ -326,19 +290,41 @@ export default function Home() {
                   <div className="lp-essai" data-essai-gratuit={o.id}><b>{ESSAI_JOURS[o.id]} jours gratuits, sans carte</b></div>
                   <div className="lp-tva">TVA non applicable, art. 293 B du CGI</div>
                   <div className="lp-for">{o.accroche}</div>
-                  <OffreDetail id={o.id} classe="lp-plist" />
+                  <OffreDetail id={o.id} classe="lp-plist" court />
                   <a className={`lp-btn ${o.id === 'studio' ? 'lp-btn--p' : 'lp-btn--g'}`} href="/signup">Essayer {ESSAI_JOURS[o.id]} jours gratuits</a>
                   <a className="lp-pay" href={`/signup?abonnement=${o.id}`} data-payer-direct={o.id}>Ou vous abonner directement, sans essai</a>
                 </div>
               ))}
+              {/* Ce que l'offre porte vraiment : l'autonomie de Signature, le suivi des clients et des automatisations adaptés à
+                  l'entreprise (lib/plans.ts:15-16, :101), et la méthode du kit (plans/011-cadrage-01-11/p5-entreprise/kit/ : découverte,
+                  matrice irritant → workflow, annexe d'autonomie). Les membres n'y sont pas nommés : rien ne les annonce avant leur
+                  drapeau (lib/plans.ts:44). Aucun chiffre de gain, aucune démonstration (p5:42 ; Benj, 02/11). */}
+              <div className="lp-plan lp-plan--ent lp-spot" data-offre="entreprise">
+                <div className="lp-pn">{OFFRE_ENTREPRISE}</div>
+                <div className="lp-pp lp-pp--mesure">Sur mesure</div>
+                <div className="lp-credits">Prix sur devis</div>
+                <div className="lp-for">Votre façon de travailler, automatisée de bout en bout, sur le même moteur que {OFFRE_AUTO}.</div>
+                <div className="od od--court">
+                  <p className="od-herite">Tout ce qu’inclut l’offre {OFFRE_AUTO}, <b>plus</b>&nbsp;:</p>
+                  <ul className="lp-plist">
+                    <li>Un atelier pour comprendre votre entreprise : vos clients, vos outils, vos règles</li>
+                    <li>Vos automatisations, construites sur ce qui vous fait perdre du temps</li>
+                    <li>Le suivi de vos clients et de vos chantiers, adapté à vos métiers</li>
+                    <li>Vos outils reliés à votre assistant</li>
+                    <li>Ce qui part seul, choisi avec vous, action par action</li>
+                  </ul>
+                </div>
+                <a className="lp-btn lp-btn--g" href="/contact?sujet=entreprise">Nous contacter</a>
+              </div>
+            </div>
+
+            {/* 02/11 (Benj) : plus d'explication sur l'offre sur mesure, en trois temps, tirés du kit Entreprise (mode A). */}
+            <div className="lp-ent-temps reveal-kids">
+              <div className="lp-et lp-spot"><span>1</span><b>On écoute</b><em>Un atelier sur votre façon de travailler : vos clients, vos outils, vos règles, et ce qui vous fait perdre du temps aujourd&apos;hui.</em></div>
+              <div className="lp-et lp-spot"><span>2</span><b>On construit</b><em>Vos automatisations et le suivi de vos clients, sur le même moteur que {OFFRE_AUTO}, essayés sur des données d&apos;exemple avant le moindre envoi.</em></div>
+              <div className="lp-et lp-spot"><span>3</span><b>Vous choisissez</b><em>Action par action, ce qui part seul et ce qui attend votre clic. Un prix estimé ou un paiement ne partent jamais seuls.</em></div>
             </div>
             <div className="lp-trial reveal"><b>Essai gratuit</b><em>3 crédits offerts (3 devis chiffrés par l&apos;IA sur vos prix) pour juger la qualité avant de payer. Sans carte. L&apos;essai n&apos;inclut pas la plateforme de conversation, qui commence avec l&apos;offre {OFFRE_PLATEFORME}.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
-
-            <div className="lp-howcredits reveal-kids">
-              <div className="lp-hc lp-spot"><span className="ic">{I.zap}</span><b>1 crédit = 1 génération</b><span>Chaque réponse préparée pour un client (une par message qu&apos;il vous écrit), un devis chiffré par l&apos;IA ou un dépôt de fichiers de compta. Une recherche chez vos fournisseurs : 2 crédits (3 avec Expert).</span></div>
-              <div className="lp-hc lp-spot"><span className="ic">{I.badge}</span><b>Modèle Expert = 3 crédits</b><span>L&apos;IA la plus puissante consomme plus : réservez-la aux gros chantiers.</span></div>
-              <div className="lp-hc lp-spot"><span className="ic">{I.repeat}</span><b>Rechargés chaque mois</b><span>Vos crédits se réinitialisent à chaque renouvellement. Non reportés au mois suivant.</span></div>
-            </div>
 
             {/* Le tableau « qui a quoi » — la même matrice que les verrous serveur (lib/plans.ts).
                 Replié par défaut : ouvert, il faisait 1 503 px en 390 px de large (mesure du 06/10). */}
@@ -365,10 +351,16 @@ export default function Home() {
 
         {/* COMPARATIF — Presti face aux autres logiciels de devis et factures : faits lus sur leurs sites, datés, mêmes critères
             pour tous (lib/comparatifConcurrents.ts ; art. L122-1 du Code de la consommation ; scripts/comparatif-qa.mjs). */}
-        <section className="lp-blk" id="comparatif">
+        {/* 02/11 (Benj, « plus court ») : replié comme « Qui a quoi » ; le contenu reste dans la page, pour les moteurs de recherche. */}
+        <section className="lp-blk" id="comparatif" style={{ paddingTop: 0 }}>
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>07</i>Comparatif</span><h2>Presti et les autres logiciels de devis et factures.</h2><p>Les mêmes critères pour tous, lus sur le site de chaque éditeur. Les autres font très bien les devis et les factures ; Presti s&apos;occupe en plus de la demande qui arrive et de la gestion par la conversation.</p></div>
-            <div className="reveal"><ComparatifConcurrents /></div>
+            <div className="reveal lp-cmp">
+              <details className="lp-cmp-pli">
+                <summary>Presti et les autres logiciels de devis et factures</summary>
+                <p className="lp-cmp-intro">Les mêmes critères pour tous, lus sur le site de chaque éditeur. Les autres font très bien les devis et les factures ; Presti s&apos;occupe en plus de la demande qui arrive et de la gestion par la conversation.</p>
+                <ComparatifConcurrents />
+              </details>
+            </div>
           </div>
         </section>
 
@@ -394,7 +386,7 @@ export default function Home() {
             l'écran ce que le balisage décrit, et ce sont les objections qu'un artisan se pose avant d'essayer. */}
         <section className="lp-blk" id="questions">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>08</i>Avant d&apos;essayer</span><h2>Les questions qu&apos;on nous pose.</h2></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>05</i>Avant d&apos;essayer</span><h2>Les questions qu&apos;on nous pose.</h2></div>
             <div className="lp-faq">
               {FAQ.slice(0, 8).map((f) => (
                 <details className="faq-item" key={f.question}>
@@ -411,7 +403,7 @@ export default function Home() {
         <section className="lp-blk lp-final reveal">
           <ObjetVivant className="lp-objet lp-objet--final" />
           <div className="container">
-            <h2>Le prochain client qui vous cherche,<br /><span className="g">ne le laissez pas filer.</span></h2>
+            <h2>Le prochain client qui vous écrit,<br /><span className="g">sa réponse est déjà prête.</span></h2>
             <p>3 devis offerts, chiffrés par l&apos;IA sur vos prix, sans carte bancaire. Vous jugez la qualité avant de payer quoi que ce soit.</p>
             <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
             {actif('prospectsEntrant') ? <p className="lp-final-alt"><a href="#maquette">Ou recevoir d&apos;abord la maquette de mon site</a></p> : null}
