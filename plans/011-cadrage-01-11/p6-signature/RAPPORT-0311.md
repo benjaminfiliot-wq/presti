@@ -27,9 +27,12 @@ est `outillage/OUTILLAGE.md`.
 - **Vers 20 h 45** : 036-030 est jugé (PASS, juge vert, typage propre) et en ligne (`58dac12`). 0194 est posée, ses 8 contrôles sont
   conformes. Les variables Vercel neuves (clé n8n, Google) sont actives. Tout reste derrière des drapeaux baissés : `systemeAgents`,
   `boiteAgents`, `connexions`.
+- **Vers 21 h** : 036-031 (gabarits sur le vrai schéma) et 036-033 (écran « Mes outils », bouton « Connecter » Google) sont jugés PASS, avec
+  un typage propre. Ils sont en ligne (`448fdb8`), **drapeau `connexions` levé** sur ordre de Benj. `/crm/outils` répond 200, et la route
+  qui lance l'OAuth n'accepte que l'envoi du bouton (405 en GET). 036-032 (multi-agents dans n8n) tourne encore.
 - **À la reprise**, dans l'ordre :
-  1. rapatrier et juger 036-031 (schéma des gabarits), 036-032 (multi-agents dans n8n, preuve de la clé) et 036-033 (écran « Mes outils »
-     et bouton « Connecter ») ; typer, pousser ;
+  1. rapatrier et juger 036-032 ; vérifier un vrai « Connecter Gmail » de bout en bout (compte de test, écran Google « non validée »
+     accepté) et le déploiement de la copie par `presti-provisionnement` ;
   2. poser 0195 si 036-031 l'a écrite ;
   3. mettre le vrai multi-agents dans n8n ;
   4. construire le bouton « Connecter » dans l'outil de gestion, puis lever `connexions` ;
