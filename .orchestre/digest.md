@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-11-03T19:36:06Z
+# Digest — 2026-11-03T19:58:32Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 201 tâche(s) PASS, 513623 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
-**État** — file : 60 · en cours : 1 · faites : 473 · refusées : 17
+**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 202 tâche(s) PASS, 514682 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
+**État** — file : 60 · en cours : 0 · faites : 474 · refusées : 17
 
 ## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -23,7 +23,6 @@
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 036-035 | feature | en-cours | claude-code | — | depuis 2026-11-03T19:36:03Z · Choix A de Benj (03/11 au soir) : la clé BOITE_CLE_N8N est dans le coffre Vault de Supabase (migration 0196, posée ; cle_boite_n8n() la rend aux rôles n8n_lecture et service_role, 44 signes vérifiés). Faire lire la clé par cette fonction, à la place de $env (bloqué par n8n), dans tous les nœuds qui déchiffrent connexions.secret_n8n ; ne jamais la garder dans les données d'exécution ; le prouver par presti-banc-boite ; puis passer les sept chefs de Sonnet 5.5 à Haiku 5.5 pour économiser la clé API de Benj, bancs rejoués |
 | 035-013 | audit | file | claude-code | — | Prompt 5, tâche 035-013 de la première réponse — un audit offensif, distinct de l'auteur, des tâches 035-003 à 035-007 (le socle lib-*, les deux chaînes, la démonstration ent-exemple-*) avant toute publication : isolation entre organisations, porte de simulation, liste « jamais en automatique », idempotence au rejeu, coûts bornés, aucune donnée réelle ni secret dans les exports ; par les agents presti-audit-attaque et presti-gestion-fiabilite ; verdict TIENT ou NE TIENT PAS |
 | 029-001 | test | file | codex-1 | — | L'assistant de gestion est vérifié en conditions réelles : la suite assistant-qa passe ses parties L (comptes de test sur la base réelle) et M (vrai modèle), puis aucun compte de test ne reste en base |
 | 026-120 | feature | file | antigravity | — | Remplir le cadre des panneaux de la station : chaque salle cliquée ouvre son panneau (Recettes et Trésorerie, Usine à sites, Atelier des maquettes, Salle de réunion, Salle des envois avec les gestes du fondateur, Standard, Rédaction, Salle des machines ; les quatre autres ouvrent la fiche de leurs agents en attendant 026-164), et chaque agent sa fiche (tâches récentes, coût par tâche, consignes, boîtes, réponses, Pause), lus par la route de la station seulement pendant qu'ils sont ouverts, sourcés, sans aucun bouton d'envoi, à 390 px comme à 1440 px |
@@ -84,6 +83,7 @@
 | 028-021 | feature | file | codex | — | Nouvelle séquence de prospection PAR ÉTAPES (méthode de Benj du 08/10) : messages courts qui questionnent d'abord (d'où viennent vos clients ? que trouve-t-on sur Google quand on vous cherche ? un chantier vous rapporte combien ?), relances programmées, puis maquette ; respect de toutes les gardes de conformité existantes |
 | 029-002 | test | file | antigravity | — | La qualité des réponses de l'assistant de gestion est mesurée avec le vrai modèle sur les scénarios de plans/016-assistant.md §7 (ai-eval --assistant), et chaque scénario échoué est expliqué |
 | 036-022 | feature | file | claude-code | — | Prompt 6, mise en service (Benj, 03/11 vers 16 h 30 : « active aussi toutes les automatisations en les testant bien sûr » ; « les migrations, je te laisse gérer tout » ; « tu peux créer un compte test gratuitement pour tester ») : suivre plans/011-cadrage-01-11/p6-signature/mise-en-service.md étape par étape — migrations posées par la session principale (0185, puis 0192 reprise de 032-047 et jugée, puis 0193), réglages de n8n, publication des enfants avant les parents, puis activation en MODE OMBRE sur un compte de test créé par l'API admin et supprimé après, comparaison, puis réel par offre et par type |
+| 036-035 | feature | fait | claude-code | PASS | 2026-11-03T19:58:31Z · 0s · 1059 l. |
 | 036-034 | feature | fait | claude-code | PASS | 2026-11-03T19:27:12Z · 0s · 13575 l. |
 | 036-032 | feature | fait | claude-code | PASS | 2026-11-03T18:54:53Z · 0s · 16519 l. |
 | 036-033 | feature | fait | claude-code | PASS | 2026-11-03T18:38:07Z · 35s · 2318 l. |

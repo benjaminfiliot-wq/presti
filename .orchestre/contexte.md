@@ -1,4 +1,4 @@
-# Carte du code — presti (2026-11-03T19:38:41Z)
+# Carte du code — presti (2026-11-03T19:58:32Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -96,7 +96,7 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/webhooks` : meta [GET POST]
 
 ## Drapeaux — `lib/flags.ts` (64) : une fonctionnalité non finie n'apparaît pas
-busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformeRegles=true · aideVisites=true · aideCentre=true · landingVideo=false · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · canauxLeboncoin=false · siteCommande=true · siteCommandeVente=true · siteAchatPublic=false · landingDemoSite=true · audience=true · pilotage=true · stationCarte=true · packPub=false · packPubVente=false · demandesEcosysteme=true · prospectsEntrant=true · aimantSite=false · ecommerce=false · essaiFormulaire=true · comptaDateReglement=true · comptaAlerteImpayes=true · comptaExportMensuel=true · assistant=true · crm=true · relancesImpayes=true · crmPieces=true · crmPlanning=true · crmApresChantier=true · crmPlan=true · crmSuivi=true · crmAtelierVivant=true · crmTempsReelComplet=true · piloteAutomatique=true · crmPointage=true · devisLots=true · facturesSituation=true · canauxTelegram=true · canauxNotifications=true · canauxLiens=true · importProspects=true · consoleV2=false · smsClients=false · demandesDemo=false · accuseParN8n=false · systemeAgents=false · connexions=true · boiteAgents=false
+busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformeRegles=true · aideVisites=true · aideCentre=true · landingVideo=false · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · canauxLeboncoin=false · siteCommande=true · siteCommandeVente=true · siteAchatPublic=false · landingDemoSite=true · audience=true · pilotage=true · stationCarte=true · packPub=false · packPubVente=false · demandesEcosysteme=true · prospectsEntrant=true · aimantSite=false · ecommerce=false · essaiFormulaire=true · comptaDateReglement=true · comptaAlerteImpayes=true · comptaExportMensuel=true · assistant=true · crm=true · relancesImpayes=true · crmPieces=true · crmPlanning=true · crmApresChantier=true · crmPlan=true · crmSuivi=true · crmAtelierVivant=true · crmTempsReelComplet=true · piloteAutomatique=true · crmPointage=true · devisLots=true · facturesSituation=true · canauxTelegram=true · canauxNotifications=true · canauxLiens=true · importProspects=true · consoleV2=false · smsClients=false · demandesDemo=false · accuseParN8n=false · systemeAgents=true · connexions=true · boiteAgents=true
 
 ## Formules — `lib/plans.ts`
 - plans : gratuit (Essai, 0 €/mois, BASE) · essentiel (Essentiel, 29 €/mois, BASE) · studio (Studio, 30 €/mois, STUDIO) · signature (Signature, 60 €/mois, SIGNATURE) · entreprise (Presti pour l’entreprise, 0 €/mois, ENTREPRISE) · business (Business, 0 €/mois, ENTREPRISE)
@@ -490,5 +490,5 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 
 ## Scripts — `scripts/` (599 .mjs, dont 88 suites e2e)
 
-## Orchestre — file : 60 · en cours : 1 · faites : 473 · refusées : 17
+## Orchestre — file : 60 · en cours : 0 · faites : 474 · refusées : 17
 
