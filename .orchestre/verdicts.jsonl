@@ -1257,3 +1257,5 @@
 {"id":"037-000","verdict":"REFUSÉE","ligne":"en-tête : type « plan » : attendu feature | test | contenu | audit | boucle-qa","code":null,"date":"2026-11-03T14:57:18Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"refuse"}
 {"id":"036-019","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T15:33:28Z","duree_s":2,"agent":"claude-code","executant":"claude-code","lignes":52595,"dossier":"fait"}
 {"id":"036-020","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T15:34:31Z","duree_s":56,"agent":"claude-code","executant":"claude-code","lignes":1202,"dossier":"fait"}
+{"id":"036-021","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T16:17:59Z","duree_s":184,"agent":"claude-code","executant":"claude-code","lignes":2614,"dossier":"fait"}
+{"id":"036-023","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T16:18:47Z","duree_s":41,"agent":"claude-code","executant":"claude-code","lignes":926,"dossier":"fait"}

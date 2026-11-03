@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-11-03T15:34:32Z
+# Digest — 2026-11-03T16:18:49Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 187 tâche(s) PASS, 445575 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
-**État** — file : 62 · en cours : 0 · faites : 459 · refusées : 17
+**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 189 tâche(s) PASS, 449115 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
+**État** — file : 61 · en cours : 1 · faites : 461 · refusées : 17
 
 ## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -19,10 +19,11 @@
 - 4 question(s) en attente : `028-008` — `node scripts/orchestre.mjs repondre 028-008 <n>`
 - 4 question(s) en attente : `028-014` — `node scripts/orchestre.mjs repondre 028-014 <n>`
 - 4 question(s) en attente : `reparation-C-juges-perimes` — `node scripts/orchestre.mjs repondre reparation-C-juges-perimes <n>`
-- sauvegarde vieille de 559 h — `node scripts/instantane-quotidien.mjs --pousser`
+- sauvegarde vieille de 560 h — `node scripts/instantane-quotidien.mjs --pousser`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
+| 036-024 | feature | en-cours | claude-code | — | depuis 2026-11-03T16:15:03Z · Mise en service, partie n8n (Benj, 03/11 : « active toutes les automatisations en les testant ») : les migrations 0185, 0192, 0193, 0187, 0190 et 0191 sont posées en production. Publier puis activer EN SIMULATION les workflows partagés du prompt 6 et du chantier 4 (lib-*, presti-dep-*, presti-cerveau, presti-boite, presti-accuse-reception, presti-suivi-artisan, presti-demande-demo, presti-detecteurs, presti-briefing-matin), enfants avant parents, appelants ouverts, chaque premier passage relu dans les exécutions — aucun envoi réel, aucune écriture hors du journal, les gabarits restent inactifs |
 | 037-000 | feature | file | claude-code | — | Prompt 6, prompt 2 (Presti pour l'entreprise) : la PREMIÈRE RÉPONSE attendue par le § 2.13 (p6:636-647), avant tout fichier de construction — le plan du vrai produit Entreprise (organisation multi-membres, départements et agents sur mesure, connecteurs d'entreprise, CRM sur mesure, applications sur mesure, client zéro = l'organisation de Benj), appuyé sur ce qui existe déjà (catalogue de 9 gabarits outillés gabarit-ent-*, déployeur à blanc, socle lib-*), avec ses décisions par défaut — rien de construit, rien d'appliqué |
 | 035-013 | audit | file | claude-code | — | Prompt 5, tâche 035-013 de la première réponse — un audit offensif, distinct de l'auteur, des tâches 035-003 à 035-007 (le socle lib-*, les deux chaînes, la démonstration ent-exemple-*) avant toute publication : isolation entre organisations, porte de simulation, liste « jamais en automatique », idempotence au rejeu, coûts bornés, aucune donnée réelle ni secret dans les exports ; par les agents presti-audit-attaque et presti-gestion-fiabilite ; verdict TIENT ou NE TIENT PAS |
 | 029-001 | test | file | codex-1 | — | L'assistant de gestion est vérifié en conditions réelles : la suite assistant-qa passe ses parties L (comptes de test sur la base réelle) et M (vrai modèle), puis aucun compte de test ne reste en base |
@@ -83,8 +84,9 @@
 | 028-020 | feature | file | codex | — | Entraîner le TROISIÈME modèle maison de l'écosystème Presti : le rédacteur de contenu (scripts TikTok, légendes, commentaires épinglés, réponses de relance), petit modèle ouvert affiné sur les textes validés par Benj, branché au registre des modèles et au relais comme moteur local gratuit |
 | 028-021 | feature | file | codex | — | Nouvelle séquence de prospection PAR ÉTAPES (méthode de Benj du 08/10) : messages courts qui questionnent d'abord (d'où viennent vos clients ? que trouve-t-on sur Google quand on vous cherche ? un chantier vous rapporte combien ?), relances programmées, puis maquette ; respect de toutes les gardes de conformité existantes |
 | 029-002 | test | file | antigravity | — | La qualité des réponses de l'assistant de gestion est mesurée avec le vrai modèle sur les scénarios de plans/016-assistant.md §7 (ai-eval --assistant), et chaque scénario échoué est expliqué |
-| 036-021 | feature | file | claude-code | — | Prompt 6, branchement automatique (décision O3 de Benj du 03/11 : voie a) : quand un artisan Studio ou Signature crée son compte et clique « Connecter », Presti crée l'identifiant n8n de son outil par l'API de n8n, puis un workflow n8n `presti-provisionnement` fabrique ses copies `client-<slug>-*` depuis les gabarits (scripts/deployer-client-n8n.mjs en vrai) et les lie à ses comptes — tout automatique, à blanc d'abord, prouvé sur un compte de test ; l'Entreprise sur mesure reste à part |
 | 036-022 | feature | file | claude-code | — | Prompt 6, mise en service (Benj, 03/11 vers 16 h 30 : « active aussi toutes les automatisations en les testant bien sûr » ; « les migrations, je te laisse gérer tout » ; « tu peux créer un compte test gratuitement pour tester ») : suivre plans/011-cadrage-01-11/p6-signature/mise-en-service.md étape par étape — migrations posées par la session principale (0185, puis 0192 reprise de 032-047 et jugée, puis 0193), réglages de n8n, publication des enfants avant les parents, puis activation en MODE OMBRE sur un compte de test créé par l'API admin et supprimé après, comparaison, puis réel par offre et par type |
+| 036-023 | feature | fait | claude-code | PASS | 2026-11-03T16:18:47Z · 41s · 926 l. |
+| 036-021 | feature | fait | claude-code | PASS | 2026-11-03T16:17:59Z · 184s · 2614 l. |
 | 036-020 | feature | fait | claude-code | PASS | 2026-11-03T15:34:31Z · 56s · 1202 l. |
 | 036-019 | feature | fait | claude-code | PASS | 2026-11-03T15:33:28Z · 2s · 52595 l. |
 | 036-011 | feature | fait | claude-code | PASS | 2026-11-03T14:43:09Z · 32s · 2764 l. |
@@ -121,7 +123,5 @@
 | 035-002 | contenu | fait | claude-code | PASS | 2026-11-02T21:09:38Z · 1s · 0 l. |
 | 035-000 | audit | fait | claude-code | PASS | 2026-11-02T21:09:35Z · 0s · 0 l. |
 | 032-033 | feature | fait | claude-code | PASS | 2026-11-02T21:08:49Z · 537s · 0 l. |
-| 032-036 | feature | fait | claude-code | PASS | 2026-11-02T21:05:49Z · 57s · 3803 l. |
-| 032-035 | audit | fait | claude-code | PASS | 2026-11-02T20:36:34Z · 0s · 5536 l. |
 
-… 438 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 440 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

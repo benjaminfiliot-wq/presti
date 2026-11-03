@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import Comparatif from '@/app/Comparatif'
 import OffreDetail from '@/app/OffreDetail'
+import OffreEntreprise from '@/app/OffreEntreprise'
 import { OFFRES, PLANS, ESSAI_JOURS } from '@/lib/plans'
 import { estNatif } from '@/lib/natif'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
@@ -103,6 +104,7 @@ export default function Abonnement() {
                 </div>
               )
             })}
+            <OffreEntreprise variante="abo" />
           </div>
 
           <h2 style={{ margin: '2rem 0 .8rem' }}>Qui a quoi, ligne par ligne</h2>

@@ -118,3 +118,8 @@
   .lp-cpt-scene{grid-template-columns:1fr}
   .lp-cpt-kpis{grid-template-columns:1fr 1fr}
 }
+
+/* 036-023 — carte « Presti pour l'entreprise, sur mesure » : pleine largeur sous Studio et Signature, sobre, sans prix. */
+.lp-plans .lp-ent{grid-column:1 / -1;height:auto}
+.lp-ent .lp-ent-devis{font-size:.9rem;opacity:.75;margin:.2rem 0 .6rem}
+.lp-ent .lp-btn{align-self:flex-start}

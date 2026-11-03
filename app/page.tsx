@@ -20,6 +20,7 @@ import { FLAGS, actif } from '@/lib/flags'
 import Comparatif from '@/app/Comparatif'
 import ComparatifConcurrents from '@/app/ComparatifConcurrents'
 import OffreDetail from '@/app/OffreDetail'
+import OffreEntreprise from '@/app/OffreEntreprise'
 import { OFFRES, ESSAI_JOURS, PLANS, offreMinimale } from '@/lib/plans'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 import { FAQ } from '@/lib/faq'
@@ -331,6 +332,7 @@ export default function Home() {
                   <a className="lp-pay" href={`/signup?abonnement=${o.id}`} data-payer-direct={o.id}>Ou vous abonner directement, sans essai</a>
                 </div>
               ))}
+              <OffreEntreprise variante="lp" />
             </div>
             <div className="lp-trial reveal"><b>Essai gratuit</b><em>3 crédits offerts (3 devis chiffrés par l&apos;IA sur vos prix) pour juger la qualité avant de payer. Sans carte. L&apos;essai n&apos;inclut pas la plateforme de conversation, qui commence avec l&apos;offre {OFFRE_PLATEFORME}.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
 

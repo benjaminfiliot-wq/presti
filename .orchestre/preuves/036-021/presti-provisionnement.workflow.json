@@ -1,0 +1,990 @@
+{
+  "name": "presti-provisionnement",
+  "active": false,
+  "nodes": [
+    {
+      "id": "Toutes les 5 minutes",
+      "name": "Toutes les 5 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Réglages",
+      "name": "Réglages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Réglages : à blanc tant que Benj n'a pas écrit « reel ». Les comptes de test sont nommés ICI, par identifiant de compte.\n// identifiants_presti : les identifiants n8n qui appartiennent à Presti (Supabase, IA), type → { id, name } ; posés par Benj.\nreturn [{ json: { mode: 'a_blanc', comptes_de_test: [], identifiants_presti: {} } }]"
+      }
+    },
+    {
+      "id": "Lire les connexions",
+      "name": "Lire les connexions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "EMPLACEMENT_SUPABASE_PRESTI",
+          "name": "Supabase account"
+        }
+      },
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/connexions?select=id,artisan_id,fournisseur,etat,secret_n8n&etat=in.(active,expiree,erreur,retiree)",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {}
+      }
+    },
+    {
+      "id": "Lire les comptes",
+      "name": "Lire les comptes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "EMPLACEMENT_SUPABASE_PRESTI",
+          "name": "Supabase account"
+        }
+      },
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans?select=id,plan",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {}
+      }
+    },
+    {
+      "id": "Lire le pilote",
+      "name": "Lire le pilote",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "EMPLACEMENT_SUPABASE_PRESTI",
+          "name": "Supabase account"
+        }
+      },
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/pilote_reglages?select=artisan_id,actif,types",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {}
+      }
+    },
+    {
+      "id": "Lire l’état",
+      "name": "Lire l’état",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        0
+      ],
+      "alwaysOutputData": true,
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti_provisionnement"
+        },
+        "returnAll": true
+      }
+    },
+    {
+      "id": "Lire les workflows",
+      "name": "Lire les workflows",
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        0
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "n8nApi": {
+          "id": "EMPLACEMENT_N8N_API",
+          "name": "n8n API"
+        }
+      },
+      "parameters": {
+        "resource": "workflow",
+        "operation": "getAll",
+        "returnAll": true,
+        "filters": {},
+        "requestOptions": {}
+      }
+    },
+    {
+      "id": "Planifier",
+      "name": "Planifier",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const crypto = require('crypto')\nconst createHash = crypto.createHash\nconst SLUG = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/\nconst TYPES_PILOTE = [\"reponse_prospect\",\"relance_devis\",\"relance_impaye\",\"envoi_devis\",\"envoi_facture\",\"assistant_client\"]\nconst OFFRES = [\"studio\",\"signature\",\"entreprise\"]\nconst FAMILLE_GABARIT = {\"studio\":\"gabarit-artisan-\",\"signature\":\"gabarit-artisan-\",\"entreprise\":\"gabarit-ent-\"}\nconst ORGANISATION_EXEMPLE = \"00000000-0000-4000-8000-0000000000e1\"\nconst JETONS_ORGANISATION = [\"ORGANISATION_DU_CLIENT\",\"A_RENSEIGNER_A_LA_COPIE\"]\nconst TYPES_ENVOI = new Set([\"n8n-nodes-base.emailSend\",\"n8n-nodes-base.gmail\",\"n8n-nodes-base.microsoftOutlook\",\"n8n-nodes-base.sendGrid\",\"n8n-nodes-base.mailgun\",\"n8n-nodes-base.mailjet\",\"n8n-nodes-base.sendInBlue\",\"n8n-nodes-base.brevo\",\"n8n-nodes-base.slack\",\"n8n-nodes-base.telegram\",\"n8n-nodes-base.twilio\",\"n8n-nodes-base.whatsApp\",\"n8n-nodes-base.discord\",\"n8n-nodes-base.mattermost\",\"n8n-nodes-base.microsoftTeams\",\"n8n-nodes-base.googleChat\",\"n8n-nodes-base.mailchimp\",\"n8n-nodes-base.activeCampaign\",\"n8n-nodes-base.lemlist\",\"n8n-nodes-base.facebookGraphApi\",\"n8n-nodes-base.linkedIn\",\"n8n-nodes-base.youTube\",\"n8n-nodes-base.twitter\"])\nconst LECTURES = /^(get|getAll|getMany|search|list|lookup|download|read|availability|getAvailability|getFreeBusy|getProfile|getStatus)$/i\nconst IDENTIFIANTS = {\"gmail\":\"gmailOAuth2\",\"microsoftOutlook\":\"microsoftOutlookOAuth2Api\",\"emailSend\":\"smtp\",\"googleCalendar\":\"googleCalendarOAuth2Api\",\"googleDrive\":\"googleDriveOAuth2Api\",\"googleDocs\":\"googleDocsOAuth2Api\",\"googleSheets\":\"googleSheetsOAuth2Api\",\"googleChat\":\"googleApi\",\"googleBusinessProfile\":\"googleBusinessProfileOAuth2Api\",\"googleAds\":\"googleAdsOAuth2Api\",\"microsoftOneDrive\":\"microsoftOneDriveOAuth2Api\",\"microsoftExcel\":\"microsoftExcelOAuth2Api\",\"microsoftTeams\":\"microsoftTeamsOAuth2Api\",\"whatsApp\":\"whatsAppApi\",\"telegram\":\"telegramApi\",\"twilio\":\"twilioApi\",\"slack\":\"slackOAuth2Api\",\"sendInBlue\":\"sendInBlueApi\",\"mailchimp\":\"mailchimpApi\",\"activeCampaign\":\"activeCampaignApi\",\"lemlist\":\"lemlistApi\",\"facebookGraphApi\":\"facebookGraphApi\",\"linkedIn\":\"linkedInOAuth2Api\",\"youTube\":\"youTubeOAuth2Api\",\"twitter\":\"twitterOAuth2Api\",\"hubspot\":\"hubspotAppToken\",\"pipedrive\":\"pipedriveApi\",\"salesforce\":\"salesforceOAuth2Api\",\"zohoCrm\":\"zohoOAuth2Api\",\"odoo\":\"odooApi\",\"airtable\":\"airtableTokenApi\",\"notion\":\"notionApi\",\"mondayCom\":\"mondayComApi\",\"clickUp\":\"clickUpApi\",\"stripe\":\"stripeApi\",\"quickbooks\":\"quickBooksOAuth2Api\",\"xero\":\"xeroOAuth2Api\",\"zendesk\":\"zendeskApi\",\"shopify\":\"shopifyApi\",\"wooCommerce\":\"wooCommerceApi\",\"lmChatAnthropic\":\"anthropicApi\",\"anthropic\":\"anthropicApi\"}\nconst TYPES_PAR_FOURNISSEUR = {\"gmail\":[\"gmailOAuth2\"],\"google_agenda\":[\"googleCalendarOAuth2Api\"],\"google_drive\":[\"googleDriveOAuth2Api\",\"googleSheetsOAuth2Api\"]}\nconst PORTEE_N8N = {\"gmailOAuth2\":\"https://www.googleapis.com/auth/gmail.readonly\",\"googleCalendarOAuth2Api\":\"https://www.googleapis.com/auth/calendar.freebusy\",\"googleDriveOAuth2Api\":\"https://www.googleapis.com/auth/drive.file\",\"googleSheetsOAuth2Api\":\"https://www.googleapis.com/auth/drive.file\"}\nconst EMPREINTES_GABARITS = {\"gabarit-artisan-accueil-boite\":{\"Normaliser un e-mail\":\"b38ce0df15690f7dbbaab0fa5b45f6df7744742f0a54d3c3a0c953da7397de2b\",\"Dédoublonner et classer\":\"daed690dd98118edc1aef6836edb50094825635e967155143f016f8ee13a18bd\",\"Dépôt prévu\":\"806558fcccd68e9a072898be9ecc9b471da50c4f349daec0ac75570d1bfd2bd9\",\"Ignoré (journal)\":\"ce43fe0dbe454889c3014391b9b53b114d84fbb9f893ee6baa6178c43c21a5ab\"},\"gabarit-artisan-accueil-envoi\":{\"Contrôle avant envoi\":\"60c702c9df0699ea6c39be450a824429f41f653da7bbd4e57c4a95f4dae1857d\",\"Envois prévus\":\"fe11b968ee2e9fb4a1e474f6f52aa4d0e9ade79402aab2e37bf3a404e4764a2b\"},\"gabarit-artisan-accueil-leads\":{\"Leads enregistrés (simulation)\":\"ef6f25e6b68275c12899ea11008945115510c966a843bb58a42bf9fe9e3b058b\",\"Normaliser les leads\":\"42aeea34302c0d772f1f8569636cabe02cb7c915f2d68f54492a37b75144b205\",\"Dépôt prévu\":\"806558fcccd68e9a072898be9ecc9b471da50c4f349daec0ac75570d1bfd2bd9\",\"Ignoré (journal)\":\"24d1f8d246235c1a0c328ad612386184c0e5eb6cfb4fab354d9ee71395803c41\"},\"gabarit-artisan-accueil-reponse\":{\"Regrouper par conversation\":\"165e8b2826f658d4e43bcfeb1e6fb15d546c9c7df1302461f360edd97e5f9550\",\"Réponse enregistrée (simulation)\":\"3ca604d9adb22bfa5c27eca9ee966e7590fa02cf97d17409e1598ada5975c2eb\",\"Joindre la description de la photo\":\"d8d2d7d56c1d20586abfc119677b244ffd19da05c33e93d943cbb7d1050ed384\",\"Revalider la qualification\":\"49c4cfbbf75af4b9d732e577b85a6b7a56d6ccae50f9ec25649682e0a0512906\",\"Revalider la proposition\":\"0122c6f0f7352dd3dade08bd5918a309fa029ed9de348155ffd070d5590bbc3a\",\"Préparer la demande au chef\":\"5d971884d338c05f1ae5ba899484fb92c90e8ec3af0cf072ab9179a92d582b09\",\"Chef indisponible : rien ne part\":\"5809434ead9e596ea1fc6bb03db39c33255dff0bde2180f8be65fbef448429c0\",\"Aiguiller les effets\":\"6bd9bb09b4b4c15db45c39fba1fe683279d52742820e33b92e245e46956e04fc\",\"Effets prévus\":\"4b14c5bd4865653e68e24cc29918ba67a1bd22df1bb89b3cbe6cb47a4681f382\",\"Voie sans écriture\":\"0ec107b586abe3857f8b38c538a84b38baf416918e587b9495d67e6ca8dfa57d\"},\"gabarit-artisan-apres\":{\"Compte et mode\":\"e3f20fd990d475b7f8a5be502287b4df08202d7a5b1aab88d45c00ab6e0c9571\",\"Décider\":\"a797897d8782f2ef5ee91c3efa5b12d79417bfabad6fbc0f64dccc64394d8898\",\"Effets prévus\":\"24a8155254bd51ade24c839341a089dd2d9ac1242182752f6cd5c5cd24c9d4ba\",\"Revalider la réponse\":\"ee7ba76fdcb53cb67518de4fbb69701a8c0698891ddc6295722d7d3afcf3f1b7\",\"Préparer la carte\":\"f62db68fa191c422471ba735db9e8efa9a27aa467af7857c27c9d4f1c1cd0704\",\"Assembler la demande\":\"0403f02ff0003b2a65c0abff47667f939e36890779520a26d1048453fa41176d\"},\"gabarit-artisan-devis\":{\"Préparer\":\"92339622efa92691de8fbdc9dc996145b33432c5dd3af0699742ac4513d502b5\",\"Constituer le dossier\":\"449d3b9aeb89424399ecfb08e1926c64509b88ea4217746a13278d66a13e79f2\",\"Modèle enregistré (simulation)\":\"0cebc0e435e32eceae12c050832c621809a8b1647fa31c2a1d84d8b58b42871f\",\"Revalider les lignes\":\"60381cc6d52cb0b243827581dc5c5e1295b61c3dbf7bf7d5a2680da5d0b92bff\",\"Préparer l'appel du chef\":\"930733ffe771f38058c6b84339eff2e00eaf3aa6d48d7edbb4846b5acacdecbd\",\"Décider de la voie\":\"93e4a1e6041863dd5727b0a4ad5a9fe1f8ca7a5e6d937901c41840fbc17e27c2\",\"Effets prévus\":\"b6d07edb295febcf994566d1ffe43660290b400bdbc489a9ae35c6ea077f5a24\",\"Bilan\":\"e21aa84d0064e8414e0fdbcfb5b5251c2dfe2efdabf2e585c3db30537aeca6a0\"},\"gabarit-artisan-direction\":{\"Compte et mode\":\"863c5ce16e5167377615ac0e4e25dfd641d720ca7d6ec052f3dcaeea7bb1903b\",\"Compter\":\"4d53dfc2da12eaf2ca5fb132ff01cd45174ad0ed481cbac0fbe89f8e6cf02113\",\"Effets prévus\":\"a44fa6977a723940ddce2eb074a1c2bf6c2d43c68203fdcb96ca556232e840d6\",\"Revalider la page\":\"d1416a5ba8dddc4604dc58cf26064a28bae571a1dfc5be2d104541a64e9edf4a\",\"Revalider le rapport\":\"04f8cbef93098ae852c84bc604553e6677d4d81de3759db1be07271be422a50d\"},\"gabarit-artisan-facturation\":{\"Préparer\":\"7fc55fbeebe0180b7ea2a2d9f2cdab117a1bed106dcaa597c54994cd7cf7c560\",\"Constituer le dossier\":\"c7e37a8ce529f709846ca19e858dfcac02760442fe968e3e63dcab4e3d41c952\",\"Modèle enregistré (simulation)\":\"e5343dbe0ec9a123bde42998f4eadf29cb17cc3cf98da78598469ba09701a83f\",\"Revalider le texte\":\"d453391b5d04d63ae2aa1a290d7c4359ae407996571674b18e4f164a1e15c6c5\",\"Décider de la voie\":\"6da8c3631c86d70465f79ce72f46eb144f1e38bef4936e7d9411c20b45917fbe\",\"Effets prévus\":\"9f4721d0986dcf9c75b3f7789dd77fe367505776575cc9d78b2ed55a166407e6\",\"SMS préparé\":\"e0b0cbfd8d9953b0b607fe49190fc1d02ee42d38d74b40a1909001bbd480197e\"},\"gabarit-artisan-operations\":{\"Compte et mode\":\"80e4405455fa29d972a190a132ebbcc235d1a8844b6071f4011a38e26a6fb245\",\"Créneaux à vérifier\":\"f30671a2521fbe7126ab8e7bc21affc5c73c168be48fe74bc64e9add365a8a85\",\"Garder les créneaux libres\":\"c782f7373cf446dd9e900d742d6c156e00ee30fbf29c5f4f142836e196075cfb\",\"Décider\":\"0a1ceb719a37208141656a800e605c7e86f355f952b485df846d5b354fbf6b9d\",\"Effets prévus\":\"d506a4614b4c82ccd0a69ef7205fff02c708a36b578cf02375c267ae74f9c62e\",\"Revalider la proposition\":\"02c6297e2aaea4175f22ce3d1824b7d54065e2f401941f8a3e5aee04d3481622\",\"Préparer la carte\":\"ade0512ba819ade99f4cf32e836be5f9d32063775f3b0d513d9a112350c84d91\",\"Assembler le rappel\":\"dac167e12044d0f833f05e92835c89176bdf4c99a545f86f0b083587c8b831a1\",\"Revalider la commande\":\"10130438eb61f2dc485ddd6426262ed2b5aa707949ed63d544cda441fbd46fa3\",\"Revalider le classement\":\"902f09f7ffb54195f8bca47481dcddae86b0c69ba65899543025644055c746ba\",\"Aperçu de l'import\":\"754be312a7cb9b1246829d79be1517c17b3c35419d54d2488131810e2cdcab0f\"},\"gabarit-artisan-suivi\":{\"Préparer\":\"7995d6300c101b64c1bc06327720cba8479ef3d152346628b263f62dbcd5ba4a\",\"Constituer la relance due\":\"ddfdc685ccabb3222d071772edd4c60e91b50efd5dae1c1500fda65f036e5734\",\"Préparer l'appel du contrôleur\":\"6357f48b4fa862badfcfe74a79e3be47d35544a75c3ca49b761405c706d57e72\",\"Modèle enregistré (simulation)\":\"1b906a3daa314c4e4c5189768fa342986a4bd92f51b2c427913f9974d250efc2\",\"Revalider le message\":\"fcf87b8e8b3dda6b1be6a87f27c42add15141c63e6c02d9db6ac35ba3e27b110\",\"Décider de la voie\":\"2d4d9ad98cf3d61cf16a171b4d95b59d8765c9b5c43cc4d4bde72700f063b9f3\",\"Effets prévus\":\"8d4e5a58733bfe943647b7b34336a03af7c4993e35e40087e9fc9007ffc339dd\",\"SMS préparé\":\"b5940cbde50a184f1ba74088dd7be865d9337e5b82f4341d36ab83f8054f822c\"}}\nconst empreinte = (t) => createHash('sha256').update(String(t), 'utf8').digest('hex')\nconst racineDuType = (type) => String(type).replace(/^.*\\./, '').replace(/(HitlTool|Tool|Trigger)$/, '')\nfunction identifiantsReclames(n) {\n  const t = racineDuType(n.type)\n  if (String(n.type).startsWith('n8n-nodes-base.httpRequest')) {\n    return n.parameters?.authentication === 'predefinedCredentialType' && typeof n.parameters?.nodeCredentialType === 'string' ? [n.parameters.nodeCredentialType] : []\n  }\n  return IDENTIFIANTS[t] && !/toolWorkflow|toolHttpRequest|agentTool/.test(n.type) ? [IDENTIFIANTS[t]] : []\n}\nfunction envoieAuDehors(n) {\n  const op = n.parameters?.operation\n  // L'API Graph de Meta se règle par sa méthode HTTP : un GET lit (les leads), tout autre verbe publie ou envoie.\n  if (n.type === 'n8n-nodes-base.facebookGraphApi') return String(n.parameters?.httpRequestMethod ?? 'GET').toUpperCase() !== 'GET'\n  if (TYPES_ENVOI.has(n.type)) return !(typeof op === 'string' && LECTURES.test(op)) && n.parameters?.resource !== 'draft'\n  if (n.type === 'n8n-nodes-base.httpRequest') {\n    const m = String(n.parameters?.method ?? 'GET').toUpperCase()\n    let hote = ''\n    try { hote = new URL(String(n.parameters?.url ?? '')).host } catch { /* expression ou vide */ }\n    return m !== 'GET' && !/\\.supabase\\.co$/.test(hote)\n  }\n  return false\n}\nconst organisationDe = (slug) => `00000000-0000-4000-8000-${empreinte(`client:${slug}`).slice(0, 12)}`\nfunction validerClient(client) {\n  const e = []\n  if (typeof client?.slug !== 'string' || !SLUG.test(client.slug) || client.slug.length > 40) e.push(`slug « ${client?.slug} » : minuscules, chiffres et tirets (40 au plus)`)\n  else if (client.slug === 'ent' || client.slug.startsWith('ent-')) e.push('slug « ent… » refusé : il se confondrait avec les copies de l’offre Entreprise (client-ent-…)')\n  if (!OFFRES.includes(client?.offre)) e.push(`offre « ${client?.offre} » : studio, signature ou entreprise`)\n  if (client?.organisation !== undefined && (typeof client.organisation !== 'string' || !UUID.test(client.organisation))) e.push('organisation : un UUID')\n  if (client?.organisation === ORGANISATION_EXEMPLE) e.push('organisation : celle de l’exemple des gabarits est refusée')\n  const types = client?.types_actives ?? []\n  if (!Array.isArray(types) || types.some((t) => !TYPES_PILOTE.includes(t))) e.push(`types activés : parmi ${TYPES_PILOTE.join(', ')} (la liste fermée du pilote)`)\n  else if (new Set(types).size !== types.length) e.push('types activés : un type deux fois')\n  else if (types.length && client?.offre !== 'signature') e.push(`types activés : seule l’offre Signature fait partir un type seul (offre ${client?.offre})`)\n  return e\n}\nfunction substituer(valeur, paires) {\n  if (typeof valeur === 'string') { let s = valeur; for (const [de, vers] of paires) s = s.split(de).join(vers); return s }\n  if (Array.isArray(valeur)) return valeur.map((v) => substituer(v, paires))\n  if (valeur && typeof valeur === 'object') return Object.fromEntries(Object.entries(valeur).map(([k, v]) => [k, substituer(v, paires)]))\n  return valeur\n}\nconst plat = (x) => (x && x.workflow && x.workflow.nodes ? x.workflow : x)\nconst nomDeLaCopie = (nomGabarit, client) => {\n  const reste = client.offre === 'entreprise' ? nomGabarit.replace(/^gabarit-ent-/, '') : nomGabarit.replace(/^gabarit-artisan-/, '')\n  if (reste === nomGabarit) throw new Error(`« ${nomGabarit} » n'est pas un gabarit de l'offre ${client.offre}`)\n  return client.offre === 'entreprise' ? `client-ent-${client.slug}-${reste}` : `client-${client.slug}-${reste}`\n}\nfunction fabriquerCopie(gabaritBrut, registreGabarit, client) {\n  const g = plat(gabaritBrut)\n  const organisation = client.organisation ?? organisationDe(client.slug)\n  const nom = nomDeLaCopie(g.name, client)\n  const paires = [...JETONS_ORGANISATION.map((j) => [j, organisation]), [ORGANISATION_EXEMPLE, organisation],\n    ...Object.entries(client.ressources ?? {}).map(([j, v]) => [j, String(v)])]\n  const emplacements = []\n  const jetonsOuverts = new Set()\n  const studio = client.offre === 'studio'\n  const nodes = g.nodes.map((n0) => {\n    // La garde du gabarit : un nœud Code n'a le droit d'être copié que tel que le registre l'a empreint.\n    if (n0.type === 'n8n-nodes-base.code') {\n      const attendu = registreGabarit?.[g.name]?.[n0.name]\n      if (attendu !== empreinte(n0.parameters?.jsCode)) throw new Error(`${g.name} / ${n0.name} : le code du gabarit ne correspond pas à son empreinte : copie refusée`)\n    }\n    const n = { ...n0, parameters: substituer(n0.parameters, paires) }\n    if (n0.credentials && Object.keys(n0.credentials).length) throw new Error(`${g.name} / ${n0.name} : un gabarit ne porte aucun identifiant`)\n    const reclames = identifiantsReclames(n)\n    if (reclames.length) {\n      n.credentials = Object.fromEntries(reclames.map((c) => {\n        const id = `EMPLACEMENT_${client.slug.toUpperCase().replace(/-/g, '_')}_${c}`\n        emplacements.push({ workflow: nom, noeud: n.name, type: c, id })\n        return [c, { id, name: `À brancher par ${client.slug} : ${c}` }]\n      }))\n    }\n    if (studio && envoieAuDehors(n)) n.disabled = true\n    for (const j of JSON.stringify(n.parameters ?? {}).match(/\\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*_DU_CLIENT\\b|\\bORGANISATION_XERO_DU_CLIENT\\b/g) ?? []) jetonsOuverts.add(j)\n    return n\n  })\n  const copie = {\n    name: nom, active: false, isArchived: false, activeVersionId: null, settings: g.settings, nodes, connections: g.connections,\n    meta: {\n      ...(g.meta ?? {}),\n      client: {\n        slug: client.slug, offre: client.offre, organisation, gabarit: g.name, mode: 'a_blanc',\n        types_actives: client.offre === 'signature' ? [...(client.types_actives ?? [])].sort() : [],\n        envois_actifs: !studio, jetons_a_renseigner: [...jetonsOuverts].sort(),\n      },\n    },\n  }\n  const registre = Object.fromEntries(nodes.filter((n) => n.type === 'n8n-nodes-base.code').map((n) => [n.name, empreinte(n.parameters.jsCode)]))\n  return { copie, registre, emplacements }\n}\nfunction slugDuCompte(artisanId) {\n  const h = String(artisanId).toLowerCase().replace(/-/g, '')\n  if (!/^[0-9a-f]{32}$/.test(h)) throw new Error('identifiant de compte invalide')\n  return `a-${h.slice(0, 12)}`\n}\nconst nomIdentifiant = (slug, fournisseur, type) => `client-${slug}-${fournisseur}-${type}`\nfunction offreServie(plan) {\n  if (plan === 'studio') return 'studio'\n  if (plan === 'signature' || plan === 'business') return 'signature'\n  return null\n}\nfunction ouvrirSecretN8n(chiffre, idConnexion, cleBase64, crypto) {\n  try {\n    const cle = Buffer.from(String(cleBase64 || ''), 'base64')\n    const p = String(chiffre || '').split('.')\n    if (cle.length !== 32 || p.length !== 4 || p[0] !== 'v1') return null\n    const d = crypto.createDecipheriv('aes-256-gcm', cle, Buffer.from(p[1], 'base64url'))\n    d.setAAD(Buffer.from(`connexions:${idConnexion}:n8n`, 'utf8'))\n    d.setAuthTag(Buffer.from(p[2], 'base64url'))\n    return JSON.parse(Buffer.concat([d.update(Buffer.from(p[3], 'base64url')), d.final()]).toString('utf8'))\n  } catch { return null }\n}\nfunction corpsIdentifiant(type, nom, secret, appOAuth) {\n  return {\n    name: nom, type,\n    data: {\n      clientId: appOAuth.clientId, clientSecret: appOAuth.clientSecret, sendAdditionalBodyProperties: false, additionalBodyProperties: {},\n      oauthTokenData: { access_token: secret.access_token, refresh_token: secret.refresh_token, token_type: 'Bearer', scope: PORTEE_N8N[type],\n        expires_at: Math.floor((secret.access_expire || 0) / 1000) },\n    },\n  }\n}\nfunction lierCopie(copie, identifiantsParType, offre) {\n  const nodes = (copie.nodes ?? []).map((n) => {\n    if (!n.credentials) return n\n    const credentials = Object.fromEntries(Object.entries(n.credentials).map(([t, c]) => [t, identifiantsParType[t] ? { id: identifiantsParType[t].id, name: identifiantsParType[t].name } : c]))\n    const restant = Object.values(credentials).some((c) => String(c.id).startsWith('EMPLACEMENT_'))\n    const { disabled: _ancien, ...reste } = n\n    return restant || (offre === 'studio' && envoieAuDehors(n)) ? { ...reste, credentials, disabled: true } : { ...reste, credentials }\n  })\n  return { ...copie, nodes }\n}\nconst manqueRequis = (copie) => (copie.nodes ?? []).some((n) => ['supabaseApi', 'anthropicApi'].some((t) => n.credentials?.[t] && String(n.credentials[t].id).startsWith('EMPLACEMENT_')))\nconst signatureLiaisons = (copie) => JSON.stringify((copie.nodes ?? []).map((n) => [n.name, Object.entries(n.credentials ?? {}).map(([t, c]) => [t, String(c.id)]).sort(), n.disabled === true]))\nconst orphelins = (copie, valides) => {\n  const bons = new Set(Object.values(valides).map((i) => String(i.id)))\n  return (copie.nodes ?? []).some((n) => Object.values(n.credentials ?? {}).some((c) => !String(c.id).startsWith('EMPLACEMENT_') && !bons.has(String(c.id))))\n}\nconst dependDe = (copie, ids) => (copie.nodes ?? []).some((n) => Object.values(n.credentials ?? {}).some((c) => ids.includes(String(c.id))))\nconst idsDe = (ligne) => Object.values(ligne.identifiants ?? {}).map((i) => i.id)\nfunction liaisonsDe(artisanId, connexions, etats, presti) {\n  const out = { ...(presti ?? {}) }\n  const actives = new Set((connexions ?? []).filter((c) => c.artisan_id === artisanId && c.etat === 'active').map((c) => c.id))\n  const slug = slugDuCompte(artisanId)\n  for (const l of etats ?? []) {\n    if (l.artisan_id !== artisanId) continue\n    if (l.etape === 'retire') for (const t of TYPES_PAR_FOURNISSEUR[l.fournisseur] ?? []) out[t] = { id: `EMPLACEMENT_${slug.toUpperCase().replace(/-/g, '_')}_${t}`, name: `À brancher par ${slug} : ${t}` }\n  }\n  for (const l of etats ?? []) if (l.artisan_id === artisanId && actives.has(l.connexion_id)) for (const [t, i] of Object.entries(l.identifiants ?? {})) out[t] = i\n  return out\n}\nfunction planifier(entree) {\n  const actions = []\n  const etats = new Map((entree.etats ?? []).map((l) => [l.connexion_id, l]))\n  const copies = new Map((entree.copies ?? []).map((c) => [c.name, c]))\n  const test = new Set(entree.comptes_de_test ?? [])\n  const reel = entree.mode === 'reel'\n  // Les identifiants d'autorisations expirées : une copie qui en dépend reste muette jusqu'au renouvellement.\n  // Les emplacements posés à la place d'un outil retiré : une copie qui en porte ne se réactive pas seule (le retrait désactive ; reconnecter relie).\n  const retires = [...new Set((entree.etats ?? []).filter((l) => l.etape === 'retire').flatMap((l) => (TYPES_PAR_FOURNISSEUR[l.fournisseur] ?? []).map((t) => `EMPLACEMENT_${slugDuCompte(l.artisan_id).toUpperCase().replace(/-/g, '_')}_${t}`)))]\n  const expires = (entree.connexions ?? []).filter((c) => c.etat === 'expiree' || c.etat === 'erreur').flatMap((c) => (etats.get(c.id) ? idsDe(etats.get(c.id)) : []))\n  for (const c of entree.connexions ?? []) {\n    const types = TYPES_PAR_FOURNISSEUR[c.fournisseur]\n    if (!types) continue\n    const artisan = entree.artisans?.[c.artisan_id]\n    const offre = offreServie(artisan?.plan)\n    const slug = slugDuCompte(c.artisan_id)\n    const ligne = etats.get(c.id)\n    const base = { connexion_id: c.id, artisan_id: c.artisan_id, slug, fournisseur: c.fournisseur, offre }\n    const tousIds = (ligne ? idsDe(ligne) : [])\n    if (c.etat === 'retiree') {\n      if (!ligne || ligne.etape === 'retire') continue\n      for (const cp of copies.values()) if (cp.name.startsWith(`client-${slug}-`) && cp.active && dependDe(cp, tousIds)) actions.push({ ...base, action: 'desactiver_copie', copie: cp.name })\n      for (const [type, i] of Object.entries(ligne.identifiants ?? {})) actions.push({ ...base, action: 'supprimer_identifiant', type, identifiant: i.id })\n      if (!Object.keys(ligne.identifiants ?? {}).length) actions.push({ ...base, action: 'marquer_retire' })\n      continue\n    }\n    if (c.etat === 'expiree' || c.etat === 'erreur') {\n      if (!ligne) continue\n      for (const cp of copies.values()) if (cp.name.startsWith(`client-${slug}-`) && cp.active && dependDe(cp, tousIds)) actions.push({ ...base, action: 'desactiver_copie', copie: cp.name, motif: c.etat })\n      if (!ligne.alerte_envoyee) actions.push({ ...base, action: 'alerter', motif: c.etat })\n      continue\n    }\n    if (c.etat !== 'active') continue // a_verifier : l'essai de lecture n'a pas réussi, rien à brancher\n    if (!offre) continue // essai, Essentiel hérité, Entreprise sur mesure : rien à brancher ici\n    // Une autorisation renouvelée après une expiration : l'ancien identifiant est retiré, un neuf sera créé au passage suivant.\n    if (ligne?.alerte_envoyee) {\n      for (const [type, i] of Object.entries(ligne.identifiants ?? {})) actions.push({ ...base, action: 'supprimer_identifiant', type, identifiant: i.id, renouvellement: true })\n      continue\n    }\n    const manque = types.filter((t) => !ligne?.identifiants?.[t])\n    const enCours = types.filter((t) => String(ligne?.etape ?? '').split(',').includes(`en_cours:${t}`))\n    for (const t of enCours) actions.push({ ...base, action: 'ignorer', motif: 'creation_en_cours_a_verifier', type: t })\n    for (const t of manque.filter((x) => !enCours.includes(x))) actions.push({ ...base, action: 'creer_identifiant', type: t, nom: nomIdentifiant(slug, c.fournisseur, t) })\n    if (manque.length) continue\n    const types_actives = offre === 'signature' ? Object.keys(entree.pilote?.[c.artisan_id]?.types ?? {}).filter((k) => entree.pilote[c.artisan_id].types[k] === true).sort() : []\n    for (const g of entree.gabarits ?? []) {\n      const nom = nomDeLaCopie(g, { offre, slug })\n      const cp = copies.get(nom)\n      if (!cp) { actions.push({ ...base, action: 'creer_copie', gabarit: g, copie: nom, types_actives }); continue }\n      const mine = liaisonsDe(c.artisan_id, entree.connexions, entree.etats, entree.identifiants_presti)\n      if (signatureLiaisons(lierCopie(cp, mine, offre)) !== signatureLiaisons(cp)) { actions.push({ ...base, action: 'relier_copie', gabarit: g, copie: nom }); continue }\n      // L'activation : jamais en blanc, seulement le compte de test nommé, et seulement une copie dont Supabase et l'IA de Presti sont liés.\n      if (reel && !cp.active && test.has(c.artisan_id) && !manqueRequis(cp) && !dependDe(cp, expires) && !dependDe(cp, retires) && !orphelins(cp, mine)) actions.push({ ...base, action: 'activer_copie', copie: nom })\n    }\n  }\n  const ordre = { desactiver_copie: 0, alerter: 1, supprimer_identifiant: 2, marquer_retire: 3, creer_identifiant: 4, creer_copie: 5, relier_copie: 6, activer_copie: 7, ignorer: 8 }\n  const trie = actions.sort((a, b) => ordre[a.action] - ordre[b.action] || (a.connexion_id + a.copie + a.type).localeCompare(b.connexion_id + b.copie + b.type))\n  // Les nœuds n8n traitent tous les éléments d'un nœud avant le suivant, sur l'état lu au début du passage : deux actions qui changent\n  // la MÊME ligne d'état se marcheraient dessus (la seconde réécrirait l'ancien état). Une seule par connexion et par passage ; la suite au passage d'après.\n  const CHANGE_L_ETAT = new Set(['creer_identifiant', 'supprimer_identifiant', 'marquer_retire', 'alerter'])\n  const deja = new Set()\n  // De même une copie : un seul geste par copie et par passage (trois connexions d'un même client voient la même copie manquante).\n  const copiesVues = new Set()\n  return trie.filter((a) => {\n    if (a.copie) { if (copiesVues.has(a.copie)) return false; copiesVues.add(a.copie) }\n    if (!CHANGE_L_ETAT.has(a.action)) return true\n    if (deja.has(a.connexion_id)) return false\n    deja.add(a.connexion_id); return true\n  })\n}\nconst reglages = $('Réglages').first().json\nconst connexions = $('Lire les connexions').all().map((i) => i.json).filter((x) => x && x.id)\nconst artisans = Object.fromEntries($('Lire les comptes').all().map((i) => i.json).filter((x) => x && x.id).map((a) => [a.id, { plan: a.plan }]))\nconst pilote = Object.fromEntries($('Lire le pilote').all().map((i) => i.json).filter((x) => x && x.artisan_id).map((p) => [p.artisan_id, { types: p.actif === true ? (p.types || {}) : {} }]))\nconst etats = $('Lire l’état').all().map((i) => i.json).filter((x) => x && x.connexion_id).map((l) => ({ ...l, identifiants: typeof l.identifiants === 'string' ? JSON.parse(l.identifiants || '{}') : (l.identifiants || {}), alerte_envoyee: l.alerte_envoyee === true || l.alerte_envoyee === 'true' }))\nconst workflows = $('Lire les workflows').all().map((i) => i.json).filter((x) => x && x.name)\nconst gabarits = workflows.map((w) => w.name).filter((n) => n.startsWith('gabarit-artisan-')).sort()\nconst copies = workflows.filter((w) => w.name.startsWith('client-')).map((w) => ({ name: w.name, active: w.active === true, nodes: w.nodes || [] }))\nconst plan = planifier({ mode: reglages.mode, comptes_de_test: reglages.comptes_de_test, identifiants_presti: reglages.identifiants_presti, connexions, artisans, pilote, etats, gabarits, copies })\nreturn plan.map((a) => ({ json: a }))"
+      }
+    },
+    {
+      "id": "Journaliser le plan",
+      "name": "Journaliser le plan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "return $input.all().map((i) => ({ json: { connexion_id: i.json.connexion_id, slug: i.json.slug, action: i.json.action, cible: i.json.copie || i.json.type || '', issue: 'prevu', mode: $('Réglages').first().json.mode } }))"
+      }
+    },
+    {
+      "id": "Écrire le plan",
+      "name": "Écrire le plan",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1980,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti_provisionnement_journal"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "connexion_id": "={{ $json.connexion_id }}",
+            "slug": "={{ $json.slug }}",
+            "action": "={{ $json.action }}",
+            "cible": "={{ $json.cible }}",
+            "issue": "={{ $json.issue }}",
+            "mode": "={{ $json.mode }}"
+          },
+          "schema": [
+            {
+              "id": "connexion_id",
+              "displayName": "connexion_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "slug",
+              "displayName": "slug",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cible",
+              "displayName": "cible",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue",
+              "displayName": "issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "mode",
+              "displayName": "mode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Mode réel ?",
+      "name": "Mode réel ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2200,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "reel",
+              "leftValue": "={{ $('Réglages').first().json.mode }}",
+              "rightValue": "reel",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Préparer la requête",
+      "name": "Préparer la requête",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2420,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const crypto = require('crypto')\nconst createHash = crypto.createHash\nconst SLUG = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/\nconst TYPES_PILOTE = [\"reponse_prospect\",\"relance_devis\",\"relance_impaye\",\"envoi_devis\",\"envoi_facture\",\"assistant_client\"]\nconst OFFRES = [\"studio\",\"signature\",\"entreprise\"]\nconst FAMILLE_GABARIT = {\"studio\":\"gabarit-artisan-\",\"signature\":\"gabarit-artisan-\",\"entreprise\":\"gabarit-ent-\"}\nconst ORGANISATION_EXEMPLE = \"00000000-0000-4000-8000-0000000000e1\"\nconst JETONS_ORGANISATION = [\"ORGANISATION_DU_CLIENT\",\"A_RENSEIGNER_A_LA_COPIE\"]\nconst TYPES_ENVOI = new Set([\"n8n-nodes-base.emailSend\",\"n8n-nodes-base.gmail\",\"n8n-nodes-base.microsoftOutlook\",\"n8n-nodes-base.sendGrid\",\"n8n-nodes-base.mailgun\",\"n8n-nodes-base.mailjet\",\"n8n-nodes-base.sendInBlue\",\"n8n-nodes-base.brevo\",\"n8n-nodes-base.slack\",\"n8n-nodes-base.telegram\",\"n8n-nodes-base.twilio\",\"n8n-nodes-base.whatsApp\",\"n8n-nodes-base.discord\",\"n8n-nodes-base.mattermost\",\"n8n-nodes-base.microsoftTeams\",\"n8n-nodes-base.googleChat\",\"n8n-nodes-base.mailchimp\",\"n8n-nodes-base.activeCampaign\",\"n8n-nodes-base.lemlist\",\"n8n-nodes-base.facebookGraphApi\",\"n8n-nodes-base.linkedIn\",\"n8n-nodes-base.youTube\",\"n8n-nodes-base.twitter\"])\nconst LECTURES = /^(get|getAll|getMany|search|list|lookup|download|read|availability|getAvailability|getFreeBusy|getProfile|getStatus)$/i\nconst IDENTIFIANTS = {\"gmail\":\"gmailOAuth2\",\"microsoftOutlook\":\"microsoftOutlookOAuth2Api\",\"emailSend\":\"smtp\",\"googleCalendar\":\"googleCalendarOAuth2Api\",\"googleDrive\":\"googleDriveOAuth2Api\",\"googleDocs\":\"googleDocsOAuth2Api\",\"googleSheets\":\"googleSheetsOAuth2Api\",\"googleChat\":\"googleApi\",\"googleBusinessProfile\":\"googleBusinessProfileOAuth2Api\",\"googleAds\":\"googleAdsOAuth2Api\",\"microsoftOneDrive\":\"microsoftOneDriveOAuth2Api\",\"microsoftExcel\":\"microsoftExcelOAuth2Api\",\"microsoftTeams\":\"microsoftTeamsOAuth2Api\",\"whatsApp\":\"whatsAppApi\",\"telegram\":\"telegramApi\",\"twilio\":\"twilioApi\",\"slack\":\"slackOAuth2Api\",\"sendInBlue\":\"sendInBlueApi\",\"mailchimp\":\"mailchimpApi\",\"activeCampaign\":\"activeCampaignApi\",\"lemlist\":\"lemlistApi\",\"facebookGraphApi\":\"facebookGraphApi\",\"linkedIn\":\"linkedInOAuth2Api\",\"youTube\":\"youTubeOAuth2Api\",\"twitter\":\"twitterOAuth2Api\",\"hubspot\":\"hubspotAppToken\",\"pipedrive\":\"pipedriveApi\",\"salesforce\":\"salesforceOAuth2Api\",\"zohoCrm\":\"zohoOAuth2Api\",\"odoo\":\"odooApi\",\"airtable\":\"airtableTokenApi\",\"notion\":\"notionApi\",\"mondayCom\":\"mondayComApi\",\"clickUp\":\"clickUpApi\",\"stripe\":\"stripeApi\",\"quickbooks\":\"quickBooksOAuth2Api\",\"xero\":\"xeroOAuth2Api\",\"zendesk\":\"zendeskApi\",\"shopify\":\"shopifyApi\",\"wooCommerce\":\"wooCommerceApi\",\"lmChatAnthropic\":\"anthropicApi\",\"anthropic\":\"anthropicApi\"}\nconst TYPES_PAR_FOURNISSEUR = {\"gmail\":[\"gmailOAuth2\"],\"google_agenda\":[\"googleCalendarOAuth2Api\"],\"google_drive\":[\"googleDriveOAuth2Api\",\"googleSheetsOAuth2Api\"]}\nconst PORTEE_N8N = {\"gmailOAuth2\":\"https://www.googleapis.com/auth/gmail.readonly\",\"googleCalendarOAuth2Api\":\"https://www.googleapis.com/auth/calendar.freebusy\",\"googleDriveOAuth2Api\":\"https://www.googleapis.com/auth/drive.file\",\"googleSheetsOAuth2Api\":\"https://www.googleapis.com/auth/drive.file\"}\nconst EMPREINTES_GABARITS = {\"gabarit-artisan-accueil-boite\":{\"Normaliser un e-mail\":\"b38ce0df15690f7dbbaab0fa5b45f6df7744742f0a54d3c3a0c953da7397de2b\",\"Dédoublonner et classer\":\"daed690dd98118edc1aef6836edb50094825635e967155143f016f8ee13a18bd\",\"Dépôt prévu\":\"806558fcccd68e9a072898be9ecc9b471da50c4f349daec0ac75570d1bfd2bd9\",\"Ignoré (journal)\":\"ce43fe0dbe454889c3014391b9b53b114d84fbb9f893ee6baa6178c43c21a5ab\"},\"gabarit-artisan-accueil-envoi\":{\"Contrôle avant envoi\":\"60c702c9df0699ea6c39be450a824429f41f653da7bbd4e57c4a95f4dae1857d\",\"Envois prévus\":\"fe11b968ee2e9fb4a1e474f6f52aa4d0e9ade79402aab2e37bf3a404e4764a2b\"},\"gabarit-artisan-accueil-leads\":{\"Leads enregistrés (simulation)\":\"ef6f25e6b68275c12899ea11008945115510c966a843bb58a42bf9fe9e3b058b\",\"Normaliser les leads\":\"42aeea34302c0d772f1f8569636cabe02cb7c915f2d68f54492a37b75144b205\",\"Dépôt prévu\":\"806558fcccd68e9a072898be9ecc9b471da50c4f349daec0ac75570d1bfd2bd9\",\"Ignoré (journal)\":\"24d1f8d246235c1a0c328ad612386184c0e5eb6cfb4fab354d9ee71395803c41\"},\"gabarit-artisan-accueil-reponse\":{\"Regrouper par conversation\":\"165e8b2826f658d4e43bcfeb1e6fb15d546c9c7df1302461f360edd97e5f9550\",\"Réponse enregistrée (simulation)\":\"3ca604d9adb22bfa5c27eca9ee966e7590fa02cf97d17409e1598ada5975c2eb\",\"Joindre la description de la photo\":\"d8d2d7d56c1d20586abfc119677b244ffd19da05c33e93d943cbb7d1050ed384\",\"Revalider la qualification\":\"49c4cfbbf75af4b9d732e577b85a6b7a56d6ccae50f9ec25649682e0a0512906\",\"Revalider la proposition\":\"0122c6f0f7352dd3dade08bd5918a309fa029ed9de348155ffd070d5590bbc3a\",\"Préparer la demande au chef\":\"5d971884d338c05f1ae5ba899484fb92c90e8ec3af0cf072ab9179a92d582b09\",\"Chef indisponible : rien ne part\":\"5809434ead9e596ea1fc6bb03db39c33255dff0bde2180f8be65fbef448429c0\",\"Aiguiller les effets\":\"6bd9bb09b4b4c15db45c39fba1fe683279d52742820e33b92e245e46956e04fc\",\"Effets prévus\":\"4b14c5bd4865653e68e24cc29918ba67a1bd22df1bb89b3cbe6cb47a4681f382\",\"Voie sans écriture\":\"0ec107b586abe3857f8b38c538a84b38baf416918e587b9495d67e6ca8dfa57d\"},\"gabarit-artisan-apres\":{\"Compte et mode\":\"e3f20fd990d475b7f8a5be502287b4df08202d7a5b1aab88d45c00ab6e0c9571\",\"Décider\":\"a797897d8782f2ef5ee91c3efa5b12d79417bfabad6fbc0f64dccc64394d8898\",\"Effets prévus\":\"24a8155254bd51ade24c839341a089dd2d9ac1242182752f6cd5c5cd24c9d4ba\",\"Revalider la réponse\":\"ee7ba76fdcb53cb67518de4fbb69701a8c0698891ddc6295722d7d3afcf3f1b7\",\"Préparer la carte\":\"f62db68fa191c422471ba735db9e8efa9a27aa467af7857c27c9d4f1c1cd0704\",\"Assembler la demande\":\"0403f02ff0003b2a65c0abff47667f939e36890779520a26d1048453fa41176d\"},\"gabarit-artisan-devis\":{\"Préparer\":\"92339622efa92691de8fbdc9dc996145b33432c5dd3af0699742ac4513d502b5\",\"Constituer le dossier\":\"449d3b9aeb89424399ecfb08e1926c64509b88ea4217746a13278d66a13e79f2\",\"Modèle enregistré (simulation)\":\"0cebc0e435e32eceae12c050832c621809a8b1647fa31c2a1d84d8b58b42871f\",\"Revalider les lignes\":\"60381cc6d52cb0b243827581dc5c5e1295b61c3dbf7bf7d5a2680da5d0b92bff\",\"Préparer l'appel du chef\":\"930733ffe771f38058c6b84339eff2e00eaf3aa6d48d7edbb4846b5acacdecbd\",\"Décider de la voie\":\"93e4a1e6041863dd5727b0a4ad5a9fe1f8ca7a5e6d937901c41840fbc17e27c2\",\"Effets prévus\":\"b6d07edb295febcf994566d1ffe43660290b400bdbc489a9ae35c6ea077f5a24\",\"Bilan\":\"e21aa84d0064e8414e0fdbcfb5b5251c2dfe2efdabf2e585c3db30537aeca6a0\"},\"gabarit-artisan-direction\":{\"Compte et mode\":\"863c5ce16e5167377615ac0e4e25dfd641d720ca7d6ec052f3dcaeea7bb1903b\",\"Compter\":\"4d53dfc2da12eaf2ca5fb132ff01cd45174ad0ed481cbac0fbe89f8e6cf02113\",\"Effets prévus\":\"a44fa6977a723940ddce2eb074a1c2bf6c2d43c68203fdcb96ca556232e840d6\",\"Revalider la page\":\"d1416a5ba8dddc4604dc58cf26064a28bae571a1dfc5be2d104541a64e9edf4a\",\"Revalider le rapport\":\"04f8cbef93098ae852c84bc604553e6677d4d81de3759db1be07271be422a50d\"},\"gabarit-artisan-facturation\":{\"Préparer\":\"7fc55fbeebe0180b7ea2a2d9f2cdab117a1bed106dcaa597c54994cd7cf7c560\",\"Constituer le dossier\":\"c7e37a8ce529f709846ca19e858dfcac02760442fe968e3e63dcab4e3d41c952\",\"Modèle enregistré (simulation)\":\"e5343dbe0ec9a123bde42998f4eadf29cb17cc3cf98da78598469ba09701a83f\",\"Revalider le texte\":\"d453391b5d04d63ae2aa1a290d7c4359ae407996571674b18e4f164a1e15c6c5\",\"Décider de la voie\":\"6da8c3631c86d70465f79ce72f46eb144f1e38bef4936e7d9411c20b45917fbe\",\"Effets prévus\":\"9f4721d0986dcf9c75b3f7789dd77fe367505776575cc9d78b2ed55a166407e6\",\"SMS préparé\":\"e0b0cbfd8d9953b0b607fe49190fc1d02ee42d38d74b40a1909001bbd480197e\"},\"gabarit-artisan-operations\":{\"Compte et mode\":\"80e4405455fa29d972a190a132ebbcc235d1a8844b6071f4011a38e26a6fb245\",\"Créneaux à vérifier\":\"f30671a2521fbe7126ab8e7bc21affc5c73c168be48fe74bc64e9add365a8a85\",\"Garder les créneaux libres\":\"c782f7373cf446dd9e900d742d6c156e00ee30fbf29c5f4f142836e196075cfb\",\"Décider\":\"0a1ceb719a37208141656a800e605c7e86f355f952b485df846d5b354fbf6b9d\",\"Effets prévus\":\"d506a4614b4c82ccd0a69ef7205fff02c708a36b578cf02375c267ae74f9c62e\",\"Revalider la proposition\":\"02c6297e2aaea4175f22ce3d1824b7d54065e2f401941f8a3e5aee04d3481622\",\"Préparer la carte\":\"ade0512ba819ade99f4cf32e836be5f9d32063775f3b0d513d9a112350c84d91\",\"Assembler le rappel\":\"dac167e12044d0f833f05e92835c89176bdf4c99a545f86f0b083587c8b831a1\",\"Revalider la commande\":\"10130438eb61f2dc485ddd6426262ed2b5aa707949ed63d544cda441fbd46fa3\",\"Revalider le classement\":\"902f09f7ffb54195f8bca47481dcddae86b0c69ba65899543025644055c746ba\",\"Aperçu de l'import\":\"754be312a7cb9b1246829d79be1517c17b3c35419d54d2488131810e2cdcab0f\"},\"gabarit-artisan-suivi\":{\"Préparer\":\"7995d6300c101b64c1bc06327720cba8479ef3d152346628b263f62dbcd5ba4a\",\"Constituer la relance due\":\"ddfdc685ccabb3222d071772edd4c60e91b50efd5dae1c1500fda65f036e5734\",\"Préparer l'appel du contrôleur\":\"6357f48b4fa862badfcfe74a79e3be47d35544a75c3ca49b761405c706d57e72\",\"Modèle enregistré (simulation)\":\"1b906a3daa314c4e4c5189768fa342986a4bd92f51b2c427913f9974d250efc2\",\"Revalider le message\":\"fcf87b8e8b3dda6b1be6a87f27c42add15141c63e6c02d9db6ac35ba3e27b110\",\"Décider de la voie\":\"2d4d9ad98cf3d61cf16a171b4d95b59d8765c9b5c43cc4d4bde72700f063b9f3\",\"Effets prévus\":\"8d4e5a58733bfe943647b7b34336a03af7c4993e35e40087e9fc9007ffc339dd\",\"SMS préparé\":\"b5940cbde50a184f1ba74088dd7be865d9337e5b82f4341d36ab83f8054f822c\"}}\nconst empreinte = (t) => createHash('sha256').update(String(t), 'utf8').digest('hex')\nconst racineDuType = (type) => String(type).replace(/^.*\\./, '').replace(/(HitlTool|Tool|Trigger)$/, '')\nfunction identifiantsReclames(n) {\n  const t = racineDuType(n.type)\n  if (String(n.type).startsWith('n8n-nodes-base.httpRequest')) {\n    return n.parameters?.authentication === 'predefinedCredentialType' && typeof n.parameters?.nodeCredentialType === 'string' ? [n.parameters.nodeCredentialType] : []\n  }\n  return IDENTIFIANTS[t] && !/toolWorkflow|toolHttpRequest|agentTool/.test(n.type) ? [IDENTIFIANTS[t]] : []\n}\nfunction envoieAuDehors(n) {\n  const op = n.parameters?.operation\n  // L'API Graph de Meta se règle par sa méthode HTTP : un GET lit (les leads), tout autre verbe publie ou envoie.\n  if (n.type === 'n8n-nodes-base.facebookGraphApi') return String(n.parameters?.httpRequestMethod ?? 'GET').toUpperCase() !== 'GET'\n  if (TYPES_ENVOI.has(n.type)) return !(typeof op === 'string' && LECTURES.test(op)) && n.parameters?.resource !== 'draft'\n  if (n.type === 'n8n-nodes-base.httpRequest') {\n    const m = String(n.parameters?.method ?? 'GET').toUpperCase()\n    let hote = ''\n    try { hote = new URL(String(n.parameters?.url ?? '')).host } catch { /* expression ou vide */ }\n    return m !== 'GET' && !/\\.supabase\\.co$/.test(hote)\n  }\n  return false\n}\nconst organisationDe = (slug) => `00000000-0000-4000-8000-${empreinte(`client:${slug}`).slice(0, 12)}`\nfunction validerClient(client) {\n  const e = []\n  if (typeof client?.slug !== 'string' || !SLUG.test(client.slug) || client.slug.length > 40) e.push(`slug « ${client?.slug} » : minuscules, chiffres et tirets (40 au plus)`)\n  else if (client.slug === 'ent' || client.slug.startsWith('ent-')) e.push('slug « ent… » refusé : il se confondrait avec les copies de l’offre Entreprise (client-ent-…)')\n  if (!OFFRES.includes(client?.offre)) e.push(`offre « ${client?.offre} » : studio, signature ou entreprise`)\n  if (client?.organisation !== undefined && (typeof client.organisation !== 'string' || !UUID.test(client.organisation))) e.push('organisation : un UUID')\n  if (client?.organisation === ORGANISATION_EXEMPLE) e.push('organisation : celle de l’exemple des gabarits est refusée')\n  const types = client?.types_actives ?? []\n  if (!Array.isArray(types) || types.some((t) => !TYPES_PILOTE.includes(t))) e.push(`types activés : parmi ${TYPES_PILOTE.join(', ')} (la liste fermée du pilote)`)\n  else if (new Set(types).size !== types.length) e.push('types activés : un type deux fois')\n  else if (types.length && client?.offre !== 'signature') e.push(`types activés : seule l’offre Signature fait partir un type seul (offre ${client?.offre})`)\n  return e\n}\nfunction substituer(valeur, paires) {\n  if (typeof valeur === 'string') { let s = valeur; for (const [de, vers] of paires) s = s.split(de).join(vers); return s }\n  if (Array.isArray(valeur)) return valeur.map((v) => substituer(v, paires))\n  if (valeur && typeof valeur === 'object') return Object.fromEntries(Object.entries(valeur).map(([k, v]) => [k, substituer(v, paires)]))\n  return valeur\n}\nconst plat = (x) => (x && x.workflow && x.workflow.nodes ? x.workflow : x)\nconst nomDeLaCopie = (nomGabarit, client) => {\n  const reste = client.offre === 'entreprise' ? nomGabarit.replace(/^gabarit-ent-/, '') : nomGabarit.replace(/^gabarit-artisan-/, '')\n  if (reste === nomGabarit) throw new Error(`« ${nomGabarit} » n'est pas un gabarit de l'offre ${client.offre}`)\n  return client.offre === 'entreprise' ? `client-ent-${client.slug}-${reste}` : `client-${client.slug}-${reste}`\n}\nfunction fabriquerCopie(gabaritBrut, registreGabarit, client) {\n  const g = plat(gabaritBrut)\n  const organisation = client.organisation ?? organisationDe(client.slug)\n  const nom = nomDeLaCopie(g.name, client)\n  const paires = [...JETONS_ORGANISATION.map((j) => [j, organisation]), [ORGANISATION_EXEMPLE, organisation],\n    ...Object.entries(client.ressources ?? {}).map(([j, v]) => [j, String(v)])]\n  const emplacements = []\n  const jetonsOuverts = new Set()\n  const studio = client.offre === 'studio'\n  const nodes = g.nodes.map((n0) => {\n    // La garde du gabarit : un nœud Code n'a le droit d'être copié que tel que le registre l'a empreint.\n    if (n0.type === 'n8n-nodes-base.code') {\n      const attendu = registreGabarit?.[g.name]?.[n0.name]\n      if (attendu !== empreinte(n0.parameters?.jsCode)) throw new Error(`${g.name} / ${n0.name} : le code du gabarit ne correspond pas à son empreinte : copie refusée`)\n    }\n    const n = { ...n0, parameters: substituer(n0.parameters, paires) }\n    if (n0.credentials && Object.keys(n0.credentials).length) throw new Error(`${g.name} / ${n0.name} : un gabarit ne porte aucun identifiant`)\n    const reclames = identifiantsReclames(n)\n    if (reclames.length) {\n      n.credentials = Object.fromEntries(reclames.map((c) => {\n        const id = `EMPLACEMENT_${client.slug.toUpperCase().replace(/-/g, '_')}_${c}`\n        emplacements.push({ workflow: nom, noeud: n.name, type: c, id })\n        return [c, { id, name: `À brancher par ${client.slug} : ${c}` }]\n      }))\n    }\n    if (studio && envoieAuDehors(n)) n.disabled = true\n    for (const j of JSON.stringify(n.parameters ?? {}).match(/\\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*_DU_CLIENT\\b|\\bORGANISATION_XERO_DU_CLIENT\\b/g) ?? []) jetonsOuverts.add(j)\n    return n\n  })\n  const copie = {\n    name: nom, active: false, isArchived: false, activeVersionId: null, settings: g.settings, nodes, connections: g.connections,\n    meta: {\n      ...(g.meta ?? {}),\n      client: {\n        slug: client.slug, offre: client.offre, organisation, gabarit: g.name, mode: 'a_blanc',\n        types_actives: client.offre === 'signature' ? [...(client.types_actives ?? [])].sort() : [],\n        envois_actifs: !studio, jetons_a_renseigner: [...jetonsOuverts].sort(),\n      },\n    },\n  }\n  const registre = Object.fromEntries(nodes.filter((n) => n.type === 'n8n-nodes-base.code').map((n) => [n.name, empreinte(n.parameters.jsCode)]))\n  return { copie, registre, emplacements }\n}\nfunction slugDuCompte(artisanId) {\n  const h = String(artisanId).toLowerCase().replace(/-/g, '')\n  if (!/^[0-9a-f]{32}$/.test(h)) throw new Error('identifiant de compte invalide')\n  return `a-${h.slice(0, 12)}`\n}\nconst nomIdentifiant = (slug, fournisseur, type) => `client-${slug}-${fournisseur}-${type}`\nfunction offreServie(plan) {\n  if (plan === 'studio') return 'studio'\n  if (plan === 'signature' || plan === 'business') return 'signature'\n  return null\n}\nfunction ouvrirSecretN8n(chiffre, idConnexion, cleBase64, crypto) {\n  try {\n    const cle = Buffer.from(String(cleBase64 || ''), 'base64')\n    const p = String(chiffre || '').split('.')\n    if (cle.length !== 32 || p.length !== 4 || p[0] !== 'v1') return null\n    const d = crypto.createDecipheriv('aes-256-gcm', cle, Buffer.from(p[1], 'base64url'))\n    d.setAAD(Buffer.from(`connexions:${idConnexion}:n8n`, 'utf8'))\n    d.setAuthTag(Buffer.from(p[2], 'base64url'))\n    return JSON.parse(Buffer.concat([d.update(Buffer.from(p[3], 'base64url')), d.final()]).toString('utf8'))\n  } catch { return null }\n}\nfunction corpsIdentifiant(type, nom, secret, appOAuth) {\n  return {\n    name: nom, type,\n    data: {\n      clientId: appOAuth.clientId, clientSecret: appOAuth.clientSecret, sendAdditionalBodyProperties: false, additionalBodyProperties: {},\n      oauthTokenData: { access_token: secret.access_token, refresh_token: secret.refresh_token, token_type: 'Bearer', scope: PORTEE_N8N[type],\n        expires_at: Math.floor((secret.access_expire || 0) / 1000) },\n    },\n  }\n}\nfunction lierCopie(copie, identifiantsParType, offre) {\n  const nodes = (copie.nodes ?? []).map((n) => {\n    if (!n.credentials) return n\n    const credentials = Object.fromEntries(Object.entries(n.credentials).map(([t, c]) => [t, identifiantsParType[t] ? { id: identifiantsParType[t].id, name: identifiantsParType[t].name } : c]))\n    const restant = Object.values(credentials).some((c) => String(c.id).startsWith('EMPLACEMENT_'))\n    const { disabled: _ancien, ...reste } = n\n    return restant || (offre === 'studio' && envoieAuDehors(n)) ? { ...reste, credentials, disabled: true } : { ...reste, credentials }\n  })\n  return { ...copie, nodes }\n}\nconst manqueRequis = (copie) => (copie.nodes ?? []).some((n) => ['supabaseApi', 'anthropicApi'].some((t) => n.credentials?.[t] && String(n.credentials[t].id).startsWith('EMPLACEMENT_')))\nconst signatureLiaisons = (copie) => JSON.stringify((copie.nodes ?? []).map((n) => [n.name, Object.entries(n.credentials ?? {}).map(([t, c]) => [t, String(c.id)]).sort(), n.disabled === true]))\nconst orphelins = (copie, valides) => {\n  const bons = new Set(Object.values(valides).map((i) => String(i.id)))\n  return (copie.nodes ?? []).some((n) => Object.values(n.credentials ?? {}).some((c) => !String(c.id).startsWith('EMPLACEMENT_') && !bons.has(String(c.id))))\n}\nconst dependDe = (copie, ids) => (copie.nodes ?? []).some((n) => Object.values(n.credentials ?? {}).some((c) => ids.includes(String(c.id))))\nconst idsDe = (ligne) => Object.values(ligne.identifiants ?? {}).map((i) => i.id)\nfunction liaisonsDe(artisanId, connexions, etats, presti) {\n  const out = { ...(presti ?? {}) }\n  const actives = new Set((connexions ?? []).filter((c) => c.artisan_id === artisanId && c.etat === 'active').map((c) => c.id))\n  const slug = slugDuCompte(artisanId)\n  for (const l of etats ?? []) {\n    if (l.artisan_id !== artisanId) continue\n    if (l.etape === 'retire') for (const t of TYPES_PAR_FOURNISSEUR[l.fournisseur] ?? []) out[t] = { id: `EMPLACEMENT_${slug.toUpperCase().replace(/-/g, '_')}_${t}`, name: `À brancher par ${slug} : ${t}` }\n  }\n  for (const l of etats ?? []) if (l.artisan_id === artisanId && actives.has(l.connexion_id)) for (const [t, i] of Object.entries(l.identifiants ?? {})) out[t] = i\n  return out\n}\nfunction planifier(entree) {\n  const actions = []\n  const etats = new Map((entree.etats ?? []).map((l) => [l.connexion_id, l]))\n  const copies = new Map((entree.copies ?? []).map((c) => [c.name, c]))\n  const test = new Set(entree.comptes_de_test ?? [])\n  const reel = entree.mode === 'reel'\n  // Les identifiants d'autorisations expirées : une copie qui en dépend reste muette jusqu'au renouvellement.\n  // Les emplacements posés à la place d'un outil retiré : une copie qui en porte ne se réactive pas seule (le retrait désactive ; reconnecter relie).\n  const retires = [...new Set((entree.etats ?? []).filter((l) => l.etape === 'retire').flatMap((l) => (TYPES_PAR_FOURNISSEUR[l.fournisseur] ?? []).map((t) => `EMPLACEMENT_${slugDuCompte(l.artisan_id).toUpperCase().replace(/-/g, '_')}_${t}`)))]\n  const expires = (entree.connexions ?? []).filter((c) => c.etat === 'expiree' || c.etat === 'erreur').flatMap((c) => (etats.get(c.id) ? idsDe(etats.get(c.id)) : []))\n  for (const c of entree.connexions ?? []) {\n    const types = TYPES_PAR_FOURNISSEUR[c.fournisseur]\n    if (!types) continue\n    const artisan = entree.artisans?.[c.artisan_id]\n    const offre = offreServie(artisan?.plan)\n    const slug = slugDuCompte(c.artisan_id)\n    const ligne = etats.get(c.id)\n    const base = { connexion_id: c.id, artisan_id: c.artisan_id, slug, fournisseur: c.fournisseur, offre }\n    const tousIds = (ligne ? idsDe(ligne) : [])\n    if (c.etat === 'retiree') {\n      if (!ligne || ligne.etape === 'retire') continue\n      for (const cp of copies.values()) if (cp.name.startsWith(`client-${slug}-`) && cp.active && dependDe(cp, tousIds)) actions.push({ ...base, action: 'desactiver_copie', copie: cp.name })\n      for (const [type, i] of Object.entries(ligne.identifiants ?? {})) actions.push({ ...base, action: 'supprimer_identifiant', type, identifiant: i.id })\n      if (!Object.keys(ligne.identifiants ?? {}).length) actions.push({ ...base, action: 'marquer_retire' })\n      continue\n    }\n    if (c.etat === 'expiree' || c.etat === 'erreur') {\n      if (!ligne) continue\n      for (const cp of copies.values()) if (cp.name.startsWith(`client-${slug}-`) && cp.active && dependDe(cp, tousIds)) actions.push({ ...base, action: 'desactiver_copie', copie: cp.name, motif: c.etat })\n      if (!ligne.alerte_envoyee) actions.push({ ...base, action: 'alerter', motif: c.etat })\n      continue\n    }\n    if (c.etat !== 'active') continue // a_verifier : l'essai de lecture n'a pas réussi, rien à brancher\n    if (!offre) continue // essai, Essentiel hérité, Entreprise sur mesure : rien à brancher ici\n    // Une autorisation renouvelée après une expiration : l'ancien identifiant est retiré, un neuf sera créé au passage suivant.\n    if (ligne?.alerte_envoyee) {\n      for (const [type, i] of Object.entries(ligne.identifiants ?? {})) actions.push({ ...base, action: 'supprimer_identifiant', type, identifiant: i.id, renouvellement: true })\n      continue\n    }\n    const manque = types.filter((t) => !ligne?.identifiants?.[t])\n    const enCours = types.filter((t) => String(ligne?.etape ?? '').split(',').includes(`en_cours:${t}`))\n    for (const t of enCours) actions.push({ ...base, action: 'ignorer', motif: 'creation_en_cours_a_verifier', type: t })\n    for (const t of manque.filter((x) => !enCours.includes(x))) actions.push({ ...base, action: 'creer_identifiant', type: t, nom: nomIdentifiant(slug, c.fournisseur, t) })\n    if (manque.length) continue\n    const types_actives = offre === 'signature' ? Object.keys(entree.pilote?.[c.artisan_id]?.types ?? {}).filter((k) => entree.pilote[c.artisan_id].types[k] === true).sort() : []\n    for (const g of entree.gabarits ?? []) {\n      const nom = nomDeLaCopie(g, { offre, slug })\n      const cp = copies.get(nom)\n      if (!cp) { actions.push({ ...base, action: 'creer_copie', gabarit: g, copie: nom, types_actives }); continue }\n      const mine = liaisonsDe(c.artisan_id, entree.connexions, entree.etats, entree.identifiants_presti)\n      if (signatureLiaisons(lierCopie(cp, mine, offre)) !== signatureLiaisons(cp)) { actions.push({ ...base, action: 'relier_copie', gabarit: g, copie: nom }); continue }\n      // L'activation : jamais en blanc, seulement le compte de test nommé, et seulement une copie dont Supabase et l'IA de Presti sont liés.\n      if (reel && !cp.active && test.has(c.artisan_id) && !manqueRequis(cp) && !dependDe(cp, expires) && !dependDe(cp, retires) && !orphelins(cp, mine)) actions.push({ ...base, action: 'activer_copie', copie: nom })\n    }\n  }\n  const ordre = { desactiver_copie: 0, alerter: 1, supprimer_identifiant: 2, marquer_retire: 3, creer_identifiant: 4, creer_copie: 5, relier_copie: 6, activer_copie: 7, ignorer: 8 }\n  const trie = actions.sort((a, b) => ordre[a.action] - ordre[b.action] || (a.connexion_id + a.copie + a.type).localeCompare(b.connexion_id + b.copie + b.type))\n  // Les nœuds n8n traitent tous les éléments d'un nœud avant le suivant, sur l'état lu au début du passage : deux actions qui changent\n  // la MÊME ligne d'état se marcheraient dessus (la seconde réécrirait l'ancien état). Une seule par connexion et par passage ; la suite au passage d'après.\n  const CHANGE_L_ETAT = new Set(['creer_identifiant', 'supprimer_identifiant', 'marquer_retire', 'alerter'])\n  const deja = new Set()\n  // De même une copie : un seul geste par copie et par passage (trois connexions d'un même client voient la même copie manquante).\n  const copiesVues = new Set()\n  return trie.filter((a) => {\n    if (a.copie) { if (copiesVues.has(a.copie)) return false; copiesVues.add(a.copie) }\n    if (!CHANGE_L_ETAT.has(a.action)) return true\n    if (deja.has(a.connexion_id)) return false\n    deja.add(a.connexion_id); return true\n  })\n}\nconst reglages = $('Réglages').first().json\nconst a = $json\nconst etats = $('Lire l’état').all().map((i) => i.json).filter((x) => x && x.connexion_id)\nconst ligne = etats.find((l) => l.connexion_id === a.connexion_id)\nconst identifiants = ligne ? (typeof ligne.identifiants === 'string' ? JSON.parse(ligne.identifiants || '{}') : (ligne.identifiants || {})) : {}\nconst base = { ...a, requete: null, reservation: null }\nconst N8N = $env.N8N_API_URL\nconst etat = (patch) => ({ connexion_id: a.connexion_id, artisan_id: a.artisan_id, slug: a.slug, fournisseur: a.fournisseur, identifiants: JSON.stringify(identifiants), etape: ligne ? ligne.etape : '', alerte_envoyee: ligne ? (ligne.alerte_envoyee === true || ligne.alerte_envoyee === 'true') : false, ...patch })\nif (!N8N && a.action !== 'alerter' && a.action !== 'marquer_retire' && a.action !== 'ignorer') return [{ json: { ...base, reservation: etat({}), echec: 'n8n_url_absente' } }]\nif (a.action === 'creer_identifiant') {\n  const c = $('Lire les connexions').all().map((i) => i.json).find((x) => x.id === a.connexion_id)\n  const secret = ouvrirSecretN8n(c && c.secret_n8n, a.connexion_id, $env.BOITE_CLE_N8N, crypto)\n  if (!secret || !$env.GOOGLE_OAUTH_CLIENT_ID || !$env.GOOGLE_OAUTH_CLIENT_SECRET) return [{ json: { ...base, reservation: etat({}), echec: 'secret_ou_application_indisponible' } }]\n  return [{ json: { ...base, reservation: etat({ etape: ((ligne && ligne.etape) ? ligne.etape + ',' : '') + 'en_cours:' + a.type }),\n    requete: { method: 'POST', url: N8N + '/api/v1/credentials', body: corpsIdentifiant(a.type, a.nom, secret, { clientId: $env.GOOGLE_OAUTH_CLIENT_ID, clientSecret: $env.GOOGLE_OAUTH_CLIENT_SECRET }) } } }]\n}\nconst workflows = $('Lire les workflows').all().map((i) => i.json).filter((x) => x && x.name)\nconst tousEtats = etats.map((l) => ({ ...l, identifiants: typeof l.identifiants === 'string' ? JSON.parse(l.identifiants || '{}') : (l.identifiants || {}) }))\nconst parType = liaisonsDe(a.artisan_id, $('Lire les connexions').all().map((i) => i.json), tousEtats, reglages.identifiants_presti)\nif (a.action === 'creer_copie' || a.action === 'relier_copie') {\n  const g = workflows.find((w) => w.name === a.gabarit)\n  if (!g) return [{ json: { ...base, reservation: etat({}), echec: 'gabarit_introuvable' } }]\n  let copie\n  if (a.action === 'creer_copie') {\n    copie = fabriquerCopie({ ...g, meta: g.meta || {} }, EMPREINTES_GABARITS, { slug: a.slug, offre: a.offre, organisation: undefined, types_actives: a.types_actives || [] }).copie\n    copie = lierCopie(copie, parType, a.offre)\n  } else {\n    copie = lierCopie(workflows.find((w) => w.name === a.copie), parType, a.offre)\n  }\n  const corps = { name: copie.name, nodes: copie.nodes, connections: copie.connections, settings: g.settings || {} }\n  const existante = workflows.find((w) => w.name === a.copie)\n  return [{ json: { ...base, reservation: etat({}), requete: a.action === 'creer_copie' ? { method: 'POST', url: N8N + '/api/v1/workflows', body: corps } : { method: 'PUT', url: N8N + '/api/v1/workflows/' + existante.id, body: corps } } }]\n}\nif (a.action === 'activer_copie') return [{ json: { ...base, reservation: etat({}), requete: { method: 'POST', url: N8N + '/api/v1/workflows/' + workflows.find((w) => w.name === a.copie).id + '/activate', body: {} } } }]\nif (a.action === 'desactiver_copie') return [{ json: { ...base, reservation: etat({}), requete: { method: 'POST', url: N8N + '/api/v1/workflows/' + workflows.find((w) => w.name === a.copie).id + '/deactivate', body: {} } } }]\nif (a.action === 'supprimer_identifiant') return [{ json: { ...base, reservation: etat({}), requete: { method: 'DELETE', url: N8N + '/api/v1/credentials/' + a.identifiant, body: null } } }]\nreturn [{ json: { ...base, reservation: etat({ etape: a.action === 'marquer_retire' ? 'retire' : (ligne ? ligne.etape : ''), alerte_envoyee: a.action === 'alerter' ? true : (ligne ? (ligne.alerte_envoyee === true || ligne.alerte_envoyee === 'true') : false) }) } }]"
+      }
+    },
+    {
+      "id": "Réserver",
+      "name": "Réserver",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2640,
+        -120
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti_provisionnement"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "connexion_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.reservation.connexion_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "connexion_id": "={{ $json.reservation.connexion_id }}",
+            "artisan_id": "={{ $json.reservation.artisan_id }}",
+            "slug": "={{ $json.reservation.slug }}",
+            "fournisseur": "={{ $json.reservation.fournisseur }}",
+            "identifiants": "={{ $json.reservation.identifiants }}",
+            "etape": "={{ $json.reservation.etape }}",
+            "alerte_envoyee": "={{ $json.reservation.alerte_envoyee }}"
+          },
+          "schema": [
+            {
+              "id": "connexion_id",
+              "displayName": "connexion_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "artisan_id",
+              "displayName": "artisan_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "slug",
+              "displayName": "slug",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fournisseur",
+              "displayName": "fournisseur",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "identifiants",
+              "displayName": "identifiants",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etape",
+              "displayName": "etape",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "alerte_envoyee",
+              "displayName": "alerte_envoyee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "A une requête ?",
+      "name": "A une requête ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2860,
+        -120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "req",
+              "leftValue": "={{ $('Préparer la requête').item.json.requete }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Appeler n8n",
+      "name": "Appeler n8n",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3080,
+        -200
+      ],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "n8nApi": {
+          "id": "EMPLACEMENT_N8N_API",
+          "name": "n8n API"
+        }
+      },
+      "parameters": {
+        "method": "={{ $('Préparer la requête').item.json.requete.method }}",
+        "url": "={{ $('Préparer la requête').item.json.requete.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "n8nApi",
+        "sendBody": "={{ $('Préparer la requête').item.json.requete.body !== null }}",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Préparer la requête').item.json.requete.body) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "fullResponse": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "Résultat",
+      "name": "Résultat",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3300,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const crypto = require('crypto')\nconst createHash = crypto.createHash\nconst SLUG = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/\nconst TYPES_PILOTE = [\"reponse_prospect\",\"relance_devis\",\"relance_impaye\",\"envoi_devis\",\"envoi_facture\",\"assistant_client\"]\nconst OFFRES = [\"studio\",\"signature\",\"entreprise\"]\nconst FAMILLE_GABARIT = {\"studio\":\"gabarit-artisan-\",\"signature\":\"gabarit-artisan-\",\"entreprise\":\"gabarit-ent-\"}\nconst ORGANISATION_EXEMPLE = \"00000000-0000-4000-8000-0000000000e1\"\nconst JETONS_ORGANISATION = [\"ORGANISATION_DU_CLIENT\",\"A_RENSEIGNER_A_LA_COPIE\"]\nconst TYPES_ENVOI = new Set([\"n8n-nodes-base.emailSend\",\"n8n-nodes-base.gmail\",\"n8n-nodes-base.microsoftOutlook\",\"n8n-nodes-base.sendGrid\",\"n8n-nodes-base.mailgun\",\"n8n-nodes-base.mailjet\",\"n8n-nodes-base.sendInBlue\",\"n8n-nodes-base.brevo\",\"n8n-nodes-base.slack\",\"n8n-nodes-base.telegram\",\"n8n-nodes-base.twilio\",\"n8n-nodes-base.whatsApp\",\"n8n-nodes-base.discord\",\"n8n-nodes-base.mattermost\",\"n8n-nodes-base.microsoftTeams\",\"n8n-nodes-base.googleChat\",\"n8n-nodes-base.mailchimp\",\"n8n-nodes-base.activeCampaign\",\"n8n-nodes-base.lemlist\",\"n8n-nodes-base.facebookGraphApi\",\"n8n-nodes-base.linkedIn\",\"n8n-nodes-base.youTube\",\"n8n-nodes-base.twitter\"])\nconst LECTURES = /^(get|getAll|getMany|search|list|lookup|download|read|availability|getAvailability|getFreeBusy|getProfile|getStatus)$/i\nconst IDENTIFIANTS = {\"gmail\":\"gmailOAuth2\",\"microsoftOutlook\":\"microsoftOutlookOAuth2Api\",\"emailSend\":\"smtp\",\"googleCalendar\":\"googleCalendarOAuth2Api\",\"googleDrive\":\"googleDriveOAuth2Api\",\"googleDocs\":\"googleDocsOAuth2Api\",\"googleSheets\":\"googleSheetsOAuth2Api\",\"googleChat\":\"googleApi\",\"googleBusinessProfile\":\"googleBusinessProfileOAuth2Api\",\"googleAds\":\"googleAdsOAuth2Api\",\"microsoftOneDrive\":\"microsoftOneDriveOAuth2Api\",\"microsoftExcel\":\"microsoftExcelOAuth2Api\",\"microsoftTeams\":\"microsoftTeamsOAuth2Api\",\"whatsApp\":\"whatsAppApi\",\"telegram\":\"telegramApi\",\"twilio\":\"twilioApi\",\"slack\":\"slackOAuth2Api\",\"sendInBlue\":\"sendInBlueApi\",\"mailchimp\":\"mailchimpApi\",\"activeCampaign\":\"activeCampaignApi\",\"lemlist\":\"lemlistApi\",\"facebookGraphApi\":\"facebookGraphApi\",\"linkedIn\":\"linkedInOAuth2Api\",\"youTube\":\"youTubeOAuth2Api\",\"twitter\":\"twitterOAuth2Api\",\"hubspot\":\"hubspotAppToken\",\"pipedrive\":\"pipedriveApi\",\"salesforce\":\"salesforceOAuth2Api\",\"zohoCrm\":\"zohoOAuth2Api\",\"odoo\":\"odooApi\",\"airtable\":\"airtableTokenApi\",\"notion\":\"notionApi\",\"mondayCom\":\"mondayComApi\",\"clickUp\":\"clickUpApi\",\"stripe\":\"stripeApi\",\"quickbooks\":\"quickBooksOAuth2Api\",\"xero\":\"xeroOAuth2Api\",\"zendesk\":\"zendeskApi\",\"shopify\":\"shopifyApi\",\"wooCommerce\":\"wooCommerceApi\",\"lmChatAnthropic\":\"anthropicApi\",\"anthropic\":\"anthropicApi\"}\nconst TYPES_PAR_FOURNISSEUR = {\"gmail\":[\"gmailOAuth2\"],\"google_agenda\":[\"googleCalendarOAuth2Api\"],\"google_drive\":[\"googleDriveOAuth2Api\",\"googleSheetsOAuth2Api\"]}\nconst PORTEE_N8N = {\"gmailOAuth2\":\"https://www.googleapis.com/auth/gmail.readonly\",\"googleCalendarOAuth2Api\":\"https://www.googleapis.com/auth/calendar.freebusy\",\"googleDriveOAuth2Api\":\"https://www.googleapis.com/auth/drive.file\",\"googleSheetsOAuth2Api\":\"https://www.googleapis.com/auth/drive.file\"}\nconst EMPREINTES_GABARITS = {\"gabarit-artisan-accueil-boite\":{\"Normaliser un e-mail\":\"b38ce0df15690f7dbbaab0fa5b45f6df7744742f0a54d3c3a0c953da7397de2b\",\"Dédoublonner et classer\":\"daed690dd98118edc1aef6836edb50094825635e967155143f016f8ee13a18bd\",\"Dépôt prévu\":\"806558fcccd68e9a072898be9ecc9b471da50c4f349daec0ac75570d1bfd2bd9\",\"Ignoré (journal)\":\"ce43fe0dbe454889c3014391b9b53b114d84fbb9f893ee6baa6178c43c21a5ab\"},\"gabarit-artisan-accueil-envoi\":{\"Contrôle avant envoi\":\"60c702c9df0699ea6c39be450a824429f41f653da7bbd4e57c4a95f4dae1857d\",\"Envois prévus\":\"fe11b968ee2e9fb4a1e474f6f52aa4d0e9ade79402aab2e37bf3a404e4764a2b\"},\"gabarit-artisan-accueil-leads\":{\"Leads enregistrés (simulation)\":\"ef6f25e6b68275c12899ea11008945115510c966a843bb58a42bf9fe9e3b058b\",\"Normaliser les leads\":\"42aeea34302c0d772f1f8569636cabe02cb7c915f2d68f54492a37b75144b205\",\"Dépôt prévu\":\"806558fcccd68e9a072898be9ecc9b471da50c4f349daec0ac75570d1bfd2bd9\",\"Ignoré (journal)\":\"24d1f8d246235c1a0c328ad612386184c0e5eb6cfb4fab354d9ee71395803c41\"},\"gabarit-artisan-accueil-reponse\":{\"Regrouper par conversation\":\"165e8b2826f658d4e43bcfeb1e6fb15d546c9c7df1302461f360edd97e5f9550\",\"Réponse enregistrée (simulation)\":\"3ca604d9adb22bfa5c27eca9ee966e7590fa02cf97d17409e1598ada5975c2eb\",\"Joindre la description de la photo\":\"d8d2d7d56c1d20586abfc119677b244ffd19da05c33e93d943cbb7d1050ed384\",\"Revalider la qualification\":\"49c4cfbbf75af4b9d732e577b85a6b7a56d6ccae50f9ec25649682e0a0512906\",\"Revalider la proposition\":\"0122c6f0f7352dd3dade08bd5918a309fa029ed9de348155ffd070d5590bbc3a\",\"Préparer la demande au chef\":\"5d971884d338c05f1ae5ba899484fb92c90e8ec3af0cf072ab9179a92d582b09\",\"Chef indisponible : rien ne part\":\"5809434ead9e596ea1fc6bb03db39c33255dff0bde2180f8be65fbef448429c0\",\"Aiguiller les effets\":\"6bd9bb09b4b4c15db45c39fba1fe683279d52742820e33b92e245e46956e04fc\",\"Effets prévus\":\"4b14c5bd4865653e68e24cc29918ba67a1bd22df1bb89b3cbe6cb47a4681f382\",\"Voie sans écriture\":\"0ec107b586abe3857f8b38c538a84b38baf416918e587b9495d67e6ca8dfa57d\"},\"gabarit-artisan-apres\":{\"Compte et mode\":\"e3f20fd990d475b7f8a5be502287b4df08202d7a5b1aab88d45c00ab6e0c9571\",\"Décider\":\"a797897d8782f2ef5ee91c3efa5b12d79417bfabad6fbc0f64dccc64394d8898\",\"Effets prévus\":\"24a8155254bd51ade24c839341a089dd2d9ac1242182752f6cd5c5cd24c9d4ba\",\"Revalider la réponse\":\"ee7ba76fdcb53cb67518de4fbb69701a8c0698891ddc6295722d7d3afcf3f1b7\",\"Préparer la carte\":\"f62db68fa191c422471ba735db9e8efa9a27aa467af7857c27c9d4f1c1cd0704\",\"Assembler la demande\":\"0403f02ff0003b2a65c0abff47667f939e36890779520a26d1048453fa41176d\"},\"gabarit-artisan-devis\":{\"Préparer\":\"92339622efa92691de8fbdc9dc996145b33432c5dd3af0699742ac4513d502b5\",\"Constituer le dossier\":\"449d3b9aeb89424399ecfb08e1926c64509b88ea4217746a13278d66a13e79f2\",\"Modèle enregistré (simulation)\":\"0cebc0e435e32eceae12c050832c621809a8b1647fa31c2a1d84d8b58b42871f\",\"Revalider les lignes\":\"60381cc6d52cb0b243827581dc5c5e1295b61c3dbf7bf7d5a2680da5d0b92bff\",\"Préparer l'appel du chef\":\"930733ffe771f38058c6b84339eff2e00eaf3aa6d48d7edbb4846b5acacdecbd\",\"Décider de la voie\":\"93e4a1e6041863dd5727b0a4ad5a9fe1f8ca7a5e6d937901c41840fbc17e27c2\",\"Effets prévus\":\"b6d07edb295febcf994566d1ffe43660290b400bdbc489a9ae35c6ea077f5a24\",\"Bilan\":\"e21aa84d0064e8414e0fdbcfb5b5251c2dfe2efdabf2e585c3db30537aeca6a0\"},\"gabarit-artisan-direction\":{\"Compte et mode\":\"863c5ce16e5167377615ac0e4e25dfd641d720ca7d6ec052f3dcaeea7bb1903b\",\"Compter\":\"4d53dfc2da12eaf2ca5fb132ff01cd45174ad0ed481cbac0fbe89f8e6cf02113\",\"Effets prévus\":\"a44fa6977a723940ddce2eb074a1c2bf6c2d43c68203fdcb96ca556232e840d6\",\"Revalider la page\":\"d1416a5ba8dddc4604dc58cf26064a28bae571a1dfc5be2d104541a64e9edf4a\",\"Revalider le rapport\":\"04f8cbef93098ae852c84bc604553e6677d4d81de3759db1be07271be422a50d\"},\"gabarit-artisan-facturation\":{\"Préparer\":\"7fc55fbeebe0180b7ea2a2d9f2cdab117a1bed106dcaa597c54994cd7cf7c560\",\"Constituer le dossier\":\"c7e37a8ce529f709846ca19e858dfcac02760442fe968e3e63dcab4e3d41c952\",\"Modèle enregistré (simulation)\":\"e5343dbe0ec9a123bde42998f4eadf29cb17cc3cf98da78598469ba09701a83f\",\"Revalider le texte\":\"d453391b5d04d63ae2aa1a290d7c4359ae407996571674b18e4f164a1e15c6c5\",\"Décider de la voie\":\"6da8c3631c86d70465f79ce72f46eb144f1e38bef4936e7d9411c20b45917fbe\",\"Effets prévus\":\"9f4721d0986dcf9c75b3f7789dd77fe367505776575cc9d78b2ed55a166407e6\",\"SMS préparé\":\"e0b0cbfd8d9953b0b607fe49190fc1d02ee42d38d74b40a1909001bbd480197e\"},\"gabarit-artisan-operations\":{\"Compte et mode\":\"80e4405455fa29d972a190a132ebbcc235d1a8844b6071f4011a38e26a6fb245\",\"Créneaux à vérifier\":\"f30671a2521fbe7126ab8e7bc21affc5c73c168be48fe74bc64e9add365a8a85\",\"Garder les créneaux libres\":\"c782f7373cf446dd9e900d742d6c156e00ee30fbf29c5f4f142836e196075cfb\",\"Décider\":\"0a1ceb719a37208141656a800e605c7e86f355f952b485df846d5b354fbf6b9d\",\"Effets prévus\":\"d506a4614b4c82ccd0a69ef7205fff02c708a36b578cf02375c267ae74f9c62e\",\"Revalider la proposition\":\"02c6297e2aaea4175f22ce3d1824b7d54065e2f401941f8a3e5aee04d3481622\",\"Préparer la carte\":\"ade0512ba819ade99f4cf32e836be5f9d32063775f3b0d513d9a112350c84d91\",\"Assembler le rappel\":\"dac167e12044d0f833f05e92835c89176bdf4c99a545f86f0b083587c8b831a1\",\"Revalider la commande\":\"10130438eb61f2dc485ddd6426262ed2b5aa707949ed63d544cda441fbd46fa3\",\"Revalider le classement\":\"902f09f7ffb54195f8bca47481dcddae86b0c69ba65899543025644055c746ba\",\"Aperçu de l'import\":\"754be312a7cb9b1246829d79be1517c17b3c35419d54d2488131810e2cdcab0f\"},\"gabarit-artisan-suivi\":{\"Préparer\":\"7995d6300c101b64c1bc06327720cba8479ef3d152346628b263f62dbcd5ba4a\",\"Constituer la relance due\":\"ddfdc685ccabb3222d071772edd4c60e91b50efd5dae1c1500fda65f036e5734\",\"Préparer l'appel du contrôleur\":\"6357f48b4fa862badfcfe74a79e3be47d35544a75c3ca49b761405c706d57e72\",\"Modèle enregistré (simulation)\":\"1b906a3daa314c4e4c5189768fa342986a4bd92f51b2c427913f9974d250efc2\",\"Revalider le message\":\"fcf87b8e8b3dda6b1be6a87f27c42add15141c63e6c02d9db6ac35ba3e27b110\",\"Décider de la voie\":\"2d4d9ad98cf3d61cf16a171b4d95b59d8765c9b5c43cc4d4bde72700f063b9f3\",\"Effets prévus\":\"8d4e5a58733bfe943647b7b34336a03af7c4993e35e40087e9fc9007ffc339dd\",\"SMS préparé\":\"b5940cbde50a184f1ba74088dd7be865d9337e5b82f4341d36ab83f8054f822c\"}}\nconst empreinte = (t) => createHash('sha256').update(String(t), 'utf8').digest('hex')\nconst racineDuType = (type) => String(type).replace(/^.*\\./, '').replace(/(HitlTool|Tool|Trigger)$/, '')\nfunction identifiantsReclames(n) {\n  const t = racineDuType(n.type)\n  if (String(n.type).startsWith('n8n-nodes-base.httpRequest')) {\n    return n.parameters?.authentication === 'predefinedCredentialType' && typeof n.parameters?.nodeCredentialType === 'string' ? [n.parameters.nodeCredentialType] : []\n  }\n  return IDENTIFIANTS[t] && !/toolWorkflow|toolHttpRequest|agentTool/.test(n.type) ? [IDENTIFIANTS[t]] : []\n}\nfunction envoieAuDehors(n) {\n  const op = n.parameters?.operation\n  // L'API Graph de Meta se règle par sa méthode HTTP : un GET lit (les leads), tout autre verbe publie ou envoie.\n  if (n.type === 'n8n-nodes-base.facebookGraphApi') return String(n.parameters?.httpRequestMethod ?? 'GET').toUpperCase() !== 'GET'\n  if (TYPES_ENVOI.has(n.type)) return !(typeof op === 'string' && LECTURES.test(op)) && n.parameters?.resource !== 'draft'\n  if (n.type === 'n8n-nodes-base.httpRequest') {\n    const m = String(n.parameters?.method ?? 'GET').toUpperCase()\n    let hote = ''\n    try { hote = new URL(String(n.parameters?.url ?? '')).host } catch { /* expression ou vide */ }\n    return m !== 'GET' && !/\\.supabase\\.co$/.test(hote)\n  }\n  return false\n}\nconst organisationDe = (slug) => `00000000-0000-4000-8000-${empreinte(`client:${slug}`).slice(0, 12)}`\nfunction validerClient(client) {\n  const e = []\n  if (typeof client?.slug !== 'string' || !SLUG.test(client.slug) || client.slug.length > 40) e.push(`slug « ${client?.slug} » : minuscules, chiffres et tirets (40 au plus)`)\n  else if (client.slug === 'ent' || client.slug.startsWith('ent-')) e.push('slug « ent… » refusé : il se confondrait avec les copies de l’offre Entreprise (client-ent-…)')\n  if (!OFFRES.includes(client?.offre)) e.push(`offre « ${client?.offre} » : studio, signature ou entreprise`)\n  if (client?.organisation !== undefined && (typeof client.organisation !== 'string' || !UUID.test(client.organisation))) e.push('organisation : un UUID')\n  if (client?.organisation === ORGANISATION_EXEMPLE) e.push('organisation : celle de l’exemple des gabarits est refusée')\n  const types = client?.types_actives ?? []\n  if (!Array.isArray(types) || types.some((t) => !TYPES_PILOTE.includes(t))) e.push(`types activés : parmi ${TYPES_PILOTE.join(', ')} (la liste fermée du pilote)`)\n  else if (new Set(types).size !== types.length) e.push('types activés : un type deux fois')\n  else if (types.length && client?.offre !== 'signature') e.push(`types activés : seule l’offre Signature fait partir un type seul (offre ${client?.offre})`)\n  return e\n}\nfunction substituer(valeur, paires) {\n  if (typeof valeur === 'string') { let s = valeur; for (const [de, vers] of paires) s = s.split(de).join(vers); return s }\n  if (Array.isArray(valeur)) return valeur.map((v) => substituer(v, paires))\n  if (valeur && typeof valeur === 'object') return Object.fromEntries(Object.entries(valeur).map(([k, v]) => [k, substituer(v, paires)]))\n  return valeur\n}\nconst plat = (x) => (x && x.workflow && x.workflow.nodes ? x.workflow : x)\nconst nomDeLaCopie = (nomGabarit, client) => {\n  const reste = client.offre === 'entreprise' ? nomGabarit.replace(/^gabarit-ent-/, '') : nomGabarit.replace(/^gabarit-artisan-/, '')\n  if (reste === nomGabarit) throw new Error(`« ${nomGabarit} » n'est pas un gabarit de l'offre ${client.offre}`)\n  return client.offre === 'entreprise' ? `client-ent-${client.slug}-${reste}` : `client-${client.slug}-${reste}`\n}\nfunction fabriquerCopie(gabaritBrut, registreGabarit, client) {\n  const g = plat(gabaritBrut)\n  const organisation = client.organisation ?? organisationDe(client.slug)\n  const nom = nomDeLaCopie(g.name, client)\n  const paires = [...JETONS_ORGANISATION.map((j) => [j, organisation]), [ORGANISATION_EXEMPLE, organisation],\n    ...Object.entries(client.ressources ?? {}).map(([j, v]) => [j, String(v)])]\n  const emplacements = []\n  const jetonsOuverts = new Set()\n  const studio = client.offre === 'studio'\n  const nodes = g.nodes.map((n0) => {\n    // La garde du gabarit : un nœud Code n'a le droit d'être copié que tel que le registre l'a empreint.\n    if (n0.type === 'n8n-nodes-base.code') {\n      const attendu = registreGabarit?.[g.name]?.[n0.name]\n      if (attendu !== empreinte(n0.parameters?.jsCode)) throw new Error(`${g.name} / ${n0.name} : le code du gabarit ne correspond pas à son empreinte : copie refusée`)\n    }\n    const n = { ...n0, parameters: substituer(n0.parameters, paires) }\n    if (n0.credentials && Object.keys(n0.credentials).length) throw new Error(`${g.name} / ${n0.name} : un gabarit ne porte aucun identifiant`)\n    const reclames = identifiantsReclames(n)\n    if (reclames.length) {\n      n.credentials = Object.fromEntries(reclames.map((c) => {\n        const id = `EMPLACEMENT_${client.slug.toUpperCase().replace(/-/g, '_')}_${c}`\n        emplacements.push({ workflow: nom, noeud: n.name, type: c, id })\n        return [c, { id, name: `À brancher par ${client.slug} : ${c}` }]\n      }))\n    }\n    if (studio && envoieAuDehors(n)) n.disabled = true\n    for (const j of JSON.stringify(n.parameters ?? {}).match(/\\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*_DU_CLIENT\\b|\\bORGANISATION_XERO_DU_CLIENT\\b/g) ?? []) jetonsOuverts.add(j)\n    return n\n  })\n  const copie = {\n    name: nom, active: false, isArchived: false, activeVersionId: null, settings: g.settings, nodes, connections: g.connections,\n    meta: {\n      ...(g.meta ?? {}),\n      client: {\n        slug: client.slug, offre: client.offre, organisation, gabarit: g.name, mode: 'a_blanc',\n        types_actives: client.offre === 'signature' ? [...(client.types_actives ?? [])].sort() : [],\n        envois_actifs: !studio, jetons_a_renseigner: [...jetonsOuverts].sort(),\n      },\n    },\n  }\n  const registre = Object.fromEntries(nodes.filter((n) => n.type === 'n8n-nodes-base.code').map((n) => [n.name, empreinte(n.parameters.jsCode)]))\n  return { copie, registre, emplacements }\n}\nfunction slugDuCompte(artisanId) {\n  const h = String(artisanId).toLowerCase().replace(/-/g, '')\n  if (!/^[0-9a-f]{32}$/.test(h)) throw new Error('identifiant de compte invalide')\n  return `a-${h.slice(0, 12)}`\n}\nconst nomIdentifiant = (slug, fournisseur, type) => `client-${slug}-${fournisseur}-${type}`\nfunction offreServie(plan) {\n  if (plan === 'studio') return 'studio'\n  if (plan === 'signature' || plan === 'business') return 'signature'\n  return null\n}\nfunction ouvrirSecretN8n(chiffre, idConnexion, cleBase64, crypto) {\n  try {\n    const cle = Buffer.from(String(cleBase64 || ''), 'base64')\n    const p = String(chiffre || '').split('.')\n    if (cle.length !== 32 || p.length !== 4 || p[0] !== 'v1') return null\n    const d = crypto.createDecipheriv('aes-256-gcm', cle, Buffer.from(p[1], 'base64url'))\n    d.setAAD(Buffer.from(`connexions:${idConnexion}:n8n`, 'utf8'))\n    d.setAuthTag(Buffer.from(p[2], 'base64url'))\n    return JSON.parse(Buffer.concat([d.update(Buffer.from(p[3], 'base64url')), d.final()]).toString('utf8'))\n  } catch { return null }\n}\nfunction corpsIdentifiant(type, nom, secret, appOAuth) {\n  return {\n    name: nom, type,\n    data: {\n      clientId: appOAuth.clientId, clientSecret: appOAuth.clientSecret, sendAdditionalBodyProperties: false, additionalBodyProperties: {},\n      oauthTokenData: { access_token: secret.access_token, refresh_token: secret.refresh_token, token_type: 'Bearer', scope: PORTEE_N8N[type],\n        expires_at: Math.floor((secret.access_expire || 0) / 1000) },\n    },\n  }\n}\nfunction lierCopie(copie, identifiantsParType, offre) {\n  const nodes = (copie.nodes ?? []).map((n) => {\n    if (!n.credentials) return n\n    const credentials = Object.fromEntries(Object.entries(n.credentials).map(([t, c]) => [t, identifiantsParType[t] ? { id: identifiantsParType[t].id, name: identifiantsParType[t].name } : c]))\n    const restant = Object.values(credentials).some((c) => String(c.id).startsWith('EMPLACEMENT_'))\n    const { disabled: _ancien, ...reste } = n\n    return restant || (offre === 'studio' && envoieAuDehors(n)) ? { ...reste, credentials, disabled: true } : { ...reste, credentials }\n  })\n  return { ...copie, nodes }\n}\nconst manqueRequis = (copie) => (copie.nodes ?? []).some((n) => ['supabaseApi', 'anthropicApi'].some((t) => n.credentials?.[t] && String(n.credentials[t].id).startsWith('EMPLACEMENT_')))\nconst signatureLiaisons = (copie) => JSON.stringify((copie.nodes ?? []).map((n) => [n.name, Object.entries(n.credentials ?? {}).map(([t, c]) => [t, String(c.id)]).sort(), n.disabled === true]))\nconst orphelins = (copie, valides) => {\n  const bons = new Set(Object.values(valides).map((i) => String(i.id)))\n  return (copie.nodes ?? []).some((n) => Object.values(n.credentials ?? {}).some((c) => !String(c.id).startsWith('EMPLACEMENT_') && !bons.has(String(c.id))))\n}\nconst dependDe = (copie, ids) => (copie.nodes ?? []).some((n) => Object.values(n.credentials ?? {}).some((c) => ids.includes(String(c.id))))\nconst idsDe = (ligne) => Object.values(ligne.identifiants ?? {}).map((i) => i.id)\nfunction liaisonsDe(artisanId, connexions, etats, presti) {\n  const out = { ...(presti ?? {}) }\n  const actives = new Set((connexions ?? []).filter((c) => c.artisan_id === artisanId && c.etat === 'active').map((c) => c.id))\n  const slug = slugDuCompte(artisanId)\n  for (const l of etats ?? []) {\n    if (l.artisan_id !== artisanId) continue\n    if (l.etape === 'retire') for (const t of TYPES_PAR_FOURNISSEUR[l.fournisseur] ?? []) out[t] = { id: `EMPLACEMENT_${slug.toUpperCase().replace(/-/g, '_')}_${t}`, name: `À brancher par ${slug} : ${t}` }\n  }\n  for (const l of etats ?? []) if (l.artisan_id === artisanId && actives.has(l.connexion_id)) for (const [t, i] of Object.entries(l.identifiants ?? {})) out[t] = i\n  return out\n}\nfunction planifier(entree) {\n  const actions = []\n  const etats = new Map((entree.etats ?? []).map((l) => [l.connexion_id, l]))\n  const copies = new Map((entree.copies ?? []).map((c) => [c.name, c]))\n  const test = new Set(entree.comptes_de_test ?? [])\n  const reel = entree.mode === 'reel'\n  // Les identifiants d'autorisations expirées : une copie qui en dépend reste muette jusqu'au renouvellement.\n  // Les emplacements posés à la place d'un outil retiré : une copie qui en porte ne se réactive pas seule (le retrait désactive ; reconnecter relie).\n  const retires = [...new Set((entree.etats ?? []).filter((l) => l.etape === 'retire').flatMap((l) => (TYPES_PAR_FOURNISSEUR[l.fournisseur] ?? []).map((t) => `EMPLACEMENT_${slugDuCompte(l.artisan_id).toUpperCase().replace(/-/g, '_')}_${t}`)))]\n  const expires = (entree.connexions ?? []).filter((c) => c.etat === 'expiree' || c.etat === 'erreur').flatMap((c) => (etats.get(c.id) ? idsDe(etats.get(c.id)) : []))\n  for (const c of entree.connexions ?? []) {\n    const types = TYPES_PAR_FOURNISSEUR[c.fournisseur]\n    if (!types) continue\n    const artisan = entree.artisans?.[c.artisan_id]\n    const offre = offreServie(artisan?.plan)\n    const slug = slugDuCompte(c.artisan_id)\n    const ligne = etats.get(c.id)\n    const base = { connexion_id: c.id, artisan_id: c.artisan_id, slug, fournisseur: c.fournisseur, offre }\n    const tousIds = (ligne ? idsDe(ligne) : [])\n    if (c.etat === 'retiree') {\n      if (!ligne || ligne.etape === 'retire') continue\n      for (const cp of copies.values()) if (cp.name.startsWith(`client-${slug}-`) && cp.active && dependDe(cp, tousIds)) actions.push({ ...base, action: 'desactiver_copie', copie: cp.name })\n      for (const [type, i] of Object.entries(ligne.identifiants ?? {})) actions.push({ ...base, action: 'supprimer_identifiant', type, identifiant: i.id })\n      if (!Object.keys(ligne.identifiants ?? {}).length) actions.push({ ...base, action: 'marquer_retire' })\n      continue\n    }\n    if (c.etat === 'expiree' || c.etat === 'erreur') {\n      if (!ligne) continue\n      for (const cp of copies.values()) if (cp.name.startsWith(`client-${slug}-`) && cp.active && dependDe(cp, tousIds)) actions.push({ ...base, action: 'desactiver_copie', copie: cp.name, motif: c.etat })\n      if (!ligne.alerte_envoyee) actions.push({ ...base, action: 'alerter', motif: c.etat })\n      continue\n    }\n    if (c.etat !== 'active') continue // a_verifier : l'essai de lecture n'a pas réussi, rien à brancher\n    if (!offre) continue // essai, Essentiel hérité, Entreprise sur mesure : rien à brancher ici\n    // Une autorisation renouvelée après une expiration : l'ancien identifiant est retiré, un neuf sera créé au passage suivant.\n    if (ligne?.alerte_envoyee) {\n      for (const [type, i] of Object.entries(ligne.identifiants ?? {})) actions.push({ ...base, action: 'supprimer_identifiant', type, identifiant: i.id, renouvellement: true })\n      continue\n    }\n    const manque = types.filter((t) => !ligne?.identifiants?.[t])\n    const enCours = types.filter((t) => String(ligne?.etape ?? '').split(',').includes(`en_cours:${t}`))\n    for (const t of enCours) actions.push({ ...base, action: 'ignorer', motif: 'creation_en_cours_a_verifier', type: t })\n    for (const t of manque.filter((x) => !enCours.includes(x))) actions.push({ ...base, action: 'creer_identifiant', type: t, nom: nomIdentifiant(slug, c.fournisseur, t) })\n    if (manque.length) continue\n    const types_actives = offre === 'signature' ? Object.keys(entree.pilote?.[c.artisan_id]?.types ?? {}).filter((k) => entree.pilote[c.artisan_id].types[k] === true).sort() : []\n    for (const g of entree.gabarits ?? []) {\n      const nom = nomDeLaCopie(g, { offre, slug })\n      const cp = copies.get(nom)\n      if (!cp) { actions.push({ ...base, action: 'creer_copie', gabarit: g, copie: nom, types_actives }); continue }\n      const mine = liaisonsDe(c.artisan_id, entree.connexions, entree.etats, entree.identifiants_presti)\n      if (signatureLiaisons(lierCopie(cp, mine, offre)) !== signatureLiaisons(cp)) { actions.push({ ...base, action: 'relier_copie', gabarit: g, copie: nom }); continue }\n      // L'activation : jamais en blanc, seulement le compte de test nommé, et seulement une copie dont Supabase et l'IA de Presti sont liés.\n      if (reel && !cp.active && test.has(c.artisan_id) && !manqueRequis(cp) && !dependDe(cp, expires) && !dependDe(cp, retires) && !orphelins(cp, mine)) actions.push({ ...base, action: 'activer_copie', copie: nom })\n    }\n  }\n  const ordre = { desactiver_copie: 0, alerter: 1, supprimer_identifiant: 2, marquer_retire: 3, creer_identifiant: 4, creer_copie: 5, relier_copie: 6, activer_copie: 7, ignorer: 8 }\n  const trie = actions.sort((a, b) => ordre[a.action] - ordre[b.action] || (a.connexion_id + a.copie + a.type).localeCompare(b.connexion_id + b.copie + b.type))\n  // Les nœuds n8n traitent tous les éléments d'un nœud avant le suivant, sur l'état lu au début du passage : deux actions qui changent\n  // la MÊME ligne d'état se marcheraient dessus (la seconde réécrirait l'ancien état). Une seule par connexion et par passage ; la suite au passage d'après.\n  const CHANGE_L_ETAT = new Set(['creer_identifiant', 'supprimer_identifiant', 'marquer_retire', 'alerter'])\n  const deja = new Set()\n  // De même une copie : un seul geste par copie et par passage (trois connexions d'un même client voient la même copie manquante).\n  const copiesVues = new Set()\n  return trie.filter((a) => {\n    if (a.copie) { if (copiesVues.has(a.copie)) return false; copiesVues.add(a.copie) }\n    if (!CHANGE_L_ETAT.has(a.action)) return true\n    if (deja.has(a.connexion_id)) return false\n    deja.add(a.connexion_id); return true\n  })\n}\nconst p = $('Préparer la requête').item.json\nconst rep = $json\nconst ok = !p.echec && (!p.requete || (rep && !rep.error && (rep.statusCode === undefined || rep.statusCode < 300)))\nconst ids = p.reservation ? JSON.parse(p.reservation.identifiants || '{}') : {}\nlet etape = p.reservation ? p.reservation.etape : ''\nif (ok && p.action === 'creer_identifiant' && rep && rep.id) { ids[p.type] = { id: String(rep.id), name: p.nom }; etape = String(etape).split(',').filter((e) => e !== 'en_cours:' + p.type).join(',') }\nif (ok && p.action === 'supprimer_identifiant') { delete ids[p.type] }\nconst alerte = ok && p.action === 'alerter'\nconst etat = p.reservation ? { ...p.reservation, identifiants: JSON.stringify(ids), etape, alerte_envoyee: (p.renouvellement && Object.keys(ids).length === 0 ? false : p.reservation.alerte_envoyee) } : null\n// Le journal : l'action, la cible, l'issue. Jamais un corps de requête, un jeton ni une réponse de n8n.\nreturn [{ json: { etat, alerte, journal: { connexion_id: p.connexion_id, slug: p.slug, action: p.action, cible: p.copie || p.type || '', issue: ok ? 'ok' : (p.echec || 'echec'), mode: 'reel' } } }]"
+      }
+    },
+    {
+      "id": "Écrire l’état",
+      "name": "Écrire l’état",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3520,
+        -120
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti_provisionnement"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "connexion_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.etat.connexion_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "connexion_id": "={{ $json.etat.connexion_id }}",
+            "artisan_id": "={{ $json.etat.artisan_id }}",
+            "slug": "={{ $json.etat.slug }}",
+            "fournisseur": "={{ $json.etat.fournisseur }}",
+            "identifiants": "={{ $json.etat.identifiants }}",
+            "etape": "={{ $json.etat.etape }}",
+            "alerte_envoyee": "={{ $json.etat.alerte_envoyee }}"
+          },
+          "schema": [
+            {
+              "id": "connexion_id",
+              "displayName": "connexion_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "artisan_id",
+              "displayName": "artisan_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "slug",
+              "displayName": "slug",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fournisseur",
+              "displayName": "fournisseur",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "identifiants",
+              "displayName": "identifiants",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etape",
+              "displayName": "etape",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "alerte_envoyee",
+              "displayName": "alerte_envoyee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Journaliser le résultat",
+      "name": "Journaliser le résultat",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3740,
+        -120
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "presti_provisionnement_journal"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "connexion_id": "={{ $('Résultat').item.json.journal.connexion_id }}",
+            "slug": "={{ $('Résultat').item.json.journal.slug }}",
+            "action": "={{ $('Résultat').item.json.journal.action }}",
+            "cible": "={{ $('Résultat').item.json.journal.cible }}",
+            "issue": "={{ $('Résultat').item.json.journal.issue }}",
+            "mode": "={{ $('Résultat').item.json.journal.mode }}"
+          },
+          "schema": [
+            {
+              "id": "connexion_id",
+              "displayName": "connexion_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "slug",
+              "displayName": "slug",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cible",
+              "displayName": "cible",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue",
+              "displayName": "issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "mode",
+              "displayName": "mode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Alerte ?",
+      "name": "Alerte ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3960,
+        -120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "al",
+              "leftValue": "={{ $('Résultat').item.json.alerte }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Alerter",
+      "name": "Alerter",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4180,
+        -200
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "EMPLACEMENT_LIB_ALERTER",
+          "cachedResultName": "lib-alerter"
+        },
+        "mode": "once",
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "type": "connexion_expiree",
+            "artisan_id": "={{ $('Résultat').item.json.journal.slug }}"
+          }
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Toutes les 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "Réglages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Réglages": {
+      "main": [
+        [
+          {
+            "node": "Lire les connexions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les connexions": {
+      "main": [
+        [
+          {
+            "node": "Lire les comptes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les comptes": {
+      "main": [
+        [
+          {
+            "node": "Lire le pilote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le pilote": {
+      "main": [
+        [
+          {
+            "node": "Lire l’état",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire l’état": {
+      "main": [
+        [
+          {
+            "node": "Lire les workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les workflows": {
+      "main": [
+        [
+          {
+            "node": "Planifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Planifier": {
+      "main": [
+        [
+          {
+            "node": "Journaliser le plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Journaliser le plan": {
+      "main": [
+        [
+          {
+            "node": "Écrire le plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Écrire le plan": {
+      "main": [
+        [
+          {
+            "node": "Mode réel ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mode réel ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer la requête",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Préparer la requête": {
+      "main": [
+        [
+          {
+            "node": "Réserver",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Réserver": {
+      "main": [
+        [
+          {
+            "node": "A une requête ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "A une requête ?": {
+      "main": [
+        [
+          {
+            "node": "Appeler n8n",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Résultat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler n8n": {
+      "main": [
+        [
+          {
+            "node": "Résultat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Résultat": {
+      "main": [
+        [
+          {
+            "node": "Écrire l’état",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Écrire l’état": {
+      "main": [
+        [
+          {
+            "node": "Journaliser le résultat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Journaliser le résultat": {
+      "main": [
+        [
+          {
+            "node": "Alerte ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alerte ?": {
+      "main": [
+        [
+          {
+            "node": "Alerter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "executionTimeout": 240
+  },
+  "meta": {
+    "mode": "a_blanc",
+    "decision": "O3 voie a (Benj, 03/11)",
+    "tables": [
+      "presti_provisionnement",
+      "presti_provisionnement_journal"
+    ]
+  }
+}
