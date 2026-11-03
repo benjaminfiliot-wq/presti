@@ -55,7 +55,12 @@ function Boite() {
       <h3 className="crm-sous bag-titre" id="bag-titre">
         À valider{etat.phase === 'pret' && aValider.length > 0 ? <span className="pill bag-compte">{aValider.length}</span> : null}
       </h3>
-      <p className="bag-aide">Ce que vos assistants ont préparé. Rien ne part sans votre accord.</p>
+      {/* 03/11 : les cartes d'agents ne viennent aujourd'hui que du palier « ombre » (le réel n'est pas servi) : l'artisan doit savoir que
+          rien n'est envoyé, sinon il croirait avoir répondu en cliquant « Valider ». */}
+      <p className="bag-aide">
+        Mode essai : vos assistants s’entraînent sur vos vraies demandes. Rien n’est envoyé à vos clients, répondez comme d’habitude.
+        « Valider » ou « Refuser » nous aide à les régler.
+      </p>
       {avis ? <p className="bag-avis" role="status">{avis}</p> : null}
       {/* Vide : rien à montrer (03/11, drapeau levé pour tous ; un compte sans département en marche ne voit pas de boîte vide). */}
       {aValider.length > 0 ? (
