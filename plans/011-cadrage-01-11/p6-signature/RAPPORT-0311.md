@@ -6,6 +6,21 @@ est `outillage/OUTILLAGE.md`.
 
 ## En bref
 
+**Vers 22 h : les comptes payants en ombre (Benj : « tous les payants »)**
+- En base, il n'y a qu'**un seul compte payant** : un Signature, en essai jusqu'au 13/11. Les deux autres comptes sont gratuits ; les comptes
+  de démonstration et le fondateur sont exclus.
+- Ses lignes `tous` et `accueil` sont **en ombre, en marche**, posées par Presti (acteur fondateur). On avance un département à la fois,
+  comme le veut `mise-en-service.md` : l'Accueil est le seul prouvé en réel. Devis, suivi, facturation, après-chantier, opérations et
+  direction suivront un par un.
+- La boîte « À valider » dit « Mode essai ». Rien n'est envoyé aux clients, et « Valider » ou « Refuser » sert à régler les assistants
+  (`cc7a579`, en ligne).
+- **Après une semaine d'ombre sans erreur**, le passage au réel se fait type par type, sur le « go » écrit de Benj.
+- **Reste aussi** :
+  - le registre des traitements doit mentionner n8n sur Oracle et l'appel à Anthropic pour les cartes ;
+  - la dette « crypto refusé aux nœuds Code » (AES-GCM en JS pur, contrôlé) ;
+  - un vrai « Connecter Gmail » de bout en bout ;
+  - le prompt 2 (Entreprise), après la remise à zéro du 08/11.
+
 **Vers 21 h 30 : les agents sont en service (`4cf7892`, vérifié en direct)**
 - **Essai réel de l'ombre réussi**, sur un compte de test Studio fictif. La chaîne : demande, événement, Cerveau, chef Accueil, puis une
   carte « à valider » en base (confirmation, motif, 4 sources). Rien n'est parti, et le compte a été supprimé (0 ligne restante).
