@@ -141,7 +141,8 @@ const MUTANTS_SUITE = [
   ['un juge porteur disparu', () => { const C = clone(M0); delete C.sources['operations-n8n-qa.mjs']; return C }, /^T7 .*absent/],
   ['un juge sorti du lanceur', () => { const C = clone(M0); C.lanceur.suites = C.lanceur.suites.filter((s) => s !== 'boite-n8n-qa.mjs'); return C }, /^(L1|T2b|T1|T8) .*boite-n8n-qa/],
   ['un nouveau *-n8n-qa.mjs que personne ne joue', () => { const C = clone(M0); C.fichiers.push('nouveau-n8n-qa.mjs'); return C }, /^L1 .*nouveau-n8n-qa/],
-  ['un juge de lot fait mais sorti du lanceur (interface-p6-qa, lot 036-011 déclaré fait)', () => { const C = clone(M0); C.fichiers.push('interface-p6-qa.mjs'); C.faits.add('036-011'); return C }, /^L1 .*interface-p6-qa/],
+  // 03/11 : depuis que 036-011 est fait et son juge inscrit, le mutant doit l'ôter lui-même du lanceur, sinon il ne simule plus rien.
+  ['un juge de lot fait mais sorti du lanceur (interface-p6-qa, lot 036-011 déclaré fait)', () => { const C = clone(M0); if (!C.fichiers.includes('interface-p6-qa.mjs')) C.fichiers.push('interface-p6-qa.mjs'); C.faits.add('036-011'); C.lanceur.suites = C.lanceur.suites.filter((s) => s !== 'interface-p6-qa.mjs'); return C }, /^L1 .*interface-p6-qa/],
   ['un lot déclaré fait dont le juge n’existe pas (036-010 sans maquettes-p6-qa)', () => { const C = clone(M0); C.fichiers = C.fichiers.filter((f) => f !== 'maquettes-p6-qa.mjs'); C.faits.add('036-010'); return C }, /^L1 .*maquettes-p6-qa/],
   ['une suite deux fois dans le lanceur', () => { const C = clone(M0); C.lanceur.suites.push('suivi-n8n-qa.mjs'); return C }, /^L2 /],
   ['un juge sans aucun mutant', () => { const C = clone(M0); C.sources['offres-affichage-qa.mjs'] = C.sources['offres-affichage-qa.mjs'].replace(/mutant|mutation/gi, 'x'); return C }, /^T12 .*aucun mutant/],
