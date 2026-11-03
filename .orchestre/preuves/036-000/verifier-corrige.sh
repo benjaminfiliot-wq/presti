@@ -1,0 +1,5 @@
+#!/bin/sh
+# Le verifier de 036-000, à l'identique, avec deux corrections de citation seulement :
+#  1. /```mermaid/ -> /\x60\x60\x60mermaid/ (les accents graves ouvraient une substitution de commande dans /bin/sh) ;
+#  2. '\\b' -> '\\\\b' (dans des guillemets doubles, sh réduit \\ à \ : JS recevait '\b', un retour arrière, et pas une borne de mot).
+node -e "const fs=require('fs');const t=fs.readFileSync('plans/011-cadrage-01-11/p6-signature/premiere-reponse.md','utf8');const sec=['## 1. ','## 2. ','## 3. ','## 4. ','## 5. '].every(s=>t.includes(s));const cit=(t.match(/[a-zA-Z0-9_./-]+\.(ts|tsx|mjs|sql|md):\d+/g)||[]).length;const pat=['A1','A13','A14','A18','B3','B4','B5','B11','C10','D3'].every(p=>new RegExp('\\\\b'+p+'\\\\b').test(t));const dec=(t.split(/^## 5\. /m)[1]||'').match(/^### Décision/gm)||[];const lots=fs.readdirSync('.orchestre/file').filter(f=>/^036-0(0[1-9]|1[0-2])\.md$/.test(f));process.exit(sec&&/\x60\x60\x60mermaid/.test(t)&&cit>=40&&pat&&dec.length>=1&&dec.length<=5&&lots.length>=4?0:1)" && for f in .orchestre/file/036-0*.md; do [ "$f" = ".orchestre/file/036-000.md" ] || node scripts/orchestre.mjs valider "$f" || exit 1; done

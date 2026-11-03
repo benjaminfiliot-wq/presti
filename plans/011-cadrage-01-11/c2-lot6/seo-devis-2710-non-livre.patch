@@ -1,0 +1,164 @@
+diff --git a/app/Breadcrumb.tsx b/app/Breadcrumb.tsx
+index 7c182883..676f8440 100644
+--- a/app/Breadcrumb.tsx
++++ b/app/Breadcrumb.tsx
+@@ -1,20 +1,22 @@
+ import Link from 'next/link'
+ 
+ // Fil d'Ariane (checklist pré-lancement) : visuel + données structurées BreadcrumbList.
+-export default function Breadcrumb({ label, path }: { label: string; path: string }) {
++// `parents` (27/10) : les niveaux intermédiaires, pour les pages à trois niveaux (« Modèles de devis › Plombier »).
++export default function Breadcrumb({ label, path, parents = [] }: { label: string; path: string; parents?: { label: string; path: string }[] }) {
++  const niveaux = [{ label: 'Accueil', path: '' }, ...parents, { label, path }]
+   const ld = {
+     '@context': 'https://schema.org',
+     '@type': 'BreadcrumbList',
+-    itemListElement: [
+-      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://prestiapp.fr' },
+-      { '@type': 'ListItem', position: 2, name: label, item: `https://prestiapp.fr${path}` },
+-    ],
++    itemListElement: niveaux.map((n, i) => ({ '@type': 'ListItem', position: i + 1, name: n.label, item: `https://prestiapp.fr${n.path}` })),
+   }
+   return (
+     <>
+       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
+       <nav aria-label="Fil d'Ariane" className="crumb">
+         <Link href="/">Accueil</Link>
++        {parents.map((p) => (
++          <span key={p.path} style={{ display: 'contents' }}><span aria-hidden="true">›</span><Link href={p.path}>{p.label}</Link></span>
++        ))}
+         <span aria-hidden="true">›</span>
+         <span className="crumb-cur">{label}</span>
+       </nav>
+diff --git a/app/PublicPied.tsx b/app/PublicPied.tsx
+index 7691327d..414f2f97 100644
+--- a/app/PublicPied.tsx
++++ b/app/PublicPied.tsx
+@@ -15,6 +15,7 @@ export default function PublicPied({ accueil = false }: { accueil?: boolean }) {
+             <a className="lp-btn lp-btn--p" href="/signup">Essayer gratuitement</a>
+           </div>
+           <nav aria-label="Produit"><b>Produit</b><a href={ancre('fonctionnalites')}>Fonctionnalités</a><a href={ancre('chiffres')}>Vos chiffres</a><a href={ancre('compta')}>Comptabilité</a><a href={ancre('tarifs')}>Tarifs</a></nav>
++          <nav aria-label="Ressources"><b>Ressources</b><a href="/generateur-devis">Générateur de devis</a><a href="/modele-devis">Modèles de devis</a><a href="/comment-faire-un-devis">Faire un devis</a><a href="/logiciel-devis-artisan">Logiciel de devis</a></nav>
+           <nav aria-label="Aide"><b>Aide</b><a href="/faq">Questions fréquentes</a><a href="/contact">Nous écrire</a><a href="/login">Se connecter</a></nav>
+           <nav aria-label="Informations légales"><b>Légal</b><a href="/cgu">Conditions générales</a><a href="/confidentialite">Confidentialité</a><a href="/mentions-legales">Mentions légales</a></nav>
+         </div>
+diff --git a/app/globals.css b/app/globals.css
+index 9374ec1e..1e4300de 100644
+--- a/app/globals.css
++++ b/app/globals.css
+@@ -1343,7 +1343,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
+ 
+ /* — Pied de page — */
+ .lp-foot{position:relative;overflow:hidden;border-top:1px solid var(--line);color:var(--faint);padding:clamp(3rem,6vw,4.5rem) 0 0;background:linear-gradient(180deg,transparent,rgba(217,119,87,.045))}
+-.lp-foot-haut{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:2rem 2.5rem}
++.lp-foot-haut{display:grid;grid-template-columns:minmax(0,1.5fr) repeat(4,minmax(0,1fr));gap:2rem 2.2rem}
+ .lp-foot .lp-brand{font-size:1.15rem}
+ .lp-foot-marque p{color:var(--muted);font-size:.93rem;line-height:1.6;max-width:34ch;margin:.9rem 0 1.3rem}
+ .lp-foot nav{display:flex;flex-direction:column;gap:.7rem;font-size:.93rem}
+diff --git a/app/page.tsx b/app/page.tsx
+index 59c2a567..03191ddc 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -26,7 +26,15 @@ import { FAQ } from '@/lib/faq'
+ 
+ // Google Search Console : la balise de vérification n'est posée QUE sur la landing — jamais sur
+ // /site ni /p, qui vivent sur le domaine de l'artisan (marque blanche).
+-export const metadata: Metadata = process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}
++//
++// 27/10 (SEO « devis ») : le titre et la description de l'ACCUEIL portent enfin la requête visée (« logiciel de devis artisan ») ;
++// le layout racine garde les siens pour les pages sans titre. `absolute` : pas de suffixe « · Presti », le nom est déjà en tête.
++export const metadata: Metadata = {
++  title: { absolute: 'Presti — Logiciel de devis artisan, réponses préparées par l’IA' },
++  description: 'Devis chiffrés par l’IA sur vos prix, réponse prête en moins d’une minute à chaque demande, relances et factures. Studio : vous validez d’un clic ; Signature : tout part seul.',
++  alternates: { canonical: '/' },
++  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
++}
+ 
+ /* Icônes SVG (Lucide-style) — jamais d'emoji comme icône. */
+ const I = {
+diff --git a/app/sitemap.ts b/app/sitemap.ts
+index 958c96e0..0dbb7c2e 100644
+--- a/app/sitemap.ts
++++ b/app/sitemap.ts
+@@ -1,5 +1,6 @@
+ import type { MetadataRoute } from 'next'
+ import { supabaseAdmin } from '@/lib/supabaseAdmin'
++import { METIERS_DEVIS, PAGES_DEVIS } from '@/lib/seoDevis'
+ 
+ export const revalidate = 3600 // le sitemap se rafraîchit au plus une fois par heure
+ 
+@@ -14,6 +15,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+     { path: '/confidentialite', priority: 0.4 },
+     { path: '/contact', priority: 0.6 },
+     { path: '/mentions-legales', priority: 0.4 },
++    // 27/10 — la rubrique « devis » (lib/seoDevis.ts) : générateur, modèles par métier, guide, logiciel.
++    ...PAGES_DEVIS.map((p) => ({ path: p.path, priority: 0.9 })),
++    ...METIERS_DEVIS.map((m) => ({ path: `/modele-devis/${m.slug}`, priority: 0.7 })),
+   ]
+   const entries: MetadataRoute.Sitemap = pages.map((p) => ({
+     url: `${base}${p.path}`, lastModified: now, changeFrequency: 'monthly', priority: p.priority,
+diff --git a/public/llms.txt b/public/llms.txt
+index 2a8bd583..43a9c34b 100644
+--- a/public/llms.txt
++++ b/public/llms.txt
+@@ -1,19 +1,38 @@
+ # Presti
+ 
+-> Presti aide les artisans du bâtiment à traiter leurs demandes clients : une réponse est prête en moins d’une minute. Presti propose aussi un site à 300 €, TVA non applicable.
++> Presti est un logiciel en ligne pour les artisans du bâtiment en France : chaque demande d’un client faite par le lien de l’artisan a sa réponse prête en moins d’une minute, le devis est chiffré par l’IA à partir des prix de l’artisan, les relances sont prévues (J+2, J+5, J+10) et le devis accepté devient une facture. Le client de l’artisan ne voit jamais le nom « Presti » : tout part au nom de l’artisan. Presti propose aussi un site d’artisan à 300 €, payé une fois, TVA non applicable.
++
++Faits vérifiables (grille de prestiapp.fr, relue le 27/10/2026) :
++
++- Deux abonnements, sans engagement, TVA non applicable (art. 293 B du CGI) : Studio : 59 € par mois (250 crédits), Signature : 99 € par mois (600 crédits).
++- Studio : tout est préparé automatiquement (réponses, devis, relances), l’artisan valide d’un clic, rien ne part sans lui.
++- Signature : les réponses aux demandes et les relances partent seules, jour et nuit ; jamais un prix estimé ni un paiement sans l’artisan.
++- Essai gratuit sans carte : 7 jours en Studio, 21 jours en Signature, une fois par compte.
++- Le devis n’est jamais envoyé seul : il est chiffré par l’IA sur les tarifs de l’artisan, qui le relit avant envoi. Presti refuse d’émettre un devis ou une facture à qui il manque une mention obligatoire (SIRET, assurance, adresse…).
++- 1 crédit = 1 réponse préparée, 1 devis généré par l’IA ou 1 dépôt de fichiers de comptabilité.
++
++## Outils gratuits et guides (sans compte)
++
++- [Générateur de devis gratuit](https://prestiapp.fr/generateur-devis) : faire un devis en ligne sans inscription, mentions obligatoires vérifiées en direct, calcul des totaux et de la TVA, PDF ; rien n’est envoyé à un serveur.
++- [Comment faire un devis](https://prestiapp.fr/comment-faire-un-devis) : les mentions obligatoires d’un devis de travaux dans le bâtiment, avec les textes officiels (service-public.fr, arrêté du 24 janvier 2017, Code des assurances), la TVA, devis gratuit ou payant.
++- [Modèles de devis par métier](https://prestiapp.fr/modele-devis) : plombier, électricien, chauffagiste, maçon, peintre, menuisier, couvreur, carreleur ; questions à poser au client, lignes types sans prix, points de vigilance.
++- [Modèle de devis plombier](https://prestiapp.fr/modele-devis/plombier)
++- [Modèle de devis électricien](https://prestiapp.fr/modele-devis/electricien)
++- [Modèle de devis maçon](https://prestiapp.fr/modele-devis/macon)
+ 
+ ## Découvrir Presti
+ 
+-- [Accueil](https://prestiapp.fr/) : présentation de l’assistant IA, des réponses aux demandes, des devis, des factures et des abonnements.
+-- [Questions fréquentes](https://prestiapp.fr/faq) : fonctionnement de Presti, sécurité des données, essai, tarifs et validation des devis.
+-- [Tarifs](https://prestiapp.fr/#tarifs) : formules d’abonnement et crédits.
++- [Logiciel de devis artisan](https://prestiapp.fr/logiciel-devis-artisan) : comment Presti va du message du client au devis signé, les deux offres et leur niveau d’automatisation.
++- [Accueil](https://prestiapp.fr/) : présentation, démonstrations, grille des offres.
++- [Questions fréquentes](https://prestiapp.fr/faq) : fonctionnement, sécurité des données, essai, tarifs, validité des devis.
+ 
+ ## Contacter et utiliser le service
+ 
+-- [Contact](https://prestiapp.fr/contact) : adresser une question à l’équipe Presti.
+-- [Commander un site](https://prestiapp.fr/site/commander) : demander un site à 300 € une fois, sans abonnement, TVA non applicable.
++- [Contact](https://prestiapp.fr/contact) : écrire à l’équipe Presti.
++- [Commander un site](https://prestiapp.fr/site/commander) : un site d’artisan à 300 €, payé une fois, sans abonnement, TVA non applicable.
+ 
+ ## Conditions et confidentialité
+ 
+-- [Conditions générales d’utilisation](https://prestiapp.fr/cgu) : conditions applicables au service.
+-- [Confidentialité](https://prestiapp.fr/confidentialite) : traitement des données personnelles.
++- [Conditions générales d’utilisation](https://prestiapp.fr/cgu)
++- [Confidentialité](https://prestiapp.fr/confidentialite)
++- [Mentions légales](https://prestiapp.fr/mentions-legales)
+diff --git a/tsconfig.json b/tsconfig.json
+index 5c43bcd4..8d1053e4 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -36,7 +36,8 @@
+     ".next/types/**/*.ts",
+     "next-env.d.ts",
+     ".next-prod/types/**/*.ts",
+-    ".next/dev/types/**/*.ts"
++    ".next/dev/types/**/*.ts",
++    ".next-prod/dev/types/**/*.ts"
+   ],
+   "exclude": [
+     "node_modules",
