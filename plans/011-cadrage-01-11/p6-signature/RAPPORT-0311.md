@@ -11,9 +11,15 @@ est `outillage/OUTILLAGE.md`.
   - L'unique essai Signature est passé de 99 € à 60 €, avec ton accord. Il reste en essai jusqu'au 13/11, sans prélèvement.
   - Les anciens montants restent reconnus pour les abonnements ouverts avant.
   - Ce déploiement a emporté le travail du jour, inerte derrière ses drapeaux baissés.
-- **Lancés à 16 h 30** :
-  - 036-019, le vrai multi-agents : un chef qui délègue à ses spécialistes ;
-  - 036-020, tout dans l'outil de gestion : CRM 3D ou tableau de bord.
+- **Vérifiés à 17 h** :
+  - **036-019, le vrai multi-agents** dans les 16 gabarits. Chaque gabarit a un agent chef (Claude Sonnet, parseur strict, aucun montant) qui
+    délègue à 2 ou 3 spécialistes en agents-outils (Claude Haiku, outils de lecture). Un « vérificateur des faits » s'ajoute là où il n'y avait
+    qu'un agent.
+  - **036-020, tout dans l'outil de gestion** :
+    - Devis, Factures, Tarifs et Inventaire sortent du menu ;
+    - « CRM atelier » devient « Outil de gestion » ;
+    - `/crm` s'ouvre sur deux portes, « CRM 3D » et « Tableau de bord », avec tous les écrans métier dessous ;
+    - aucune route n'est supprimée.
 - **Posés, à lancer** :
   - 036-021, le branchement automatique des comptes (voie O3 a) ;
   - 036-022, la mise en service : migrations, puis mode ombre sur un compte de test, puis activation.
