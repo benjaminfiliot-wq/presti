@@ -88,7 +88,17 @@ Tout ce qui se construisait sans toi est construit et vérifié. Le reste suit `
    - (a) Presti crée l'identifiant n8n par l'API au moment du « Connecter ».
    - (b) La copie lit le jeton chiffré et appelle l'API par un nœud HTTP.
 2. **Exposer ou non un webhook n8n** : temps réel de WhatsApp, Telegram et Facebook Lead Ads. Sinon, ces canaux passent par Presti et la base.
-3. **Migrations : l'état réel en base, relu le 03/11 vers 17 h 15.**
+3. **Migrations posées le 03/11 vers 18 h**, par le connecteur Supabase, chacune contrôlée après pose :
+   - 0185 (automatisation, 7 contrôles verts), 0192 (accusé de réception, 8), 0193 (système d'agents, 9), 0187 (`factures.envoyee_le`),
+     0190 (demandes de démo), 0191 (suivi des envois).
+   - **Les tables de l'activation des automatisations sont donc en place.**
+   - **Restent à poser** :
+     - 0183 (organisations) et 0186 (SMS) ;
+     - **0184 et 0188, les gardes de session dont dépend chaque requête connectée**. Selon leur propre fichier, elles se posent seulement
+       après le banc de 0138 (PGlite) et un essai à sec, et 0184 après 0183.
+   - L'ancien état, relu à 17 h 15, suit.
+
+   **Migrations : l'état réel en base, relu le 03/11 vers 17 h 15.**
    - **Seule 0189** (le rôle `n8n_lecture`) est posée.
    - Ne sont pas posées : 0183 (organisations), 0185 (automatisation), 0186 (SMS), 0187 (`factures.envoyee_le`), 0190 (demandes de démo),
      0191 (suivi des envois), 0193 (système d'agents) et 0192. Pour 0184 et 0188, qui ne créent pas de table, l'état n'a pas été relu.
