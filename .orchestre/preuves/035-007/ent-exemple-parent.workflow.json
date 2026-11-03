@@ -1,0 +1,1121 @@
+{
+  "id": "egBJcOFqHnSnmXaN",
+  "name": "ent-exemple-parent",
+  "active": false,
+  "isArchived": false,
+  "versionId": "2d5adb38-9d4f-4487-9f52-c99877c2abdb",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 29,
+  "createdAt": "2026-11-03T08:26:01.809Z",
+  "updatedAt": "2026-11-03T08:40:39.949Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 300,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [
+    {
+      "id": "HpXOIwnFuxmQqjGh",
+      "name": "ent"
+    },
+    {
+      "id": "HwXvPMf3fglTRwQV",
+      "name": "ent-exemple"
+    },
+    {
+      "id": "w057rgVkkfITpLHW",
+      "name": "orchestrateur"
+    }
+  ],
+  "parentFolderId": null,
+  "description": "ent-exemple-parent (035-007) : orchestrateur du mode A sur Exemple. Bâti-Démo ; il lit (épinglé), route vers cinq chaînes d'agents et journalise ; ne calcule rien, aucun modèle ; INACTIF, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Toutes les 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "Lire la configuration (mode A : épinglée)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire la configuration (mode A : épinglée)": {
+      "main": [
+        [
+          {
+            "node": "Interrupteur général ouvert ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interrupteur général ouvert ?": {
+      "main": [
+        [
+          {
+            "node": "Poser le verrou (mode A : épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bilan du passage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poser le verrou (mode A : épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Verrou posé ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verrou posé ?": {
+      "main": [
+        [
+          {
+            "node": "Lire les disjoncteurs (mode A : épinglés)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bilan du passage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les disjoncteurs (mode A : épinglés)": {
+      "main": [
+        [
+          {
+            "node": "Lire les événements échus (mode A : épinglés)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les événements échus (mode A : épinglés)": {
+      "main": [
+        [
+          {
+            "node": "Préparer la capture",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la capture": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-capturer-lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-capturer-lead": {
+      "main": [
+        [
+          {
+            "node": "Aiguiller",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aiguiller": {
+      "main": [
+        [
+          {
+            "node": "Router par agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router par agent": {
+      "main": [
+        [
+          {
+            "node": "Appeler ent-exemple-qualification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler ent-exemple-relance",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler ent-exemple-alerte",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler ent-exemple-reporting",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Journal : non routé ou sauté",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler ent-exemple-qualification": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Réunir les sorties": {
+      "main": [
+        [
+          {
+            "node": "Préparer les rédactions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler ent-exemple-relance": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Appeler ent-exemple-alerte": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 2
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Appeler ent-exemple-reporting": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 3
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Journal : non routé ou sauté": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Préparer les rédactions": {
+      "main": [
+        [
+          {
+            "node": "Rien à rédiger ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à rédiger ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer les disjoncteurs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler ent-exemple-redaction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer les disjoncteurs": {
+      "main": [
+        [
+          {
+            "node": "Aucune chaîne appelée ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler ent-exemple-redaction": {
+      "main": [
+        [
+          {
+            "node": "Préparer les disjoncteurs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer les disjoncteurs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aucune chaîne appelée ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-disjoncteur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le journal": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-journaliser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-disjoncteur": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-journaliser": {
+      "main": [
+        [
+          {
+            "node": "Préparer le battement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le battement": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-battement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-battement": {
+      "main": [
+        [
+          {
+            "node": "Bilan du passage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "6b9cff38-0b99-4f4f-ae04-d8f6ab8d36bb",
+      "name": "Toutes les 5 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ba33653c-91aa-4dc3-8f8c-31e82dd6ad97",
+      "name": "Lire la configuration (mode A : épinglée)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {},
+      "notes": "lecture: configuration du client, une fois par passage (interrupteur général, simulation, interrupteurs par agent, réglages des agents)\nMode A : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai (données fictives « Exemple. Bâti-Démo »). Non épinglé, il ne rend rien d'utile et le passage s'arrête sans effet (fail-closed). Mode B : GET de la configuration par organisation (table à naître au « go » de Benj, p5:424), select= limité, organisation_id=eq."
+    },
+    {
+      "id": "dadbefe8-5731-4ce5-9198-854d3bf3cb1f",
+      "name": "Interrupteur général ouvert ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "interrupteurgnralouvert",
+              "leftValue": "={{ $json.interrupteur_general === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Faux (coupé, absent ou illisible) : le passage s'arrête, rien n'est appelé (p5:263)."
+    },
+    {
+      "id": "c2bbb301-6e5a-40c7-8627-936ee48896db",
+      "name": "Poser le verrou (mode A : épinglé)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -80
+      ],
+      "parameters": {},
+      "notes": "lecture: pose du verrou du client (une ligne avec échéance)\nMode A : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai (données fictives « Exemple. Bâti-Démo »). Non épinglé, il ne rend rien d'utile et le passage s'arrête sans effet (fail-closed). Mode B : PATCH conditionnel du verrou par organisation, derrière une porte « simulation »"
+    },
+    {
+      "id": "7d12e3d4-03b9-44b5-878b-30c8d7d37615",
+      "name": "Verrou posé ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        -80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "verroupos",
+              "leftValue": "={{ $json.verrou_pose === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Faux : un autre passage tient le verrou ; celui-ci s'arrête sans rien faire."
+    },
+    {
+      "id": "7a252bb9-dd06-4a71-b1d1-540027f7edf9",
+      "name": "Lire les disjoncteurs (mode A : épinglés)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        -160
+      ],
+      "parameters": {},
+      "notes": "lecture: état du disjoncteur de chaque agent\nMode A : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai (données fictives « Exemple. Bâti-Démo »). Non épinglé, il ne rend rien d'utile et le passage s'arrête sans effet (fail-closed). Mode B : GET des disjoncteurs par organisation"
+    },
+    {
+      "id": "ea89e555-1770-4f94-b77d-7ef8e410bdbd",
+      "name": "Lire les événements échus (mode A : épinglés)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        -160
+      ],
+      "parameters": {},
+      "notes": "lecture: événements échus (relances dues, balayage, rapport dû), lignes de demandes à réclamer, clés déjà réservées, agrégats\nMode A : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai (données fictives « Exemple. Bâti-Démo »). Non épinglé, il ne rend rien d'utile et le passage s'arrête sans effet (fail-closed). Mode B : GET des événements échus (0185, au « go »), 200 au plus"
+    },
+    {
+      "id": "d33cce3f-c028-4c22-8dde-1d409805a4da",
+      "name": "Préparer la capture",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Parent : réclamer les demandes neuves (lib-capturer-lead : colonnes permises, empreinte du contact, jamais le contact). Il ne calcule rien.\nconst C = $('Lire la configuration (mode A : épinglée)').first().json;\nconst V = $('Lire les événements échus (mode A : épinglés)').first().json;\nconst trace = { execution_parent: 'ent-exemple-parent:' + V.passage, declencheur: 'ent-exemple-parent', tentative: 0 };\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: C.organisation_id, simulation: C.simulation, cle_idempotence: cle, trace: trace, config: config, donnees: donnees });\nconst sorties = (nom, branche) => { const n = $(nom); return n.isExecuted ? n.all(branche || 0).map((x) => x.json) : []; };\nreturn [{ json: env('lib-capturer-lead@1', 'cap:' + V.passage, C.capture, { lignes: V.lignes_demandes }) }];"
+      }
+    },
+    {
+      "id": "c759847c-08f4-4f60-b8c1-dfe08a139219",
+      "name": "Appeler lib-capturer-lead",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        -160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "yj7KzcEjf04iTAcm"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Réclame les demandes neuves (035-004).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "8e59184e-0188-4711-a4f6-beedac5f4ed1",
+      "name": "Aiguiller",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Parent : AIGUILLER, sans rien calculer. Chaque événement va à l'agent de son type (table fermée) ; un type inconnu va à la sortie de\n// secours (journal). Un agent dont l'interrupteur n'est pas ouvert, ou dont le disjoncteur n'est pas fermé, est SAUTÉ (fail-closed) et le\n// saut est journalisé. Une enveloppe par agent, son lot d'événements tel quel, sa configuration telle que lue.\nconst C = $('Lire la configuration (mode A : épinglée)').first().json;\nconst V = $('Lire les événements échus (mode A : épinglés)').first().json;\nconst trace = { execution_parent: 'ent-exemple-parent:' + V.passage, declencheur: 'ent-exemple-parent', tentative: 0 };\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: C.organisation_id, simulation: C.simulation, cle_idempotence: cle, trace: trace, config: config, donnees: donnees });\nconst sorties = (nom, branche) => { const n = $(nom); return n.isExecuted ? n.all(branche || 0).map((x) => x.json) : []; };\nconst DJ = $('Lire les disjoncteurs (mode A : épinglés)').first().json.disjoncteurs || {};\nconst ROUTES = { demande_recue: 'qualification', relance_due: 'relance', balayage: 'alerte', rapport_du: 'reporting' };\nconst cap = $input.first().json;\nconst capOk = !!(cap && cap.contrat === 'lib-capturer-lead@1' && cap.resultat && Array.isArray(cap.resultat.evenements));\nconst evenements = (capOk ? cap.resultat.evenements : []).concat(V.evenements);\nconst lots = {}, nonRoutes = [], sautes = [];\nfor (const ev of evenements) { const a = ROUTES[ev.type]; if (!a) { nonRoutes.push(ev.id === undefined ? null : ev.id); continue; } if (!lots[a]) lots[a] = []; lots[a].push(ev); }\nconst ouvert = (a) => C.interrupteurs_agents[a] === true && !!DJ['ent-exemple-' + a] && DJ['ent-exemple-' + a].etat === 'ferme';\nconst DONNEES = {\n  qualification: (l) => ({ evenements: l, empreintes_connues: V.empreintes_connues, cles_connues: V.cles_connues, escalade: V.escalade }),\n  relance: (l) => ({ objets: l.map((ev) => ev.objet), maintenant: V.maintenant, cles_connues: V.cles_connues }),\n  alerte: (l) => ({ balayages: l.map((ev) => ev.balayage) }),\n  reporting: (l) => ({ rapports: l.map((ev) => ev.rapport), cles_connues: V.cles_connues }),\n};\nconst s = [];\nfor (const a of ['qualification', 'relance', 'alerte', 'reporting']) { if (!lots[a]) continue; if (!ouvert(a)) { sautes.push(a); continue; }\n  s.push({ json: env('ent-exemple-' + a + '@1', 'ent:' + a + ':' + V.passage, C.agents[a], DONNEES[a](lots[a])) }); }\nif (nonRoutes.length || sautes.length || !capOk || !s.length) s.push({ json: { contrat: 'aucun', non_routes: nonRoutes, sautes: sautes, capture_en_echec: !capOk } });\nreturn s;"
+      }
+    },
+    {
+      "id": "6f32a053-3066-4500-8a6d-6580b5bc92ef",
+      "name": "Router par agent",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2400,
+        -160
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputKey": "qualification",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "ent-exemple-qualification@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "relance",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "ent-exemple-relance@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "alerte",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "ent-exemple-alerte@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "reporting",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "ent-exemple-reporting@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "secours"
+        }
+      },
+      "notes": "Switch par type d'événement (via le contrat de l'enveloppe), avec une sortie de secours vers le journal."
+    },
+    {
+      "id": "304fa6a0-8bde-426e-a4aa-3fef3cec207e",
+      "name": "Appeler ent-exemple-qualification",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        -460
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "CeZdu0DkZfi7XDVn"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chaîne de l'agent qualification. « Continue (using error output) » : une chaîne en panne ne fait pas échouer le parent.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "2f6ddca8-ea3b-408d-926f-6f303c237e80",
+      "name": "Réunir les sorties",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2900,
+        -160
+      ],
+      "parameters": {
+        "mode": "append",
+        "numberInputs": 5
+      }
+    },
+    {
+      "id": "37e2e885-c9a0-409a-b44d-c6bd1cdae323",
+      "name": "Appeler ent-exemple-relance",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        -300
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "yk2F9qZZrlAAseLB"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chaîne de l'agent relance. « Continue (using error output) » : une chaîne en panne ne fait pas échouer le parent.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "9e71aa1f-324a-4193-a49e-956e28b607d0",
+      "name": "Appeler ent-exemple-alerte",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        -140
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BnVx0mm1Ulrg4XlJ"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chaîne de l'agent alerte. « Continue (using error output) » : une chaîne en panne ne fait pas échouer le parent.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "860ccf9d-c6f1-46b3-ba43-66a118ef77bb",
+      "name": "Appeler ent-exemple-reporting",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        20
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "TrryBnJIbdQ9tzhw"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chaîne de l'agent reporting. « Continue (using error output) » : une chaîne en panne ne fait pas échouer le parent.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "6004446c-1ec7-4a56-9b52-06eec8184df9",
+      "name": "Journal : non routé ou sauté",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        180
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Parent : la sortie de secours du routage. Rien n'est perdu en silence : l'événement non routé ou l'agent sauté part au journal du passage.\nreturn $input.all().map((x) => ({ json: { contrat: 'aucun', non_routes: x.json.non_routes, sautes: x.json.sautes, capture_en_echec: x.json.capture_en_echec } }));"
+      }
+    },
+    {
+      "id": "bf508bb4-7593-4816-89d7-f187b515c0b6",
+      "name": "Bilan du passage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5540,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Parent : le bilan agrégé du passage, sans donnée personnelle : où il s'est arrêté, ce qui a été routé où, les statuts, les effets prévus\n// et faits (toujours zéro fait en simulation), et le verrou à lever. Des comptes, aucun calcul métier.\nconst C = $('Lire la configuration (mode A : épinglée)').first().json;\nconst passe = (nom) => $(nom).isExecuted;\nconst sorties = (nom, b) => passe(nom) ? $(nom).all(b || 0).map((x) => x.json) : [];\nconst issue = (nom) => { if (!passe(nom)) return null; const sans = (x) => !x || typeof x.contrat !== 'string'; const a = sorties(nom, 0), b = sorties(nom, 1); return { ok: a.filter((x) => !sans(x)), ko: a.filter(sans).concat(b.filter(sans)) }; };\nif (!passe('Poser le verrou (mode A : épinglé)')) return [{ json: { arret: 'interrupteur_general_coupe', routes: {}, statuts: {}, effets_prevus: 0, effets_faits: 0, verrou: 'non_pose' } }];\nif (!passe('Lire les disjoncteurs (mode A : épinglés)')) return [{ json: { arret: 'verrou_deja_pris', routes: {}, statuts: {}, effets_prevus: 0, effets_faits: 0, verrou: 'laisse_a_son_porteur' } }];\nconst routes = {}, statuts = {};\nlet prevus = 0, faits = 0;\nfor (const x of sorties('Aiguiller')) if (x.contrat !== 'aucun') { const a = x.contrat.split('@')[0].slice(12); routes[a] = (x.donnees.evenements || x.donnees.objets || x.donnees.balayages || x.donnees.rapports || []).length; }\nfor (const a of ['qualification', 'relance', 'alerte', 'reporting', 'redaction']) { const r = issue('Appeler ent-exemple-' + a); if (!r) continue;\n  statuts[a] = r.ko.length ? 'echec' : r.ok.map((x) => x.statut).join(',');\n  for (const x of r.ok) { if (x && Array.isArray(x.effets_prevus)) prevus += x.effets_prevus.length; if (x && Array.isArray(x.effets_faits)) faits += x.effets_faits.length; } }\nif (passe('Préparer les rédactions') && !passe('Appeler ent-exemple-redaction')) routes.redaction = 0;\nfor (const nom of ['Appeler lib-capturer-lead', 'Appeler lib-disjoncteur', 'Appeler lib-journaliser', 'Appeler lib-battement']) for (const x of sorties(nom)) { if (x && Array.isArray(x.effets_prevus)) prevus += x.effets_prevus.length; if (x && Array.isArray(x.effets_faits)) faits += x.effets_faits.length; }\nconst secours = sorties('Journal : non routé ou sauté')[0] || { non_routes: [], sautes: [], capture_en_echec: false };\nconst disjoncteurs = {}; for (const x of sorties('Appeler lib-disjoncteur')) if (x && x.resultat) disjoncteurs[x.cle_idempotence.split(':')[1]] = x.resultat.etat;\nreturn [{ json: { arret: null, simulation: C.simulation, routes: routes, statuts: statuts, sautes: secours.sautes, non_routes: secours.non_routes.length, capture_en_echec: secours.capture_en_echec, disjoncteurs: disjoncteurs, effets_prevus: prevus, effets_faits: faits, verrou: 'a_lever' } }];"
+      }
+    },
+    {
+      "id": "c21c95bc-cc03-4a8a-83ec-320a1e42d292",
+      "name": "Préparer les rédactions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3140,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Parent : deuxième aiguillage. Les demandes de rédaction rendues par la Relance vont à l'agent Rédaction (s'il est ouvert), telles quelles.\nconst C = $('Lire la configuration (mode A : épinglée)').first().json;\nconst V = $('Lire les événements échus (mode A : épinglés)').first().json;\nconst trace = { execution_parent: 'ent-exemple-parent:' + V.passage, declencheur: 'ent-exemple-parent', tentative: 0 };\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: C.organisation_id, simulation: C.simulation, cle_idempotence: cle, trace: trace, config: config, donnees: donnees });\nconst sorties = (nom, branche) => { const n = $(nom); return n.isExecuted ? n.all(branche || 0).map((x) => x.json) : []; };\nconst DJ = $('Lire les disjoncteurs (mode A : épinglés)').first().json.disjoncteurs || {};\nconst demandes = [];\nfor (const s of sorties('Appeler ent-exemple-relance')) if (s && s.resultat && Array.isArray(s.resultat.demandes_redaction)) for (const d of s.resultat.demandes_redaction) demandes.push(d);\nconst ouvert = C.interrupteurs_agents.redaction === true && !!DJ['ent-exemple-redaction'] && DJ['ent-exemple-redaction'].etat === 'ferme';\nif (!demandes.length || !ouvert) return [{ json: { vide: true, saute: demandes.length > 0 } }];\nreturn [{ json: env('ent-exemple-redaction@1', 'ent:redaction:' + V.passage, C.agents.redaction, { demandes: demandes, interrupteurs: { general: C.interrupteur_general, agent: C.interrupteurs_agents.redaction }, cles_existantes: V.cles_connues, compteurs: V.compteurs, maintenant: V.maintenant }) }];"
+      }
+    },
+    {
+      "id": "d2ca4402-12e1-49aa-b8ce-fd11465697a4",
+      "name": "Rien à rédiger ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3380,
+        -160
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienrdiger",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "ae77153d-252c-43c8-9f16-60031dca7a54",
+      "name": "Préparer les disjoncteurs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3860,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Parent : l'issue de chaque chaîne appelée (succès, ou échec : sortie d'erreur, statut « erreur » ou « rejete ») va à son disjoncteur\n// (lib-disjoncteur : coupé après N échecs de suite). Le parent ne compte rien lui-même.\nconst C = $('Lire la configuration (mode A : épinglée)').first().json;\nconst V = $('Lire les événements échus (mode A : épinglés)').first().json;\nconst trace = { execution_parent: 'ent-exemple-parent:' + V.passage, declencheur: 'ent-exemple-parent', tentative: 0 };\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: C.organisation_id, simulation: C.simulation, cle_idempotence: cle, trace: trace, config: config, donnees: donnees });\nconst sorties = (nom, branche) => { const n = $(nom); return n.isExecuted ? n.all(branche || 0).map((x) => x.json) : []; };\n// L'issue d'un appel de chaîne : une sortie qui porte un contrat est une réponse ; un élément sans contrat (sortie d'erreur) est un échec.\n// On ne se fie pas à la seule branche 1 : avec des données épinglées, n8n la remplit aussi (essai 460, défaut trouvé le 03/11).\nconst issue = (nom) => { const n = $(nom); if (!n.isExecuted) return null; const a = n.all(0).map((x) => x.json), b = n.all(1).map((x) => x.json); const sans = (x) => !x || typeof x.contrat !== 'string';\n  return { ok: a.filter((x) => !sans(x)), ko: a.filter(sans).concat(b.filter(sans)) }; };\nconst DJ = $('Lire les disjoncteurs (mode A : épinglés)').first().json.disjoncteurs || {};\nconst s = [];\nfor (const a of ['qualification', 'relance', 'alerte', 'reporting', 'redaction']) { const r = issue('Appeler ent-exemple-' + a); if (!r) continue;\n  const echec = r.ko.length > 0 || !r.ok.length || r.ok.some((x) => x.statut === 'erreur' || x.statut === 'rejete');\n  s.push({ json: env('lib-disjoncteur@1', 'dj:' + a + ':' + V.passage, { seuil: C.disjoncteur_seuil }, { agent: 'ent-exemple-' + a, issue: echec ? 'echec' : 'succes', etat_precedent: DJ['ent-exemple-' + a] }) }); }\nreturn s.length ? s : [{ json: { vide: true } }];"
+      }
+    },
+    {
+      "id": "c86c3aa4-3ef3-446a-8108-6893abd22e65",
+      "name": "Appeler ent-exemple-redaction",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3620,
+        -240
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "vtM522VNdzcl4o9I"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chaîne de l'agent Rédaction (et de la porte). En mode A, sa sortie est épinglée dans l'essai de bout en bout : le modèle de lib-rediger-message reste épinglé (question 5) et un sous-workflow n'est pas couvert par les données épinglées (fiches-depots.md:433).",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "9d6afa82-84ea-47fe-a87a-d1269316dfad",
+      "name": "Aucune chaîne appelée ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4100,
+        -160
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aucunechaneappele",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "3b101d20-207b-4a0e-9e8b-9bba1227b8fc",
+      "name": "Préparer le journal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4580,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Parent : le journal du passage (lib-journaliser) : chaque chaîne appelée et son statut, chaque agent sauté, chaque événement non routé,\n// chaque disjoncteur. Des identifiants et des statuts seulement : aucun nom, aucun contact, aucun texte de client.\nconst C = $('Lire la configuration (mode A : épinglée)').first().json;\nconst V = $('Lire les événements échus (mode A : épinglés)').first().json;\nconst trace = { execution_parent: 'ent-exemple-parent:' + V.passage, declencheur: 'ent-exemple-parent', tentative: 0 };\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: C.organisation_id, simulation: C.simulation, cle_idempotence: cle, trace: trace, config: config, donnees: donnees });\nconst sorties = (nom, branche) => { const n = $(nom); return n.isExecuted ? n.all(branche || 0).map((x) => x.json) : []; };\n// L'issue d'un appel de chaîne : une sortie qui porte un contrat est une réponse ; un élément sans contrat (sortie d'erreur) est un échec.\n// On ne se fie pas à la seule branche 1 : avec des données épinglées, n8n la remplit aussi (essai 460, défaut trouvé le 03/11).\nconst issue = (nom) => { const n = $(nom); if (!n.isExecuted) return null; const a = n.all(0).map((x) => x.json), b = n.all(1).map((x) => x.json); const sans = (x) => !x || typeof x.contrat !== 'string';\n  return { ok: a.filter((x) => !sans(x)), ko: a.filter(sans).concat(b.filter(sans)) }; };\nconst L = [];\nconst ligne = (evenement, objet_ref, decision) => L.push({ evenement: evenement, agent: 'ent-exemple-parent', objet_ref: objet_ref === null || objet_ref === undefined ? null : String(objet_ref).slice(0, 80), decision: String(decision).slice(0, 200), modele: null, jetons_entree: null, jetons_sortie: null, cout_eur: null, source_tarif: null, simulation: C.simulation });\nfor (const a of ['qualification', 'relance', 'alerte', 'reporting', 'redaction']) { const r = issue('Appeler ent-exemple-' + a); if (!r) continue;\n  ligne('chaine_appelee', 'ent-exemple-' + a, r.ko.length ? 'sortie d\\'erreur : ' + String((r.ko[0] && r.ko[0].error && (r.ko[0].error.message || r.ko[0].error)) || 'échec').slice(0, 150) : 'statut ' + r.ok.map((x) => x.statut).join(', ')); }\nfor (const x of sorties('Journal : non routé ou sauté')) { for (const a of x.sautes) ligne('agent_saute', 'ent-exemple-' + a, 'interrupteur coupé ou disjoncteur non fermé : chaîne non appelée');\n  for (const id of x.non_routes) ligne('evenement_non_route', id, 'type d\\'événement sans agent : rien n\\'est fait');\n  if (x.capture_en_echec) ligne('capture_en_echec', null, 'lib-capturer-lead : aucune demande réclamée à ce passage'); }\nfor (const x of sorties('Préparer les rédactions')) if (x.saute) ligne('agent_saute', 'ent-exemple-redaction', 'interrupteur coupé ou disjoncteur non fermé : rédaction non appelée');\nfor (const x of sorties('Appeler lib-disjoncteur')) if (x && x.resultat) ligne('disjoncteur', x.cle_idempotence.split(':')[1], 'état ' + x.resultat.etat);\nif (!L.length) ligne('passage_sans_evenement', null, 'rien à router');\nreturn [{ json: env('lib-journaliser@1', 'jp:' + V.passage, {}, { entrees: L.slice(0, 200) }) }];"
+      }
+    },
+    {
+      "id": "25f7f53e-fa5d-47b2-b165-9c35ac21c23d",
+      "name": "Appeler lib-disjoncteur",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4340,
+        -240
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "zmmR9U9S0gc3X6tC"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Disjoncteur de chaque agent appelé (035-003).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "69f48c91-3710-4e27-a118-16ae65607237",
+      "name": "Appeler lib-journaliser",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4820,
+        -160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "NQg0KDXIa5hhzAvq"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Journal du passage (035-003).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "e228fa25-59e8-4bdd-9568-ebdff05e74e2",
+      "name": "Préparer le battement",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5060,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Parent : le battement du passage (lib-battement), que le contrôle des 26 h surveille (p5:255).\nconst C = $('Lire la configuration (mode A : épinglée)').first().json;\nconst V = $('Lire les événements échus (mode A : épinglés)').first().json;\nconst trace = { execution_parent: 'ent-exemple-parent:' + V.passage, declencheur: 'ent-exemple-parent', tentative: 0 };\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: C.organisation_id, simulation: C.simulation, cle_idempotence: cle, trace: trace, config: config, donnees: donnees });\nconst sorties = (nom, branche) => { const n = $(nom); return n.isExecuted ? n.all(branche || 0).map((x) => x.json) : []; };\nreturn [{ json: env('lib-battement@1', 'bat:' + V.passage, {}, { workflow: 'ent-exemple-parent', passe_le: V.maintenant, operation: 'battre' }) }];"
+      }
+    },
+    {
+      "id": "15f75b83-3a35-4cc6-8840-d5b03cc99625",
+      "name": "Appeler lib-battement",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        5300,
+        -160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "XwjyA6PFjzlI2vpd"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Battement du parent (035-003).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "e8509e65-a251-4b4d-8f42-98e854cebfcb",
+      "name": "Sticky Note 2882e519",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## ent-exemple-parent (035-007)\nOrchestrateur du mode A sur « Exemple. Bâti-Démo » : il LIT (épinglé), il ROUTE, il journalise. Il ne calcule rien et n'appelle aucun modèle (p5:156, p5:176).\nToutes les 5 min : interrupteur général → verrou → disjoncteurs → événements échus → capture → aiguillage par agent (sortie de secours) → rédaction des relances → disjoncteurs → journal → battement → bilan.\nINACTIF, jamais publié. Simulation partout. Juge : scripts/demo-entreprise-qa.mjs ; runbook : plans/011-cadrage-01-11/p5-entreprise/demo/runbook.md",
+        "color": 4,
+        "width": 640,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 035-007), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

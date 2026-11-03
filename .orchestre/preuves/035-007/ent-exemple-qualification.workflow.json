@@ -1,0 +1,689 @@
+{
+  "id": "CeZdu0DkZfi7XDVn",
+  "name": "ent-exemple-qualification",
+  "active": false,
+  "isArchived": false,
+  "versionId": "ce53a26d-8fc8-49ac-9897-09caf82aa8f0",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 19,
+  "createdAt": "2026-11-03T08:18:26.321Z",
+  "updatedAt": "2026-11-03T08:26:07.005Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "egBJcOFqHnSnmXaN",
+    "availableInMCP": true
+  },
+  "tags": [
+    {
+      "id": "HpXOIwnFuxmQqjGh",
+      "name": "ent"
+    },
+    {
+      "id": "HwXvPMf3fglTRwQV",
+      "name": "ent-exemple"
+    },
+    {
+      "id": "pSZXov5cJ3qqjfTz",
+      "name": "agent-qualification"
+    }
+  ],
+  "parentFolderId": null,
+  "description": "ent-exemple-qualification (035-007) : agent Qualification du mode A sur Exemple. Bâti-Démo ; appelle lib-dedoublonner, lib-qualifier-lead, lib-decider, lib-journaliser ; INACTIF, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par un parent": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Préparer le dédoublonnage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le dédoublonnage": {
+      "main": [
+        [
+          {
+            "node": "Rien à dédoublonner ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à dédoublonner ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-dedoublonner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le journal": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-journaliser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-dedoublonner": {
+      "main": [
+        [
+          {
+            "node": "Préparer la qualification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la qualification": {
+      "main": [
+        [
+          {
+            "node": "Rien à qualifier ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à qualifier ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-qualifier-lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-qualifier-lead": {
+      "main": [
+        [
+          {
+            "node": "Préparer la décision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la décision": {
+      "main": [
+        [
+          {
+            "node": "Rien à décider ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à décider ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-decider",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-decider": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-journaliser": {
+      "main": [
+        [
+          {
+            "node": "Assembler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assembler": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "c949ab1d-f0e0-4d23-abd8-054e96144b31",
+      "name": "Appelé par un parent",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "6b0a5033-97ff-4f74-8142-17a9f99d0eae",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de ent-exemple-qualification@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'ent-exemple-qualification@1';\nconst SCHEMA = {\"sans_contact\":true,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"grille\",\"seuils\",\"delais_cibles_min\",\"autonomie\",\"plan\",\"pilote\",\"parties_depuis_24h\"],\"properties\":{\"grille\":{\"type\":\"array\",\"maxItems\":30},\"seuils\":{\"type\":\"object\"},\"delais_cibles_min\":{\"type\":\"object\"},\"autonomie\":{\"type\":\"object\"},\"plan\":{\"type\":[\"string\",\"null\"],\"maxLength\":20},\"pilote\":{\"type\":\"object\"},\"parties_depuis_24h\":{\"type\":[\"integer\",\"null\"],\"minimum\":0}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"evenements\",\"empreintes_connues\",\"cles_connues\",\"escalade\"],\"properties\":{\"evenements\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"required\":[\"id\",\"type\",\"recu_le\",\"champs\"],\"properties\":{\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"type\":{\"const\":\"demande_recue\"}}}},\"empreintes_connues\":{\"type\":\"array\",\"maxItems\":1000},\"cles_connues\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"maxLength\":80}},\"escalade\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"format\":\"uuid\"}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: ent-exemple-qualification@1"
+    },
+    {
+      "id": "5938d0d9-a30f-42a1-9881-b4a8796b4b46",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "entreconforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "88d30d2d-efcb-4388-94aa-aa025f9a0432",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        -120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "portesimulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "cd12a261-8ee1-4943-8d26-f5a90ddaef8a",
+      "name": "Préparer le dédoublonnage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Qualification (I1) : chaque demande reçue reçoit sa clé (organisation, qualification, demande, première réponse). Une clé déjà réservée\n// par un passage précédent (lecture prévue des clés, épinglée en mode A : D.cles_connues) donne « déjà fait » : le rejeu ne refait rien.\nconst AGENT = 'ent-exemple-qualification';\nconst E = $(\"Contrat d'entrée\").first().json.enveloppe;\nconst C = E.config, D = E.donnees;\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: E.organisation_id, simulation: E.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(E.trace.execution_parent), declencheur: AGENT, tentative: E.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst neuf = (s) => !!(s && s.contrat === 'lib-dedoublonner@1' && s.resultat && s.resultat.deja_fait === false);\nconst VIDE = [{ json: { vide: true } }];\nconst s = D.evenements.map((ev) => ({ json: env('lib-dedoublonner@1', 'q:' + ev.id, { cles_connues: D.cles_connues }, { type: 'qualification', objet_id: ev.id, etape: 'premiere-reponse' }) }));\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "548e7506-23cb-4c97-9794-584fe570d603",
+      "name": "Rien à dédoublonner ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        -120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienddoublonner",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape, on passe au journal. Faux : on appelle le gabarit."
+    },
+    {
+      "id": "b534480c-06d1-488b-9875-0a83b40d86af",
+      "name": "Préparer le journal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Qualification : une ligne de journal par décision des lib-* (sans nom, sans contact, sans texte de client).\nconst AGENT = 'ent-exemple-qualification';\nconst E = $(\"Contrat d'entrée\").first().json.enveloppe;\nconst C = E.config, D = E.donnees;\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: E.organisation_id, simulation: E.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(E.trace.execution_parent), declencheur: AGENT, tentative: E.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst neuf = (s) => !!(s && s.contrat === 'lib-dedoublonner@1' && s.resultat && s.resultat.deja_fait === false);\nconst VIDE = [{ json: { vide: true } }];\nconst L = [];\nconst ligne = (evenement, objet_ref, decision) => L.push({ evenement: evenement, agent: AGENT, objet_ref: objet_ref === null || objet_ref === undefined ? null : String(objet_ref).slice(0, 80), decision: String(decision).slice(0, 200), modele: null, jetons_entree: null, jetons_sortie: null, cout_eur: null, source_tarif: null, simulation: E.simulation });\nconst echec = (nom, s) => !s || typeof s.contrat !== 'string' || s.statut === 'erreur' || s.statut === 'rejete';\nfor (const s of sorties('Appeler lib-dedoublonner')) { if (echec('dd', s)) ligne('appel_en_echec', null, 'lib-dedoublonner'); else if (s.resultat.deja_fait) ligne('deja_traite', s.cle_idempotence.slice(2), 'clé déjà réservée : rien de refait'); }\nfor (const s of sorties('Appeler lib-qualifier-lead')) { if (echec('q', s)) ligne('appel_en_echec', null, 'lib-qualifier-lead'); else if (s.statut === 'refuse') ligne('qualification_refusee', null, 'grille refusée : ' + (s.erreurs || []).join(' ; ')); else if (s.resultat) ligne('qualification', s.resultat.lead_id, 'note ' + s.resultat.note + ', priorité ' + s.resultat.priorite + (s.resultat.doublon ? ', doublon' : '')); }\nfor (const s of sorties('Appeler lib-decider')) { if (echec('d', s)) ligne('appel_en_echec', null, 'lib-decider'); else if (s.resultat) ligne('decision', s.resultat.objet_id, s.resultat.action + ', niveau ' + s.resultat.niveau + ' (' + s.resultat.motif + ')'); }\nif (!L.length) ligne('passage_sans_evenement', null, 'rien à traiter dans ce lot');\nreturn [{ json: env('lib-journaliser@1', 'j:' + E.cle_idempotence, {}, { entrees: L.slice(0, 200) }) }];"
+      }
+    },
+    {
+      "id": "3e50bb38-e7a1-482c-bafd-577b47e8aceb",
+      "name": "Appeler lib-dedoublonner",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "MnNHht0kG7S6ehDV"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Appelle lib-dedoublonner (bibliothèque partagée, 035-003 à 035-005), sans la réécrire. En mode A, sa sortie est épinglée dans l'essai de la chaîne tant que lib-dedoublonner n'a pas ent-exemple-qualification dans ses callerIds (preuve 035-007).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "58b36406-3907-48fe-9d7b-a405f6d21bf5",
+      "name": "Préparer la qualification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Qualification : seules les demandes neuves sont notées, selon la grille écrite avec le client (lib-qualifier-lead, sans modèle) ; le\n// doublon se lit sur l'empreinte du contact, jamais sur le contact (question 27).\nconst AGENT = 'ent-exemple-qualification';\nconst E = $(\"Contrat d'entrée\").first().json.enveloppe;\nconst C = E.config, D = E.donnees;\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: E.organisation_id, simulation: E.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(E.trace.execution_parent), declencheur: AGENT, tentative: E.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst neuf = (s) => !!(s && s.contrat === 'lib-dedoublonner@1' && s.resultat && s.resultat.deja_fait === false);\nconst VIDE = [{ json: { vide: true } }];\nconst envs = $('Préparer le dédoublonnage').all().map((x) => x.json);\nconst parId = {}; for (const ev of D.evenements) parId[ev.id] = ev;\nconst s = [];\n$input.all().forEach((x, i) => { if (!neuf(x.json) || !envs[i]) return; const ev = parId[envs[i].donnees.objet_id]; if (!ev) return;\n  s.push({ json: env('lib-qualifier-lead@1', 'q:' + ev.id, { grille: C.grille, seuils: C.seuils, delais_cibles_min: C.delais_cibles_min, empreintes_connues: D.empreintes_connues }, { lead_id: ev.id, evenement_id: ev.id, empreinte_contact: ev.empreinte_contact === undefined ? null : ev.empreinte_contact, champs: ev.champs }) }); });\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "9cbd1b68-bc80-4a2c-bdcb-d792d6f9aabc",
+      "name": "Rien à qualifier ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        -120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienqualifier",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape, on passe au journal. Faux : on appelle le gabarit."
+    },
+    {
+      "id": "9f1d0f84-bfa7-42f8-a128-b0cb98caf47e",
+      "name": "Appeler lib-qualifier-lead",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uvGWZR8fHnXURRV6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Appelle lib-qualifier-lead (bibliothèque partagée, 035-003 à 035-005), sans la réécrire. En mode A, sa sortie est épinglée dans l'essai de la chaîne tant que lib-qualifier-lead n'a pas ent-exemple-qualification dans ses callerIds (preuve 035-007).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "e2772b47-586b-456f-b120-f96d704153d8",
+      "name": "Préparer la décision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Qualification : chaque demande notée devient une décision « valider la réponse proposée » (lib-decider). L'escalade est ce que relira le\n// pilote au départ (lecture prévue, épinglée : D.escalade). Mode A : niveau 2 au plus, la décision reste une carte (question 1).\nconst AGENT = 'ent-exemple-qualification';\nconst E = $(\"Contrat d'entrée\").first().json.enveloppe;\nconst C = E.config, D = E.donnees;\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: E.organisation_id, simulation: E.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(E.trace.execution_parent), declencheur: AGENT, tentative: E.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst neuf = (s) => !!(s && s.contrat === 'lib-dedoublonner@1' && s.resultat && s.resultat.deja_fait === false);\nconst VIDE = [{ json: { vide: true } }];\nconst s = [];\nfor (const { json: q } of $input.all()) { const r = q && q.contrat === 'lib-qualifier-lead@1' && q.statut === 'ok' ? q.resultat : null; if (!r) continue;\n  s.push({ json: env('lib-decider@1', 'd:' + r.lead_id, { autonomie: C.autonomie, plan: C.plan, pilote: C.pilote, parties_depuis_24h: C.parties_depuis_24h }, { objet_type: 'demande', objet_id: r.lead_id, constat: { outil: 'valider_reponse_proposee', etape: 'premiere-reponse', escalade: D.escalade.includes(r.lead_id) } }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "5b3f8402-b374-4e7c-92f1-c1628000393b",
+      "name": "Rien à décider ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        -120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "riendcider",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape, on passe au journal. Faux : on appelle le gabarit."
+    },
+    {
+      "id": "de85305e-7561-436e-8fac-a45a83e78f9e",
+      "name": "Appeler lib-decider",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "hckqX1tQjIommtTH"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Appelle lib-decider (bibliothèque partagée, 035-003 à 035-005), sans la réécrire. En mode A, sa sortie est épinglée dans l'essai de la chaîne tant que lib-decider n'a pas ent-exemple-qualification dans ses callerIds (preuve 035-007).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "59c1221d-c27c-4f2d-92e3-9463fd474e8e",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        960,
+        120
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 035-007). Rien n'a été écrit ni envoyé."
+      },
+      "notes": "Mode A : aucun effet réel n'est branché. Hors simulation, la chaîne s'arrête ici, avant tout appel."
+    },
+    {
+      "id": "7dfda9d3-c5d4-4524-ac72-87e47fd517d6",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3840,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de ent-exemple-qualification@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'ent-exemple-qualification@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "1a8563dd-8bfa-43ac-9024-311ca96bd58e",
+      "name": "Appeler lib-journaliser",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3360,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "NQg0KDXIa5hhzAvq"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Appelle lib-journaliser (035-003) : une ligne par décision, en simulation.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "86b0b972-ad8f-46f4-b241-7f001fa1bcc7",
+      "name": "Assembler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Qualification : la sortie de la chaîne. Aucune demande de rédaction : lib-rediger-message@1 ne rédige que des relances (écart écrit dans\n// la preuve) ; la carte « valider la réponse proposée » suffit en mode A.\nconst AGENT = 'ent-exemple-qualification';\nconst E = $(\"Contrat d'entrée\").first().json.enveloppe;\nconst C = E.config, D = E.donnees;\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: E.organisation_id, simulation: E.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(E.trace.execution_parent), declencheur: AGENT, tentative: E.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst neuf = (s) => !!(s && s.contrat === 'lib-dedoublonner@1' && s.resultat && s.resultat.deja_fait === false);\nconst VIDE = [{ json: { vide: true } }];\nconst APPELS = [\"Appeler lib-dedoublonner\",\"Appeler lib-qualifier-lead\",\"Appeler lib-decider\",\"Appeler lib-journaliser\"];\nconst erreurs = [], effets = [];\nfor (const nom of APPELS) for (const s of sorties(nom)) {\n  if (!s || typeof s.contrat !== 'string') { erreurs.push(nom + ' : appel en échec'); continue; }\n  if (s.statut === 'erreur' || s.statut === 'rejete') erreurs.push(nom + ' : ' + s.statut + (Array.isArray(s.erreurs) && s.erreurs[0] ? ' (' + String(s.erreurs[0]).slice(0, 120) + ')' : ''));\n  if (Array.isArray(s.effets_prevus)) for (const e of s.effets_prevus) effets.push(e);\n  if (Array.isArray(s.effets_faits) && s.effets_faits.length) erreurs.push(nom + ' : effet fait en simulation');\n}\nconst jr = sorties('Appeler lib-journaliser')[0];\nconst journal = jr && Array.isArray(jr.journal) ? jr.journal : [];\nconst dd = sorties('Appeler lib-dedoublonner');\nconst resultat = {\n  evenements_recus: D.evenements.length, deja_faits: dd.filter((s) => s && s.resultat && s.resultat.deja_fait === true).length,\n  qualifies: sorties('Appeler lib-qualifier-lead').filter((s) => s && s.resultat).map((s) => ({ lead_id: s.resultat.lead_id, note: s.resultat.note, priorite: s.resultat.priorite, categorie: s.resultat.categorie, delai_cible_min: s.resultat.delai_cible_min, doublon: s.resultat.doublon })),\n  decisions: sorties('Appeler lib-decider').filter((s) => s && s.resultat).map((s) => ({ objet_id: s.resultat.objet_id, action: s.resultat.action, niveau: s.resultat.niveau, motif: s.resultat.motif, cle_idempotence: s.resultat.cle_idempotence })),\n  demandes_redaction: [],\n};\nconst statut = erreurs.length ? 'erreur' : (resultat.evenements_recus === 0 || resultat.deja_faits === resultat.evenements_recus) ? 'rien_a_faire' : 'ok';\nreturn [{ json: { enveloppe: E, statut: statut, resultat: resultat, effets_prevus: effets.slice(0, 1000), effets_faits: [], journal: journal, erreurs: erreurs.slice(0, 20) } }];"
+      }
+    },
+    {
+      "id": "114f246c-66bc-479e-93db-1e038ecbd1b4",
+      "name": "Sticky Note 69fe43b2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## ent-exemple-qualification (035-007)\nAgent Qualification (rang 2, analyse), irritant Exemple. I1. Note et catégorise chaque demande selon la grille écrite avec le client ; aucun modèle ; n'envoie jamais.\nContrat ent-exemple-qualification@1 (enveloppe@1). Appelée par ent-exemple-parent seulement.\nINACTIF, jamais publié, en simulation (mode A) : rien n'est lu ni écrit en base, rien n'est envoyé, aucun modèle n'est appelé.\nJuge : scripts/demo-entreprise-qa.mjs",
+        "color": 4,
+        "width": 640,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 035-007), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

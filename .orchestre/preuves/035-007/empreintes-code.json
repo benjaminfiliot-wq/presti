@@ -1,0 +1,53 @@
+{
+  "ent-exemple-alerte": {
+    "Contrat d'entrée": "5cfee7d9a23cd9619d0f5b34174a2b2db9622e4e62de4a498a05938885a5d2da",
+    "Constater les anomalies": "796ad77afc0397006fca9e80612b53ab73775d5aabda6e3c5e7e052f9f8bcd50",
+    "Préparer le journal": "df97f0c33e0d73afaceedb912a586beceaebdfb4b0827a88f5d9a0f774aab450",
+    "Contrat de sortie": "0ab6c8c1daee0ee9f654b2906659a3e96fa7af2246ac5c0f936c8132a4614fd4",
+    "Assembler": "56591645feb75fb0f55d9f0a3b94cde0efd15167d8155af00db39138d4e7822e"
+  },
+  "ent-exemple-parent": {
+    "Préparer la capture": "01e817c9d17b38b41d06b40e65372d65217c10df73e7d58ad0cf9dcd32966756",
+    "Aiguiller": "fe07fd65e2de0df63af6ed5c89c666e41c9e687cac58cca74570698ce4cb7432",
+    "Journal : non routé ou sauté": "fd129f5201373ef312d9b601ed79fa0cd945ce7581b9541fc846cb8271065427",
+    "Bilan du passage": "ce96057d1edd96e6b9100495267d8308db477191a3d6dcbd469853fea86790c6",
+    "Préparer les rédactions": "a63f2d737a356b9cfd91cd1de781d0947b53592ce72b31304046a46c9f31d6a9",
+    "Préparer les disjoncteurs": "3106c6b849ac6b7058a24e5c0cbc13c8e84c79ce7f55c6d7e86132f4c91a5650",
+    "Préparer le journal": "91c4086cc312120a7a00cf8dde2d68979bbf6934bff0c69a1d423b5468d33414",
+    "Préparer le battement": "18d94bb77ac4129da70b0f503af531095079136633d725e3890b28bde5b62bb4"
+  },
+  "ent-exemple-qualification": {
+    "Contrat d'entrée": "20f59c7b845d89cc0778919f771ab26a9db864ee11343b33b7bb4a798fb5d3b7",
+    "Préparer le dédoublonnage": "44f2d772264ce8b5d2d51a12ef2c863ad2ae2c662a2965c5cbe7eba68a389bdc",
+    "Préparer le journal": "223cfa5ef7004c99ed45dd34dfa9a91152e79e22c09d8ddfc9708aa1f13bdd0c",
+    "Préparer la qualification": "121f5cf4762ccc986b59543bec982d499ae957c8955f73df7f54e9a176846a68",
+    "Préparer la décision": "7ea0e845360e0412972a7ff071bf5a39476e0b67c22dbc4eb1bbd06542ec19dd",
+    "Contrat de sortie": "02906e9915f872442a8a10ef9a353731957f21bba8d508ab0f9120a1216f17b1",
+    "Assembler": "ad4654332e8190b9d434099f8be28c2bdb8fbb25667d75ad96a1baf70374d604"
+  },
+  "ent-exemple-redaction": {
+    "Contrat d'entrée": "e7e0debcef8f844ce6e20ed175948dcdc7cbd5a3f159b7b050143013cf06893a",
+    "Préparer la rédaction": "c0aae8831d8afbfc071bbb23776bf0be158132b61f14c8b1646393214bf1cc9a",
+    "Préparer le journal": "8deb9b2c55552bba9d40b8993a837b7a57b2f0cef8c402520a18a2a33b742bce",
+    "Préparer la porte": "405b0691122a78814342344e803e76104393f7ddcb3d2d54a1d647ff4d164bbb",
+    "Préparer l'exécution": "49e11e11346f73cb68c2579cd0c31e2fe593c19483c99a217130132ce4412a14",
+    "Contrat de sortie": "aea1acf286f15a6c609c8b714fac95f900f733beb9e764caaa08bbc66b0a39f3",
+    "Assembler": "6c460fb5cb19d0ececdba5ad374a1cfa8883c9a257112924af8e66bde0953e7d"
+  },
+  "ent-exemple-relance": {
+    "Contrat d'entrée": "bd6d646551aa31d1bdb0c3721a9eb8bde79c32ea98844c4777351b3479b86ac0",
+    "Préparer les relances": "0a1f60392d0af9d58bb7cba64c1eb665bb1eec8f8c62fc0c58d9cf1dac273c4d",
+    "Préparer le journal": "182f967a6f375a33b22b59222c1a1f20b0e4390f8c93ddeedc4e2c9caa9d352f",
+    "Préparer le dédoublonnage": "b0baef2ec76914f8fbcfe1c6c4757c8a7491cba720f69b67b9590a9a48616c9e",
+    "Contrat de sortie": "0738d1333feae21491ce3bc7ed75d8e04b295799f88c4e575d32d15883b0bcc4",
+    "Assembler": "a8e73aec3e080df7f49fc32360accf0d9efbe046db00dbcc6d58ed3cbffef01c"
+  },
+  "ent-exemple-reporting": {
+    "Contrat d'entrée": "b62fdb099fb63c851b4cbce9d3b120688584e7d2e7f4e82b068782f18a2f5aed",
+    "Préparer le dédoublonnage": "2761c450e9c91e0de64ff0ade9fac0bf8ad9dcd4c23ef8ec89bcd0de46e505ec",
+    "Préparer le rapport": "21374566297c2bac517318c653b13a8d63e2b38a8363945cc39fa0a97ec23d12",
+    "Préparer le journal": "2938bf8ae9f6068546f805f5e90094c032209b709f75fa6930877229ab79b2cd",
+    "Contrat de sortie": "3ed0c6d951c02c61af3a50b8ef622b95f8ee602b13cb57f0c3d82b871f1c9e82",
+    "Assembler": "0e2128e72b70aeff13b04503a72b99284d539e705fdfa6b3f465f8f924b0cfca"
+  }
+}

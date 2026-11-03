@@ -1,0 +1,689 @@
+{
+  "id": "vtM522VNdzcl4o9I",
+  "name": "ent-exemple-redaction",
+  "active": false,
+  "isArchived": false,
+  "versionId": "c0501d93-2f30-4733-89f3-6eca61cca91f",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 19,
+  "createdAt": "2026-11-03T08:22:14.156Z",
+  "updatedAt": "2026-11-03T08:26:10.230Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "egBJcOFqHnSnmXaN",
+    "availableInMCP": true
+  },
+  "tags": [
+    {
+      "id": "HpXOIwnFuxmQqjGh",
+      "name": "ent"
+    },
+    {
+      "id": "HwXvPMf3fglTRwQV",
+      "name": "ent-exemple"
+    },
+    {
+      "id": "gJXidkZP6wXsCnHG",
+      "name": "agent-redaction"
+    }
+  ],
+  "parentFolderId": null,
+  "description": "ent-exemple-redaction (035-007) : agent Rédaction et porte de Conformité du mode A ; appelle lib-rediger-message (modèle épinglé), lib-porte-conformite, lib-executer, lib-journaliser ; INACTIF, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par un parent": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Préparer la rédaction",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la rédaction": {
+      "main": [
+        [
+          {
+            "node": "Rien à rédiger ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à rédiger ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-rediger-message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le journal": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-journaliser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-rediger-message": {
+      "main": [
+        [
+          {
+            "node": "Préparer la porte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la porte": {
+      "main": [
+        [
+          {
+            "node": "Rien à contrôler ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à contrôler ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-porte-conformite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-porte-conformite": {
+      "main": [
+        [
+          {
+            "node": "Préparer l'exécution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer l'exécution": {
+      "main": [
+        [
+          {
+            "node": "Rien à exécuter ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à exécuter ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-executer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-executer": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-journaliser": {
+      "main": [
+        [
+          {
+            "node": "Assembler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assembler": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "691f5531-f9ce-4293-9f86-4bdeb679fba6",
+      "name": "Appelé par un parent",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "2bdfecc1-3939-4dc0-9257-8858b724dc00",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de ent-exemple-redaction@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'ent-exemple-redaction@1';\nconst SCHEMA = {\"sans_contact\":true,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"redaction\",\"porte\",\"niveau_max\"],\"properties\":{\"redaction\":{\"type\":\"object\"},\"porte\":{\"type\":\"object\"},\"niveau_max\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":2}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"demandes\",\"interrupteurs\",\"cles_existantes\",\"compteurs\",\"maintenant\"],\"properties\":{\"demandes\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"action_cle\",\"objet_type\",\"objet_id\",\"palier\",\"canal\",\"type_action\",\"outil\",\"cible\",\"faits\",\"destinataire\"],\"properties\":{\"action_cle\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"^[A-Za-z0-9_:@.#-]+$\"},\"objet_type\":{\"enum\":[\"demande\",\"devis\",\"facture\",\"conversation\",\"chantier\"]},\"objet_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"palier\":{\"type\":[\"integer\",\"null\"],\"minimum\":1,\"maximum\":10},\"canal\":{\"enum\":[\"email\",\"sms\"]},\"type_action\":{\"type\":\"string\",\"pattern\":\"^[a-z_]{2,60}$\"},\"outil\":{\"type\":\"string\",\"pattern\":\"^[a-z_]{2,60}$\"},\"cible\":{\"enum\":[\"carte\",\"pilote\"]},\"faits\":{\"type\":\"object\"},\"destinataire\":{\"type\":\"object\"}}}},\"interrupteurs\":{\"type\":[\"object\",\"null\"]},\"cles_existantes\":{\"type\":[\"array\",\"null\"],\"maxItems\":1000},\"compteurs\":{\"type\":\"object\"},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: ent-exemple-redaction@1"
+    },
+    {
+      "id": "61a960e9-708a-4215-bf7f-31a4849b964a",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "entreconforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "c4a4b169-9454-4e6c-a736-11e5583dcea9",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        -120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "portesimulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "fda7b34f-11fb-459f-803f-a33a1ffb3669",
+      "name": "Préparer la rédaction",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Rédaction : chaque demande d'un agent devient un brouillon (lib-rediger-message : les seuls faits, montants mis en forme par le code,\n// jamais le nom ni l'adresse du destinataire). Le modèle reste épinglé en mode A (question 5) : aucun appel réel.\nconst AGENT = 'ent-exemple-redaction';\nconst E = $(\"Contrat d'entrée\").first().json.enveloppe;\nconst C = E.config, D = E.donnees;\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: E.organisation_id, simulation: E.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(E.trace.execution_parent), declencheur: AGENT, tentative: E.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst neuf = (s) => !!(s && s.contrat === 'lib-dedoublonner@1' && s.resultat && s.resultat.deja_fait === false);\nconst VIDE = [{ json: { vide: true } }];\nconst s = D.demandes.map((d) => ({ json: env('lib-rediger-message@1', d.action_cle, Object.assign({ canal: d.canal }, C.redaction), { action_cle: d.action_cle, faits: d.faits }) }));\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "04846a99-576f-49a7-b701-7e2d3584389a",
+      "name": "Rien à rédiger ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        -120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienrdiger",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape, on passe au journal. Faux : on appelle le gabarit."
+    },
+    {
+      "id": "48065e21-f05d-4d00-a040-07f0d16efe11",
+      "name": "Préparer le journal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Rédaction : une ligne par brouillon, par verdict de la porte et par carte prévue. Les jetons et le coût restent null : rien n'est mesuré.\nconst AGENT = 'ent-exemple-redaction';\nconst E = $(\"Contrat d'entrée\").first().json.enveloppe;\nconst C = E.config, D = E.donnees;\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: E.organisation_id, simulation: E.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(E.trace.execution_parent), declencheur: AGENT, tentative: E.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst neuf = (s) => !!(s && s.contrat === 'lib-dedoublonner@1' && s.resultat && s.resultat.deja_fait === false);\nconst VIDE = [{ json: { vide: true } }];\nconst L = [];\nconst ligne = (evenement, objet_ref, decision) => L.push({ evenement: evenement, agent: AGENT, objet_ref: objet_ref === null || objet_ref === undefined ? null : String(objet_ref).slice(0, 80), decision: String(decision).slice(0, 200), modele: null, jetons_entree: null, jetons_sortie: null, cout_eur: null, source_tarif: null, simulation: E.simulation });\nconst echec = (nom, s) => !s || typeof s.contrat !== 'string' || s.statut === 'erreur' || s.statut === 'rejete';\nfor (const s of sorties('Appeler lib-rediger-message')) { if (echec('red', s)) ligne('redaction_en_echec', s && s.cle_idempotence, 'aucun brouillon (hors schéma ou appel en échec)'); else ligne('brouillon', s.resultat.action_cle, 'brouillon ' + s.resultat.canal + ' prêt, modèle épinglé'); }\nfor (const s of sorties('Appeler lib-porte-conformite')) { if (echec('p', s)) ligne('porte_en_echec', null, 'lecture en erreur : refus'); else ligne(s.resultat.verdict === 'passe' ? 'porte_passe' : 'porte_refuse', s.cle_idempotence, s.resultat.verdict + (s.resultat.motifs.length ? ' (' + s.resultat.motifs.join(', ') + ')' : '')); }\nfor (const s of sorties('Appeler lib-executer')) { if (echec('x', s)) ligne('execution_en_echec', null, 'lib-executer'); else ligne(s.resultat.deja_fait ? 'deja_traite' : 'carte_prevue', s.cle_idempotence, s.resultat.deja_fait ? 'déjà fait : rien de refait' : (s.resultat.motif || 'carte prévue (simulation)')); }\nif (!L.length) ligne('passage_sans_evenement', null, 'rien à traiter dans ce lot');\nreturn [{ json: env('lib-journaliser@1', 'j:' + E.cle_idempotence, {}, { entrees: L.slice(0, 200) }) }];"
+      }
+    },
+    {
+      "id": "89c39682-75be-494f-99d8-84d68eee139c",
+      "name": "Appeler lib-rediger-message",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "xfRUnkwOKSwQezVb"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Appelle lib-rediger-message (bibliothèque partagée, 035-003 à 035-005), sans la réécrire. En mode A, sa sortie est épinglée dans l'essai de la chaîne tant que lib-rediger-message n'a pas ent-exemple-redaction dans ses callerIds (preuve 035-007).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "6b199a42-2edc-4951-8348-cc80cae69d46",
+      "name": "Préparer la porte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Rédaction : AUCUN brouillon ne va à l'exécution sans passer la porte de conformité (lib-porte-conformite, veto ; rang 1). La cible vient\n// de la demande (carte en mode A) ; un brouillon hors schéma n'existe pas (statut « erreur » de la rédaction) et s'arrête ici.\nconst AGENT = 'ent-exemple-redaction';\nconst E = $(\"Contrat d'entrée\").first().json.enveloppe;\nconst C = E.config, D = E.donnees;\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: E.organisation_id, simulation: E.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(E.trace.execution_parent), declencheur: AGENT, tentative: E.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst neuf = (s) => !!(s && s.contrat === 'lib-dedoublonner@1' && s.resultat && s.resultat.deja_fait === false);\nconst VIDE = [{ json: { vide: true } }];\nconst parCle = {}; for (const d of D.demandes) parCle[d.action_cle] = d;\nconst s = [];\nfor (const { json: b } of $input.all()) { const r = b && b.contrat === 'lib-rediger-message@1' && b.statut === 'ok' ? b.resultat : null; if (!r) continue; const d = parCle[r.action_cle]; if (!d) continue;\n  s.push({ json: env('lib-porte-conformite@1', d.action_cle, C.porte, { action: { type_action: d.type_action, outil: d.outil, prix_sources: true, cible: d.cible, sans_relecture: d.cible === 'pilote' }, message: { canal: r.canal, objet: r.objet, texte: r.texte }, destinataire: d.destinataire, faits: d.faits, maintenant: D.maintenant, compteurs: D.compteurs }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "63365661-96de-4fa7-83e7-4aa5f9661cf6",
+      "name": "Rien à contrôler ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        -120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "riencontrler",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape, on passe au journal. Faux : on appelle le gabarit."
+    },
+    {
+      "id": "57a3c2ac-e76f-4bb8-8169-d851bfe18f93",
+      "name": "Appeler lib-porte-conformite",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "8c8vkUeSkfgB5FAM"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Appelle lib-porte-conformite (bibliothèque partagée, 035-003 à 035-005), sans la réécrire. En mode A, sa sortie est épinglée dans l'essai de la chaîne tant que lib-porte-conformite n'a pas ent-exemple-redaction dans ses callerIds (preuve 035-007).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "722d01cd-ec22-49f1-a56c-bfed6a7402a2",
+      "name": "Préparer l'exécution",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Rédaction : SEUL ce que la porte laisse passer va à lib-executer, qui relit les interrupteurs juste avant l'effet (épinglés en mode A) et\n// ne PRÉVOIT qu'une carte (niveau 2 au plus). Un refus s'arrête ici, au journal : un geste « jamais en automatique » n'atteint pas l'exécution.\nconst AGENT = 'ent-exemple-redaction';\nconst E = $(\"Contrat d'entrée\").first().json.enveloppe;\nconst C = E.config, D = E.donnees;\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: E.organisation_id, simulation: E.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(E.trace.execution_parent), declencheur: AGENT, tentative: E.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst neuf = (s) => !!(s && s.contrat === 'lib-dedoublonner@1' && s.resultat && s.resultat.deja_fait === false);\nconst VIDE = [{ json: { vide: true } }];\nconst parCle = {}; for (const d of D.demandes) parCle[d.action_cle] = d;\nconst brouillons = {}; for (const b of sorties('Appeler lib-rediger-message')) if (b && b.resultat) brouillons[b.resultat.action_cle] = b.resultat;\nconst s = [];\nfor (const { json: p } of $input.all()) { if (!p || p.contrat !== 'lib-porte-conformite@1' || !p.resultat || p.resultat.verdict !== 'passe') continue;\n  const d = parCle[p.cle_idempotence], b = brouillons[p.cle_idempotence]; if (!d || !b) continue;\n  const charge = { type_action: d.type_action, objet_type: d.objet_type, objet_id: d.objet_id, canal: d.canal, brouillon: { objet: b.objet, texte: b.texte } }; if (d.palier) charge.palier = d.palier;\n  s.push({ json: env('lib-executer@1', d.action_cle, { niveau_max: C.niveau_max }, { verdict: 'passe', cible: p.resultat.cible, cle_idempotence: d.action_cle, charge: charge, interrupteurs: D.interrupteurs, cles_existantes: D.cles_existantes }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "ebb9658f-a767-4de6-b7b9-38bea198651b",
+      "name": "Rien à exécuter ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2640,
+        -120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienexcuter",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape, on passe au journal. Faux : on appelle le gabarit."
+    },
+    {
+      "id": "79056199-ab52-4f0c-b455-e12cd590c930",
+      "name": "Appeler lib-executer",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ADX5mPWqIvq1LGs6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Appelle lib-executer (bibliothèque partagée, 035-003 à 035-005), sans la réécrire. En mode A, sa sortie est épinglée dans l'essai de la chaîne tant que lib-executer n'a pas ent-exemple-redaction dans ses callerIds (preuve 035-007).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "11ce458e-ff4c-4062-bf3f-0110c97c0cb8",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        960,
+        120
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 035-007). Rien n'a été écrit ni envoyé."
+      },
+      "notes": "Mode A : aucun effet réel n'est branché. Hors simulation, la chaîne s'arrête ici, avant tout appel."
+    },
+    {
+      "id": "97d6745b-4396-43fa-9a9c-b25f21e7b0f3",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3840,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de ent-exemple-redaction@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'ent-exemple-redaction@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "097a32d2-7a52-4532-ad65-e0f8fdd2e6b2",
+      "name": "Appeler lib-journaliser",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3360,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "NQg0KDXIa5hhzAvq"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Appelle lib-journaliser (035-003) : une ligne par décision, en simulation.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f38508f5-ecd5-4179-b7aa-9b57e40b0731",
+      "name": "Assembler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Rédaction : la sortie. Ce qui est « sur le bureau » du gérant (cartes prévues), ce que la porte a arrêté, et pourquoi.\nconst AGENT = 'ent-exemple-redaction';\nconst E = $(\"Contrat d'entrée\").first().json.enveloppe;\nconst C = E.config, D = E.donnees;\nconst env = (contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: E.organisation_id, simulation: E.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(E.trace.execution_parent), declencheur: AGENT, tentative: E.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst neuf = (s) => !!(s && s.contrat === 'lib-dedoublonner@1' && s.resultat && s.resultat.deja_fait === false);\nconst VIDE = [{ json: { vide: true } }];\nconst APPELS = [\"Appeler lib-rediger-message\",\"Appeler lib-porte-conformite\",\"Appeler lib-executer\",\"Appeler lib-journaliser\"];\nconst erreurs = [], effets = [];\nfor (const nom of APPELS) for (const s of sorties(nom)) {\n  if (!s || typeof s.contrat !== 'string') { erreurs.push(nom + ' : appel en échec'); continue; }\n  if (s.statut === 'erreur' || s.statut === 'rejete') erreurs.push(nom + ' : ' + s.statut + (Array.isArray(s.erreurs) && s.erreurs[0] ? ' (' + String(s.erreurs[0]).slice(0, 120) + ')' : ''));\n  if (Array.isArray(s.effets_prevus)) for (const e of s.effets_prevus) effets.push(e);\n  if (Array.isArray(s.effets_faits) && s.effets_faits.length) erreurs.push(nom + ' : effet fait en simulation');\n}\nconst jr = sorties('Appeler lib-journaliser')[0];\nconst journal = jr && Array.isArray(jr.journal) ? jr.journal : [];\nconst porte = sorties('Appeler lib-porte-conformite').filter((s) => s && s.resultat);\nconst exe = sorties('Appeler lib-executer').filter((s) => s && s.resultat);\nconst resultat = { demandes_recues: D.demandes.length, brouillons: sorties('Appeler lib-rediger-message').filter((s) => s && s.resultat).length,\n  refus_porte: porte.filter((s) => s.resultat.verdict !== 'passe').map((s) => ({ action_cle: s.cle_idempotence, motifs: s.resultat.motifs })),\n  cartes_prevues: exe.filter((s) => s.statut === 'ok' && s.resultat.deja_fait === false && s.resultat.prevu).map((s) => s.cle_idempotence),\n  deja_faits: exe.filter((s) => s.resultat.deja_fait === true).map((s) => s.cle_idempotence),\n  bloques: exe.filter((s) => s.statut !== 'ok' && s.resultat.deja_fait !== true).map((s) => ({ action_cle: s.cle_idempotence, motif: s.resultat.motif || s.statut })) };\nconst statut = erreurs.length ? 'erreur' : (resultat.demandes_recues === 0) ? 'rien_a_faire' : 'ok';\nreturn [{ json: { enveloppe: E, statut: statut, resultat: resultat, effets_prevus: effets.slice(0, 1000), effets_faits: [], journal: journal, erreurs: erreurs.slice(0, 20) } }];"
+      }
+    },
+    {
+      "id": "a8b849ff-7a87-4fd1-830d-8b6b671b84e6",
+      "name": "Sticky Note 81d4f6d0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## ent-exemple-redaction (035-007)\nAgent Rédaction (rang 2, action) et porte de Conformité (rang 1, veto). Brouillon à partir des seuls faits, modèle épinglé ; rien ne va à l'exécution sans la porte ; carte prévue seulement.\nContrat ent-exemple-redaction@1 (enveloppe@1). Appelée par ent-exemple-parent seulement.\nINACTIF, jamais publié, en simulation (mode A) : rien n'est lu ni écrit en base, rien n'est envoyé, aucun modèle n'est appelé.\nJuge : scripts/demo-entreprise-qa.mjs",
+        "color": 4,
+        "width": 640,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 035-007), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

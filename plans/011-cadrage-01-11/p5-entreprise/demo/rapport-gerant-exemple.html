@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Exemple. Bâti-Démo — rapport du gérant (démonstration à blanc)</title>
+<style>
+  /* Jetons du socle app/base.css (skill presti-design) : fond sombre froid, accent corail, gris froid. Aucune police chargée du réseau. */
+  :root{--paper:#0A0C11;--surface:#13161F;--surface-2:#1A1E29;--ink:#EDEFF4;--ink-soft:#C3C8D4;--muted:#8B93A2;--line:rgba(255,255,255,.09);
+    --accent:#D97757;--accent-2:#E8946F;--accent-tint:rgba(217,119,87,.14);--ok:#38CD8C;--warn:#E4B45A;--crit:#F0776A;--radius:14px}
+  *{box-sizing:border-box}
+  html{background:var(--paper);color:var(--ink)}
+  body{margin:0;font:16px/1.55 "Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+  main{max-width:880px;margin:0 auto;padding:40px 22px 64px}
+  h1,h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.01em;line-height:1.15;margin:0}
+  h1{font-size:clamp(26px,4vw,36px)}
+  h2{font-size:20px;margin-bottom:12px}
+  .sur{color:var(--accent-2);font:600 13px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .bandeau{margin:18px 0 28px;padding:12px 14px;border:1px solid var(--accent);background:var(--accent-tint);border-radius:var(--radius);color:var(--ink-soft)}
+  .trois{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
+  .case{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .case b{display:block;font:700 34px/1 "JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;margin:6px 0 4px}
+  .case span{color:var(--muted);font-size:14px}
+  .case.bureau b{color:var(--accent-2)}
+  section{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+  ul{list-style:none;margin:0;padding:0}
+  li{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;padding:9px 0;border-top:1px solid var(--line)}
+  li:first-child{border-top:0}
+  li .n{color:var(--muted);font-size:14px}
+  .ligne{color:var(--ink-soft);margin:6px 0}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:9px 8px;border-top:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  td.base{color:var(--warn)}
+  .tableau{overflow-x:auto}
+  footer{color:var(--muted);font-size:13px;margin-top:24px}
+  code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12.5px;color:var(--ink-soft)}
+  @media (max-width:640px){.trois{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="sur">Exemple. Rapport du gérant</p>
+    <h1>Exemple. Bâti-Démo : où en est-on ce mardi 3 novembre 2026, 9 h 30</h1>
+    <p class="bandeau" role="note">Exemple. Démonstration à blanc (mode A) sur une entreprise fictive : rien n’a été envoyé, rien n’a été écrit, aucun modèle n’a été appelé. Chaque nom, numéro et texte est fabriqué et porte « Exemple. ». Ce rapport ne contient aucun chiffre de gain : seulement des comptes du passage.</p>
+  </header>
+
+  <div class="trois" aria-label="Exemple. Le passage en trois chiffres">
+    <div class="case"><span>Exemple. Déjà traité seul</span><b data-compte="fait_seul">0</b><span>en mode à blanc, rien ne part seul</span></div>
+    <div class="case bureau"><span>Exemple. Sur votre bureau, solution prête</span><b data-compte="bureau">11</b><span>cartes à valider d’un clic</span></div>
+    <div class="case"><span>Exemple. À reprendre</span><b data-compte="reprendre">1</b><span>arrêté par la porte de conformité</span></div>
+  </div>
+
+  <section aria-labelledby="bureau">
+    <h2 id="bureau">Exemple. Sur votre bureau, solution prête</h2>
+    <ul>
+      <li><span class="t">Exemple. Relance de la facture FAC-2026-007, palier 3</span><span class="n">brouillon prêt, à relire et valider</span></li>
+      <li><span class="t">Exemple. Relance de la facture FAC-2026-008, palier 3</span><span class="n">brouillon prêt, à relire et valider</span></li>
+      <li><span class="t">Exemple. Relance de la facture FAC-2026-009, palier 2</span><span class="n">brouillon prêt, à relire et valider</span></li>
+      <li><span class="t">Exemple. Relance de la conversation …0125 par SMS, palier 3</span><span class="n">brouillon prêt, à relire et valider</span></li>
+      <li><span class="t">Exemple. Réponse à la demande …0101 (Exemple. Salle de bain)</span><span class="n">à valider (mode à blanc : rien ne part seul)</span></li>
+      <li><span class="t">Exemple. Réponse à la demande …0103 (non renseignée)</span><span class="n">même contact qu’une demande déjà reçue : à vérifier</span></li>
+      <li><span class="t">Exemple. Réponse à la demande …0106 (Exemple. Toiture)</span><span class="n">sujet sensible : à traiter à la main</span></li>
+      <li><span class="t">Exemple. Réponse à la demande …0111 (Exemple. Dépannage électrique)</span><span class="n">à valider (mode à blanc : rien ne part seul)</span></li>
+      <li><span class="t">Exemple. Réponse à la demande …0116 (Exemple. Cuisine)</span><span class="n">à valider (mode à blanc : rien ne part seul)</span></li>
+      <li><span class="t">Exemple. Réponse à la demande …0121 (Exemple. Salle de bain)</span><span class="n">sujet sensible : à traiter à la main</span></li>
+      <li><span class="t">Exemple. Réponse à la demande …0126 (Exemple. Toiture)</span><span class="n">à valider (mode à blanc : rien ne part seul)</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="reprendre">
+    <h2 id="reprendre">Exemple. À reprendre</h2>
+    <ul>
+      <li><span class="t">Exemple. Relance du devis DEV-2026-012, palier 3</span><span class="n">arrêté : un prix cité n’est pas dans la base</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="ecartees">
+    <h2 id="ecartees">Exemple. Volontairement laissé de côté</h2>
+    <ul>
+      <li><span class="t">Exemple. Facture …0510</span><span class="n">pas encore d’échéance</span></li>
+      <li><span class="t">Exemple. Devis …0311</span><span class="n">relancé il y a moins de 3 jours par un autre canal</span></li>
+      <li><span class="t">Exemple. Conversation …0104</span><span class="n">le client a répondu STOP</span></li>
+      <li><span class="t">Exemple. Conversation …0106</span><span class="n">litige ou sujet sensible : à traiter à la main</span></li>
+      <li><span class="t">Exemple. Conversation …0121</span><span class="n">litige ou sujet sensible : à traiter à la main</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="alertes">
+    <h2 id="alertes">Exemple. Alertes internes</h2>
+    <ul>
+      <li><span class="t">Exemple. Des demandes attendent depuis plus d’une heure</span><span class="n">prévenu : l’associé</span></li>
+      <li><span class="t">Exemple. Une facture arrive à échéance sous 3 jours</span><span class="n">prévenu : l’administratif</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="semaine">
+    <h2 id="semaine">Exemple. La semaine passée, du 26 octobre au 1er novembre 2026</h2>
+    <p class="ligne">Exemple. Le rapport du lundi, tel que l’agent Reporting l’a rendu : il compte les passages à blanc de la semaine passée, pas ceux de ce matin.</p>
+    <p class="ligne">Exemple. Rapport de la semaine du 26 octobre 2026 au 1er novembre 2026</p>
+    <p class="ligne">Exemple. Déjà traité : 0 ; sur votre bureau, solution prête : 4 ; à reprendre : 1 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026)</p>
+    <p class="ligne">Exemple. Actions préparées : 7 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; aucune base de départ : rien n’est comparé</p>
+    <p class="ligne">Exemple. Relances préparées : 6 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; aucune base de départ : rien n’est comparé</p>
+    <p class="ligne">Exemple. Sur votre bureau, solution prête : 4 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; aucune base de départ : rien n’est comparé</p>
+    <p class="ligne">Exemple. À reprendre (échecs) : 1 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; aucune base de départ : rien n’est comparé</p>
+    <p class="ligne">Exemple. Arrêtés par la porte de conformité : 1 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; aucune base de départ : rien n’est comparé</p>
+  </section>
+
+  <section aria-labelledby="kpi">
+    <h2 id="kpi">Exemple. Les indicateurs suivis</h2>
+    <div class="tableau">
+    <table>
+      <thead><tr><th scope="col">Indicateur</th><th scope="col">Base de départ</th><th scope="col">Fréquence</th></tr></thead>
+      <tbody>
+        <tr data-kpi="K1"><td>Exemple. K1 · Délai de première réponse</td><td class="base" data-base>Inconnue, à mesurer</td><td>hebdomadaire</td></tr>
+        <tr data-kpi="K2"><td>Exemple. K2 · Qualification et transformation</td><td class="base" data-base>Inconnue, à mesurer</td><td>hebdomadaire</td></tr>
+        <tr data-kpi="K3"><td>Exemple. K3 · Devis relancés puis signés</td><td class="base" data-base>Inconnue, à mesurer</td><td>mensuelle</td></tr>
+        <tr data-kpi="K4"><td>Exemple. K4 · Délai de paiement, impayés récupérés</td><td class="base" data-base>Inconnue, à mesurer</td><td>mensuelle</td></tr>
+        <tr data-kpi="K5"><td>Exemple. K5 · Temps administratif (toujours déclaré)</td><td class="base" data-base>Inconnue, à mesurer</td><td>mensuelle</td></tr>
+        <tr data-kpi="K6"><td>Exemple. K6 · Qualité des agents</td><td class="base" data-base>Inconnue, à mesurer</td><td>hebdomadaire</td></tr>
+        <tr data-kpi="K7"><td>Exemple. K7 · Incidents (doublons, gestes interdits, disjoncteurs)</td><td class="base" data-base>Inconnue, à mesurer</td><td>hebdomadaire</td></tr>
+        <tr data-kpi="K8"><td>Exemple. K8 · Coût mensuel réel</td><td class="base" data-base>Inconnue, à mesurer</td><td>mensuelle</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="ligne">Exemple. Aucune cible n’est proposée avant d’avoir mesuré la base de départ chez vous, pendant quatre semaines.</p>
+  </section>
+
+  <footer>
+    <p>Exemple. Fabriqué à partir des passages à blanc dans n8n : bout en bout <code>#461</code> (48 effets prévus, 0 fait), chaînes <code>#451</code> <code>#450</code> <code>#452</code> <code>#447</code> <code>#448</code>. Tâche 035-007.</p>
+  </footer>
+</main>
+</body>
+</html>
