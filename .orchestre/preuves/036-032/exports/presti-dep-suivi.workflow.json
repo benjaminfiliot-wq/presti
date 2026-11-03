@@ -1,0 +1,2655 @@
+{
+  "id": "jo8eQMEwiB9wCbKN",
+  "name": "presti-dep-suivi",
+  "active": true,
+  "isArchived": false,
+  "versionId": "450d3c52-12c8-4bc1-a5d4-20291075ebb7",
+  "activeVersionId": "8d7de560-412b-497f-ba1c-db34f3a99a23",
+  "triggerCount": 0,
+  "nodeCount": 39,
+  "createdAt": "2026-11-03T10:16:48.485Z",
+  "updatedAt": "2026-11-03T18:37:12.955Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 600,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "596OC5mL2aMBq6SD,95LajsFcVM4AALac",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "scopes": [
+    "execution:delete",
+    "execution:list",
+    "execution:read",
+    "execution:reveal",
+    "workflow:create",
+    "workflow:delete",
+    "workflow:disableRedaction",
+    "workflow:enableRedaction",
+    "workflow:execute",
+    "workflow:execute-chat",
+    "workflow:export",
+    "workflow:import",
+    "workflow:list",
+    "workflow:move",
+    "workflow:publish",
+    "workflow:read",
+    "workflow:share",
+    "workflow:unpublish",
+    "workflow:unshare",
+    "workflow:update"
+  ],
+  "canExecute": true,
+  "connections": {
+    "Appelé par le Cerveau": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Lire le dossier de chaque relance (simulation : dans l'enveloppe)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le dossier de chaque relance (simulation : dans l'enveloppe)": {
+      "main": [
+        [
+          {
+            "node": "Préparer le contrôle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le contrôle": {
+      "main": [
+        [
+          {
+            "node": "Rien à contrôler ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à contrôler ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer la relance",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-controler-conflit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la relance": {
+      "main": [
+        [
+          {
+            "node": "Rien à relancer ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à relancer ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer la décision",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-relancer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la décision": {
+      "main": [
+        [
+          {
+            "node": "Aucun devis à décider ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aucun devis à décider ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer la rédaction",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-decider",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la rédaction": {
+      "main": [
+        [
+          {
+            "node": "Rien à rédiger ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à rédiger ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer la porte",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-rediger-message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la porte": {
+      "main": [
+        [
+          {
+            "node": "Rien à passer à la porte ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à passer à la porte ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer l'exécution",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-porte-conformite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer l'exécution": {
+      "main": [
+        [
+          {
+            "node": "Rien à exécuter ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à exécuter ?": {
+      "main": [
+        [
+          {
+            "node": "Composer la note, le lot et le registre",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-executer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-controler-conflit": {
+      "main": [
+        [
+          {
+            "node": "Préparer la relance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-relancer": {
+      "main": [
+        [
+          {
+            "node": "Préparer la décision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-decider": {
+      "main": [
+        [
+          {
+            "node": "Préparer la rédaction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-rediger-message": {
+      "main": [
+        [
+          {
+            "node": "Préparer la porte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-porte-conformite": {
+      "main": [
+        [
+          {
+            "node": "Préparer l'exécution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-executer": {
+      "main": [
+        [
+          {
+            "node": "Composer la note, le lot et le registre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Composer la note, le lot et le registre": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le journal": {
+      "main": [
+        [
+          {
+            "node": "Rien à journaliser ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à journaliser ?": {
+      "main": [
+        [
+          {
+            "node": "Assembler",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-journaliser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-journaliser": {
+      "main": [
+        [
+          {
+            "node": "Assembler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assembler": {
+      "main": [
+        [
+          {
+            "node": "Dossier du chef",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dossier du chef": {
+      "main": [
+        [
+          {
+            "node": "Élément vide pour les spécialistes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Élément vide pour les spécialistes": {
+      "main": [
+        [
+          {
+            "node": "Chef du département suivi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chef du département suivi": {
+      "main": [
+        [
+          {
+            "node": "Revalider le chef",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revalider le chef": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Sonnet 5.5 (chef)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Chef du département suivi",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sortie stricte du chef": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Chef du département suivi",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Spécialiste : contrôleur de conflit": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chef du département suivi",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Spécialiste : relanceur": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chef du département suivi",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "17534092-efc8-45a1-b45c-a267e580a0a4",
+      "name": "Appelé par le Cerveau",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        80
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "2c58c7f4-8af3-43b0-934e-6a5a43fe4115",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de presti-dep-suivi@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'presti-dep-suivi@1';\nconst SCHEMA = {\"sans_contact\":false,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"nom_artisan\",\"offre\",\"capacites\",\"pilote\",\"parties_depuis_24h\",\"plafond_jour\",\"interrupteur_general\",\"interrupteur_departement\",\"pause_generale\",\"mots_escalade_artisan\",\"fournisseurs\",\"horaires\",\"paliers_conversation_jours\",\"paliers_devis_jours\",\"jour_du_lot\",\"ton\",\"signature\",\"interet\"],\"properties\":{\"nom_artisan\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":70,\"pattern\":\"^[^@]*$\"},\"offre\":{\"enum\":[\"studio\",\"signature\",\"essentiel\",\"essai\"]},\"capacites\":{\"type\":\"array\",\"maxItems\":60,\"items\":{\"type\":\"string\",\"pattern\":\"^[a-z_.]{2,40}$\"}},\"pilote\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"drapeau\",\"actif\",\"types\"],\"properties\":{\"drapeau\":{\"type\":\"boolean\"},\"actif\":{\"type\":\"boolean\"},\"types\":{\"type\":\"object\"}}},\"parties_depuis_24h\":{\"type\":\"integer\",\"minimum\":0},\"plafond_jour\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":20},\"interrupteur_general\":{\"type\":\"boolean\"},\"interrupteur_departement\":{\"type\":\"boolean\"},\"pause_generale\":{\"type\":[\"boolean\",\"null\"]},\"mots_escalade_artisan\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"string\",\"maxLength\":60}},\"fournisseurs\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"string\",\"maxLength\":60}},\"horaires\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"jours_permis\",\"heures_permises\"],\"properties\":{\"jours_permis\":{\"type\":\"array\",\"maxItems\":7,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"heures_permises\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"debut\",\"fin\"],\"properties\":{\"debut\":{\"type\":\"string\",\"pattern\":\"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"},\"fin\":{\"type\":\"string\",\"pattern\":\"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}}}}},\"paliers_conversation_jours\":{\"type\":\"array\",\"maxItems\":5,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":365}},\"paliers_devis_jours\":{\"type\":\"array\",\"maxItems\":5,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":365}},\"jour_du_lot\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7},\"ton\":{\"type\":\"string\",\"maxLength\":300,\"pattern\":\"^[^@]*$\"},\"signature\":{\"type\":\"string\",\"maxLength\":120,\"pattern\":\"^[^@]*$\"},\"interet\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"poids\",\"seuils\"],\"properties\":{\"poids\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"consulte\",\"question_posee\",\"expire_bientot\",\"relance_sans_reponse\"],\"properties\":{\"consulte\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100},\"question_posee\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100},\"expire_bientot\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100},\"relance_sans_reponse\":{\"type\":\"integer\",\"minimum\":-100,\"maximum\":0}}},\"seuils\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"chaud\",\"tiede\"],\"properties\":{\"chaud\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"tiede\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":99}}}}}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"evenements\",\"maintenant\",\"cles_existantes\"],\"properties\":{\"evenements\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"artisan_id\",\"type\",\"cle\",\"donnees\"],\"properties\":{\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"type\":{\"enum\":[\"relance_due\"]},\"cle\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":60,\"pattern\":\"^[A-Za-z0-9_:.-]+$\"},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"objet_type\",\"objet_id\",\"dossier_id\",\"statut\",\"depuis_le\",\"paliers_envoyes\",\"main_prise\",\"exclu\",\"carte\",\"ecartee_le\",\"stop\",\"historique\",\"messages_entrants\",\"canal\",\"destinataire\",\"faits\",\"signaux\"],\"properties\":{\"objet_type\":{\"enum\":[\"devis\",\"conversation\"]},\"objet_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"dossier_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"statut\":{\"enum\":[\"envoye\",\"brouillon\",\"accepte\",\"refuse\",\"expire\",\"repondu\",\"nouveau\",\"en_discussion\",\"gagne\",\"perdu\"]},\"depuis_le\":{\"type\":\"string\",\"format\":\"date-time\"},\"paliers_envoyes\":{\"type\":\"array\",\"maxItems\":10,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":10}},\"main_prise\":{\"type\":[\"boolean\",\"null\"]},\"exclu\":{\"type\":[\"boolean\",\"null\"]},\"carte\":{\"enum\":[\"aucune\",\"en_attente\",\"en_cours\",null]},\"ecartee_le\":{\"type\":[\"string\",\"null\"],\"maxLength\":40},\"stop\":{\"type\":[\"boolean\",\"null\"]},\"historique\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"ok\"],\"properties\":{\"ok\":{\"type\":\"boolean\"},\"erreur\":{\"type\":\"string\",\"maxLength\":200},\"ignorees\":{\"type\":\"array\",\"maxItems\":10,\"items\":{\"type\":\"string\",\"maxLength\":40}},\"traces\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"chemin\",\"le\"],\"properties\":{\"chemin\":{\"enum\":[\"assistant\",\"crm\",\"impayes\",\"conversation\"]},\"le\":{\"type\":\"string\",\"maxLength\":40}}}}}},\"messages_entrants\":{\"type\":\"array\",\"maxItems\":12,\"items\":{\"type\":\"string\",\"maxLength\":600}},\"canal\":{\"enum\":[\"email\",\"sms\",\"aucun\"]},\"destinataire\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"opposition\",\"consentement_sms\"],\"properties\":{\"opposition\":{\"type\":[\"boolean\",\"null\"]},\"consentement_sms\":{\"type\":[\"boolean\",\"null\"]}}},\"faits\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"numero\",\"objet\",\"client\",\"montant_ttc_centimes\",\"emis_le\"],\"properties\":{\"numero\":{\"type\":[\"string\",\"null\"],\"maxLength\":30,\"pattern\":\"^[A-Z0-9-]+$\"},\"objet\":{\"type\":[\"string\",\"null\"],\"maxLength\":120,\"pattern\":\"^[^@{}]*$\"},\"client\":{\"type\":[\"string\",\"null\"],\"maxLength\":70,\"pattern\":\"^[^@]*$\"},\"montant_ttc_centimes\":{\"type\":[\"integer\",\"null\"],\"minimum\":0},\"emis_le\":{\"type\":[\"string\",\"null\"],\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}},\"signaux\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"consulte\",\"question_posee\",\"expire_dans_jours\",\"relances_sans_reponse\"],\"properties\":{\"consulte\":{\"type\":[\"boolean\",\"null\"]},\"question_posee\":{\"type\":\"boolean\"},\"expire_dans_jours\":{\"type\":[\"integer\",\"null\"],\"minimum\":-3650,\"maximum\":3650},\"relances_sans_reponse\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10}}}}}}}},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"},\"cles_existantes\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"maxLength\":80}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: presti-dep-suivi@1"
+    },
+    {
+      "id": "1195ef03-cc1b-4766-8e2f-f3830220813a",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "entreconforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "292c51a7-61fc-4eb5-a46c-d74c8bff8320",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de presti-dep-suivi@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'presti-dep-suivi@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "dd711db7-1c97-4390-9d37-ee82b0a262aa",
+      "name": "Sticky Note f356f473",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -16
+      ],
+      "parameters": {
+        "content": "## presti-dep-suivi (036-004)\nDépartement 3, Suivi et relances (A12, A19, A20) : relances de CONVERSATION (J+2, J+5, J+10) et de DEVIS, carte de lot du lundi, note d'intérêt calculée par le code.\nContrôleur de conflit (lib-controler-conflit) → palier (lib-relancer, registre de 3 jours) → décision d'un devis (lib-decider) → texte (lib-rediger-message, modèle ÉPINGLÉ) → porte de conformité → exécution (lib-executer) → note, carte de lot, registre → journal.\nStudio : tout en carte (une par conversation, UNE carte de lot le lundi pour les devis), jamais un envoi. Signature : la conversation part seule avec relances.auto ; le devis par le pilote si tout le permet, sinon carte de lot.\nCe que n8n envoie est écrit dans le registre commun (assistant_actions, messages) APRÈS l'envoi : jamais deux relances en 3 jours, tous chemins confondus.\nContrat presti-dep-suivi@1 (plans/011-cadrage-01-11/p6-signature/contrats/suivi.json). INACTIF, jamais publié, en simulation. Juge : scripts/suivi-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 224
+      }
+    },
+    {
+      "id": "0f81ec0d-578c-4543-9ed9-40efee72cada",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "portesimulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché dans ce lot."
+    },
+    {
+      "id": "9cebd38f-07b8-4148-a8d0-c2dbde504003",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        896,
+        240
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (tâche 036-004). Rien n'a été lu, écrit ni envoyé."
+      },
+      "notes": "Simulation : aucun effet réel n'est branché. Hors simulation, le travail s'arrête ici, avant tout appel."
+    },
+    {
+      "id": "860d33d8-a300-416c-b5ab-d448b734e871",
+      "name": "Lire le dossier de chaque relance (simulation : dans l'enveloppe)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        896,
+        80
+      ],
+      "parameters": {},
+      "notes": "Simulation : un emplacement, les objets sont dans l’enveloppe (événement relance_due). Réel : ces lectures, GET, select= limité, TOUJOURS filtrées sur le compte (« Supabase account » passe outre la RLS) :\nrequete: GET devis?select=id,numero,objet,client_nom,total_ttc,statut,envoye_le,validite_jours,lead_id&artisan_id=eq.<compte>&statut=eq.envoye&limit=200\nrequete: GET leads?select=id,statut,prise_en_main&artisan_id=eq.<compte>&statut=eq.repondu&limit=200\nrequete: GET relances?select=id,lead_id,rang,planifiee_le,envoyee&envoyee=eq.false&lead_id=in.(<conversations du compte>)&limit=200\nrequete: GET assistant_actions?select=objet_id,maj_le&artisan_id=eq.<compte>&outil=in.(relancer_devis,relancer_facture)&statut=eq.executee&objet_id=in.(<devis du dossier>)&limit=100\nrequete: GET crm_rappels?select=devis_id,envoye_le&artisan_id=eq.<compte>&devis_id=in.(<devis du dossier>)&envoye_le=not.is.null&limit=100\nrequete: GET relances_impayes?select=facture_id,envoyee_le&artisan_id=eq.<compte>&facture_id=in.(<factures du dossier>)&envoyee_le=not.is.null&limit=100\nrequete: GET messages?select=lead_id,sent_at,etat&lead_id=in.(<conversations du compte>)&type=eq.relance&sens=eq.out&limit=100\nrequete: GET assistant_actions?select=outil,objet_id,statut,maj_le&artisan_id=eq.<compte>&outil=eq.relancer_devis&statut=in.(en_attente,en_cours,refusee)&limit=200\nrequete: GET relances_exclusions?select=cible_id&artisan_id=eq.<compte>&limit=500\nrequete: GET messages?select=contenu&lead_id=eq.<conversation du compte>&sens=eq.in&order=sent_at.desc&limit=5"
+    },
+    {
+      "id": "57fad469-b748-4e66-b084-0ba785eb1091",
+      "name": "Préparer le contrôle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Suivi, étape 1 (A20) : AVANT tout geste, le contrôleur de conflit. Une offre sans la capacité « relances » (Essentiel, essai) n'a rien à contrôler : annulée, comme le cron. La PAUSE GÉNÉRALE (lib/agents/sortie.ts : seule la valeur exacte false ouvre la porte) est lue par le Cerveau et passée dans config.pause_generale : posée ou illisible (null), rien n'est contrôlé ni relancé, les relances restent dues. Les coordonnées des messages du client sont MASQUÉES avant de sortir du chef.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst s = OBJ.filter(({ e }) => e.config.capacites.includes('relances') && e.config.pause_generale === false).map(({ e, ev, o }) => ({ json: env(e, 'lib-controler-conflit@1', 'rc:' + ev.id, { mots_escalade_artisan: e.config.mots_escalade_artisan },\n  { objet_type: o.objet_type, objet_id: o.objet_id, dossier_id: o.dossier_id, statut: o.statut, main_prise: o.main_prise, exclu: o.exclu, carte: o.carte, ecartee_le: o.ecartee_le,\n    historique: o.historique, stop: o.stop, messages_entrants: o.messages_entrants.map((t) => t.replace(MAIL, '[coordonnée]').replace(TEL, '[coordonnée]')), maintenant: e.donnees.maintenant }) }));\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "bd68ca06-afd2-4aeb-879d-c65f273fc25e",
+      "name": "Rien à contrôler ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "riencontrler",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "717158aa-86e5-4d64-acd3-a7a3ae1ce624",
+      "name": "Appeler lib-controler-conflit",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "F2son8oGwifPETg3"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le contrôleur de conflit (036-004). En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "cbdf54f7-3af7-4805-a903-870943a2aea9",
+      "name": "Préparer la relance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Suivi, étape 2 : le palier atteint et non envoyé, le registre de 3 jours, le stop, les horaires (lib-relancer, 035-005). Seulement pour ce que le contrôleur laisse passer.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst conf = parCle('Appeler lib-controler-conflit', 'lib-controler-conflit@1');\nconst s = [];\nfor (const { e, ev, o } of OBJ) { const r = conf['rc:' + ev.id]; if (!bon(r) || r.resultat.continuer !== true) continue;\n  const config = { paliers_jours: o.objet_type === 'devis' ? e.config.paliers_devis_jours : e.config.paliers_conversation_jours, jours_permis: e.config.horaires.jours_permis, heures_permises: e.config.horaires.heures_permises };\n  if (o.objet_type === 'conversation') config.sauf = 'conversation';\n  s.push({ json: env(e, 'lib-relancer@1', 'rl:' + ev.id, config, { objet_type: o.objet_type, objet_id: o.objet_id, depuis_le: o.depuis_le, historique: o.historique, paliers_envoyes: o.paliers_envoyes, stop: o.stop, escalade: r.resultat.sensible === true, maintenant: e.donnees.maintenant }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "9a028fb4-d321-47ce-b777-77d719d98b2b",
+      "name": "Rien à relancer ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2016,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienrelancer",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "5e1fc428-c5aa-4d68-91f0-82d90d603d89",
+      "name": "Appeler lib-relancer",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "jGM56jxeLUVXZIiM"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Palier et registre de 3 jours (035-005), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "d06829f2-5803-460d-af14-9d344051c726",
+      "name": "Préparer la décision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2464,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Suivi, étape 3 : la décision d'un DEVIS (lib-decider) : carte ou pilote. Le niveau 3 n'existe que si l'offre a le pilote (assistant.pilote, lu en base,\n// jamais un nom d'offre). Une relance de CONVERSATION ne passe pas ici : son seul interrupteur est relances.auto (lib/plans.ts, comme le cron).\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1');\nconst s = [];\nfor (const { e, ev, o } of OBJ) { const r = rel['rl:' + ev.id]; if (o.objet_type !== 'devis' || !bon(r) || r.resultat.a_relancer !== true) continue;\n  s.push({ json: env(e, 'lib-decider@1', 'd:' + ev.id, { autonomie: { niveau_max: e.config.capacites.includes('assistant.pilote') ? 3 : 2, niveau_defaut: 2, niveaux: {} }, plan: e.config.offre, pilote: e.config.pilote, parties_depuis_24h: e.config.parties_depuis_24h },\n    { objet_type: 'devis', objet_id: o.objet_id, constat: { outil: 'relancer_devis', etape: 'palier' + r.resultat.palier, escalade: false } }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "2bfbf3bf-c59b-4c06-93a3-554523c83d33",
+      "name": "Aucun devis à décider ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2688,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aucundevisdcider",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "64d19b52-2955-48ca-89f8-16701804d974",
+      "name": "Appeler lib-decider",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2912,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "hckqX1tQjIommtTH"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Carte, pilote ou rien (035-004), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "ccbb8f0c-ec29-437c-be04-765c25c5526e",
+      "name": "Préparer la rédaction",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3136,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Suivi, étape 4 : le texte (lib-rediger-message, modèle ÉPINGLÉ), à partir des seuls faits. La cible est fixée ICI :\n//   conversation : part seul SEULEMENT avec relances.auto (Signature), sinon carte ; devis : lib-decider (pilote ou carte) ;\n//   un devis dont la cible est une carte attend le LOT du lundi (config.jour_du_lot) : aucun texte n'est rédigé les autres jours.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1'), dec = parCle('Appeler lib-decider', 'lib-decider@1');\nconst s = [];\nfor (const { e, ev, o } of OBJ) { const r = rel['rl:' + ev.id]; if (!bon(r) || r.resultat.a_relancer !== true) continue;\n  let cible;\n  if (o.objet_type === 'conversation') cible = e.config.capacites.includes('relances.auto') ? 'pilote' : 'carte';\n  else { const d = dec['d:' + ev.id]; if (!bon(d) || d.resultat.action === 'rien') continue; cible = d.resultat.action === 'pilote' ? 'pilote' : 'carte'; if (cible === 'carte' && !jourDuLot(e)) continue; }\n  if (o.canal === 'aucun') continue;\n  const f = o.faits, faits = { type_relance: o.objet_type === 'devis' ? 'relance_devis' : 'relance_conversation', palier: r.resultat.palier };\n  if (o.objet_type === 'devis') { faits.numero = f.numero; faits.objet = f.objet; faits.montant_ttc_centimes = f.montant_ttc_centimes; faits.emis_le = f.emis_le; }\n  s.push({ json: env(e, 'lib-rediger-message@1', 'rm:' + ev.id, { canal: o.canal === 'sms' ? 'sms' : 'email', ton: e.config.ton, signature: e.config.signature, nom_artisan: e.config.nom_artisan, mention_ia: cible === 'pilote' },\n    { action_cle: r.resultat.cle_idempotence, faits: faits }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "10e14de9-7adb-4c8c-ba4c-ec13f512f6b1",
+      "name": "Rien à rédiger ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3360,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienrdiger",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "36249bf2-5c80-4568-b7ee-fb73763e8806",
+      "name": "Appeler lib-rediger-message",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3584,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "xfRUnkwOKSwQezVb"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le texte, à partir des seuls faits ; modèle ÉPINGLÉ (035-005), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "fe37bedb-7c59-4601-befb-6ff23f9eaf69",
+      "name": "Préparer la porte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3808,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Suivi, étape 5 : la porte de conformité (lib-porte-conformite, veto) avant TOUT effet : aucun prix, date, créneau ou fournisseur inventé ; une lecture illisible vaut refus.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1'), red = parCle('Appeler lib-rediger-message', 'lib-rediger-message@1'), dec = parCle('Appeler lib-decider', 'lib-decider@1');\nconst s = [];\nfor (const { e, ev, o } of OBJ) { const b = red['rm:' + ev.id], r = rel['rl:' + ev.id]; if (!bon(b) || !bon(r)) continue;\n  const devis = o.objet_type === 'devis', cible = devis ? (bon(dec['d:' + ev.id]) && dec['d:' + ev.id].resultat.action === 'pilote' ? 'pilote' : 'carte') : (e.config.capacites.includes('relances.auto') ? 'pilote' : 'carte');\n  const f = o.faits, faits = { type_relance: devis ? 'relance_devis' : 'relance_conversation', palier: r.resultat.palier };\n  if (devis) { faits.numero = f.numero; faits.objet = f.objet; faits.montant_ttc_centimes = f.montant_ttc_centimes; faits.emis_le = f.emis_le; }\n  s.push({ json: env(e, 'lib-porte-conformite@1', 'p:' + ev.id, { jamais_auto: [], regles_metier: { fournisseurs: e.config.fournisseurs, mots_escalade_artisan: e.config.mots_escalade_artisan, jours_permis: e.config.horaires.jours_permis, heures_permises: e.config.horaires.heures_permises }, plafond_jour: e.config.plafond_jour },\n    { action: { type_action: faits.type_relance, outil: devis ? 'relancer_devis' : 'relancer_conversation', prix_sources: true, cible: cible, sans_relecture: cible === 'pilote' },\n      message: { canal: b.resultat.canal, objet: b.resultat.objet, texte: b.resultat.texte }, destinataire: { opposition: o.destinataire.opposition, consentement_sms: o.destinataire.consentement_sms, escalade: false },\n      faits: faits, maintenant: e.donnees.maintenant, compteurs: { envoyes_aujourdhui: e.config.parties_depuis_24h } }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "1483fa2b-d6a7-4a5a-860b-da6afe1155f0",
+      "name": "Rien à passer à la porte ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4032,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienpasserlaporte",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "c4eefe2c-a57a-41b1-8766-90cf23ad2c99",
+      "name": "Appeler lib-porte-conformite",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4256,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "8c8vkUeSkfgB5FAM"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le veto (035-005), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "8d06f84b-9b2b-42da-9661-f72e7a63a2ce",
+      "name": "Préparer l'exécution",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4480,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Suivi, étape 6 : SEUL ce que la porte laisse passer va à lib-executer (relit les interrupteurs juste avant l'effet et les clés déjà en base). Un devis dont la cible est\n// une carte NE passe PAS ici : il entre dans la carte de lot du lundi (étape 7), qui a sa propre clé.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1'), red = parCle('Appeler lib-rediger-message', 'lib-rediger-message@1'), dec = parCle('Appeler lib-decider', 'lib-decider@1'), porte = parCle('Appeler lib-porte-conformite', 'lib-porte-conformite@1');\nconst s = [];\nfor (const { e, ev, o } of OBJ) { const p = porte['p:' + ev.id], r = rel['rl:' + ev.id], b = red['rm:' + ev.id]; if (!p || !p.resultat || p.resultat.verdict !== 'passe' || !bon(r) || !bon(b)) continue;\n  const devis = o.objet_type === 'devis', cible = p.resultat.cible;\n  if (devis && cible === 'carte') continue;\n  s.push({ json: env(e, 'lib-executer@1', r.resultat.cle_idempotence, { niveau_max: cible === 'pilote' ? 3 : 2 }, { verdict: 'passe', cible: cible, cle_idempotence: r.resultat.cle_idempotence,\n    charge: { type_action: devis ? 'relance_devis' : 'relance_conversation', objet_type: o.objet_type, objet_id: o.objet_id, palier: r.resultat.palier, canal: b.resultat.canal, brouillon: { objet: b.resultat.objet, texte: b.resultat.texte } },\n    interrupteurs: { general: e.config.interrupteur_general, agent: e.config.interrupteur_departement }, cles_existantes: e.donnees.cles_existantes }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "e7f9ad34-9fad-40f4-b5d7-b9bb6ea0831a",
+      "name": "Rien à exécuter ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4704,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienexcuter",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "f17029ff-0366-4f44-8f14-27a380c76326",
+      "name": "Appeler lib-executer",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4928,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ADX5mPWqIvq1LGs6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Relit les interrupteurs et les clés juste avant l'effet (035-005), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "0b7bbd13-398a-48aa-ae85-a2fdb3b385b4",
+      "name": "Composer la note, le lot et le registre",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5152,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Suivi, étape 7 (A12, A19, C9) : trois choses calculées par le CODE, jamais par un modèle.\n//   1. la NOTE D'INTÉRÊT de chaque relance (somme des poids de config.interet, bornée de 0 à 100) : elle ORDONNE la carte de lot, elle ne décide d'aucun envoi ;\n//   2. la CARTE DE LOT du lundi (devis, au format de lib/assistant/cartes.ts apercuLotRelances) : retenus triés par note, exclus avec leur motif ; Studio : tout en carte ;\n//   3. le REGISTRE COMMUN : chaque relance qui PART SEULE (Signature) écrit sa trace là où lib/relancesRegistre.ts la lira (assistant_actions pour un devis, messages pour\n//      une conversation), APRÈS l'envoi réussi ; en Studio, c'est le clic de l'artisan qui l'écrit (le code de l'app).\n// Constantes figées, comparées au code par scripts/suivi-n8n-qa.mjs : le maximum d'un lot.\nconst LOT_MAX = 20;\nconst STATUT_LOT = { brouillon: 'brouillon', accepte: 'signé', refuse: 'refusé', expire: 'expiré' };\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst conf = parCle('Appeler lib-controler-conflit', 'lib-controler-conflit@1'), rel = parCle('Appeler lib-relancer', 'lib-relancer@1'), red = parCle('Appeler lib-rediger-message', 'lib-rediger-message@1');\nconst dec = parCle('Appeler lib-decider', 'lib-decider@1'), porte = parCle('Appeler lib-porte-conformite', 'lib-porte-conformite@1'), ex = parCle('Appeler lib-executer', 'lib-executer@1');\nconst fr = (iso) => { const m = /^(\\d{4})-(\\d{2})-(\\d{2})/.exec(String(iso || '')); return m ? m[3] + '/' + m[2] + '/' + m[1] : ''; };\nfunction note(sig, I) {\n  let n = 0;\n  if (sig.consulte === true) n += I.poids.consulte;\n  if (sig.question_posee === true) n += I.poids.question_posee;\n  if (Number.isInteger(sig.expire_dans_jours) && sig.expire_dans_jours >= 0 && sig.expire_dans_jours <= 7) n += I.poids.expire_bientot;\n  n += I.poids.relance_sans_reponse * sig.relances_sans_reponse;\n  n = Math.max(0, Math.min(100, n));\n  return { note: n, tranche: n >= I.seuils.chaud ? 'chaud' : n >= I.seuils.tiede ? 'tiede' : 'froid' };\n}\nconst MOTIFS_FR = { dossier_conclu: (o) => 'pas en attente de réponse (statut : ' + (STATUT_LOT[o.statut] || o.statut) + ')', client_en_discussion: () => 'le client a répondu : la discussion est en cours',\n  main_prise: () => 'vous avez repris la main sur ce dossier', exclu: () => 'vous avez demandé de ne plus le relancer', client_sensible: () => 'sujet sensible dans le fil : à traiter à la main',\n  deja_en_cours: () => 'une relance de ce dossier attend déjà votre clic', ecartee_recemment: (o) => 'relance écartée par vous le ' + fr(o.ecartee_le) + ' : pas reproposée (nommez le devis pour la relancer quand même)',\n  deja_relance: (o, r) => 'déjà relancé' + (r && r.derniere ? ' le ' + fr(r.derniere.le) : '') + ' : pas avant ' + 3 + ' jours', doublon_dossier: () => 'ce dossier est déjà relancé dans ce passage', lecture_manquante: () => 'dossier illisible : rien ne part sans le savoir' };\nreturn ENVS.map((e) => {\n  const decisions = [], effets = [], retenus = [], exclus = [];\n  const lundi = jourDuLot(e), jour = paris(new Date(Date.parse(e.donnees.maintenant))).date;\n  for (const { ev, o } of OBJ.filter((x) => x.e === e)) {\n    const id = ev.id, c = conf['rc:' + id], r = rel['rl:' + id], b = red['rm:' + id], d = dec['d:' + id], p = porte['p:' + id], x = ex[r && r.resultat && r.resultat.cle_idempotence];\n    const base = { objet_id: o.objet_id, objet_type: o.objet_type, palier: null, issue: 'reste_du', motifs: [], note: null, tranche: null };\n    const ligne = Object.assign(base, bon(r) || (r && r.resultat) ? { palier: r.resultat.palier } : {});\n    if (e.config.pause_generale !== false) { ligne.motifs = ['pause_generale']; decisions.push(ligne); continue; }\n    if (!e.config.capacites.includes('relances')) { ligne.issue = 'annule'; ligne.motifs = ['offre_sans_relances']; decisions.push(ligne); continue; }\n    if (!bon(c) && !(c && c.resultat)) { ligne.motifs = ['conflit_illisible']; decisions.push(ligne); continue; }\n    if (c.resultat.continuer !== true) { ligne.issue = c.resultat.issue; ligne.motifs = c.resultat.motifs.slice(); decisions.push(ligne);\n      if (o.objet_type === 'devis') exclus.push({ numero: o.faits.numero, client: o.faits.client, motif: (MOTIFS_FR[c.resultat.motifs[0]] || (() => 'à revoir'))(o, c.resultat) });\n      continue; }\n    if (!r || !r.resultat) { ligne.motifs = ['relance_illisible']; decisions.push(ligne); continue; }\n    if (r.resultat.a_relancer !== true) { ligne.issue = ['stop', 'litige_ou_escalade'].includes(r.resultat.motif) ? 'annule' : (['palier_deja_envoye', 'aucun_palier_atteint'].includes(r.resultat.motif) ? 'rien' : 'reste_du'); ligne.motifs = [r.resultat.motif]; decisions.push(ligne); continue; }\n    const n = note(o.signaux, e.config.interet); ligne.note = n.note; ligne.tranche = n.tranche;\n    if (o.objet_type === 'devis' && bon(d) && d.resultat.action === 'rien') { ligne.motifs = ['niveau_1_propose']; decisions.push(ligne); continue; }\n    if (o.objet_type === 'devis' && bon(d) && d.resultat.action === 'carte' && !lundi) { ligne.issue = 'attente_lot'; ligne.motifs = ['lot_du_lundi']; decisions.push(ligne); continue; }\n    if (o.canal === 'aucun') { ligne.motifs = ['sans_courriel']; decisions.push(ligne); continue; }\n    if (!p || !p.resultat || p.resultat.verdict !== 'passe') { ligne.motifs = p && p.resultat ? ['refus_porte'].concat(p.resultat.motifs || []) : ['porte_absente']; decisions.push(ligne); continue; }\n    if (o.objet_type === 'devis' && p.resultat.cible === 'carte') {\n      retenus.push({ id: o.objet_id, note: n.note, numero: o.faits.numero, client: o.faits.client, montant_ttc: o.faits.montant_ttc_centimes === null ? null : o.faits.montant_ttc_centimes / 100, envoye_le: o.faits.emis_le,\n        message: { a: 'adresse lue au moment d’écrire la carte', objet: b.resultat.objet, texte: b.resultat.texte }, ligne: ligne, ordre_envoi: o.faits.emis_le || '' });\n      ligne.issue = 'prepare'; ligne.motifs = ['carte_de_lot']; decisions.push(ligne); continue; }\n    if (!x || !x.resultat) { ligne.motifs = ['execution_absente']; decisions.push(ligne); continue; }\n    if (x.statut !== 'ok') { ligne.issue = x.statut === 'rien_a_faire' ? 'rien' : 'reste_du'; ligne.motifs = [x.resultat.motif]; decisions.push(ligne); continue; }\n    ligne.issue = p.resultat.cible === 'pilote' ? 'part_seul' : 'prepare'; ligne.motifs = [p.resultat.cible === 'pilote' ? 'pilote' : 'carte'];\n    decisions.push(ligne);\n    if (p.resultat.cible === 'pilote') {\n      const cle = r.resultat.cle_idempotence;\n      effets.push(o.objet_type === 'devis'\n        ? { effet: 'ecrire_registre_relance', quand: 'apres_envoi_reussi', organisation_id: e.organisation_id, cle: 'reg:' + cle, table: 'assistant_actions', requete: 'POST /rest/v1/assistant_actions',\n            corps: { artisan_id: e.organisation_id, conversation_id: o.dossier_id, tour: 1, outil: 'relancer_devis', mode: 'direct', statut: 'executee', titre: 'Relance de devis envoyée par n8n (palier ' + r.resultat.palier + ')', entrees: { source: 'n8n', cle: cle }, apercu: {}, objet_type: 'devis', objet_id: o.objet_id } }\n        : { effet: 'ecrire_registre_relance', quand: 'apres_envoi_reussi', organisation_id: e.organisation_id, cle: 'reg:' + cle, table: 'messages', requete: 'POST /rest/v1/messages',\n            corps: { lead_id: o.objet_id, sens: 'out', type: 'relance', contenu: b.resultat.texte } });\n    }\n  }\n  retenus.sort((a, b) => b.note - a.note || String(a.ordre_envoi).localeCompare(String(b.ordre_envoi)) || String(a.numero).localeCompare(String(b.numero)));\n  const gardes = retenus.slice(0, LOT_MAX), enPlus = retenus.slice(LOT_MAX);\n  for (const t of enPlus) { t.ligne.issue = 'reste_du'; t.ligne.motifs = ['lot_complet']; exclus.push({ numero: t.numero, client: t.client, motif: 'au-delà des ' + LOT_MAX + ' premiers : second lot, une fois celui-ci traité' }); }\n  let lot = null;\n  if (gardes.length) {\n    const cleLot = 'lot:' + e.organisation_id.slice(0, 8) + ':' + jour, existe = e.donnees.cles_existantes.includes(cleLot);\n    lot = { cle: cleLot, titre: 'Relancer ' + gardes.length + ' devis' + (exclus.length ? ' · ' + exclus.length + ' exclu' + (exclus.length > 1 ? 's' : '') : ''), critere: 'note d’intérêt décroissante, puis devis le plus ancien d’abord',\n      retenus: gardes.map((t) => ({ numero: t.numero, client: t.client, montant_ttc: t.montant_ttc, envoye_le: t.envoye_le, message: t.message, note: t.note })), exclus: exclus.slice(), deja_fait: existe };\n    if (!existe) effets.push({ effet: 'ecrire_carte_lot', organisation_id: e.organisation_id, cle: cleLot, objet_type: 'devis', type_action: 'relance_devis_lot', outil: 'relancer_devis_lot', apercu: { titre: lot.titre, critere: lot.critere, retenus: lot.retenus, exclus: lot.exclus }, irreversible: true });\n  }\n  return { json: { enveloppe: e, composition: { decisions: decisions, lot: lot, effets: effets, exclus: exclus } } };\n});"
+      }
+    },
+    {
+      "id": "542807c9-5a99-4ea9-8be1-ca90ea2be58c",
+      "name": "Préparer le journal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5376,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Suivi, étape 8 : le journal (lib-journaliser), une enveloppe par compte : des identifiants et des décisions, jamais un nom, un contact ni un texte.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst comp = $('Composer la note, le lot et le registre').all().map((x) => x.json);\nconst s = comp.map((k) => { const e = k.enveloppe, L = [];\n  const ligne = (evenement, ref, decision) => L.push({ evenement: evenement, agent: 'presti-dep-suivi', objet_ref: ref, decision: String(decision).slice(0, 200), modele: null, jetons_entree: null, jetons_sortie: null, cout_eur: null, source_tarif: null, simulation: e.simulation });\n  for (const dcs of k.composition.decisions) ligne('suivi_decision', dcs.objet_id, dcs.issue + ' (' + dcs.motifs.join(', ') + ')' + (dcs.note !== null ? ', intérêt ' + dcs.tranche : ''));\n  if (k.composition.lot) ligne('carte_de_lot', null, 'lot de ' + k.composition.lot.retenus.length + ' devis, ' + k.composition.lot.exclus.length + ' exclu(s)');\n  for (const a of AUTRES.filter((x) => x.org === e.organisation_id)) ligne('evenement_autre_compte', a.id, 'rejeté : événement d’un autre compte');\n  return { json: env(e, 'lib-journaliser@1', 'j:' + e.cle_idempotence, {}, { entrees: L.slice(0, 200) }) }; });\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "413647db-f3e3-40fc-9e47-037a82d55582",
+      "name": "Rien à journaliser ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5600,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienjournaliser",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : aucun compte à journaliser."
+    },
+    {
+      "id": "cdc80981-2946-4035-ad4b-bf71c16fe15b",
+      "name": "Appeler lib-journaliser",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        5824,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "NQg0KDXIa5hhzAvq"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le journal (035-003), une enveloppe par compte. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f12cf32d-bbf4-47c9-9409-c7f1abde0a6c",
+      "name": "Assembler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6048,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Suivi : la sortie, une par compte. Les effets prévus viennent de lib-executer (la carte ou la ligne du pilote), de la carte de lot et du registre. Rien n'est fait.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst comp = $('Composer la note, le lot et le registre').all().map((x) => x.json);\nconst APPELS = ['Appeler lib-controler-conflit', 'Appeler lib-relancer', 'Appeler lib-decider', 'Appeler lib-rediger-message', 'Appeler lib-porte-conformite', 'Appeler lib-executer', 'Appeler lib-journaliser'];\nconst communes = [];\nfor (const nom of APPELS) for (const s of sorties(nom)) if (s && s.vide === true) continue; else if (!s || typeof s.contrat !== 'string') communes.push(nom + ' : appel en échec');\nreturn comp.map((k) => {\n  const e = k.enveloppe, c = k.composition, erreurs = communes.slice(), effets = [];\n  for (const nom of APPELS.slice(0, 6)) for (const s of sorties(nom)) if (s && (s.statut === 'erreur' || s.statut === 'rejete')) erreurs.push(s.contrat + ' : ' + s.statut);\n  for (const s of sorties('Appeler lib-executer')) for (const f of (s && s.effets_prevus) || []) if ((f.organisation_id || (f.corps && f.corps.organisation_id)) === e.organisation_id) effets.push(f);\n  for (const f of c.effets) effets.push(f);\n  const compte = (issue) => c.decisions.filter((x) => x.issue === issue).length;\n  const refus = c.decisions.filter((x) => x.motifs.includes('refus_porte')).map((x) => x.objet_id);\n  const resultat = { objets_recus: c.decisions.length, decisions: c.decisions, prepare: compte('prepare'), part_seul: compte('part_seul'), attente_lot: compte('attente_lot'), reste_du: compte('reste_du'), annule: compte('annule'), rien: compte('rien'),\n    lot: c.lot ? { titre: c.lot.titre, retenus: c.lot.retenus.length, exclus: c.lot.exclus.length, deja_fait: c.lot.deja_fait } : null, refus_porte: refus, rejets: { autre_compte: AUTRES.filter((x) => x.org === e.organisation_id).length } };\n  return { json: { enveloppe: e, statut: erreurs.length ? 'erreur' : (effets.length || c.decisions.length ? 'ok' : 'rien_a_faire'), resultat: resultat, effets_prevus: effets, erreurs: erreurs.slice(0, 20),\n    journal: [{ evenement: 'suivi', agent: 'presti-dep-suivi', objet_ref: null, decision: ('suivi : ' + resultat.prepare + ' préparée(s), ' + resultat.part_seul + ' parties seules, ' + resultat.attente_lot + ' en attente du lot, ' + resultat.annule + ' annulée(s)').slice(0, 200), simulation: e.simulation }] } };\n});"
+      }
+    },
+    {
+      "id": "cc168a33-cfe5-481f-a749-3078935e8ab8",
+      "name": "Dossier du chef",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        236,
+        500
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Chef du département (036-032) : le dossier que lit le chef. Rien n'est décidé ici ; l'élément d'origine est repris par « Revalider le chef ».\n// Ni coordonnées ni montant ajoutés : le dossier reprend la sortie du code (résultat, effets prévus, extrait du brouillon) et les clés des spécialistes.\nconst DEP = \"suivi\";\nconst OUTILS = [[\"Spécialiste : contrôleur de conflit\",\"Préparer le contrôle\"],[\"Spécialiste : relanceur\",\"Préparer la relance\"]];\nconst j = $json || {}; const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\nconst org = e.organisation_id;\nconst effets = (Array.isArray(j.effets_prevus) ? j.effets_prevus : []).filter((x) => x && (x.effet === 'ecrire_carte' || x.effet === 'mettre_en_file_pilote') && x.corps && typeof x.corps === 'object').slice(0, 40)\n  .map((x) => ({ effet: x.effet, cle: x.corps.cle, type_action: x.corps.type_action || null, canal: x.corps.canal || null, brouillon: x.corps.brouillon && typeof x.corps.brouillon.texte === 'string' ? x.corps.brouillon.texte.slice(0, 500) : null }));\nconst cles = {};\nfor (const [outil, noeud] of OUTILS) { let l = []; try { const n = $(noeud); if (n.isExecuted) l = n.all().map((x) => x.json).filter((x) => x && x.organisation_id === org && typeof x.cle_idempotence === 'string').map((x) => x.cle_idempotence); } catch (err) { l = []; } cles[outil] = [...new Set(l)].slice(0, 40); }\nconst dossier = { departement: DEP, statut: j.statut || null, simulation: e.simulation !== false, resultat: j.resultat && typeof j.resultat === 'object' ? j.resultat : null, effets_prevus: effets, cles_des_specialistes: cles, erreurs: (Array.isArray(j.erreurs) ? j.erreurs : []).slice(0, 5) };\nlet texte = JSON.stringify(dossier);\nif (texte.length > 12000) { dossier.resultat = '(résultat trop long : retiré du dossier)'; texte = JSON.stringify(dossier); }\nreturn { json: { dossier_du_chef: texte.slice(0, 12000) } };"
+      }
+    },
+    {
+      "id": "49bf042c-084c-427a-ab32-4bbd600e7aed",
+      "name": "Chef du département suivi",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        456,
+        500
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Dossier du chef').item.json.dossier_du_chef }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Tu es le chef du département suivi d'un artisan français, dans un système en simulation : rien n'est envoyé.\nLe code a déjà tout décidé : cartes, pilote (envoi seul après dix minutes), montants, porte de conformité. Tu relis son dossier et tu rends une note structurée.\n\nRègles absolues :\n1. Tu n'écris jamais un montant, un prix, un pourcentage ni une somme, et jamais le signe €. Les montants sont calculés par le code.\n2. Tu n'inventes aucun fait : tu ne cites que le dossier ou la réponse d'un spécialiste. Aucune donnée personnelle dans ta note.\n3. Tu ne peux qu'être plus prudent. Mettre une clé dans points_a_confirmer fait passer cette action du pilote à une carte que l'artisan valide. Tu ne peux jamais faire l'inverse, ni ajouter une action.\n4. Tes deux spécialistes sont des outils :\n   - « Spécialiste : contrôleur de conflit » : Recontrôle une relance (lib-controler-conflit) : conflit, fenêtre, jour permis.\n   - « Spécialiste : relanceur » : Recalcule le palier de relance (lib-relancer) : palier atteint, déjà envoyé, à relancer.\n   Dès qu'une clé existe dans cles_des_specialistes, consulte au moins un spécialiste avant de conclure (deux appels au plus), en commençant par l'action la plus sensible (le pilote d'abord) ; le paramètre cle est copié tel quel depuis cles_des_specialistes. Sans aucune clé, n'appelle personne.\n5. Ta réponse :\n   - avis vaut « rien_a_signaler » si tout est cohérent, « a_confirmer » sinon ;\n   - chaque point_a_confirmer porte une cle prise dans effets_prevus[].cle et un motif court ;\n   - note fait deux phrases au plus, en français ;\n   - specialistes_consultes donne les noms exacts des outils appelés (liste vide sinon).",
+          "maxIterations": 5,
+          "returnIntermediateSteps": true,
+          "passthroughBinaryImages": false,
+          "batching": {
+            "batchSize": 4,
+            "delayBetweenBatches": 0
+          }
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": false
+    },
+    {
+      "id": "e8716c33-5a44-443e-b9f3-02b20f46b284",
+      "name": "Élément vide pour les spécialistes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        346,
+        360
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Chef du département (036-032) : un outil toolWorkflow transmet au spécialiste l'élément d'entrée de l'agent, en plus des champs\n// mappés ; les lib-* ont un contrat strict (« champ hors contrat »). L'agent reçoit donc un élément vide et lit son dossier par expression.\nreturn { json: {} };"
+      }
+    },
+    {
+      "id": "0695ee23-e8e8-4cfb-9569-ccb0fe7cca82",
+      "name": "Claude Sonnet 5.5 (chef)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.6,
+      "position": [
+        336,
+        720
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-sonnet-5-5"
+        },
+        "options": {
+          "maxTokensToSample": 8000,
+          "thinkingMode": "adaptive",
+          "effort": "low"
+        }
+      },
+      "credentials": {
+        "anthropicApi": {
+          "id": "hZsu1Oq5gUfaa2jB",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "id": "1e8fae6d-61e2-478e-8cae-cc3afe375dd2",
+      "name": "Sortie stricte du chef",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        476,
+        720
+      ],
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"avis\",\"note\",\"points_a_confirmer\",\"specialistes_consultes\"],\"properties\":{\"avis\":{\"type\":\"string\",\"enum\":[\"rien_a_signaler\",\"a_confirmer\"]},\"note\":{\"type\":\"string\",\"maxLength\":400},\"points_a_confirmer\":{\"type\":\"array\",\"maxItems\":20,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"cle\",\"motif\"],\"properties\":{\"cle\":{\"type\":\"string\",\"maxLength\":120},\"motif\":{\"type\":\"string\",\"maxLength\":200}}}},\"specialistes_consultes\":{\"type\":\"array\",\"maxItems\":4,\"items\":{\"type\":\"string\",\"enum\":[\"Spécialiste : contrôleur de conflit\",\"Spécialiste : relanceur\"]}}}}",
+        "autoFix": false
+      }
+    },
+    {
+      "id": "b30ac589-e7a4-4d05-8947-0075c7a85f76",
+      "name": "Spécialiste : contrôleur de conflit",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        616,
+        720
+      ],
+      "parameters": {
+        "description": "Recontrôle une relance (lib-controler-conflit) : conflit, fenêtre, jour permis. Passe par lib-specialiste-outil vers lib-controler-conflit ; simulation forcée : le spécialiste ne fait rien, il relit.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "Yicrr9T7m3jqpOXD",
+          "cachedResultName": "lib-specialiste-outil"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "cible": "F2son8oGwifPETg3",
+            "contrat": "={{ (($('Préparer le contrôle').isExecuted ? $('Préparer le contrôle').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).contrat }}",
+            "organisation_id": "={{ (($('Préparer le contrôle').isExecuted ? $('Préparer le contrôle').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).organisation_id }}",
+            "cle_idempotence": "={{ (($('Préparer le contrôle').isExecuted ? $('Préparer le contrôle').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).cle_idempotence }}",
+            "trace": "={{ (($('Préparer le contrôle').isExecuted ? $('Préparer le contrôle').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).trace }}",
+            "config": "={{ (($('Préparer le contrôle').isExecuted ? $('Préparer le contrôle').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).config }}",
+            "donnees": "={{ (($('Préparer le contrôle').isExecuted ? $('Préparer le contrôle').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).donnees }}",
+            "simulation": "={{ true }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "cible",
+              "displayName": "cible",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "contrat",
+              "displayName": "contrat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "organisation_id",
+              "displayName": "organisation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "cle_idempotence",
+              "displayName": "cle_idempotence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "trace",
+              "displayName": "trace",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            },
+            {
+              "id": "config",
+              "displayName": "config",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            },
+            {
+              "id": "donnees",
+              "displayName": "donnees",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            },
+            {
+              "id": "simulation",
+              "displayName": "simulation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "boolean"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      }
+    },
+    {
+      "id": "72af90fa-3bb7-4c84-ae08-04da2d14a509",
+      "name": "Spécialiste : relanceur",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        756,
+        720
+      ],
+      "parameters": {
+        "description": "Recalcule le palier de relance (lib-relancer) : palier atteint, déjà envoyé, à relancer. Passe par lib-specialiste-outil vers lib-relancer ; simulation forcée : le spécialiste ne fait rien, il relit.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "Yicrr9T7m3jqpOXD",
+          "cachedResultName": "lib-specialiste-outil"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "cible": "jGM56jxeLUVXZIiM",
+            "contrat": "={{ (($('Préparer la relance').isExecuted ? $('Préparer la relance').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).contrat }}",
+            "organisation_id": "={{ (($('Préparer la relance').isExecuted ? $('Préparer la relance').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).organisation_id }}",
+            "cle_idempotence": "={{ (($('Préparer la relance').isExecuted ? $('Préparer la relance').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).cle_idempotence }}",
+            "trace": "={{ (($('Préparer la relance').isExecuted ? $('Préparer la relance').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).trace }}",
+            "config": "={{ (($('Préparer la relance').isExecuted ? $('Préparer la relance').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).config }}",
+            "donnees": "={{ (($('Préparer la relance').isExecuted ? $('Préparer la relance').all() : []).map((x) => x.json).find((x) => x && x.cle_idempotence === $fromAI('cle', 'La clé à relire, copiée telle quelle depuis cles_des_specialistes du dossier', 'string')) || {}).donnees }}",
+            "simulation": "={{ true }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "cible",
+              "displayName": "cible",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "contrat",
+              "displayName": "contrat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "organisation_id",
+              "displayName": "organisation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "cle_idempotence",
+              "displayName": "cle_idempotence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "trace",
+              "displayName": "trace",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            },
+            {
+              "id": "config",
+              "displayName": "config",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            },
+            {
+              "id": "donnees",
+              "displayName": "donnees",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            },
+            {
+              "id": "simulation",
+              "displayName": "simulation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "boolean"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      }
+    },
+    {
+      "id": "df566222-e9d2-45f9-ae1c-4486207a98fa",
+      "name": "Revalider le chef",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        696,
+        500
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Chef du département (036-032) : revalider la sortie du chef (R18). Le chef ne peut qu'être PLUS prudent : une clé qu'il signale passe du\n// pilote (envoi seul) à une carte « À valider ». Jamais un montant, jamais une action ajoutée. Sortie absente, en erreur ou hors schéma : rien ne change.\nconst DEP = \"suivi\";\nconst SPECIALISTES = [\"Spécialiste : contrôleur de conflit\",\"Spécialiste : relanceur\"];\nconst SOURCE = \"Assembler\";\nlet origine;\ntry { origine = $(SOURCE).item.json; } catch (err) { origine = $(SOURCE).all(0)[$itemIndex].json; }\nconst j = Object.assign({}, origine);\nconst sortie = $json && $json.output && typeof $json.output === 'object' ? $json.output : null;\nconst MONTANT = /\\d[\\d\\s.,]*\\s?(€|eur\\b|euros?\\b)|€/i;\nconst effets = Array.isArray(j.effets_prevus) ? j.effets_prevus.map((x) => (x && typeof x === 'object' ? Object.assign({}, x) : x)) : [];\nconst cles = new Set(effets.filter((x) => x && x.corps && typeof x.corps.cle === 'string').map((x) => x.corps.cle));\nconst etapes = $json && Array.isArray($json.intermediateSteps) ? $json.intermediateSteps : [];\nconst appels = etapes.slice(0, 6).map((s) => { const a = (s && s.action) || {}; const o = typeof (s && s.observation) === 'string' ? s.observation : JSON.stringify((s && s.observation) || null);\n  return { outil: typeof a.tool === 'string' ? a.tool : null, cle: a.toolInput && typeof a.toolInput.cle === 'string' ? a.toolInput.cle.slice(0, 120) : null, statut_du_retour: (String(o).match(/statut\\W{1,6}([a-z_]+)/) || [])[1] || null, erreur_du_retour: ((String(o).match(/erreurs\\W{1,6}([^\\]]{0,240})/) || [])[1] || '').replace(/\\\\\"/g, '\"').slice(0, 240) || null }; });\nconst norme = (x) => String(x).replace(/[^a-zA-Z0-9_-]+/g, '_');\nconst appeles = new Set(appels.map((x) => norme(x.outil)));\nlet raison = null;\nif (!sortie) raison = $json && $json.error ? 'chef_en_erreur' : 'sortie_absente';\nelse if (!['rien_a_signaler', 'a_confirmer'].includes(sortie.avis)) raison = 'avis_hors_liste';\nelse if (typeof sortie.note !== 'string' || sortie.note.length > 400) raison = 'note_invalide';\nelse if (!Array.isArray(sortie.points_a_confirmer) || !Array.isArray(sortie.specialistes_consultes)) raison = 'listes_invalides';\nelse if (MONTANT.test(sortie.note) || sortie.points_a_confirmer.some((p) => !p || MONTANT.test(String(p.motif || '')))) raison = 'montant_ecrit';\nelse if (sortie.specialistes_consultes.some((s) => !SPECIALISTES.includes(s))) raison = 'specialiste_inconnu';\nelse if (sortie.specialistes_consultes.some((s) => !appeles.has(norme(s)))) raison = 'specialiste_cite_non_appele';\nconst r = j.resultat && typeof j.resultat === 'object' ? Object.assign({}, j.resultat) : null;\nlet note;\nif (raison) note = { statut: 'indisponible', raison: raison, detail: raison === 'chef_en_erreur' ? String(($json.error && ($json.error.message || $json.error)) || '').slice(0, 300) : null, pilotes_retenus: [], appels_specialistes: appels };\nelse {\n  const points = sortie.points_a_confirmer.filter((p) => p && typeof p.cle === 'string' && cles.has(p.cle)).slice(0, 20).map((p) => ({ cle: p.cle, motif: String(p.motif || '').slice(0, 200) }));\n  const viser = new Set(points.map((p) => p.cle)); const retenus = [];\n  for (let i = 0; i < effets.length; i++) { const x = effets[i];\n    if (x && x.effet === 'mettre_en_file_pilote' && x.corps && viser.has(x.corps.cle)) { effets[i] = Object.assign({}, x, { effet: 'ecrire_carte', corps: Object.assign({}, x.corps, { retenu_par_le_chef: true }) }); retenus.push(x.corps.cle); } }\n  if (r && Array.isArray(r.pilote) && Array.isArray(r.cartes) && retenus.length) { r.pilote = r.pilote.filter((k) => !retenus.includes(k)); r.cartes = r.cartes.concat(retenus.filter((k) => !r.cartes.includes(k))); }\n  note = { statut: 'ok', avis: sortie.avis, note: sortie.note, points_a_confirmer: points, points_ecartes: sortie.points_a_confirmer.length - points.length, specialistes_consultes: sortie.specialistes_consultes, appels_specialistes: appels, pilotes_retenus: retenus };\n}\nif (r) r.note_du_chef = note;\nconst journal = Array.isArray(j.journal) ? j.journal.slice() : [];\njournal.push({ evenement: 'note_du_chef', agent: 'chef-' + DEP, objet_ref: null, decision: note.statut === 'ok' ? note.avis + ' ; pilotes retenus : ' + note.pilotes_retenus.length : 'note indisponible (' + note.raison + ') : rien ne change', simulation: !(j.enveloppe && j.enveloppe.simulation === false) });\nreturn { json: Object.assign(j, { resultat: r || j.resultat, effets_prevus: effets, journal: journal }) };"
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": {
+    "sameAsDraft": false,
+    "nodes": [
+      {
+        "id": "17534092-efc8-45a1-b45c-a267e580a0a4",
+        "name": "Appelé par le Cerveau",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          0,
+          80
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "2c58c7f4-8af3-43b0-934e-6a5a43fe4115",
+        "name": "Contrat d'entrée",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Contrat d'entrée de presti-dep-suivi@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'presti-dep-suivi@1';\nconst SCHEMA = {\"sans_contact\":false,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"nom_artisan\",\"offre\",\"capacites\",\"pilote\",\"parties_depuis_24h\",\"plafond_jour\",\"interrupteur_general\",\"interrupteur_departement\",\"pause_generale\",\"mots_escalade_artisan\",\"fournisseurs\",\"horaires\",\"paliers_conversation_jours\",\"paliers_devis_jours\",\"jour_du_lot\",\"ton\",\"signature\",\"interet\"],\"properties\":{\"nom_artisan\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":70,\"pattern\":\"^[^@]*$\"},\"offre\":{\"enum\":[\"studio\",\"signature\",\"essentiel\",\"essai\"]},\"capacites\":{\"type\":\"array\",\"maxItems\":60,\"items\":{\"type\":\"string\",\"pattern\":\"^[a-z_.]{2,40}$\"}},\"pilote\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"drapeau\",\"actif\",\"types\"],\"properties\":{\"drapeau\":{\"type\":\"boolean\"},\"actif\":{\"type\":\"boolean\"},\"types\":{\"type\":\"object\"}}},\"parties_depuis_24h\":{\"type\":\"integer\",\"minimum\":0},\"plafond_jour\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":20},\"interrupteur_general\":{\"type\":\"boolean\"},\"interrupteur_departement\":{\"type\":\"boolean\"},\"pause_generale\":{\"type\":[\"boolean\",\"null\"]},\"mots_escalade_artisan\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"string\",\"maxLength\":60}},\"fournisseurs\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"string\",\"maxLength\":60}},\"horaires\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"jours_permis\",\"heures_permises\"],\"properties\":{\"jours_permis\":{\"type\":\"array\",\"maxItems\":7,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"heures_permises\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"debut\",\"fin\"],\"properties\":{\"debut\":{\"type\":\"string\",\"pattern\":\"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"},\"fin\":{\"type\":\"string\",\"pattern\":\"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}}}}},\"paliers_conversation_jours\":{\"type\":\"array\",\"maxItems\":5,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":365}},\"paliers_devis_jours\":{\"type\":\"array\",\"maxItems\":5,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":365}},\"jour_du_lot\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7},\"ton\":{\"type\":\"string\",\"maxLength\":300,\"pattern\":\"^[^@]*$\"},\"signature\":{\"type\":\"string\",\"maxLength\":120,\"pattern\":\"^[^@]*$\"},\"interet\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"poids\",\"seuils\"],\"properties\":{\"poids\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"consulte\",\"question_posee\",\"expire_bientot\",\"relance_sans_reponse\"],\"properties\":{\"consulte\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100},\"question_posee\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100},\"expire_bientot\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100},\"relance_sans_reponse\":{\"type\":\"integer\",\"minimum\":-100,\"maximum\":0}}},\"seuils\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"chaud\",\"tiede\"],\"properties\":{\"chaud\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"tiede\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":99}}}}}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"evenements\",\"maintenant\",\"cles_existantes\"],\"properties\":{\"evenements\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"artisan_id\",\"type\",\"cle\",\"donnees\"],\"properties\":{\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"type\":{\"enum\":[\"relance_due\"]},\"cle\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":60,\"pattern\":\"^[A-Za-z0-9_:.-]+$\"},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"objet_type\",\"objet_id\",\"dossier_id\",\"statut\",\"depuis_le\",\"paliers_envoyes\",\"main_prise\",\"exclu\",\"carte\",\"ecartee_le\",\"stop\",\"historique\",\"messages_entrants\",\"canal\",\"destinataire\",\"faits\",\"signaux\"],\"properties\":{\"objet_type\":{\"enum\":[\"devis\",\"conversation\"]},\"objet_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"dossier_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"statut\":{\"enum\":[\"envoye\",\"brouillon\",\"accepte\",\"refuse\",\"expire\",\"repondu\",\"nouveau\",\"en_discussion\",\"gagne\",\"perdu\"]},\"depuis_le\":{\"type\":\"string\",\"format\":\"date-time\"},\"paliers_envoyes\":{\"type\":\"array\",\"maxItems\":10,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":10}},\"main_prise\":{\"type\":[\"boolean\",\"null\"]},\"exclu\":{\"type\":[\"boolean\",\"null\"]},\"carte\":{\"enum\":[\"aucune\",\"en_attente\",\"en_cours\",null]},\"ecartee_le\":{\"type\":[\"string\",\"null\"],\"maxLength\":40},\"stop\":{\"type\":[\"boolean\",\"null\"]},\"historique\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"ok\"],\"properties\":{\"ok\":{\"type\":\"boolean\"},\"erreur\":{\"type\":\"string\",\"maxLength\":200},\"ignorees\":{\"type\":\"array\",\"maxItems\":10,\"items\":{\"type\":\"string\",\"maxLength\":40}},\"traces\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"chemin\",\"le\"],\"properties\":{\"chemin\":{\"enum\":[\"assistant\",\"crm\",\"impayes\",\"conversation\"]},\"le\":{\"type\":\"string\",\"maxLength\":40}}}}}},\"messages_entrants\":{\"type\":\"array\",\"maxItems\":12,\"items\":{\"type\":\"string\",\"maxLength\":600}},\"canal\":{\"enum\":[\"email\",\"sms\",\"aucun\"]},\"destinataire\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"opposition\",\"consentement_sms\"],\"properties\":{\"opposition\":{\"type\":[\"boolean\",\"null\"]},\"consentement_sms\":{\"type\":[\"boolean\",\"null\"]}}},\"faits\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"numero\",\"objet\",\"client\",\"montant_ttc_centimes\",\"emis_le\"],\"properties\":{\"numero\":{\"type\":[\"string\",\"null\"],\"maxLength\":30,\"pattern\":\"^[A-Z0-9-]+$\"},\"objet\":{\"type\":[\"string\",\"null\"],\"maxLength\":120,\"pattern\":\"^[^@{}]*$\"},\"client\":{\"type\":[\"string\",\"null\"],\"maxLength\":70,\"pattern\":\"^[^@]*$\"},\"montant_ttc_centimes\":{\"type\":[\"integer\",\"null\"],\"minimum\":0},\"emis_le\":{\"type\":[\"string\",\"null\"],\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}},\"signaux\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"consulte\",\"question_posee\",\"expire_dans_jours\",\"relances_sans_reponse\"],\"properties\":{\"consulte\":{\"type\":[\"boolean\",\"null\"]},\"question_posee\":{\"type\":\"boolean\"},\"expire_dans_jours\":{\"type\":[\"integer\",\"null\"],\"minimum\":-3650,\"maximum\":3650},\"relances_sans_reponse\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10}}}}}}}},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"},\"cles_existantes\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"maxLength\":80}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+        },
+        "notes": "contrat: presti-dep-suivi@1"
+      },
+      {
+        "id": "1195ef03-cc1b-4766-8e2f-f3830220813a",
+        "name": "Entrée conforme ?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          448,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "entreconforme",
+                "leftValue": "={{ $json.conforme }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": false,
+          "options": {}
+        }
+      },
+      {
+        "id": "292c51a7-61fc-4eb5-a46c-d74c8bff8320",
+        "name": "Contrat de sortie",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          896,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Contrat de sortie de presti-dep-suivi@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'presti-dep-suivi@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+        }
+      },
+      {
+        "id": "dd711db7-1c97-4390-9d37-ee82b0a262aa",
+        "name": "Sticky Note f356f473",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -32,
+          -16
+        ],
+        "parameters": {
+          "content": "## presti-dep-suivi (036-004)\nDépartement 3, Suivi et relances (A12, A19, A20) : relances de CONVERSATION (J+2, J+5, J+10) et de DEVIS, carte de lot du lundi, note d'intérêt calculée par le code.\nContrôleur de conflit (lib-controler-conflit) → palier (lib-relancer, registre de 3 jours) → décision d'un devis (lib-decider) → texte (lib-rediger-message, modèle ÉPINGLÉ) → porte de conformité → exécution (lib-executer) → note, carte de lot, registre → journal.\nStudio : tout en carte (une par conversation, UNE carte de lot le lundi pour les devis), jamais un envoi. Signature : la conversation part seule avec relances.auto ; le devis par le pilote si tout le permet, sinon carte de lot.\nCe que n8n envoie est écrit dans le registre commun (assistant_actions, messages) APRÈS l'envoi : jamais deux relances en 3 jours, tous chemins confondus.\nContrat presti-dep-suivi@1 (plans/011-cadrage-01-11/p6-signature/contrats/suivi.json). INACTIF, jamais publié, en simulation. Juge : scripts/suivi-n8n-qa.mjs",
+          "color": 4,
+          "width": 608,
+          "height": 224
+        }
+      },
+      {
+        "id": "0f81ec0d-578c-4543-9ed9-40efee72cada",
+        "name": "Porte simulation",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          672,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "portesimulation",
+                "leftValue": "={{ $json.enveloppe.simulation }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": false,
+          "options": {}
+        },
+        "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché dans ce lot."
+      },
+      {
+        "id": "9cebd38f-07b8-4148-a8d0-c2dbde504003",
+        "name": "Hors simulation : non branché",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          896,
+          240
+        ],
+        "parameters": {
+          "errorType": "errorMessage",
+          "errorMessage": "Hors simulation : effet réel non branché (tâche 036-004). Rien n'a été lu, écrit ni envoyé."
+        },
+        "notes": "Simulation : aucun effet réel n'est branché. Hors simulation, le travail s'arrête ici, avant tout appel."
+      },
+      {
+        "id": "860d33d8-a300-416c-b5ab-d448b734e871",
+        "name": "Lire le dossier de chaque relance (simulation : dans l'enveloppe)",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          896,
+          80
+        ],
+        "parameters": {},
+        "notes": "Simulation : un emplacement, les objets sont dans l’enveloppe (événement relance_due). Réel : ces lectures, GET, select= limité, TOUJOURS filtrées sur le compte (« Supabase account » passe outre la RLS) :\nrequete: GET devis?select=id,numero,objet,client_nom,total_ttc,statut,envoye_le,validite_jours,lead_id&artisan_id=eq.<compte>&statut=eq.envoye&limit=200\nrequete: GET leads?select=id,statut,prise_en_main&artisan_id=eq.<compte>&statut=eq.repondu&limit=200\nrequete: GET relances?select=id,lead_id,rang,planifiee_le,envoyee&envoyee=eq.false&lead_id=in.(<conversations du compte>)&limit=200\nrequete: GET assistant_actions?select=objet_id,maj_le&artisan_id=eq.<compte>&outil=in.(relancer_devis,relancer_facture)&statut=eq.executee&objet_id=in.(<devis du dossier>)&limit=100\nrequete: GET crm_rappels?select=devis_id,envoye_le&artisan_id=eq.<compte>&devis_id=in.(<devis du dossier>)&envoye_le=not.is.null&limit=100\nrequete: GET relances_impayes?select=facture_id,envoyee_le&artisan_id=eq.<compte>&facture_id=in.(<factures du dossier>)&envoyee_le=not.is.null&limit=100\nrequete: GET messages?select=lead_id,sent_at,etat&lead_id=in.(<conversations du compte>)&type=eq.relance&sens=eq.out&limit=100\nrequete: GET assistant_actions?select=outil,objet_id,statut,maj_le&artisan_id=eq.<compte>&outil=eq.relancer_devis&statut=in.(en_attente,en_cours,refusee)&limit=200\nrequete: GET relances_exclusions?select=cible_id&artisan_id=eq.<compte>&limit=500\nrequete: GET messages?select=contenu&lead_id=eq.<conversation du compte>&sens=eq.in&order=sent_at.desc&limit=5"
+      },
+      {
+        "id": "57fad469-b748-4e66-b084-0ba785eb1091",
+        "name": "Préparer le contrôle",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Suivi, étape 1 (A20) : AVANT tout geste, le contrôleur de conflit. Une offre sans la capacité « relances » (Essentiel, essai) n'a rien à contrôler : annulée, comme le cron. La PAUSE GÉNÉRALE (lib/agents/sortie.ts : seule la valeur exacte false ouvre la porte) est lue par le Cerveau et passée dans config.pause_generale : posée ou illisible (null), rien n'est contrôlé ni relancé, les relances restent dues. Les coordonnées des messages du client sont MASQUÉES avant de sortir du chef.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst s = OBJ.filter(({ e }) => e.config.capacites.includes('relances') && e.config.pause_generale === false).map(({ e, ev, o }) => ({ json: env(e, 'lib-controler-conflit@1', 'rc:' + ev.id, { mots_escalade_artisan: e.config.mots_escalade_artisan },\n  { objet_type: o.objet_type, objet_id: o.objet_id, dossier_id: o.dossier_id, statut: o.statut, main_prise: o.main_prise, exclu: o.exclu, carte: o.carte, ecartee_le: o.ecartee_le,\n    historique: o.historique, stop: o.stop, messages_entrants: o.messages_entrants.map((t) => t.replace(MAIL, '[coordonnée]').replace(TEL, '[coordonnée]')), maintenant: e.donnees.maintenant }) }));\nreturn s.length ? s : VIDE;"
+        }
+      },
+      {
+        "id": "bd68ca06-afd2-4aeb-879d-c65f273fc25e",
+        "name": "Rien à contrôler ?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1344,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "riencontrler",
+                "leftValue": "={{ $json.vide === true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": false,
+          "options": {}
+        },
+        "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+      },
+      {
+        "id": "717158aa-86e5-4d64-acd3-a7a3ae1ce624",
+        "name": "Appeler lib-controler-conflit",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          1568,
+          160
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "F2son8oGwifPETg3"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "notes": "Le contrôleur de conflit (036-004). En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "cbdf54f7-3af7-4805-a903-870943a2aea9",
+        "name": "Préparer la relance",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1792,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Suivi, étape 2 : le palier atteint et non envoyé, le registre de 3 jours, le stop, les horaires (lib-relancer, 035-005). Seulement pour ce que le contrôleur laisse passer.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst conf = parCle('Appeler lib-controler-conflit', 'lib-controler-conflit@1');\nconst s = [];\nfor (const { e, ev, o } of OBJ) { const r = conf['rc:' + ev.id]; if (!bon(r) || r.resultat.continuer !== true) continue;\n  const config = { paliers_jours: o.objet_type === 'devis' ? e.config.paliers_devis_jours : e.config.paliers_conversation_jours, jours_permis: e.config.horaires.jours_permis, heures_permises: e.config.horaires.heures_permises };\n  if (o.objet_type === 'conversation') config.sauf = 'conversation';\n  s.push({ json: env(e, 'lib-relancer@1', 'rl:' + ev.id, config, { objet_type: o.objet_type, objet_id: o.objet_id, depuis_le: o.depuis_le, historique: o.historique, paliers_envoyes: o.paliers_envoyes, stop: o.stop, escalade: r.resultat.sensible === true, maintenant: e.donnees.maintenant }) }); }\nreturn s.length ? s : VIDE;"
+        }
+      },
+      {
+        "id": "9a028fb4-d321-47ce-b777-77d719d98b2b",
+        "name": "Rien à relancer ?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2016,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "rienrelancer",
+                "leftValue": "={{ $json.vide === true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": false,
+          "options": {}
+        },
+        "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+      },
+      {
+        "id": "5e1fc428-c5aa-4d68-91f0-82d90d603d89",
+        "name": "Appeler lib-relancer",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          2240,
+          160
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "jGM56jxeLUVXZIiM"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "notes": "Palier et registre de 3 jours (035-005), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "d06829f2-5803-460d-af14-9d344051c726",
+        "name": "Préparer la décision",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2464,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Suivi, étape 3 : la décision d'un DEVIS (lib-decider) : carte ou pilote. Le niveau 3 n'existe que si l'offre a le pilote (assistant.pilote, lu en base,\n// jamais un nom d'offre). Une relance de CONVERSATION ne passe pas ici : son seul interrupteur est relances.auto (lib/plans.ts, comme le cron).\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1');\nconst s = [];\nfor (const { e, ev, o } of OBJ) { const r = rel['rl:' + ev.id]; if (o.objet_type !== 'devis' || !bon(r) || r.resultat.a_relancer !== true) continue;\n  s.push({ json: env(e, 'lib-decider@1', 'd:' + ev.id, { autonomie: { niveau_max: e.config.capacites.includes('assistant.pilote') ? 3 : 2, niveau_defaut: 2, niveaux: {} }, plan: e.config.offre, pilote: e.config.pilote, parties_depuis_24h: e.config.parties_depuis_24h },\n    { objet_type: 'devis', objet_id: o.objet_id, constat: { outil: 'relancer_devis', etape: 'palier' + r.resultat.palier, escalade: false } }) }); }\nreturn s.length ? s : VIDE;"
+        }
+      },
+      {
+        "id": "2bfbf3bf-c59b-4c06-93a3-554523c83d33",
+        "name": "Aucun devis à décider ?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2688,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "aucundevisdcider",
+                "leftValue": "={{ $json.vide === true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": false,
+          "options": {}
+        },
+        "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+      },
+      {
+        "id": "64d19b52-2955-48ca-89f8-16701804d974",
+        "name": "Appeler lib-decider",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          2912,
+          160
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "hckqX1tQjIommtTH"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "notes": "Carte, pilote ou rien (035-004), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "ccbb8f0c-ec29-437c-be04-765c25c5526e",
+        "name": "Préparer la rédaction",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3136,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Suivi, étape 4 : le texte (lib-rediger-message, modèle ÉPINGLÉ), à partir des seuls faits. La cible est fixée ICI :\n//   conversation : part seul SEULEMENT avec relances.auto (Signature), sinon carte ; devis : lib-decider (pilote ou carte) ;\n//   un devis dont la cible est une carte attend le LOT du lundi (config.jour_du_lot) : aucun texte n'est rédigé les autres jours.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1'), dec = parCle('Appeler lib-decider', 'lib-decider@1');\nconst s = [];\nfor (const { e, ev, o } of OBJ) { const r = rel['rl:' + ev.id]; if (!bon(r) || r.resultat.a_relancer !== true) continue;\n  let cible;\n  if (o.objet_type === 'conversation') cible = e.config.capacites.includes('relances.auto') ? 'pilote' : 'carte';\n  else { const d = dec['d:' + ev.id]; if (!bon(d) || d.resultat.action === 'rien') continue; cible = d.resultat.action === 'pilote' ? 'pilote' : 'carte'; if (cible === 'carte' && !jourDuLot(e)) continue; }\n  if (o.canal === 'aucun') continue;\n  const f = o.faits, faits = { type_relance: o.objet_type === 'devis' ? 'relance_devis' : 'relance_conversation', palier: r.resultat.palier };\n  if (o.objet_type === 'devis') { faits.numero = f.numero; faits.objet = f.objet; faits.montant_ttc_centimes = f.montant_ttc_centimes; faits.emis_le = f.emis_le; }\n  s.push({ json: env(e, 'lib-rediger-message@1', 'rm:' + ev.id, { canal: o.canal === 'sms' ? 'sms' : 'email', ton: e.config.ton, signature: e.config.signature, nom_artisan: e.config.nom_artisan, mention_ia: cible === 'pilote' },\n    { action_cle: r.resultat.cle_idempotence, faits: faits }) }); }\nreturn s.length ? s : VIDE;"
+        }
+      },
+      {
+        "id": "10e14de9-7adb-4c8c-ba4c-ec13f512f6b1",
+        "name": "Rien à rédiger ?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          3360,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "rienrdiger",
+                "leftValue": "={{ $json.vide === true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": false,
+          "options": {}
+        },
+        "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+      },
+      {
+        "id": "36249bf2-5c80-4568-b7ee-fb73763e8806",
+        "name": "Appeler lib-rediger-message",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          3584,
+          160
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "xfRUnkwOKSwQezVb"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "notes": "Le texte, à partir des seuls faits ; modèle ÉPINGLÉ (035-005), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "fe37bedb-7c59-4601-befb-6ff23f9eaf69",
+        "name": "Préparer la porte",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3808,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Suivi, étape 5 : la porte de conformité (lib-porte-conformite, veto) avant TOUT effet : aucun prix, date, créneau ou fournisseur inventé ; une lecture illisible vaut refus.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1'), red = parCle('Appeler lib-rediger-message', 'lib-rediger-message@1'), dec = parCle('Appeler lib-decider', 'lib-decider@1');\nconst s = [];\nfor (const { e, ev, o } of OBJ) { const b = red['rm:' + ev.id], r = rel['rl:' + ev.id]; if (!bon(b) || !bon(r)) continue;\n  const devis = o.objet_type === 'devis', cible = devis ? (bon(dec['d:' + ev.id]) && dec['d:' + ev.id].resultat.action === 'pilote' ? 'pilote' : 'carte') : (e.config.capacites.includes('relances.auto') ? 'pilote' : 'carte');\n  const f = o.faits, faits = { type_relance: devis ? 'relance_devis' : 'relance_conversation', palier: r.resultat.palier };\n  if (devis) { faits.numero = f.numero; faits.objet = f.objet; faits.montant_ttc_centimes = f.montant_ttc_centimes; faits.emis_le = f.emis_le; }\n  s.push({ json: env(e, 'lib-porte-conformite@1', 'p:' + ev.id, { jamais_auto: [], regles_metier: { fournisseurs: e.config.fournisseurs, mots_escalade_artisan: e.config.mots_escalade_artisan, jours_permis: e.config.horaires.jours_permis, heures_permises: e.config.horaires.heures_permises }, plafond_jour: e.config.plafond_jour },\n    { action: { type_action: faits.type_relance, outil: devis ? 'relancer_devis' : 'relancer_conversation', prix_sources: true, cible: cible, sans_relecture: cible === 'pilote' },\n      message: { canal: b.resultat.canal, objet: b.resultat.objet, texte: b.resultat.texte }, destinataire: { opposition: o.destinataire.opposition, consentement_sms: o.destinataire.consentement_sms, escalade: false },\n      faits: faits, maintenant: e.donnees.maintenant, compteurs: { envoyes_aujourdhui: e.config.parties_depuis_24h } }) }); }\nreturn s.length ? s : VIDE;"
+        }
+      },
+      {
+        "id": "1483fa2b-d6a7-4a5a-860b-da6afe1155f0",
+        "name": "Rien à passer à la porte ?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          4032,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "rienpasserlaporte",
+                "leftValue": "={{ $json.vide === true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": false,
+          "options": {}
+        },
+        "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+      },
+      {
+        "id": "c4eefe2c-a57a-41b1-8766-90cf23ad2c99",
+        "name": "Appeler lib-porte-conformite",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          4256,
+          160
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "8c8vkUeSkfgB5FAM"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "notes": "Le veto (035-005), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "8d06f84b-9b2b-42da-9661-f72e7a63a2ce",
+        "name": "Préparer l'exécution",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4480,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Suivi, étape 6 : SEUL ce que la porte laisse passer va à lib-executer (relit les interrupteurs juste avant l'effet et les clés déjà en base). Un devis dont la cible est\n// une carte NE passe PAS ici : il entre dans la carte de lot du lundi (étape 7), qui a sa propre clé.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1'), red = parCle('Appeler lib-rediger-message', 'lib-rediger-message@1'), dec = parCle('Appeler lib-decider', 'lib-decider@1'), porte = parCle('Appeler lib-porte-conformite', 'lib-porte-conformite@1');\nconst s = [];\nfor (const { e, ev, o } of OBJ) { const p = porte['p:' + ev.id], r = rel['rl:' + ev.id], b = red['rm:' + ev.id]; if (!p || !p.resultat || p.resultat.verdict !== 'passe' || !bon(r) || !bon(b)) continue;\n  const devis = o.objet_type === 'devis', cible = p.resultat.cible;\n  if (devis && cible === 'carte') continue;\n  s.push({ json: env(e, 'lib-executer@1', r.resultat.cle_idempotence, { niveau_max: cible === 'pilote' ? 3 : 2 }, { verdict: 'passe', cible: cible, cle_idempotence: r.resultat.cle_idempotence,\n    charge: { type_action: devis ? 'relance_devis' : 'relance_conversation', objet_type: o.objet_type, objet_id: o.objet_id, palier: r.resultat.palier, canal: b.resultat.canal, brouillon: { objet: b.resultat.objet, texte: b.resultat.texte } },\n    interrupteurs: { general: e.config.interrupteur_general, agent: e.config.interrupteur_departement }, cles_existantes: e.donnees.cles_existantes }) }); }\nreturn s.length ? s : VIDE;"
+        }
+      },
+      {
+        "id": "e7f9ad34-9fad-40f4-b5d7-b9bb6ea0831a",
+        "name": "Rien à exécuter ?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          4704,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "rienexcuter",
+                "leftValue": "={{ $json.vide === true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": false,
+          "options": {}
+        },
+        "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+      },
+      {
+        "id": "f17029ff-0366-4f44-8f14-27a380c76326",
+        "name": "Appeler lib-executer",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          4928,
+          160
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "ADX5mPWqIvq1LGs6"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "notes": "Relit les interrupteurs et les clés juste avant l'effet (035-005), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "0b7bbd13-398a-48aa-ae85-a2fdb3b385b4",
+        "name": "Composer la note, le lot et le registre",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          5152,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Suivi, étape 7 (A12, A19, C9) : trois choses calculées par le CODE, jamais par un modèle.\n//   1. la NOTE D'INTÉRÊT de chaque relance (somme des poids de config.interet, bornée de 0 à 100) : elle ORDONNE la carte de lot, elle ne décide d'aucun envoi ;\n//   2. la CARTE DE LOT du lundi (devis, au format de lib/assistant/cartes.ts apercuLotRelances) : retenus triés par note, exclus avec leur motif ; Studio : tout en carte ;\n//   3. le REGISTRE COMMUN : chaque relance qui PART SEULE (Signature) écrit sa trace là où lib/relancesRegistre.ts la lira (assistant_actions pour un devis, messages pour\n//      une conversation), APRÈS l'envoi réussi ; en Studio, c'est le clic de l'artisan qui l'écrit (le code de l'app).\n// Constantes figées, comparées au code par scripts/suivi-n8n-qa.mjs : le maximum d'un lot.\nconst LOT_MAX = 20;\nconst STATUT_LOT = { brouillon: 'brouillon', accepte: 'signé', refuse: 'refusé', expire: 'expiré' };\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst conf = parCle('Appeler lib-controler-conflit', 'lib-controler-conflit@1'), rel = parCle('Appeler lib-relancer', 'lib-relancer@1'), red = parCle('Appeler lib-rediger-message', 'lib-rediger-message@1');\nconst dec = parCle('Appeler lib-decider', 'lib-decider@1'), porte = parCle('Appeler lib-porte-conformite', 'lib-porte-conformite@1'), ex = parCle('Appeler lib-executer', 'lib-executer@1');\nconst fr = (iso) => { const m = /^(\\d{4})-(\\d{2})-(\\d{2})/.exec(String(iso || '')); return m ? m[3] + '/' + m[2] + '/' + m[1] : ''; };\nfunction note(sig, I) {\n  let n = 0;\n  if (sig.consulte === true) n += I.poids.consulte;\n  if (sig.question_posee === true) n += I.poids.question_posee;\n  if (Number.isInteger(sig.expire_dans_jours) && sig.expire_dans_jours >= 0 && sig.expire_dans_jours <= 7) n += I.poids.expire_bientot;\n  n += I.poids.relance_sans_reponse * sig.relances_sans_reponse;\n  n = Math.max(0, Math.min(100, n));\n  return { note: n, tranche: n >= I.seuils.chaud ? 'chaud' : n >= I.seuils.tiede ? 'tiede' : 'froid' };\n}\nconst MOTIFS_FR = { dossier_conclu: (o) => 'pas en attente de réponse (statut : ' + (STATUT_LOT[o.statut] || o.statut) + ')', client_en_discussion: () => 'le client a répondu : la discussion est en cours',\n  main_prise: () => 'vous avez repris la main sur ce dossier', exclu: () => 'vous avez demandé de ne plus le relancer', client_sensible: () => 'sujet sensible dans le fil : à traiter à la main',\n  deja_en_cours: () => 'une relance de ce dossier attend déjà votre clic', ecartee_recemment: (o) => 'relance écartée par vous le ' + fr(o.ecartee_le) + ' : pas reproposée (nommez le devis pour la relancer quand même)',\n  deja_relance: (o, r) => 'déjà relancé' + (r && r.derniere ? ' le ' + fr(r.derniere.le) : '') + ' : pas avant ' + 3 + ' jours', doublon_dossier: () => 'ce dossier est déjà relancé dans ce passage', lecture_manquante: () => 'dossier illisible : rien ne part sans le savoir' };\nreturn ENVS.map((e) => {\n  const decisions = [], effets = [], retenus = [], exclus = [];\n  const lundi = jourDuLot(e), jour = paris(new Date(Date.parse(e.donnees.maintenant))).date;\n  for (const { ev, o } of OBJ.filter((x) => x.e === e)) {\n    const id = ev.id, c = conf['rc:' + id], r = rel['rl:' + id], b = red['rm:' + id], d = dec['d:' + id], p = porte['p:' + id], x = ex[r && r.resultat && r.resultat.cle_idempotence];\n    const base = { objet_id: o.objet_id, objet_type: o.objet_type, palier: null, issue: 'reste_du', motifs: [], note: null, tranche: null };\n    const ligne = Object.assign(base, bon(r) || (r && r.resultat) ? { palier: r.resultat.palier } : {});\n    if (e.config.pause_generale !== false) { ligne.motifs = ['pause_generale']; decisions.push(ligne); continue; }\n    if (!e.config.capacites.includes('relances')) { ligne.issue = 'annule'; ligne.motifs = ['offre_sans_relances']; decisions.push(ligne); continue; }\n    if (!bon(c) && !(c && c.resultat)) { ligne.motifs = ['conflit_illisible']; decisions.push(ligne); continue; }\n    if (c.resultat.continuer !== true) { ligne.issue = c.resultat.issue; ligne.motifs = c.resultat.motifs.slice(); decisions.push(ligne);\n      if (o.objet_type === 'devis') exclus.push({ numero: o.faits.numero, client: o.faits.client, motif: (MOTIFS_FR[c.resultat.motifs[0]] || (() => 'à revoir'))(o, c.resultat) });\n      continue; }\n    if (!r || !r.resultat) { ligne.motifs = ['relance_illisible']; decisions.push(ligne); continue; }\n    if (r.resultat.a_relancer !== true) { ligne.issue = ['stop', 'litige_ou_escalade'].includes(r.resultat.motif) ? 'annule' : (['palier_deja_envoye', 'aucun_palier_atteint'].includes(r.resultat.motif) ? 'rien' : 'reste_du'); ligne.motifs = [r.resultat.motif]; decisions.push(ligne); continue; }\n    const n = note(o.signaux, e.config.interet); ligne.note = n.note; ligne.tranche = n.tranche;\n    if (o.objet_type === 'devis' && bon(d) && d.resultat.action === 'rien') { ligne.motifs = ['niveau_1_propose']; decisions.push(ligne); continue; }\n    if (o.objet_type === 'devis' && bon(d) && d.resultat.action === 'carte' && !lundi) { ligne.issue = 'attente_lot'; ligne.motifs = ['lot_du_lundi']; decisions.push(ligne); continue; }\n    if (o.canal === 'aucun') { ligne.motifs = ['sans_courriel']; decisions.push(ligne); continue; }\n    if (!p || !p.resultat || p.resultat.verdict !== 'passe') { ligne.motifs = p && p.resultat ? ['refus_porte'].concat(p.resultat.motifs || []) : ['porte_absente']; decisions.push(ligne); continue; }\n    if (o.objet_type === 'devis' && p.resultat.cible === 'carte') {\n      retenus.push({ id: o.objet_id, note: n.note, numero: o.faits.numero, client: o.faits.client, montant_ttc: o.faits.montant_ttc_centimes === null ? null : o.faits.montant_ttc_centimes / 100, envoye_le: o.faits.emis_le,\n        message: { a: 'adresse lue au moment d’écrire la carte', objet: b.resultat.objet, texte: b.resultat.texte }, ligne: ligne, ordre_envoi: o.faits.emis_le || '' });\n      ligne.issue = 'prepare'; ligne.motifs = ['carte_de_lot']; decisions.push(ligne); continue; }\n    if (!x || !x.resultat) { ligne.motifs = ['execution_absente']; decisions.push(ligne); continue; }\n    if (x.statut !== 'ok') { ligne.issue = x.statut === 'rien_a_faire' ? 'rien' : 'reste_du'; ligne.motifs = [x.resultat.motif]; decisions.push(ligne); continue; }\n    ligne.issue = p.resultat.cible === 'pilote' ? 'part_seul' : 'prepare'; ligne.motifs = [p.resultat.cible === 'pilote' ? 'pilote' : 'carte'];\n    decisions.push(ligne);\n    if (p.resultat.cible === 'pilote') {\n      const cle = r.resultat.cle_idempotence;\n      effets.push(o.objet_type === 'devis'\n        ? { effet: 'ecrire_registre_relance', quand: 'apres_envoi_reussi', organisation_id: e.organisation_id, cle: 'reg:' + cle, table: 'assistant_actions', requete: 'POST /rest/v1/assistant_actions',\n            corps: { artisan_id: e.organisation_id, conversation_id: o.dossier_id, tour: 1, outil: 'relancer_devis', mode: 'direct', statut: 'executee', titre: 'Relance de devis envoyée par n8n (palier ' + r.resultat.palier + ')', entrees: { source: 'n8n', cle: cle }, apercu: {}, objet_type: 'devis', objet_id: o.objet_id } }\n        : { effet: 'ecrire_registre_relance', quand: 'apres_envoi_reussi', organisation_id: e.organisation_id, cle: 'reg:' + cle, table: 'messages', requete: 'POST /rest/v1/messages',\n            corps: { lead_id: o.objet_id, sens: 'out', type: 'relance', contenu: b.resultat.texte } });\n    }\n  }\n  retenus.sort((a, b) => b.note - a.note || String(a.ordre_envoi).localeCompare(String(b.ordre_envoi)) || String(a.numero).localeCompare(String(b.numero)));\n  const gardes = retenus.slice(0, LOT_MAX), enPlus = retenus.slice(LOT_MAX);\n  for (const t of enPlus) { t.ligne.issue = 'reste_du'; t.ligne.motifs = ['lot_complet']; exclus.push({ numero: t.numero, client: t.client, motif: 'au-delà des ' + LOT_MAX + ' premiers : second lot, une fois celui-ci traité' }); }\n  let lot = null;\n  if (gardes.length) {\n    const cleLot = 'lot:' + e.organisation_id.slice(0, 8) + ':' + jour, existe = e.donnees.cles_existantes.includes(cleLot);\n    lot = { cle: cleLot, titre: 'Relancer ' + gardes.length + ' devis' + (exclus.length ? ' · ' + exclus.length + ' exclu' + (exclus.length > 1 ? 's' : '') : ''), critere: 'note d’intérêt décroissante, puis devis le plus ancien d’abord',\n      retenus: gardes.map((t) => ({ numero: t.numero, client: t.client, montant_ttc: t.montant_ttc, envoye_le: t.envoye_le, message: t.message, note: t.note })), exclus: exclus.slice(), deja_fait: existe };\n    if (!existe) effets.push({ effet: 'ecrire_carte_lot', organisation_id: e.organisation_id, cle: cleLot, objet_type: 'devis', type_action: 'relance_devis_lot', outil: 'relancer_devis_lot', apercu: { titre: lot.titre, critere: lot.critere, retenus: lot.retenus, exclus: lot.exclus }, irreversible: true });\n  }\n  return { json: { enveloppe: e, composition: { decisions: decisions, lot: lot, effets: effets, exclus: exclus } } };\n});"
+        }
+      },
+      {
+        "id": "542807c9-5a99-4ea9-8be1-ca90ea2be58c",
+        "name": "Préparer le journal",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          5376,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Suivi, étape 8 : le journal (lib-journaliser), une enveloppe par compte : des identifiants et des décisions, jamais un nom, un contact ni un texte.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst comp = $('Composer la note, le lot et le registre').all().map((x) => x.json);\nconst s = comp.map((k) => { const e = k.enveloppe, L = [];\n  const ligne = (evenement, ref, decision) => L.push({ evenement: evenement, agent: 'presti-dep-suivi', objet_ref: ref, decision: String(decision).slice(0, 200), modele: null, jetons_entree: null, jetons_sortie: null, cout_eur: null, source_tarif: null, simulation: e.simulation });\n  for (const dcs of k.composition.decisions) ligne('suivi_decision', dcs.objet_id, dcs.issue + ' (' + dcs.motifs.join(', ') + ')' + (dcs.note !== null ? ', intérêt ' + dcs.tranche : ''));\n  if (k.composition.lot) ligne('carte_de_lot', null, 'lot de ' + k.composition.lot.retenus.length + ' devis, ' + k.composition.lot.exclus.length + ' exclu(s)');\n  for (const a of AUTRES.filter((x) => x.org === e.organisation_id)) ligne('evenement_autre_compte', a.id, 'rejeté : événement d’un autre compte');\n  return { json: env(e, 'lib-journaliser@1', 'j:' + e.cle_idempotence, {}, { entrees: L.slice(0, 200) }) }; });\nreturn s.length ? s : VIDE;"
+        }
+      },
+      {
+        "id": "413647db-f3e3-40fc-9e47-037a82d55582",
+        "name": "Rien à journaliser ?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          5600,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "rienjournaliser",
+                "leftValue": "={{ $json.vide === true }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": false,
+          "options": {}
+        },
+        "notes": "Vrai : aucun compte à journaliser."
+      },
+      {
+        "id": "cdc80981-2946-4035-ad4b-bf71c16fe15b",
+        "name": "Appeler lib-journaliser",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          5824,
+          160
+        ],
+        "parameters": {
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "NQg0KDXIa5hhzAvq"
+          },
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "notes": "Le journal (035-003), une enveloppe par compte. En simulation, sa sortie est épinglée dans l'essai du chef tant que presti-dep-suivi n'est pas dans ses callerIds (session principale).",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "f12cf32d-bbf4-47c9-9409-c7f1abde0a6c",
+        "name": "Assembler",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          6048,
+          80
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// Suivi : la sortie, une par compte. Les effets prévus viennent de lib-executer (la carte ou la ligne du pilote), de la carte de lot et du registre. Rien n'est fait.\nconst ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst OBJ = []; const PAR_ID = {}; const AUTRES = [];\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  if (ev.artisan_id !== e.organisation_id) { AUTRES.push({ id: ev.id, org: e.organisation_id }); continue; }\n  if (ev.type !== 'relance_due' || PAR_ID[ev.id]) continue;\n  PAR_ID[ev.id] = { e: e, ev: ev, o: ev.donnees }; OBJ.push(PAR_ID[ev.id]);\n}\nOBJ.sort((a, b) => (a.o.objet_type === b.o.objet_type ? 0 : a.o.objet_type === 'devis' ? -1 : 1));\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-suivi', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) { const p = {}; for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value; return { jour: JOURS_ISO[p.weekday], date: p.year + '-' + p.month + '-' + p.day }; }\nconst jourDuLot = (e) => paris(new Date(Date.parse(e.donnees.maintenant))).jour === e.config.jour_du_lot;\nconst MAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/g;\nconst TEL = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/g;\nconst comp = $('Composer la note, le lot et le registre').all().map((x) => x.json);\nconst APPELS = ['Appeler lib-controler-conflit', 'Appeler lib-relancer', 'Appeler lib-decider', 'Appeler lib-rediger-message', 'Appeler lib-porte-conformite', 'Appeler lib-executer', 'Appeler lib-journaliser'];\nconst communes = [];\nfor (const nom of APPELS) for (const s of sorties(nom)) if (s && s.vide === true) continue; else if (!s || typeof s.contrat !== 'string') communes.push(nom + ' : appel en échec');\nreturn comp.map((k) => {\n  const e = k.enveloppe, c = k.composition, erreurs = communes.slice(), effets = [];\n  for (const nom of APPELS.slice(0, 6)) for (const s of sorties(nom)) if (s && (s.statut === 'erreur' || s.statut === 'rejete')) erreurs.push(s.contrat + ' : ' + s.statut);\n  for (const s of sorties('Appeler lib-executer')) for (const f of (s && s.effets_prevus) || []) if ((f.organisation_id || (f.corps && f.corps.organisation_id)) === e.organisation_id) effets.push(f);\n  for (const f of c.effets) effets.push(f);\n  const compte = (issue) => c.decisions.filter((x) => x.issue === issue).length;\n  const refus = c.decisions.filter((x) => x.motifs.includes('refus_porte')).map((x) => x.objet_id);\n  const resultat = { objets_recus: c.decisions.length, decisions: c.decisions, prepare: compte('prepare'), part_seul: compte('part_seul'), attente_lot: compte('attente_lot'), reste_du: compte('reste_du'), annule: compte('annule'), rien: compte('rien'),\n    lot: c.lot ? { titre: c.lot.titre, retenus: c.lot.retenus.length, exclus: c.lot.exclus.length, deja_fait: c.lot.deja_fait } : null, refus_porte: refus, rejets: { autre_compte: AUTRES.filter((x) => x.org === e.organisation_id).length } };\n  return { json: { enveloppe: e, statut: erreurs.length ? 'erreur' : (effets.length || c.decisions.length ? 'ok' : 'rien_a_faire'), resultat: resultat, effets_prevus: effets, erreurs: erreurs.slice(0, 20),\n    journal: [{ evenement: 'suivi', agent: 'presti-dep-suivi', objet_ref: null, decision: ('suivi : ' + resultat.prepare + ' préparée(s), ' + resultat.part_seul + ' parties seules, ' + resultat.attente_lot + ' en attente du lot, ' + resultat.annule + ' annulée(s)').slice(0, 200), simulation: e.simulation }] } };\n});"
+        }
+      }
+    ],
+    "connections": {
+      "Appelé par le Cerveau": {
+        "main": [
+          [
+            {
+              "node": "Contrat d'entrée",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Contrat d'entrée": {
+        "main": [
+          [
+            {
+              "node": "Entrée conforme ?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entrée conforme ?": {
+        "main": [
+          [
+            {
+              "node": "Porte simulation",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Contrat de sortie",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Porte simulation": {
+        "main": [
+          [
+            {
+              "node": "Lire le dossier de chaque relance (simulation : dans l'enveloppe)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Hors simulation : non branché",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire le dossier de chaque relance (simulation : dans l'enveloppe)": {
+        "main": [
+          [
+            {
+              "node": "Préparer le contrôle",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Préparer le contrôle": {
+        "main": [
+          [
+            {
+              "node": "Rien à contrôler ?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Rien à contrôler ?": {
+        "main": [
+          [
+            {
+              "node": "Préparer la relance",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Appeler lib-controler-conflit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Préparer la relance": {
+        "main": [
+          [
+            {
+              "node": "Rien à relancer ?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Rien à relancer ?": {
+        "main": [
+          [
+            {
+              "node": "Préparer la décision",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Appeler lib-relancer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Préparer la décision": {
+        "main": [
+          [
+            {
+              "node": "Aucun devis à décider ?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aucun devis à décider ?": {
+        "main": [
+          [
+            {
+              "node": "Préparer la rédaction",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Appeler lib-decider",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Préparer la rédaction": {
+        "main": [
+          [
+            {
+              "node": "Rien à rédiger ?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Rien à rédiger ?": {
+        "main": [
+          [
+            {
+              "node": "Préparer la porte",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Appeler lib-rediger-message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Préparer la porte": {
+        "main": [
+          [
+            {
+              "node": "Rien à passer à la porte ?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Rien à passer à la porte ?": {
+        "main": [
+          [
+            {
+              "node": "Préparer l'exécution",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Appeler lib-porte-conformite",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Préparer l'exécution": {
+        "main": [
+          [
+            {
+              "node": "Rien à exécuter ?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Rien à exécuter ?": {
+        "main": [
+          [
+            {
+              "node": "Composer la note, le lot et le registre",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Appeler lib-executer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Appeler lib-controler-conflit": {
+        "main": [
+          [
+            {
+              "node": "Préparer la relance",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Appeler lib-relancer": {
+        "main": [
+          [
+            {
+              "node": "Préparer la décision",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Appeler lib-decider": {
+        "main": [
+          [
+            {
+              "node": "Préparer la rédaction",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Appeler lib-rediger-message": {
+        "main": [
+          [
+            {
+              "node": "Préparer la porte",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Appeler lib-porte-conformite": {
+        "main": [
+          [
+            {
+              "node": "Préparer l'exécution",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Appeler lib-executer": {
+        "main": [
+          [
+            {
+              "node": "Composer la note, le lot et le registre",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Composer la note, le lot et le registre": {
+        "main": [
+          [
+            {
+              "node": "Préparer le journal",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Préparer le journal": {
+        "main": [
+          [
+            {
+              "node": "Rien à journaliser ?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Rien à journaliser ?": {
+        "main": [
+          [
+            {
+              "node": "Assembler",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Appeler lib-journaliser",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Appeler lib-journaliser": {
+        "main": [
+          [
+            {
+              "node": "Assembler",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Assembler": {
+        "main": [
+          [
+            {
+              "node": "Contrat de sortie",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": []
+  },
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  }
+}

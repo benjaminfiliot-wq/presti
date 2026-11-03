@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-11-03T18:38:11Z
+# Digest — 2026-11-03T19:09:13Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 199 tâche(s) PASS, 483529 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
-**État** — file : 60 · en cours : 1 · faites : 471 · refusées : 17
+**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 200 tâche(s) PASS, 500048 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
+**État** — file : 60 · en cours : 1 · faites : 472 · refusées : 17
 
 ## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -23,7 +23,7 @@
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 036-032 | feature | en-cours | claude-code | — | depuis 2026-11-03T18:12:51Z · Écart 2 de l'audit 036-028 : installer le vrai multi-agents dans n8n. Chaque chef presti-dep-* devient un agent IA (Claude, identifiant « Anthropic account ») qui délègue à ses spécialistes branchés en outils (toolWorkflow vers les lib-* publiés), comme dans les fichiers de 036-019 ; puis prouver par un banc qu'un nœud Code lit $env.BOITE_CLE_N8N ; tout en simulation, bancs rejoués |
+| 036-034 | feature | en-cours | claude-code | — | depuis 2026-11-03T19:09:10Z · Essai réel du palier « ombre » du 03/11 au soir, sur un compte de test fictif (supprimé depuis) : départements « tous » et « accueil » en ombre et en marche, demande fictive, événement demande_recue. Le Cerveau a bien traité l'événement (traite_le posé), mais AUCUNE carte n'a été écrite dans assistant_actions (origine agent). Trouver pourquoi dans les exécutions de presti-cerveau et de ses enfants, corriger dans n8n, et prouver la carte par un banc |
 | 035-013 | audit | file | claude-code | — | Prompt 5, tâche 035-013 de la première réponse — un audit offensif, distinct de l'auteur, des tâches 035-003 à 035-007 (le socle lib-*, les deux chaînes, la démonstration ent-exemple-*) avant toute publication : isolation entre organisations, porte de simulation, liste « jamais en automatique », idempotence au rejeu, coûts bornés, aucune donnée réelle ni secret dans les exports ; par les agents presti-audit-attaque et presti-gestion-fiabilite ; verdict TIENT ou NE TIENT PAS |
 | 029-001 | test | file | codex-1 | — | L'assistant de gestion est vérifié en conditions réelles : la suite assistant-qa passe ses parties L (comptes de test sur la base réelle) et M (vrai modèle), puis aucun compte de test ne reste en base |
 | 026-120 | feature | file | antigravity | — | Remplir le cadre des panneaux de la station : chaque salle cliquée ouvre son panneau (Recettes et Trésorerie, Usine à sites, Atelier des maquettes, Salle de réunion, Salle des envois avec les gestes du fondateur, Standard, Rédaction, Salle des machines ; les quatre autres ouvrent la fiche de leurs agents en attendant 026-164), et chaque agent sa fiche (tâches récentes, coût par tâche, consignes, boîtes, réponses, Pause), lus par la route de la station seulement pendant qu'ils sont ouverts, sourcés, sans aucun bouton d'envoi, à 390 px comme à 1440 px |
@@ -84,6 +84,7 @@
 | 028-021 | feature | file | codex | — | Nouvelle séquence de prospection PAR ÉTAPES (méthode de Benj du 08/10) : messages courts qui questionnent d'abord (d'où viennent vos clients ? que trouve-t-on sur Google quand on vous cherche ? un chantier vous rapporte combien ?), relances programmées, puis maquette ; respect de toutes les gardes de conformité existantes |
 | 029-002 | test | file | antigravity | — | La qualité des réponses de l'assistant de gestion est mesurée avec le vrai modèle sur les scénarios de plans/016-assistant.md §7 (ai-eval --assistant), et chaque scénario échoué est expliqué |
 | 036-022 | feature | file | claude-code | — | Prompt 6, mise en service (Benj, 03/11 vers 16 h 30 : « active aussi toutes les automatisations en les testant bien sûr » ; « les migrations, je te laisse gérer tout » ; « tu peux créer un compte test gratuitement pour tester ») : suivre plans/011-cadrage-01-11/p6-signature/mise-en-service.md étape par étape — migrations posées par la session principale (0185, puis 0192 reprise de 032-047 et jugée, puis 0193), réglages de n8n, publication des enfants avant les parents, puis activation en MODE OMBRE sur un compte de test créé par l'API admin et supprimé après, comparaison, puis réel par offre et par type |
+| 036-032 | feature | fait | claude-code | PASS | 2026-11-03T18:54:53Z · 0s · 16519 l. |
 | 036-033 | feature | fait | claude-code | PASS | 2026-11-03T18:38:07Z · 35s · 2318 l. |
 | 036-031 | feature | fait | claude-code | PASS | 2026-11-03T18:37:25Z · 0s · 19585 l. |
 | 036-030 | feature | fait | claude-code | PASS | 2026-11-03T18:19:59Z · 8s · 0 l. |
@@ -122,6 +123,5 @@
 | 035-005 | feature | fait | claude-code | PASS | 2026-11-03T07:52:14Z · 299s · 9170 l. |
 | 032-041 | feature | fait | claude-code | PASS | 2026-11-03T00:19:57Z · 4s · 16220 l. |
 | 035-004 | feature | fait | claude-code | PASS | 2026-11-03T00:01:17Z · 52s · 0 l. |
-| 035-011 | contenu | fait | claude-code | PASS | 2026-11-02T23:59:52Z · 0s · 1420 l. |
 
-… 449 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 450 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
