@@ -355,6 +355,21 @@ publié : tous sont inactifs, essayés sur des données fictives.
 | **Sous-traitant** | Oracle (hébergement du serveur, Paris) : accord de traitement des données **à archiver** par le fondateur, comme au § 24 (« à archiver » ≠ « signé ») |
 | **Avant chaque publication** | Relire cette section ; le workflow est audité par un agent distinct, essayé en simulation, puis publié sur le « go » écrit du fondateur |
 
+## 23 ter. Les agents de Studio et Signature dans n8n : les cartes préparées *(prompt 6, 036-030 à 036-035, 3 novembre 2026)*
+
+Presti agit **pour le compte de l'artisan** (sous-traitant, art. 28) ; Oracle Cloud héberge n8n, et Anthropic est sous-traitant ultérieur (§ 24).
+
+| | |
+|---|---|
+| **Finalité** | Préparer, pour chaque département de l'artisan (accueil, devis, suivi, facturation, après-chantier, opérations, direction), les actions à faire, sous forme de cartes « à valider » dans l'outil de gestion. En palier « ombre » (en service depuis le 03/11, posé par Presti avec l'accord de l'artisan), **rien n'est envoyé** : la carte le dit (« Mode essai »). Le palier « réel » n'est servi qu'après accord écrit, type par type |
+| **Données** | Les événements métier (`evenements_metier` : identifiants, codes, dates, nombres, **sans texte libre**, contrainte `faits_sans_texte`, 0185) ; les colonnes que le rôle `n8n_lecture` peut lire (0189, 0193, 0194) ; la sortie d'un département envoyée au modèle : identifiants, motifs, 500 signes de brouillon, **coordonnées masquées** en amont (« [coordonnée] », `plans/011-cadrage-01-11/p6-signature/multi-agents-n8n.md` § 6) ; les cartes (`assistant_actions`, origine `agent` : motif, sources de chaque fait) |
+| **Base légale** | Exécution du contrat de l'artisan ; ses instructions (le palier de chaque département) |
+| **Personnes** | L'artisan ; ses prospects et ses clients |
+| **Durée** | Cartes : jusqu'à leur échéance (`expire_le`, obligatoire pour une carte d'agent, 0194), puis avec le compte. Exécutions de n8n : les passages réussis **ne sont pas conservés** (`saveDataSuccessExecution: none`). Les passages en erreur le sont, dans n8n sur Oracle, pour le diagnostic ; **leur durée de purge reste à fixer par le fondateur**. Les workflows qui déchiffrent un secret ne conservent rien (036-035) |
+| **Destinataires** | Oracle Cloud (hébergement de n8n, Paris, UE) ; Anthropic (Claude Haiku 5.5, États-Unis, § 24) ; Supabase (UE) |
+| **Secrets** | Les accès branchés par l'artisan (`connexions.secret_n8n`) sont chiffrés en AES-256-GCM. La clé est dans le coffre Vault de Supabase (0196) et n'est lisible que par `n8n_lecture` et `service_role`. Elle n'est jamais écrite dans un journal (`plans/011-cadrage-01-11/p6-signature/cle-coffre-n8n.md`) |
+| **Où** | n8n : `presti-cerveau`, `presti-dep-*`, `lib-*` ; `lib/evenements/ecrivain.ts` ; `app/crm/BoiteAgents.tsx` ; migrations 0185, 0189, 0193, 0194, 0196 |
+
 ## 24. Transferts hors Union européenne et garanties
 
 Le tableau dit ce que les **textes publics annoncent** (`lib/legalArtisan.ts`, `app/cgu`, `app/confidentialite`) et ce qu'il reste à **archiver**. Il n'affirme la signature d'aucun accord : aucune pièce n'en est versionnée dans le dépôt (recherche du 20/10).
@@ -365,6 +380,7 @@ Le tableau dit ce que les **textes publics annoncent** (`lib/legalArtisan.ts`, `
 | **Vercel** | Hébergement de l'application, journaux | États-Unis | Clauses contractuelles types (CCT) annoncées ; cadre de protection des données UE-États-Unis (Data Privacy Framework) à vérifier pour ce prestataire | DPA avec CCT / certification DPF à archiver | Relevé le 21/10 : ⚠️ DPA (vercel.com/legal/dpa, en vigueur le 31/03/2026) réservé aux offres **Pro et Enterprise** : en Hobby, aucun DPA ne couvre Presti. Offre à vérifier (Settings → Billing) |
 | **Anthropic** | Modèle d'IA (réponses, assistant) | États-Unis | CCT annoncées ; non-entraînement annoncé | DPA / conditions commerciales de l'API, durée de conservation des appels | Relevé le 21/10 : DPA du 24/02/2025 intégré « by reference » aux conditions commerciales (cocontractant Anthropic Ireland) ; non-entraînement contractuel ; entrées/sorties de l’API effacées sous 30 jours (sauf exceptions) ; PDF datés à archiver |
 | **Resend** | Envoi des e-mails (réponses, relances, devis, messages de service) | États-Unis | CCT annoncées | DPA avec CCT / certification DPF à archiver | Relevé le 21/10 : DPA du 31/12/2025 intégré aux conditions ; version exécutée dans le tableau de bord, à récupérer |
+| **Oracle Cloud** | Hébergement de n8n et des agents de Studio et Signature (§ 23 bis, § 23 ter) | Union européenne (Paris, `presti-ops/usine/LISEZMOI.md:20`) | Pas de transfert annoncé | Accord de traitement des données d'Oracle Cloud | Relevé le 03/11 : pièce à archiver |
 | **Stripe** | Paiement des abonnements (Presti, responsable de traitement) | UE et États-Unis | CCT annoncées (§ 3) | DPA de Stripe, accepté en ligne à conserver | Relevé le 21/10 : DPA du 28/09/2026 et DTA intégrés « par référence » au contrat de services ; PDF datés à archiver |
 
 Relevé du 21/10/2026, sources et liens : `SaaS/Legal/DPA-prestataires-2026-10-21.md` (aucun DPA n’est à signer à part ; aucun n’est « signé » au sens d’une pièce versionnée).
