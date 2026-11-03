@@ -1,0 +1,142 @@
+mention d'IA relue dans lib/mentionAssistant.ts : « Message rédigé et envoyé automatiquement par l’assistant »
+✓ structure des 5 gabarits (operations 73 nœuds, administratif 79 nœuds, finance 74 nœuds, apres-vente 62 nœuds, direction 55 nœuds)
+✓ essai gabarit-ent-operations : le planificateur lit l’agenda réel : le code trouve les créneaux libres de chaque membre, le modèle choisit un numéro, l’agenda reçoit le chantier, avec sa tâche et son dossier
+      → m1 occupé de 8 h à 10 h : proposé à 10 h ; m2 libre : proposé à 8 h (créneaux du code) ; le choix du modèle donne une carte « À valider » pour l’agenda (jamais de rendez-vous pris seul) + tâche + dossier ; plan simulé = plan réel ; un numéro hors liste ou « Presti » est rejeté
+✓ essai gabarit-ent-operations : une ligne d’import en anomalie ne s’importe jamais : l’équipe est prévenue ; la tâche déjà connue du projet n’est pas recréée
+      → L1 importée, L2 (libellé absent, quantité négative) refusée avec une carte d’information et une alerte ; la tâche déjà dans ClickUp n’est pas recréée
+✓ essai gabarit-ent-operations : une autre organisation ne donne rien : ni chantier, ni membre, ni action automatique
+      → les membres d’une autre organisation ne reçoivent aucun chantier (aucun créneau, alerte à l’équipe) ; la configuration et l’annexe d’une autre organisation ne donnent aucune action automatique
+✓ essai gabarit-ent-administratif : une attestation qui expire donne une relance prévue et une échéance dans l’agenda, au nom du client, une seule fois par palier
+      → échéance à 10 jours : 1 relance de palier 1 au bon destinataire + 1 événement d’agenda (plan simulé = plan réel) ; à 90 jours rien ; expirée : relancée ; trois relances faites ou une hier : aucune ; échéance déjà dans l’agenda : pas de doublon
+✓ essai gabarit-ent-administratif : une pièce manquante est relancée à qui doit le document, JAMAIS sans destinataire connu : l’équipe est informée à la place
+      → Kbis lu dans le Drive et RIB lu dans un courrier : présents ; seule l’attestation de vigilance manque, sans destinataire connu : aucune relance, une carte d’information ; la pièce introuvable avec un destinataire est relancée ; la pièce d’une autre organisation est ignorée
+✓ essai gabarit-ent-administratif : une attestation ne dit que les faits du dossier : un nombre inventé, un fait manquant, un prix ou « Presti » sont rejetés
+      → tous les faits présents : accepté ; « 45 heures » inventé, date de fin manquante, prix, « Presti » : rejetés
+✓ essai gabarit-ent-administratif : une autre organisation ne donne rien (pièces, échéances, relances, configuration)
+      → les lignes d’une autre organisation ne produisent aucune entrée ; sa configuration ne donne aucune action automatique
+✓ essai gabarit-ent-finance : un paiement lu donne un impayé arrêté : la facture soldée n’est plus relancée ; le reste dû est celui du code, pas celui du modèle
+      → F002 payée (Stripe) : soldée, relances arrêtées ; F001 payée en partie (Qonto, 200 €) : reste 1 000,00 € calculé par le code (le « 999,99 » du modèle est ignoré) ; F004 déjà payée : rien ; une autre organisation : ignorée ; encaissé du jour 800 € ; un prix écrit par le modèle est rejeté
+✓ essai gabarit-ent-finance : le facturier « quand c’est fini » : le chantier terminé est chiffré par le code avec le tarif du client ; un tarif manquant ne devient jamais une facture
+      → 2×100 € + 1×50 € HT = 250 € HT, TVA 50 €, 300 € TTC en centimes entiers (tarif du client) ; tarif inconnu ou aucune ligne : pas de facture, une carte d’information
+✓ essai gabarit-ent-finance : l’export au comptable est un fichier : factures réglées du mois dernier, pas celles que le comptable a déjà, jamais avant le début du mois
+      → le 2 décembre : une ligne (F010) ; F011 est déjà chez le comptable, F012 est d’octobre ; le CSV porte 120,00 calculé par le code ; le 15 décembre : pas d’export
+✓ essai gabarit-ent-finance : une autre organisation ne donne rien (factures, tarifs, configuration)
+      → une facture et un chantier d’une autre organisation ne donnent rien ; sa configuration ne donne aucune action automatique
+✓ essai gabarit-ent-apres-vente : un avis à 1 étoile donne une carte : jamais une publication, même au niveau le plus autonome de l’annexe ; l’équipe est alertée ; l’avis à 5 étoiles est publié selon l’annexe
+      → 1 étoile : 1 carte « À valider » pour le rôle associé + alerte Slack, aucune réponse automatique, même avec l’annexe au niveau 3 ; 5 étoiles : réponse publiée avec l’annexe ; niveau 1 : brouillon ; le modèle aggrave (5 étoiles « très mécontent » : carte) ; un prix ou un sentiment hors énumération est rejeté ; avec le délai de 10 minutes, la réponse à 5 étoiles devient une carte « annulable » exécutée à l’échéance
+✓ essai gabarit-ent-apres-vente : l’entretien d’un contrat est proposé une fois, au bon destinataire ; sans destinataire : l’équipe est informée
+      → visite dans 20 jours : 1 proposition (date 23/11/2026 écrite par le code) ; sans destinataire : une carte d’information ; déjà proposée : rien ; un contrat d’une autre organisation est ignoré
+✓ essai gabarit-ent-apres-vente : une autre organisation ne donne rien (avis, tickets Chatwoot, configuration)
+      → l’événement Chatwoot d’une autre organisation est ignoré ; sa configuration ne donne aucune action automatique
+✓ essai gabarit-ent-direction : un rapport du lundi aux chiffres du code : le code compte, le modèle ne rédige qu’une phrase sans chiffre ; envoi, document et journal ; rien avant 8 h
+      → lundi 8 h 15 : encaissé 12 345 €, signé 8 000 €, en cours 2 500 €, impayés 400 €, coût IA 2,00 € (chiffres du code, ceux d’une autre organisation ignorés) ; envoi Slack + document Docs + ligne Sheets ; un chiffre, « Presti » ou une priorité hors liste dans la phrase du modèle sont rejetés ; à 7 h 30 seule la page du matin ; avant 7 h rien
+✓ essai gabarit-ent-direction : le point mensuel passe par la validation d’équipe : une carte « À valider » du périmètre direction et une demande Slack ; rien ne part avant ; le bilan à un mois suit la date de déploiement
+      → 1er du mois, 8 h 30 : page du matin (envoyée), point mensuel et bilan à un mois (30 jours après le déploiement) en cartes « À valider » du périmètre direction, avec une demande Slack chacune ; la carte approuvée par le gérant est reprise, celle d’un rôle hors liste est ignorée
+✓ essai gabarit-ent-direction : le compteur dit ce qui sort vers un modèle externe : le mode privé rédige sans modèle ; le plafond du coût IA alerte
+      → rédigé par le modèle : 1 document externe, 0 privé, plafond de 2,00 € dépassé (2,50 €) : alerte ; en mode privé : 0 externe, 1 privé, la phrase est celle du code
+✓ essai gabarit-ent-direction : une autre organisation ne donne rien (chiffres, rapports, configuration)
+      → les chiffres et rapports d’une autre organisation donnent « non lu », jamais leurs valeurs ; sa configuration ne donne aucune action automatique
+  ✓ mutant « une écriture dans la banque (POST vers Qonto) » (finance) fait rougir le juge
+      → gabarit-ent-finance : S14 Écrire un virement : écriture HTTP dans la banque ou la compta (thirdparty.qonto.com) : lecture seule
+  ✓ mutant « une écriture dans la compta (QuickBooks crée une facture) » (finance) fait rougir le juge
+      → gabarit-ent-finance : S14 Lire les factures QuickBooks : écriture dans la compta ou la banque du client (n8n-nodes-base.quickbooks create) : lecture seule
+  ✓ mutant « une écriture dans la compta (POST vers Pennylane) » (finance) fait rougir le juge
+      → gabarit-ent-finance : S14 Lire les factures Pennylane : écriture HTTP dans la banque ou la compta (app.pennylane.com) : lecture seule
+  ✓ mutant « un montant du modèle (le reste dû) » (finance) fait rougir le juge
+      → essai gabarit-ent-finance : un paiement lu donne un impayé arrêté : la facture soldée n’est plus relancée ; le reste dû est celui du code, pas celui du modèle → ok1 true 
+  ✓ mutant « un montant du modèle (le schéma porte un montant) » (finance) fait rougir le juge
+      → gabarit-ent-finance : S6 Rédacteur d’impayés : le schéma du modèle porte un montant, une date ou un créneau : le code calcule
+  ✓ mutant « un montant du modèle (le total d’une facture) » (finance) fait rougir le juge
+      → essai gabarit-ent-finance : le facturier « quand c’est fini » : le chantier terminé est chiffré par le code avec le tarif du client ; un tarif manquant ne devient jamais 
+  ✓ mutant « une relance sans paiement lu (la facture soldée est relancée) » (finance) fait rougir le juge
+      → essai gabarit-ent-finance : un paiement lu donne un impayé arrêté : la facture soldée n’est plus relancée ; le reste dû est celui du code, pas celui du modèle → ok1 false
+  ✓ mutant « un avis négatif publié (le brouillon part sans carte) » (apres-vente) fait rougir le juge
+      → essai gabarit-ent-apres-vente : un avis à 1 étoile donne une carte : jamais une publication, même au niveau le plus autonome de l’annexe ; l’équipe est alertée ; l’avis à
+  ✓ mutant « un avis négatif publié (le seuil du code ignoré) » (apres-vente) fait rougir le juge
+      → essai gabarit-ent-apres-vente : un avis à 1 étoile donne une carte : jamais une publication, même au niveau le plus autonome de l’annexe ; l’équipe est alertée ; l’avis à
+  ✓ mutant « un avis négatif publié (le modèle peut adoucir le verdict) » (apres-vente) fait rougir le juge
+      → essai gabarit-ent-apres-vente : un avis à 1 étoile donne une carte : jamais une publication, même au niveau le plus autonome de l’annexe ; l’équipe est alertée ; l’avis à
+  ✓ mutant « une relance de document sans destinataire connu » (administratif) fait rougir le juge
+      → essai gabarit-ent-administratif : une pièce manquante est relancée à qui doit le document, JAMAIS sans destinataire connu : l’équipe est informée à la place → manquantes 
+  ✓ mutant « une relance sans limite (plus de trois relances) » (administratif) fait rougir le juge
+      → essai gabarit-ent-administratif : une attestation qui expire donne une relance prévue et une échéance dans l’agenda, au nom du client, une seule fois par palier → ok1 tru
+  ✓ mutant « une relance sans écart (le même jour) » (administratif) fait rougir le juge
+      → essai gabarit-ent-administratif : une attestation qui expire donne une relance prévue et une échéance dans l’agenda, au nom du client, une seule fois par palier → ok1 tru
+  ✓ mutant « un nombre inventé dans une attestation » (administratif) fait rougir le juge
+      → essai gabarit-ent-administratif : une attestation ne dit que les faits du dossier : un nombre inventé, un fait manquant, un prix ou « Presti » sont rejetés → ok true refu
+  ✓ mutant « une organisation lue sans filtre (la requête) » (administratif) fait rougir le juge
+      → gabarit-ent-administratif : S7 Lire les relances faites : requête sans filtre organisation (organisation_id=eq.…)
+  ✓ mutant « une organisation lue sans filtre (les chantiers d’une autre organisation passent) » (operations) fait rougir le juge
+      → essai gabarit-ent-operations : une autre organisation ne donne rien : ni chantier, ni membre, ni action automatique → sansMembre false aucun true rien true
+  ✓ mutant « une organisation lue sans filtre (les membres d’une autre organisation) » (operations) fait rougir le juge
+      → essai gabarit-ent-operations : une autre organisation ne donne rien : ni chantier, ni membre, ni action automatique → sansMembre false aucun false rien true
+  ✓ mutant « une organisation lue sans filtre (la configuration d’une autre organisation) » (finance) fait rougir le juge
+      → essai gabarit-ent-finance : une autre organisation ne donne rien (factures, tarifs, configuration) → rien true sansAuto false
+  ✓ mutant « une organisation lue sans filtre (les chiffres d’une autre organisation) » (direction) fait rougir le juge
+      → essai gabarit-ent-direction : une autre organisation ne donne rien (chiffres, rapports, configuration) → nonLu false sansAuto true : Impayés échus : 1 000 000 € | Devis s
+  ✓ mutant « une organisation lue sans filtre (les rapports d’une autre organisation) » (direction) fait rougir le juge
+      → essai gabarit-ent-direction : une autre organisation ne donne rien (chiffres, rapports, configuration) → nonLu false sansAuto true : Impayés échus : non lu | Devis sans r
+  ✓ mutant « une écriture sans organisation » (apres-vente) fait rougir le juge
+      → gabarit-ent-apres-vente : S7 Répondre par la plateforme : écriture sans la clé organisation_id dans le corps
+  ✓ mutant « un identifiant branché » (apres-vente) fait rougir le juge
+      → gabarit-ent-apres-vente : S3 Fiche Google : répondre à l’avis : identifiant branché dans un gabarit (« y a pas besoin de connexion », Benj 03/11)
+  ✓ mutant « un identifiant de la base branché » (direction) fait rougir le juge
+      → gabarit-ent-direction : S3 Lire les rapports : identifiant branché dans un gabarit (« y a pas besoin de connexion », Benj 03/11)
+  ✓ mutant « un outil d’agent qui écrit (l’agenda crée un événement) » (operations) fait rougir le juge
+      → gabarit-ent-operations : S6 Lire l’agenda Google (outil) : outil d'agent qui écrit ou envoie (create) : l'écriture se fait après la porte
+  ✓ mutant « un outil d’agent qui écrit (le Drive crée un fichier) » (administratif) fait rougir le juge
+      → gabarit-ent-administratif : S6 Chercher dans le Drive (outil) : outil d'agent qui écrit ou envoie (upload) : l'écriture se fait après la porte
+  ✓ mutant « un outil d’agent sans note de lecture » (finance) fait rougir le juge
+      → gabarit-ent-finance : S6 Paiement Stripe (outil) : un outil d'agent doit déclarer « outil: lecture » et dire ce qu'il lit
+  ✓ mutant « « Presti » dans un message du client (le texte envoyé) » (finance) fait rougir le juge
+      → gabarit-ent-finance : S9 Envoyer par Gmail : « Presti » dans un message qui part chez un client (marque blanche)
+  ✓ mutant « « Presti » dans un message du client (la réponse à un avis) » (apres-vente) fait rougir le juge
+      → gabarit-ent-apres-vente : S9 Fiche Google : répondre à l’avis : « Presti » dans un message qui part chez un client (marque blanche)
+  ✓ mutant « « Presti » dans un message du client (la revalidation le laisse passer) » (operations) fait rougir le juge
+      → essai gabarit-ent-operations : le planificateur lit l’agenda réel : le code trouve les créneaux libres de chaque membre, le modèle choisit un numéro, l’agenda reçoit le c
+  ✓ mutant « « Presti » dans un message du client (une attestation) » (administratif) fait rougir le juge
+      → essai gabarit-ent-administratif : une attestation ne dit que les faits du dossier : un nombre inventé, un fait manquant, un prix ou « Presti » sont rejetés → ok true refu
+  ✓ mutant « la mention de l’assistant ôtée d’un envoi » (direction) fait rougir le juge
+      → gabarit-ent-direction : S10 Diffuser par Teams : la mention de l'assistant n'est pas dans le texte envoyé
+  ✓ mutant « le nœud Agenda retiré » (operations) fait rougir le juge
+      → gabarit-ent-operations : S2 outil absent : n8n-nodes-base.googleCalendar
+  ✓ mutant « le nœud Outlook retiré » (operations) fait rougir le juge
+      → gabarit-ent-operations : S2 outil absent : n8n-nodes-base.microsoftOutlook
+  ✓ mutant « le nœud Stripe retiré » (finance) fait rougir le juge
+      → gabarit-ent-finance : S2 outil absent : n8n-nodes-base.stripe
+  ✓ mutant « l’API Qonto retirée » (finance) fait rougir le juge
+      → gabarit-ent-finance : S2 API absente : thirdparty.qonto.com
+  ✓ mutant « le nœud Zendesk retiré » (apres-vente) fait rougir le juge
+      → gabarit-ent-apres-vente : S2 outil absent : n8n-nodes-base.zendesk
+  ✓ mutant « Chatwoot lu par une adresse tierce (hors plateforme) » (apres-vente) fait rougir le juge
+      → gabarit-ent-apres-vente : S2 Chatwoot n’est pas lu par les événements de la plateforme
+  ✓ mutant « Google Chat retiré » (direction) fait rougir le juge
+      → gabarit-ent-direction : S2 outil absent : n8n-nodes-base.googleChat
+  ✓ mutant « la validation d’équipe retirée (Teams) » (direction) fait rougir le juge
+      → gabarit-ent-direction : S11 la validation d’équipe (Slack et Teams, envoyer et attendre) est absente
+  ✓ mutant « l’outil de validation humaine de n8n retiré de l’agent » (direction) fait rougir le juge
+      → gabarit-ent-direction : S2 outil absent : n8n-nodes-base.slackHitlTool
+  ✓ mutant « le mode privé retiré » (direction) fait rougir le juge
+      → gabarit-ent-direction : S16 le mode privé (aucun texte vers un modèle externe) est absent
+  ✓ mutant « un chiffre écrit par le modèle (la phrase de la direction) » (direction) fait rougir le juge
+      → essai gabarit-ent-direction : un rapport du lundi aux chiffres du code : le code compte, le modèle ne rédige qu’une phrase sans chiffre ; envoi, document et journal ; rie
+  ✓ mutant « une priorité hors de la liste du code » (direction) fait rougir le juge
+      → essai gabarit-ent-direction : un rapport du lundi aux chiffres du code : le code compte, le modèle ne rédige qu’une phrase sans chiffre ; envoi, document et journal ; rie
+  ✓ mutant « un point mensuel envoyé sans validation d’équipe » (direction) fait rougir le juge
+      → essai gabarit-ent-direction : le point mensuel passe par la validation d’équipe : une carte « À valider » du périmètre direction et une demande Slack ; rien ne part avant
+  ✓ mutant « un créneau du modèle (le numéro n’est plus contrôlé) » (operations) fait rougir le juge
+      → essai gabarit-ent-operations : le planificateur lit l’agenda réel : le code trouve les créneaux libres de chaque membre, le modèle choisit un numéro, l’agenda reçoit le c
+  ✓ mutant « un créneau occupé proposé » (operations) fait rougir le juge
+      → essai gabarit-ent-operations : le planificateur lit l’agenda réel : le code trouve les créneaux libres de chaque membre, le modèle choisit un numéro, l’agenda reçoit le c
+  ✓ mutant « une ligne d’import en anomalie importée » (operations) fait rougir le juge
+      → essai gabarit-ent-operations : une ligne d’import en anomalie ne s’importe jamais : l’équipe est prévenue ; la tâche déjà connue du projet n’est pas recréée → import 2 in
+  ✓ mutant « la porte de la relève retirée de la vérification (échec ouvert) » (direction) fait rougir le juge
+      → gabarit-ent-direction : S5 Porte simulation : la porte doit échouer fermée (simulation !== false)
+  ✓ mutant « un webhook ajouté » (finance) fait rougir le juge
+      → gabarit-ent-finance : S4 Entrée publique : déclencheur à webhook (n8n-nodes-base.webhook)
+  ✓ mutant « les actions ne sont plus réservées avant l’effet » (administratif) fait rougir le juge
+      → gabarit-ent-administratif : S12 les actions ne sont pas réservées avant l’effet (idempotence)
+  ✓ mutant « l’annexe d’autonomie n’est plus lue » (apres-vente) fait rougir le juge
+      → gabarit-ent-apres-vente : S12 l’autonomie par type d’action n’est pas lue dans l’annexe
+gabarits-entreprise-2-qa : 5 gabarits, 18 essais, 51 mutants
+OK

@@ -1,0 +1,355 @@
+[
+  {
+    "workflow": "gabarit-ent-operations",
+    "nom": "le planificateur lit l’agenda réel : le code trouve les créneaux libres de chaque membre, le modèle choisit un numéro, l’agenda reçoit le chantier, avec sa tâche et son dossier",
+    "epingles": "Exemple.",
+    "sortie": {
+      "propositions": [
+        {
+          "index": 0,
+          "membre_ref": "m1",
+          "membre_libelle": "Exemple. Membre 1",
+          "debut": "2026-11-04T10:00:00",
+          "fin": "2026-11-04T12:00:00"
+        },
+        {
+          "index": 1,
+          "membre_ref": "m2",
+          "membre_libelle": "Exemple. Membre 2",
+          "debut": "2026-11-04T08:00:00",
+          "fin": "2026-11-04T10:00:00"
+        }
+      ],
+      "plan": [
+        "carte|import_ligne|information|ligne_import:L2:import_ligne:info:carte",
+        "carte|planifier_chantier|carte|chantier:c1:planifier_chantier:carte",
+        "dossier_drive|creer_dossier|auto|chantier:c1:creer_dossier",
+        "import_ligne|import_ligne|auto|ligne_import:L1:import_ligne",
+        "prevenir_slack|prevenir_equipe|auto|lot:chantier:c1:prevenir_equipe",
+        "tache_clickup|creer_tache_projet|auto|chantier:c1:creer_tache_projet"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-operations",
+    "nom": "une ligne d’import en anomalie ne s’importe jamais : l’équipe est prévenue ; la tâche déjà connue du projet n’est pas recréée",
+    "epingles": "Exemple.",
+    "sortie": [
+      "carte|import_ligne|information|ligne_import:L2:import_ligne:info:carte",
+      "carte|planifier_chantier|carte|chantier:c1:planifier_chantier:carte",
+      "dossier_drive|creer_dossier|auto|chantier:c1:creer_dossier",
+      "import_ligne|import_ligne|auto|ligne_import:L1:import_ligne",
+      "prevenir_slack|prevenir_equipe|auto|lot:chantier:c1:prevenir_equipe",
+      "tache_clickup|creer_tache_projet|auto|chantier:c1:creer_tache_projet"
+    ],
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-operations",
+    "nom": "une autre organisation ne donne rien : ni chantier, ni membre, ni action automatique",
+    "epingles": "Exemple.",
+    "sortie": [
+      "carte|import_ligne|information|ligne_import:L2:import_ligne:info:carte",
+      "carte|planifier_chantier|information|chantier:c1:planifier_chantier:info:carte",
+      "import_ligne|import_ligne|auto|ligne_import:L1:import_ligne",
+      "prevenir_slack|prevenir_equipe|auto|lot:chantier:c1:prevenir_equipe"
+    ],
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-administratif",
+    "nom": "une attestation qui expire donne une relance prévue et une échéance dans l’agenda, au nom du client, une seule fois par palier",
+    "epingles": "Exemple.",
+    "sortie": {
+      "simulation": [
+        "echeance_agenda_google|echeance_agenda|auto|echeance:att-assurance:echeance_agenda",
+        "relance_gmail|relance_piece|auto|echeance:att-assurance:n1:relance_piece"
+      ],
+      "reel": [
+        "echeance_agenda_google|echeance_agenda|auto|echeance:att-assurance:echeance_agenda",
+        "relance_gmail|relance_piece|auto|echeance:att-assurance:n1:relance_piece"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-administratif",
+    "nom": "une pièce manquante est relancée à qui doit le document, JAMAIS sans destinataire connu : l’équipe est informée à la place",
+    "epingles": "Exemple.",
+    "sortie": {
+      "manquantes": [
+        "urssaf"
+      ],
+      "plan": [
+        "carte|relance_piece|information|piece:urssaf:relance_piece:info:carte",
+        "prevenir_slack|prevenir_equipe|auto|lot:piece:kbis:prevenir_equipe"
+      ],
+      "plan2": [
+        "carte|relance_piece|information|piece:urssaf:relance_piece:info:carte",
+        "prevenir_slack|prevenir_equipe|auto|lot:piece:rib:prevenir_equipe",
+        "relance_gmail|relance_piece|auto|piece:rib:n1:relance_piece"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-administratif",
+    "nom": "une attestation ne dit que les faits du dossier : un nombre inventé, un fait manquant, un prix ou « Presti » sont rejetés",
+    "epingles": "Exemple.",
+    "sortie": {
+      "accepte": true
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-administratif",
+    "nom": "une autre organisation ne donne rien (pièces, échéances, relances, configuration)",
+    "epingles": "Exemple.",
+    "sortie": [
+      "carte|relance_piece|carte|echeance:att-assurance:n1:relance_piece:carte"
+    ],
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-finance",
+    "nom": "un paiement lu donne un impayé arrêté : la facture soldée n’est plus relancée ; le reste dû est celui du code, pas celui du modèle",
+    "epingles": "Exemple.",
+    "sortie": {
+      "simulation": [
+        "carte|solder_facture|carte|facture:F002:solder_facture:carte",
+        "courriel_gmail|relance_impaye|auto|facture:F001:n1:relance_impaye",
+        "indicateur|indicateur_encaissements|auto|bilan:2026-11-03:indicateur_encaissements",
+        "prevenir_slack|prevenir_equipe|auto|lot:facture:F001:prevenir_equipe"
+      ],
+      "reel": [
+        "carte|solder_facture|carte|facture:F002:solder_facture:carte",
+        "courriel_gmail|relance_impaye|auto|facture:F001:n1:relance_impaye",
+        "indicateur|indicateur_encaissements|auto|bilan:2026-11-03:indicateur_encaissements",
+        "prevenir_slack|prevenir_equipe|auto|lot:facture:F001:prevenir_equipe"
+      ],
+      "reste": 100000
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-finance",
+    "nom": "le facturier « quand c’est fini » : le chantier terminé est chiffré par le code avec le tarif du client ; un tarif manquant ne devient jamais une facture",
+    "epingles": "Exemple.",
+    "sortie": {
+      "facture": {
+        "effet": "facture_creer",
+        "type_action": "facturer_chantier",
+        "organisation_id": "ORG_A",
+        "entreprise": "Exemple. Entreprise",
+        "cle_idempotence": "chantier:ch1:facturer_chantier",
+        "chantier_ref": "ch1",
+        "libelle": "Exemple. Chantier terminé",
+        "lignes": [
+          {
+            "ref_tarif": "exemple-intervention",
+            "quantite": 2,
+            "designation": "Exemple. Intervention",
+            "ht_centimes": 20000
+          },
+          {
+            "ref_tarif": "exemple-fourniture",
+            "quantite": 1,
+            "designation": "Exemple. Fourniture",
+            "ht_centimes": 5000
+          }
+        ],
+        "total_ht_centimes": 25000,
+        "total_tva_centimes": 5000,
+        "total_ttc_centimes": 30000,
+        "resume": "Facture du chantier terminé Exemple. Chantier terminé : 300,00 € TTC",
+        "mode": "auto"
+      }
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-finance",
+    "nom": "l’export au comptable est un fichier : factures réglées du mois dernier, pas celles que le comptable a déjà, jamais avant le début du mois",
+    "epingles": "Exemple.",
+    "sortie": {
+      "export": {
+        "effet": "export_comptable",
+        "type_action": "export_comptable",
+        "organisation_id": "ORG_A",
+        "entreprise": "Exemple. Entreprise",
+        "cle_idempotence": "export:2026-11:export_comptable",
+        "mois": "2026-11",
+        "destinataire": "comptable@exemple.invalid",
+        "boite": "gmail",
+        "lignes": [
+          {
+            "facture_ref": "F010",
+            "total_ttc_centimes": 12000,
+            "payee_le": "2026-11-12"
+          }
+        ],
+        "objet": "Export du mois 2026-11",
+        "resume": "Export au comptable : 1 facture(s) réglée(s) en 2026-11",
+        "mode": "auto",
+        "simulation": true,
+        "effets_faits": []
+      },
+      "csv": [
+        {
+          "json": {
+            "numero": "F010",
+            "total_ttc": "120,00",
+            "date_reglement": "2026-11-12"
+          }
+        }
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-finance",
+    "nom": "une autre organisation ne donne rien (factures, tarifs, configuration)",
+    "epingles": "Exemple.",
+    "sortie": [
+      "indicateur|indicateur_encaissements|auto|bilan:2026-11-03:indicateur_encaissements"
+    ],
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-apres-vente",
+    "nom": "un avis à 1 étoile donne une carte : jamais une publication, même au niveau le plus autonome de l’annexe ; l’équipe est alertée ; l’avis à 5 étoiles est publié selon l’annexe",
+    "epingles": "Exemple.",
+    "sortie": {
+      "simulation": [
+        "carte|repondre_avis_negatif|carte|avis:google:exemple-avis-1:repondre_avis_negatif:carte",
+        "courriel_gmail|proposer_entretien|auto|contrat:exemple-contrat-1:2026-11-23:proposer_entretien",
+        "prevenir_slack|prevenir_equipe|auto|lot:avis:google:exemple-avis-1:prevenir_equipe",
+        "repondre_google|repondre_avis|auto|avis:google:exemple-avis-2:repondre_avis",
+        "repondre_zendesk|repondre_ticket|auto|ticket:zendesk:exemple-ticket-1:repondre_ticket"
+      ],
+      "reel": [
+        "carte|repondre_avis_negatif|carte|avis:google:exemple-avis-1:repondre_avis_negatif:carte",
+        "courriel_gmail|proposer_entretien|auto|contrat:exemple-contrat-1:2026-11-23:proposer_entretien",
+        "prevenir_slack|prevenir_equipe|auto|lot:avis:google:exemple-avis-1:prevenir_equipe",
+        "repondre_google|repondre_avis|auto|avis:google:exemple-avis-2:repondre_avis",
+        "repondre_zendesk|repondre_ticket|auto|ticket:zendesk:exemple-ticket-1:repondre_ticket"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-apres-vente",
+    "nom": "l’entretien d’un contrat est proposé une fois, au bon destinataire ; sans destinataire : l’équipe est informée",
+    "epingles": "Exemple.",
+    "sortie": [
+      "carte|proposer_entretien|information|contrat:c2:2026-11-23:proposer_entretien:info:carte",
+      "courriel_gmail|proposer_entretien|auto|contrat:c1:2026-11-23:proposer_entretien"
+    ],
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-apres-vente",
+    "nom": "une autre organisation ne donne rien (avis, tickets Chatwoot, configuration)",
+    "epingles": "Exemple.",
+    "sortie": [
+      "carte|proposer_entretien|carte|contrat:exemple-contrat-1:2026-11-23:proposer_entretien:carte",
+      "carte|repondre_avis_negatif|prepare|avis:google:exemple-avis-1:repondre_avis_negatif:carte",
+      "carte|repondre_avis|carte|avis:google:exemple-avis-2:repondre_avis:carte",
+      "carte|repondre_ticket|carte|ticket:zendesk:exemple-ticket-1:repondre_ticket:carte"
+    ],
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-direction",
+    "nom": "un rapport du lundi aux chiffres du code : le code compte, le modèle ne rédige qu’une phrase sans chiffre ; envoi, document et journal ; rien avant 8 h",
+    "epingles": "Exemple.",
+    "sortie": {
+      "lignes": [
+        "Encaissé cette semaine : 12 345 €",
+        "Signé cette semaine : 8 000 €",
+        "En cours : 2 500 €",
+        "Impayés : 400 €",
+        "Coût IA de la semaine : 2,00 €",
+        "Appels à un modèle externe cette semaine : 10"
+      ],
+      "simulation": [
+        "diffuser_slack|diffuser_direction|auto|page:lundi:2026-11-09:diffuser_direction",
+        "diffuser_slack|diffuser_direction|auto|page:matin:2026-11-09:diffuser_direction",
+        "indicateur|compteur_ia|auto|ia:2026-11-09:compteur_ia",
+        "journal_sheets|journal_sheets|auto|page:lundi:2026-11-09:journal_sheets",
+        "rapport_docs|rapport_docs|auto|page:lundi:2026-11-09:rapport_docs"
+      ],
+      "reel": [
+        "diffuser_slack|diffuser_direction|auto|page:lundi:2026-11-09:diffuser_direction",
+        "diffuser_slack|diffuser_direction|auto|page:matin:2026-11-09:diffuser_direction",
+        "indicateur|compteur_ia|auto|ia:2026-11-09:compteur_ia",
+        "journal_sheets|journal_sheets|auto|page:lundi:2026-11-09:journal_sheets",
+        "rapport_docs|rapport_docs|auto|page:lundi:2026-11-09:rapport_docs"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-direction",
+    "nom": "le point mensuel passe par la validation d’équipe : une carte « À valider » du périmètre direction et une demande Slack ; rien ne part avant ; le bilan à un mois suit la date de déploiement",
+    "epingles": "Exemple.",
+    "sortie": {
+      "reel": [
+        "carte|diffuser_equipe|carte|page:bilan_1_mois:2026-12-01:diffuser_equipe:carte",
+        "carte|diffuser_equipe|carte|page:point_mensuel:2026-12-01:diffuser_equipe:carte",
+        "diffuser_slack|diffuser_direction|auto|page:matin:2026-12-01:diffuser_direction",
+        "indicateur|compteur_ia|auto|ia:2026-12-01:compteur_ia",
+        "rapport_docs|rapport_docs|auto|page:point_mensuel:2026-12-01:rapport_docs",
+        "valider_slack|validation_equipe|auto|page:bilan_1_mois:2026-12-01:diffuser_equipe:carte:equipe",
+        "valider_slack|validation_equipe|auto|page:point_mensuel:2026-12-01:diffuser_equipe:carte:equipe"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-direction",
+    "nom": "le compteur dit ce qui sort vers un modèle externe : le mode privé rédige sans modèle ; le plafond du coût IA alerte",
+    "epingles": "Exemple.",
+    "sortie": {
+      "externe": {
+        "documents_par_modele_externe": 1,
+        "documents_en_mode_prive": 0
+      },
+      "prive": {
+        "documents_par_modele_externe": 0,
+        "documents_en_mode_prive": 1
+      }
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-direction",
+    "nom": "une autre organisation ne donne rien (chiffres, rapports, configuration)",
+    "epingles": "Exemple.",
+    "sortie": [
+      "carte|journal_sheets|auto_differe|page:lundi:2026-11-09:journal_sheets:carte",
+      "carte|rapport_docs|auto_differe|page:lundi:2026-11-09:rapport_docs:carte",
+      "indicateur|compteur_ia|auto|ia:2026-11-09:compteur_ia"
+    ],
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), horloge figée au 03/11/2026, épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  }
+]

@@ -1,0 +1,56 @@
+{
+  "_lisez_moi": "Empreintes SHA-256 (texte jsCode en UTF-8) des nœuds Code des gabarits gabarit-ent-* (R19 de scripts/n8n-specs-qa.mjs). Exemple. Gabarits inactifs, sans identifiant.",
+  "gabarit-ent-operations": {
+    "Cartes en effets": "947903051db2cc56ce0117ce53bdd71638944e4f5f0663b3c4f29bc4c5ee79f6",
+    "Entrée d’exemple": "e1201a9a77f566d009eef512e15357540148b0fe848746f8d64e924bbcf8a7c7",
+    "Normaliser les entrées": "8253c5c820f700f74125bfb0f08c0a5cd557fa2be1538d3b87bd9407335b27dd",
+    "Préparer le planning": "988158cc79312d8b4624b7ba36eaca25fcb617e522773c51851a036b54de5116",
+    "Effets prévus": "00b7a77c83d7567798dfc2d4856a4d09ae94115b5d06758e554649be170ac999",
+    "Revalider le répartiteur": "942d4d8b7f93cbf79fb87f8ecc98b85acc091fd42370200cee6c1a52a4d3ef35",
+    "Décider les effets": "e6687db83f54b3f7a7f1368463329292dc908ab143f8291a555257f06d2730a5",
+    "Garder les actions réservées": "85c39c4c5a2214fafd3ee663ffeaf673e9d18dd099bf0cd8585f7ea6a38ca2ff"
+  },
+  "gabarit-ent-administratif": {
+    "Cartes en effets": "947903051db2cc56ce0117ce53bdd71638944e4f5f0663b3c4f29bc4c5ee79f6",
+    "Entrée d’exemple": "246d5df05d5efa187f917cb961d44c9226159eb205988cb6130ef96d0a99133d",
+    "Normaliser les entrées": "4c4c541f9a4e0ba705910a83108cb5302238209772663e865cb1088fc65809fc",
+    "Croiser les sources": "492a6903c501bcd07c46401840fff4f139cb2c4bd4ca51fe1ecd23ebe5a32d3b",
+    "Effets prévus": "c8eb704e28f24682702c22c0b5ab3efdd4c66e72b7cdc3ea52a96a1ae15574a8",
+    "Revalider les relances": "d834afde09b0f0d6e0d98ccc46a062dfc55657f14cd49d0b3c09b6b29711eed3",
+    "Revalider les attestations": "9c6c07362f99ae8fec76f229a13d0142645b106868a8b3d1d9fac45a2e2ba17c",
+    "Décider les effets": "496cc9aa2c0de255d5e82a18c996353d638ed86d8ea93c6e2abcfbe405758ede",
+    "Garder les actions réservées": "85c39c4c5a2214fafd3ee663ffeaf673e9d18dd099bf0cd8585f7ea6a38ca2ff"
+  },
+  "gabarit-ent-finance": {
+    "Cartes en effets": "947903051db2cc56ce0117ce53bdd71638944e4f5f0663b3c4f29bc4c5ee79f6",
+    "Entrée d’exemple": "6dc8f2ecb1ff68c78c802e4f54d81606479a3acf12276cb0231ecf9224a10567",
+    "Normaliser les entrées": "0c7ab6fd759bb23644244d094ab6c78c37ad5f537869827280f5c9d42d328e31",
+    "Rapprocher": "9b90e7f4c50b96ed6acead42aa027be236d2ae583635bd88307f15cb1c56b4a5",
+    "Effets prévus": "490adc7e450ce623e00d5eaab337eb027339eed2deeceae1f98f1cb7a313ffc1",
+    "Revalider les relances": "d834afde09b0f0d6e0d98ccc46a062dfc55657f14cd49d0b3c09b6b29711eed3",
+    "Décider les effets": "5b5e7e8451f1bc4329950e75f5cb8b6e6ca6bd75a8e7026b876c52f9ce207d97",
+    "Fabriquer le CSV": "1025a84ff484067cf1b431f8fbca97961f5d8739020581ad6f07d5d7684890bf",
+    "Garder les actions réservées": "85c39c4c5a2214fafd3ee663ffeaf673e9d18dd099bf0cd8585f7ea6a38ca2ff"
+  },
+  "gabarit-ent-apres-vente": {
+    "Cartes en effets": "947903051db2cc56ce0117ce53bdd71638944e4f5f0663b3c4f29bc4c5ee79f6",
+    "Entrée d’exemple": "4ad6a060501d2188958274f1d92eeffad3e58de2c57b9ed808cd8be6cf56151c",
+    "Normaliser les entrées": "ddc39bd07abedfea5c8a8f83c3cbf0db6d7bfb86a3888bc548296266bf8dcda6",
+    "Qualifier les retours": "80991a1b09420f99b8120b21199d36f36096c43ccd29276fbd6c9c71c17a3e05",
+    "Effets prévus": "1195c87afc56390388ba9512ac33dc04f3349dd28aff21b52edeb4fa4c914f94",
+    "Revalider le rédacteur": "eb81adef1481b5d60a9194f2dd5d8d10b63a8763cf13d6f3f9cbeca6ba6edb9c",
+    "Décider les effets": "8e304400278053635354078c74019436df4755600436ede4185f6d1c3a42f78a",
+    "Garder les actions réservées": "85c39c4c5a2214fafd3ee663ffeaf673e9d18dd099bf0cd8585f7ea6a38ca2ff"
+  },
+  "gabarit-ent-direction": {
+    "Cartes en effets": "947903051db2cc56ce0117ce53bdd71638944e4f5f0663b3c4f29bc4c5ee79f6",
+    "Entrée d’exemple": "2a593409ebf173c24d0593837c61d7e684f8bf25255df11259a8198af8cd38c5",
+    "Préparer le passage": "16e5dabbdc961ee7568eb46dbe292d1daa7305ff9585f8c41b8dfc2d697d8fcf",
+    "Compter": "4fa42c778e0b6f025c5ac9e3164075fecf07ff068d35b94186537f101c2d2ff6",
+    "Effets prévus": "87019fb139538511f47696e20b4a070f094140bb7db19797b9d545447fe45fbe",
+    "Rédiger sans modèle": "17cbd9a33fb0aca5335e9b9f6a4167d2d54d490c4bd212d8001531056f1412e9",
+    "Revalider les documents": "aacd13fa9c40b68da836ce10b9932a616d575376d30c5d9ce4296f3333983cae",
+    "Décider les effets": "ecfe516321fb96a6d85ea5d555dd7bd580fb0dd6edf8c12d25acbdf3cb1215a3",
+    "Garder les actions réservées": "85c39c4c5a2214fafd3ee663ffeaf673e9d18dd099bf0cd8585f7ea6a38ca2ff"
+  }
+}

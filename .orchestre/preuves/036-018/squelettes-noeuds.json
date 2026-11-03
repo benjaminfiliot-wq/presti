@@ -1,0 +1,1819 @@
+{
+  "n8n-nodes-base.gmailTrigger#releve-a-intervalle": {
+    "typeVersion": 1.4,
+    "parameters": {
+      "pollTimes": {
+        "item": [
+          {
+            "mode": "everyX",
+            "value": 5,
+            "unit": "minutes"
+          }
+        ]
+      },
+      "authentication": "oAuth2",
+      "event": "messageReceived",
+      "simple": true,
+      "maxResults": 10,
+      "filters": {
+        "readStatus": "unread",
+        "q": "newer_than:1d"
+      },
+      "options": {}
+    },
+    "credentialsKey": "gmailOAuth2 (authentication oAuth2) | googleApi (authentication serviceAccount)",
+    "incertitudes": [
+      "Le filtre `q` est facultatif dans le type mais l'aide du constructeur dit que sans lui TOUT mail entrant déclenche le workflow.",
+      "Le type ne dit pas comment marquer un mail traité : il faut un nœud gmail message markAsRead / addLabels après coup, sinon doublons possibles (aide du constructeur).",
+      "pollTimes.item[].mode 'everyX' avec value/unit : confirmé par le type ; la valeur 5 minutes est un exemple."
+    ]
+  },
+  "n8n-nodes-base.microsoftOutlookTrigger#releve-a-intervalle": {
+    "typeVersion": 1,
+    "parameters": {
+      "pollTimes": {
+        "item": [
+          {
+            "mode": "everyX",
+            "value": 5,
+            "unit": "minutes"
+          }
+        ]
+      },
+      "authentication": "microsoftOutlookOAuth2Api",
+      "event": "messageReceived",
+      "output": "simple",
+      "filters": {
+        "readStatus": "unread"
+      },
+      "options": {}
+    },
+    "credentialsKey": "microsoftOutlookOAuth2Api | microsoftOAuth2Api | microsoftEntraServicePrincipalApi (selon `authentication`)",
+    "incertitudes": [
+      "Avec authentication microsoftEntraServicePrincipalApi, le paramètre `mailbox` (resource locator, mode id) devient utile ; non fourni ici.",
+      "Pas d'opération de marquage dans le déclencheur : prévoir microsoftOutlook message update (isRead) ou move, ou une Data Table d'identifiants traités."
+    ]
+  },
+  "n8n-nodes-base.emailReadImap#reception-imap": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "mailbox": "INBOX",
+      "postProcessAction": "read",
+      "format": "simple",
+      "downloadAttachments": false,
+      "options": {
+        "customEmailConfig": "[\"UNSEEN\"]",
+        "trackLastMessageId": true
+      }
+    },
+    "credentialsKey": "imap",
+    "incertitudes": [
+      "Ce nœud écoute en continu (pas de pollTimes) ; le type ne montre aucun réglage d'intervalle.",
+      "`customEmailConfig` est une chaîne contenant un tableau JSON (valeur par défaut du type : [\"UNSEEN\"])."
+    ]
+  },
+  "n8n-nodes-base.gmail#message.send": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "resource": "message",
+      "operation": "send",
+      "authentication": "oAuth2",
+      "sendTo": "={{ $json.destinataire }}",
+      "subject": "Exemple.",
+      "emailType": "text",
+      "message": "Exemple.",
+      "options": {
+        "appendAttribution": false
+      }
+    },
+    "credentialsKey": "gmailOAuth2 (authentication oAuth2) | googleApi (authentication serviceAccount)",
+    "incertitudes": [
+      "`appendAttribution` vaut true par défaut : la phrase « envoyé avec n8n » serait ajoutée ; mis à false ici (règle white-label : jamais de marque tierce côté client).",
+      "`senderName` et `replyTo` existent dans options (confirmé) ; non remplis car dépendent de l'artisan."
+    ]
+  },
+  "n8n-nodes-base.gmail#draft.create": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "resource": "draft",
+      "operation": "create",
+      "authentication": "oAuth2",
+      "subject": "Exemple.",
+      "emailType": "text",
+      "message": "Exemple.",
+      "options": {
+        "sendTo": "={{ $json.destinataire }}"
+      }
+    },
+    "credentialsKey": "gmailOAuth2 (authentication oAuth2) | googleApi (authentication serviceAccount)",
+    "incertitudes": [
+      "Pour un brouillon, le destinataire n'est PAS au premier niveau : il se trouve dans `options.sendTo` (confirmé par le type).",
+      "Pas de paramètre appendAttribution sur draft.create (absent du type)."
+    ]
+  },
+  "n8n-nodes-base.microsoftOutlook#message.send": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "message",
+      "operation": "send",
+      "authentication": "microsoftOutlookOAuth2Api",
+      "toRecipients": "={{ $json.destinataire }}",
+      "subject": "Exemple.",
+      "bodyContent": "Exemple.",
+      "additionalFields": {
+        "bodyContentType": "Text",
+        "saveToSentItems": true
+      }
+    },
+    "credentialsKey": "microsoftOutlookOAuth2Api | microsoftOAuth2Api | microsoftEntraServicePrincipalApi (selon `authentication`)",
+    "incertitudes": [
+      "Casse de bodyContentType : les valeurs du type sont 'html' (minuscule) et 'Text' (T majuscule).",
+      "Le commentaire du type pour message.send est « Send an existing email draft » (libellé de la sortie du get_node_types) mais les paramètres sont bien ceux d'un envoi direct (toRecipients, subject, bodyContent)."
+    ]
+  },
+  "n8n-nodes-base.microsoftOutlook#draft.create": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "draft",
+      "operation": "create",
+      "authentication": "microsoftOutlookOAuth2Api",
+      "subject": "Exemple.",
+      "bodyContent": "Exemple.",
+      "additionalFields": {
+        "toRecipients": "={{ $json.destinataire }}",
+        "bodyContentType": "Text"
+      }
+    },
+    "credentialsKey": "microsoftOutlookOAuth2Api | microsoftOAuth2Api | microsoftEntraServicePrincipalApi (selon `authentication`)",
+    "incertitudes": [
+      "Pour un brouillon, toRecipients est dans additionalFields (pas au premier niveau, contrairement à message.send).",
+      "L'opération draft.send existe pour envoyer ensuite le brouillon (confirmé par search_nodes) ; non détaillée ici."
+    ]
+  },
+  "n8n-nodes-base.whatsApp#message.send": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "resource": "message",
+      "operation": "send",
+      "phoneNumberId": "ID_NUMERO_EXEMPLE",
+      "recipientPhoneNumber": "={{ $json.telephone }}",
+      "messageType": "text",
+      "textBody": "Exemple."
+    },
+    "credentialsKey": "whatsAppApi",
+    "incertitudes": [
+      "Fenêtre de 24 h : get_node_types NE LA MENTIONNE PAS (aucun avertissement dans les paramètres de send ni de sendTemplate). La règle Meta (texte libre seulement dans les 24 h après le dernier message du client, modèle approuvé au-delà) est une règle de la plateforme WhatsApp, non confirmée par cet outil : à vérifier dans la documentation Meta avant de s'y fier.",
+      "textBody est limité à 4096 caractères (commentaire du type).",
+      "Opérations présentes pour message : send, sendAndWait, sendTemplate (search_nodes)."
+    ]
+  },
+  "n8n-nodes-base.whatsApp#message.sendTemplate": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "resource": "message",
+      "operation": "sendTemplate",
+      "phoneNumberId": "ID_NUMERO_EXEMPLE",
+      "recipientPhoneNumber": "={{ $json.telephone }}",
+      "template": "nom_modele_exemple|fr",
+      "components": {
+        "component": [
+          {
+            "type": "body",
+            "bodyParameters": {
+              "parameter": [
+                {
+                  "type": "text",
+                  "text": "Exemple."
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "credentialsKey": "whatsAppApi",
+    "incertitudes": [
+      "`template` : liste chargée depuis le compte, ou expression au format `nom|langue` (confirmé par le type).",
+      "Le modèle doit exister et être approuvé côté Meta : non vérifiable ici."
+    ]
+  },
+  "n8n-nodes-base.facebookGraphApi#GET leads (Lead Ads)": {
+    "typeVersion": 1,
+    "parameters": {
+      "authType": "accessToken",
+      "hostUrl": "graph.facebook.com",
+      "graphApiVersion": "v25.0",
+      "httpRequestMethod": "GET",
+      "node": "ID_FORMULAIRE_EXEMPLE",
+      "edge": "leads",
+      "options": {
+        "fields": {
+          "field": [
+            {
+              "name": "id"
+            },
+            {
+              "name": "created_time"
+            },
+            {
+              "name": "field_data"
+            }
+          ]
+        }
+      }
+    },
+    "credentialsKey": "facebookGraphApi (authType accessToken) | facebookGraphApiOAuth2Api (authType oAuth2)",
+    "incertitudes": [
+      "Le nœud n'a pas de resource/operation : tout passe par node + edge + httpRequestMethod.",
+      "graphApiVersion est obligatoire ; liste du type jusqu'à 'v25.0'. Le choix d'une version supportée par Meta à la date d'usage n'est pas vérifiable ici.",
+      "options.fields.field[].name n'est offert que pour GET (displayOptions du type). Les noms de champs Lead Ads (id, created_time, field_data) viennent de la documentation Graph API, pas de get_node_types.",
+      "Pas de pagination dans ce nœud (aucune option) : suivre paging.next par un second appel ou un nœud HTTP Request."
+    ]
+  },
+  "n8n-nodes-base.facebookGraphApi#POST feed (publication de page)": {
+    "typeVersion": 1,
+    "parameters": {
+      "authType": "accessToken",
+      "hostUrl": "graph.facebook.com",
+      "graphApiVersion": "v25.0",
+      "httpRequestMethod": "POST",
+      "node": "ID_PAGE_EXEMPLE",
+      "edge": "feed",
+      "sendBinaryData": false,
+      "options": {
+        "queryParameters": {
+          "parameter": [
+            {
+              "name": "message",
+              "value": "Exemple."
+            }
+          ]
+        }
+      }
+    },
+    "credentialsKey": "facebookGraphApi (authType accessToken) | facebookGraphApiOAuth2Api (authType oAuth2)",
+    "incertitudes": [
+      "Le paramètre `message` du feed est un nom de l'API Graph, non confirmé par get_node_types (qui ne décrit que la forme options.queryParameters.parameter[{name,value}]).",
+      "Un jeton de PAGE (et non d'utilisateur) est en général requis pour publier : règle Meta, non confirmée ici.",
+      "Il existe aussi options.queryParametersJson (objet JSON) comme alternative à queryParameters."
+    ]
+  },
+  "n8n-nodes-base.facebookGraphApi#POST Instagram media (conteneur)": {
+    "typeVersion": 1,
+    "parameters": {
+      "authType": "accessToken",
+      "hostUrl": "graph.facebook.com",
+      "graphApiVersion": "v25.0",
+      "httpRequestMethod": "POST",
+      "node": "ID_COMPTE_INSTAGRAM_EXEMPLE",
+      "edge": "media",
+      "sendBinaryData": false,
+      "options": {
+        "queryParameters": {
+          "parameter": [
+            {
+              "name": "image_url",
+              "value": "https://exemple.invalid/image.jpg"
+            },
+            {
+              "name": "caption",
+              "value": "Exemple."
+            }
+          ]
+        }
+      }
+    },
+    "credentialsKey": "facebookGraphApi (authType accessToken) | facebookGraphApiOAuth2Api (authType oAuth2)",
+    "incertitudes": [
+      "Confirmé par le type : les endpoints conteneur Instagram (/media) exigent image_url ou video_url en paramètres de requête (pas de binaire).",
+      "Les bonnes pratiques content_generation de l'outil recommandent le binaire pour Facebook/Instagram : contradiction apparente avec le conseil du type ; suivre le conseil du type pour /media.",
+      "`caption` : nom de l'API Graph, non confirmé par get_node_types."
+    ]
+  },
+  "n8n-nodes-base.facebookGraphApi#POST Instagram media_publish": {
+    "typeVersion": 1,
+    "parameters": {
+      "authType": "accessToken",
+      "hostUrl": "graph.facebook.com",
+      "graphApiVersion": "v25.0",
+      "httpRequestMethod": "POST",
+      "node": "ID_COMPTE_INSTAGRAM_EXEMPLE",
+      "edge": "media_publish",
+      "sendBinaryData": false,
+      "options": {
+        "queryParameters": {
+          "parameter": [
+            {
+              "name": "creation_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        }
+      }
+    },
+    "credentialsKey": "facebookGraphApi (authType accessToken) | facebookGraphApiOAuth2Api (authType oAuth2)",
+    "incertitudes": [
+      "`creation_id` : nom de l'API Graph (identifiant renvoyé par l'appel /media), non confirmé par get_node_types.",
+      "Pour une vidéo, le conteneur est traité en asynchrone : prévoir un nœud Wait / une boucle de sondage avant media_publish (bonne pratique content_generation de l'outil)."
+    ]
+  },
+  "n8n-nodes-base.linkedIn#post.create (personne)": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "post",
+      "operation": "create",
+      "authentication": "standard",
+      "postAs": "person",
+      "person": "URN_PERSONNE_EXEMPLE",
+      "text": "Exemple.",
+      "shareMediaCategory": "NONE",
+      "additionalFields": {
+        "visibility": "PUBLIC"
+      }
+    },
+    "credentialsKey": "linkedInOAuth2Api (authentication standard) | linkedInCommunityManagementOAuth2Api (authentication communityManagement)",
+    "incertitudes": [
+      "`person` est obligatoire quand postAs = person (valeur chargée par getPersonUrn) ; ici un marqueur.",
+      "Seule opération de la ressource post : create (search_nodes).",
+      "L'aide du constructeur précise que l'API LinkedIn ne permet pas de scraper profils ni leads."
+    ]
+  },
+  "n8n-nodes-base.linkedIn#post.create (organisation)": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "post",
+      "operation": "create",
+      "authentication": "communityManagement",
+      "postAs": "organization",
+      "organization": "URN_ORGANISATION_EXEMPLE",
+      "text": "Exemple.",
+      "shareMediaCategory": "NONE"
+    },
+    "credentialsKey": "linkedInCommunityManagementOAuth2Api (authentication communityManagement) | linkedInOAuth2Api (authentication standard)",
+    "incertitudes": [
+      "Le type n'indique PAS quel mode d'authentification est exigé pour publier au nom d'une organisation ; `communityManagement` est un choix probable, non confirmé.",
+      "additionalFields.visibility n'est affiché que pour postAs = person (displayOptions du type) : omis ici.",
+      "`organization` : URN de l'organisation, saisi à la main (aucune méthode de chargement indiquée)."
+    ]
+  },
+  "n8n-nodes-base.youTube#video.getAll": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "video",
+      "operation": "getAll",
+      "returnAll": false,
+      "limit": 25,
+      "filters": {
+        "channelId": "ID_CHAINE_EXEMPLE"
+      },
+      "options": {
+        "order": "date"
+      }
+    },
+    "credentialsKey": "youTubeOAuth2Api",
+    "incertitudes": [
+      "COMMENTAIRES : ABSENTS. Les ressources du nœud sont channel, playlist, playlistItem, video, videoCategory ; aucune ressource comment (search_nodes). À faire par HTTP Request (YouTube Data API) si besoin.",
+      "La sortie de video.getAll est un résultat de recherche (id.videoId, snippet.*), sans statistiques de vues."
+    ]
+  },
+  "n8n-nodes-base.twitter#tweet.create": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "tweet",
+      "operation": "create",
+      "text": "Exemple."
+    },
+    "credentialsKey": "twitterOAuth2Api",
+    "incertitudes": [
+      "Les pièces jointes passent par additionalFields.attachments (identifiant de média déjà téléversé) ; le téléversement n'est pas fait par ce nœud (non vu dans les opérations).",
+      "Réponse ou citation : additionalFields.inReplyToStatusId / inQuoteToStatusId, resource locators (mode id ou url)."
+    ]
+  },
+  "n8n-nodes-base.twitter#tweet.search": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "tweet",
+      "operation": "search",
+      "searchText": "@compte_exemple",
+      "returnAll": false,
+      "limit": 50,
+      "additionalFields": {
+        "sortOrder": "recency",
+        "tweetFieldsObject": [
+          "author_id",
+          "created_at",
+          "conversation_id"
+        ]
+      }
+    },
+    "credentialsKey": "twitterOAuth2Api",
+    "incertitudes": [
+      "MENTIONS : pas d'opération dédiée. tweet.search (7 derniers jours selon la description) avec une requête contenant @compte est un contournement, non confirmé comme équivalent exact par get_node_types.",
+      "Les opérations du nœud : directMessage.create, list.add, tweet.create/delete/like/retweet/search, user.searchUser.",
+      "Le niveau d'accès de l'API X (payant) conditionne la recherche ; non vérifiable ici."
+    ]
+  },
+  "n8n-nodes-base.googleAds#campaign.getAll": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "campaign",
+      "operation": "getAll",
+      "managerCustomerId": "0000000000",
+      "clientCustomerId": "0000000000",
+      "additionalOptions": {
+        "dateRange": "LAST_30_DAYS",
+        "campaignStatus": "ENABLED"
+      }
+    },
+    "credentialsKey": "googleAdsOAuth2Api",
+    "incertitudes": [
+      "Pas de paramètre `returnAll`/`limit` dans le type de campaign.getAll.",
+      "Sortie : id, name, status, impressions, interactions, costMicros, ctr, averageCost… (type). Le jeton développeur Google Ads n'apparaît pas dans les paramètres : il relève du credential, non vérifiable ici.",
+      "Seules opérations de campaign : get, getAll. Pas de rapport par groupe d'annonces ni par mot-clé dans ce nœud."
+    ]
+  },
+  "n8n-nodes-base.sendInBlue#contact.upsert": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "resource": "contact",
+      "operation": "upsert",
+      "email": "={{ $json.email }}",
+      "upsertAttributes": {
+        "upsertAttributesValues": [
+          {
+            "fieldName": "PRENOM",
+            "fieldValue": "Exemple."
+          }
+        ]
+      }
+    },
+    "credentialsKey": "sendInBlueApi",
+    "incertitudes": [
+      "Le nœud n'expose aucun paramètre de liste : l'inscription à une liste n'est pas faisable par contact.upsert dans ce type (non confirmé ailleurs)."
+    ]
+  },
+  "n8n-nodes-base.sendInBlue#contact.getAll": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "resource": "contact",
+      "operation": "getAll",
+      "returnAll": false,
+      "limit": 50,
+      "options": {
+        "sort": "desc"
+      }
+    },
+    "credentialsKey": "sendInBlueApi",
+    "incertitudes": [
+      "Seul filtre : filters.modifiedSince (date UTC ISO). Pas de filtre par liste ni par e-mail (utiliser contact.get)."
+    ]
+  },
+  "n8n-nodes-base.sendInBlue#contact.get": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "resource": "contact",
+      "operation": "get",
+      "identifier": "={{ $json.email }}"
+    },
+    "credentialsKey": "sendInBlueApi",
+    "incertitudes": [
+      "`identifier` accepte e-mail (encodé), identifiant ou valeur d'attribut SMS (commentaire du type)."
+    ]
+  },
+  "n8n-nodes-base.sendInBlue#email.sendTemplate": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "resource": "email",
+      "operation": "sendTemplate",
+      "templateId": "1",
+      "recipients": "={{ $json.email }}",
+      "additionalFields": {
+        "templateParameters": {
+          "parameterValues": {
+            "parameters": "PRENOM=Exemple."
+          }
+        }
+      }
+    },
+    "credentialsKey": "sendInBlueApi",
+    "incertitudes": [
+      "templateId est une chaîne ; le gabarit doit exister dans Brevo.",
+      "`recipients` : le type dit seulement « Recipients » (pas de précision sur la liste d'adresses séparées par des virgules).",
+      "Les 300 envois/jour du plan gratuit (email-brevo.md) ne sont pas gérés par le nœud : la vérification du quota est à construire dans le workflow."
+    ]
+  },
+  "n8n-nodes-base.mailchimp#member.create": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "member",
+      "operation": "create",
+      "authentication": "apiKey",
+      "list": "ID_LISTE_EXEMPLE",
+      "email": "={{ $json.email }}",
+      "status": "pending",
+      "jsonParameters": false,
+      "mergeFieldsUi": {
+        "mergeFieldsValues": [
+          {
+            "name": "FNAME",
+            "value": "Exemple."
+          }
+        ]
+      }
+    },
+    "credentialsKey": "mailchimpApi (authentication apiKey) | mailchimpOAuth2Api (authentication oAuth2)",
+    "incertitudes": [
+      "Aucun upsert exposé : create puis update. Le comportement de create sur un membre existant n'est pas décrit par le type.",
+      "status 'pending' choisi pour le double opt-in (valeurs du type : cleaned, pending, subscribed, transactional, unsubscribed)."
+    ]
+  },
+  "n8n-nodes-base.mailchimp#member.update": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "member",
+      "operation": "update",
+      "authentication": "apiKey",
+      "list": "ID_LISTE_EXEMPLE",
+      "email": "={{ $json.email }}",
+      "jsonParameters": false,
+      "updateFields": {
+        "language": "fr"
+      }
+    },
+    "credentialsKey": "mailchimpApi (authentication apiKey) | mailchimpOAuth2Api (authentication oAuth2)",
+    "incertitudes": [
+      "Même résolution de membre par e-mail que create ; non détaillé."
+    ]
+  },
+  "n8n-nodes-base.mailchimp#member.getAll": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "member",
+      "operation": "getAll",
+      "authentication": "apiKey",
+      "list": "ID_LISTE_EXEMPLE",
+      "returnAll": false,
+      "limit": 50,
+      "options": {
+        "status": "subscribed"
+      }
+    },
+    "credentialsKey": "mailchimpApi (authentication apiKey) | mailchimpOAuth2Api (authentication oAuth2)",
+    "incertitudes": [
+      "Le défaut de limit est 500 dans le type (50 ici par prudence)."
+    ]
+  },
+  "n8n-nodes-base.activeCampaign#contact.create": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "contact",
+      "operation": "create",
+      "email": "={{ $json.email }}",
+      "updateIfExists": true,
+      "additionalFields": {
+        "firstName": "Exemple.",
+        "lastName": "Exemple."
+      }
+    },
+    "credentialsKey": "activeCampaignApi",
+    "incertitudes": [
+      "updateIfExists (booléen) donne un comportement d'upsert ; sinon erreur si le contact existe (commentaire du type)."
+    ]
+  },
+  "n8n-nodes-base.activeCampaign#contact.update": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "contact",
+      "operation": "update",
+      "contactId": "={{ $json.id }}",
+      "updateFields": {
+        "firstName": "Exemple."
+      }
+    },
+    "credentialsKey": "activeCampaignApi",
+    "incertitudes": [
+      "contactId est typé nombre (défaut 0) ; une expression est acceptée par le type."
+    ]
+  },
+  "n8n-nodes-base.activeCampaign#contactList.add": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "contactList",
+      "operation": "add",
+      "listId": 1,
+      "contactId": "={{ $json.id }}"
+    },
+    "credentialsKey": "activeCampaignApi",
+    "incertitudes": [
+      "listId et contactId sont des nombres ; listId: 1 est un exemple, pas un identifiant réel."
+    ]
+  },
+  "n8n-nodes-base.lemlist#lead.create": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "lead",
+      "operation": "create",
+      "campaignId": "ID_CAMPAGNE_EXEMPLE",
+      "email": "={{ $json.email }}",
+      "additionalFields": {
+        "firstName": "Exemple.",
+        "lastName": "Exemple.",
+        "companyName": "Exemple.",
+        "deduplicate": true
+      }
+    },
+    "credentialsKey": "lemlistApi",
+    "incertitudes": [
+      "deduplicate = ne pas insérer si l'e-mail est déjà dans une autre campagne (commentaire du type)."
+    ]
+  },
+  "n8n-nodes-base.lemlist#lead.get": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "lead",
+      "operation": "get",
+      "email": "={{ $json.email }}"
+    },
+    "credentialsKey": "lemlistApi",
+    "incertitudes": []
+  },
+  "n8n-nodes-base.hubspot#contact.upsert": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "resource": "contact",
+      "operation": "upsert",
+      "authentication": "oAuth2",
+      "email": "={{ $json.email }}",
+      "additionalFields": {
+        "firstName": "Exemple.",
+        "lastName": "Exemple.",
+        "phoneNumber": "={{ $json.telephone }}",
+        "companyName": "Exemple."
+      },
+      "options": {
+        "resolveData": true
+      }
+    },
+    "credentialsKey": "hubspotOAuth2Api (authentication 'oAuth2') | hubspotAppToken ('appToken') | hubspotApi ('apiKey')",
+    "incertitudes": [
+      "Recopié du brief (version 2.2), non revérifié par get_node_types dans cette passe."
+    ]
+  },
+  "n8n-nodes-base.hubspot#deal.create": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "resource": "deal",
+      "operation": "create",
+      "authentication": "oAuth2",
+      "stage": "Exemple.",
+      "additionalFields": {
+        "dealName": "Exemple.",
+        "amount": 0,
+        "pipeline": "Exemple.",
+        "description": "Exemple."
+      }
+    },
+    "credentialsKey": "hubspotOAuth2Api (authentication 'oAuth2') | hubspotAppToken ('appToken') | hubspotApi ('apiKey')",
+    "incertitudes": [
+      "Recopié du brief (version 2.2), non revérifié.",
+      "stage et pipeline sont des identifiants propres au compte (loadOptions) : valeurs fictives."
+    ]
+  },
+  "n8n-nodes-base.hubspot#contact.search": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "resource": "contact",
+      "operation": "search",
+      "authentication": "oAuth2",
+      "returnAll": false,
+      "limit": 10,
+      "filterGroupsUi": {
+        "filterGroupsValues": [
+          {
+            "filtersUi": {
+              "filterValues": [
+                {
+                  "propertyName": "email",
+                  "type": "email",
+                  "operator": "EQ",
+                  "value": "={{ $json.email }}"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "additionalFields": {
+        "query": "Exemple."
+      }
+    },
+    "credentialsKey": "hubspotOAuth2Api (authentication 'oAuth2') | hubspotAppToken ('appToken') | hubspotApi ('apiKey')",
+    "incertitudes": [
+      "Recopié du brief (version 2.2), non revérifié.",
+      "Valeur exacte de filterValues[].type (loadOption, souvent de la forme nom|type) et de operator non confirmée ici."
+    ]
+  },
+  "n8n-nodes-base.pipedrive#person.create": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "person",
+      "operation": "create",
+      "authentication": "apiToken",
+      "name": "Exemple.",
+      "additionalFields": {
+        "emails": {
+          "emailProperties": [
+            {
+              "value": "={{ $json.email }}",
+              "primary": true,
+              "label": "work"
+            }
+          ]
+        },
+        "phones": {
+          "phoneProperties": [
+            {
+              "value": "={{ $json.telephone }}",
+              "primary": true,
+              "label": "mobile"
+            }
+          ]
+        }
+      }
+    },
+    "credentialsKey": "pipedriveApi (authentication 'apiToken') | pipedriveOAuth2Api ('oAuth2')",
+    "incertitudes": [
+      "Aucune : champs lus dans PipedriveV2PersonCreateParams. Le nom 'authentication' est optionnel dans le type (valeur par défaut non indiquée)."
+    ]
+  },
+  "n8n-nodes-base.pipedrive#deal.create": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "deal",
+      "operation": "create",
+      "authentication": "apiToken",
+      "title": "Exemple.",
+      "associateWith": "person",
+      "person_id": 0,
+      "additionalFields": {
+        "value": 0,
+        "currency": "EUR",
+        "status": "open"
+      }
+    },
+    "credentialsKey": "pipedriveApi (authentication 'apiToken') | pipedriveOAuth2Api ('oAuth2')",
+    "incertitudes": [
+      "person_id: 0 est fictif (défaut du type) ; à remplacer par une expression à l'usage.",
+      "org_id/person_id existent au premier niveau (selon associateWith) ET dans additionalFields (affichage inverse) : un seul des deux jeux est utile."
+    ]
+  },
+  "n8n-nodes-base.pipedrive#person.search": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "person",
+      "operation": "search",
+      "authentication": "apiToken",
+      "term": "Exemple.",
+      "exactMatch": false,
+      "returnAll": false,
+      "limit": 10,
+      "additionalFields": {
+        "fields": [
+          "name"
+        ]
+      }
+    },
+    "credentialsKey": "pipedriveApi (authentication 'apiToken') | pipedriveOAuth2Api ('oAuth2')",
+    "incertitudes": [
+      "term: minimum 2 caractères (1 si exactMatch). Pour chercher par e-mail : additionalFields.fields = ['email'] (valeurs permises : custom_fields, email, name, notes, phone)."
+    ]
+  },
+  "n8n-nodes-base.salesforce#contact.upsert": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "resource": "contact",
+      "operation": "upsert",
+      "authentication": "oAuth2",
+      "externalId": "Email",
+      "externalIdValue": "={{ $json.email }}",
+      "lastname": "Exemple.",
+      "additionalFields": {
+        "firstName": "Exemple.",
+        "email": "={{ $json.email }}",
+        "phone": "={{ $json.telephone }}",
+        "description": "Exemple."
+      }
+    },
+    "credentialsKey": "salesforceOAuth2Api (authentication 'oAuth2') | salesforceJwtApi ('jwt')",
+    "incertitudes": [
+      "externalId est un loadOption (getExternalIdFields) : 'Email' est un exemple non confirmé ; doit être un champ marqué External ID / unique dans l'org.",
+      "Le type d'interface est nommé v11 et la version réelle est 1.1 (typeVersion 1.1)."
+    ]
+  },
+  "n8n-nodes-base.salesforce#opportunity.create": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "resource": "opportunity",
+      "operation": "create",
+      "authentication": "oAuth2",
+      "name": "Exemple.",
+      "closeDate": "2030-01-31",
+      "stageName": "Prospecting",
+      "additionalFields": {
+        "amount": 0,
+        "description": "Exemple."
+      }
+    },
+    "credentialsKey": "salesforceOAuth2Api (authentication 'oAuth2') | salesforceJwtApi ('jwt')",
+    "incertitudes": [
+      "stageName est un loadOption (getStages) : 'Prospecting' est un exemple non confirmé, dépend de l'org."
+    ]
+  },
+  "n8n-nodes-base.salesforce#opportunity.getAll": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "resource": "opportunity",
+      "operation": "getAll",
+      "authentication": "oAuth2",
+      "returnAll": false,
+      "limit": 10,
+      "options": {
+        "fields": "Id,Name,StageName",
+        "conditionsUi": {
+          "conditionValues": [
+            {
+              "field": "StageName",
+              "operation": "equal",
+              "value": "Prospecting"
+            }
+          ]
+        }
+      }
+    },
+    "credentialsKey": "salesforceOAuth2Api (authentication 'oAuth2') | salesforceJwtApi ('jwt')",
+    "incertitudes": [
+      "Valeurs de field (loadOption getOpportunityFields) à confirmer dans l'org ; operation limitée à < <= equal > >=."
+    ]
+  },
+  "n8n-nodes-base.salesforce#lead.create": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "resource": "lead",
+      "operation": "create",
+      "authentication": "oAuth2",
+      "company": "Exemple.",
+      "lastname": "Exemple.",
+      "additionalFields": {
+        "firstname": "Exemple.",
+        "email": "={{ $json.email }}",
+        "phone": "={{ $json.telephone }}",
+        "description": "Exemple.",
+        "leadSource": "Web"
+      }
+    },
+    "credentialsKey": "salesforceOAuth2Api (authentication 'oAuth2') | salesforceJwtApi ('jwt')",
+    "incertitudes": [
+      "leadSource est un loadOption (getLeadSources) : 'Web' est un exemple non confirmé.",
+      "Casse : lead utilise additionalFields.firstname (minuscule) alors que contact upsert utilise firstName."
+    ]
+  },
+  "n8n-nodes-base.zohoCrm#contact.upsert": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "contact",
+      "operation": "upsert",
+      "lastName": "Exemple.",
+      "additionalFields": {
+        "First_Name": "Exemple.",
+        "Email": "={{ $json.email }}",
+        "Phone": "={{ $json.telephone }}",
+        "Description": "Exemple."
+      }
+    },
+    "credentialsKey": "zohoOAuth2Api (pas de paramètre 'authentication' dans l'interface)",
+    "incertitudes": [
+      "Aucun paramètre 'authentication' dans le type : un seul identifiant OAuth2 attendu.",
+      "Pas de champ de correspondance explicite : la doc du type dit que l'upsert se fait sur Email."
+    ]
+  },
+  "n8n-nodes-base.zohoCrm#deal.create": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "deal",
+      "operation": "create",
+      "dealName": "Exemple.",
+      "stage": "Qualification",
+      "additionalFields": {
+        "Amount": 0,
+        "Currency": "EUR",
+        "Closing_Date": "2030-01-31",
+        "Description": "Exemple."
+      }
+    },
+    "credentialsKey": "zohoOAuth2Api (pas de paramètre 'authentication' dans l'interface)",
+    "incertitudes": [
+      "stage est un loadOption (getDealStage) : 'Qualification' est un exemple non confirmé, dépend du compte.",
+      "Closing_Date : format de date non précisé par le type (YYYY-MM-DD supposé)."
+    ]
+  },
+  "n8n-nodes-base.zohoCrm#contact.getAll": {
+    "typeVersion": 1,
+    "parameters": {
+      "resource": "contact",
+      "operation": "getAll",
+      "returnAll": false,
+      "limit": 10,
+      "options": {
+        "sort_order": "desc"
+      }
+    },
+    "credentialsKey": "zohoOAuth2Api (pas de paramètre 'authentication' dans l'interface)",
+    "incertitudes": [
+      "Pas de filtre par champ dans cette opération (seulement fields, sort_by, sort_order, approved, converted, include_child, territory_id)."
+    ]
+  },
+  "n8n-nodes-base.odoo#contact.create": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "contact",
+      "operation": "create",
+      "authentication": "odooApiKeyApi",
+      "fieldsToSend": {
+        "mappingMode": "defineBelow",
+        "value": {
+          "name": "Exemple."
+        },
+        "matchingColumns": [],
+        "schema": []
+      }
+    },
+    "credentialsKey": "odooApiKeyApi (authentication 'odooApiKeyApi') | odooApi ('odooApi')",
+    "incertitudes": [
+      "fieldsToSend est un resource mapper dont le schéma est chargé dynamiquement depuis l'instance Odoo : les noms de colonnes (name, email, phone...) ne sont pas confirmés par get_node_types.",
+      "Valeur par défaut du paramètre authentication non indiquée."
+    ]
+  },
+  "n8n-nodes-base.odoo#opportunity.create": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "opportunity",
+      "operation": "create",
+      "authentication": "odooApiKeyApi",
+      "fieldsToSend": {
+        "mappingMode": "defineBelow",
+        "value": {
+          "name": "Exemple."
+        },
+        "matchingColumns": [],
+        "schema": []
+      }
+    },
+    "credentialsKey": "odooApiKeyApi (authentication 'odooApiKeyApi') | odooApi ('odooApi')",
+    "incertitudes": [
+      "Même resource mapper dynamique que pour contact : noms de champs (modèle crm.lead supposé : name, expected_revenue, partner_id...) non confirmés."
+    ]
+  },
+  "n8n-nodes-base.odoo#opportunity.getAll": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "opportunity",
+      "operation": "getAll",
+      "authentication": "odooApiKeyApi",
+      "returnAll": false,
+      "limit": 10,
+      "filters": {
+        "filter": [
+          {
+            "fieldName": "name",
+            "operator": "like",
+            "value": "Exemple."
+          }
+        ]
+      }
+    },
+    "credentialsKey": "odooApiKeyApi (authentication 'odooApiKeyApi') | odooApi ('odooApi')",
+    "incertitudes": [
+      "fieldName est un loadOption (getOpportunityFields) : 'name' non confirmé pour l'instance.",
+      "Opérateurs confirmés : equal, notEqual, greaterThen, lesserThen, greaterOrEqual, lesserOrEqual, like, in, notIn, childOf (graphie 'greaterThen' / 'lesserThen' du type)."
+    ]
+  },
+  "n8n-nodes-base.airtable#record.upsert": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "resource": "record",
+      "operation": "upsert",
+      "authentication": "airtableTokenApi",
+      "base": {
+        "__rl": true,
+        "mode": "id",
+        "value": "appEXEMPLE"
+      },
+      "table": {
+        "__rl": true,
+        "mode": "id",
+        "value": "tblEXEMPLE"
+      },
+      "columns": {
+        "mappingMode": "defineBelow",
+        "value": {
+          "Nom": "Exemple."
+        },
+        "matchingColumns": [
+          "Nom"
+        ],
+        "schema": []
+      },
+      "options": {
+        "typecast": true
+      }
+    },
+    "credentialsKey": "airtableTokenApi (authentication 'airtableTokenApi') | airtableOAuth2Api ('airtableOAuth2Api')",
+    "incertitudes": [
+      "columns est un resource mapper : noms de colonnes dépendants de la table ; matchingColumns sert de clé d'upsert (contenu exact du schema non confirmé).",
+      "Valeurs fictives appEXEMPLE / tblEXEMPLE pour base/table (mode 'id')."
+    ]
+  },
+  "n8n-nodes-base.airtable#record.search": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "resource": "record",
+      "operation": "search",
+      "authentication": "airtableTokenApi",
+      "base": {
+        "__rl": true,
+        "mode": "id",
+        "value": "appEXEMPLE"
+      },
+      "table": {
+        "__rl": true,
+        "mode": "id",
+        "value": "tblEXEMPLE"
+      },
+      "filterByFormula": "={Nom} = 'Exemple.'",
+      "returnAll": false,
+      "limit": 10
+    },
+    "credentialsKey": "airtableTokenApi (authentication 'airtableTokenApi') | airtableOAuth2Api ('airtableOAuth2Api')",
+    "incertitudes": [
+      "Valeurs fictives appEXEMPLE / tblEXEMPLE pour base/table (mode 'id').",
+      "returnAll vaut true par défaut dans ce nœud (false posé ici)."
+    ]
+  },
+  "n8n-nodes-base.notion#databasePage.create": {
+    "typeVersion": 3,
+    "parameters": {
+      "resource": "databasePage",
+      "operation": "create",
+      "authentication": "apiKey",
+      "dataSourceId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "00000000-0000-0000-0000-000000000000"
+      },
+      "title": "Exemple.",
+      "propertiesUi": {
+        "propertyValues": [
+          {
+            "key": "Description|rich_text",
+            "textContent": "Exemple."
+          }
+        ]
+      },
+      "contentType": "markdown",
+      "markdown": "Exemple.",
+      "simple": true
+    },
+    "credentialsKey": "notionApi (authentication 'apiKey') | notionOAuth2Api ('oAuth2')",
+    "incertitudes": [
+      "Version 3 : le paramètre est dataSourceId (pas databaseId, ancien nom v2).",
+      "key est au format 'Nom de propriété|type' (loadOption) ; le champ 'type' est calculé par expression, non écrit ici.",
+      "dataSourceId : UUID nul fictif."
+    ]
+  },
+  "n8n-nodes-base.notion#databasePage.getAll": {
+    "typeVersion": 3,
+    "parameters": {
+      "resource": "databasePage",
+      "operation": "getAll",
+      "authentication": "apiKey",
+      "dataSourceId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "00000000-0000-0000-0000-000000000000"
+      },
+      "returnAll": false,
+      "limit": 10,
+      "filterType": "none",
+      "simple": true
+    },
+    "credentialsKey": "notionApi (authentication 'apiKey') | notionOAuth2Api ('oAuth2')",
+    "incertitudes": [
+      "dataSourceId : UUID nul fictif.",
+      "Filtre manuel : filterType 'manual' + filters.conditions[]{key,condition,...Value} ; non détaillé dans ce squelette."
+    ]
+  },
+  "n8n-nodes-base.mondayCom#item.createItem": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "item",
+      "operation": "createItem",
+      "authentication": "accessToken",
+      "boardId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "0000000000"
+      },
+      "createAs": "item",
+      "name": "Exemple.",
+      "columnValuesMode": "json",
+      "columnValuesJson": "{}"
+    },
+    "credentialsKey": "mondayComApi (authentication 'accessToken') | mondayComOAuth2Api ('oAuth2')",
+    "incertitudes": [
+      "boardId : identifiant fictif.",
+      "columnValuesJson typé IDataObject | string : une chaîne JSON est posée ; clés = identifiants de colonnes monday."
+    ]
+  },
+  "n8n-nodes-base.mondayCom#item.getItems": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "item",
+      "operation": "getItems",
+      "authentication": "accessToken",
+      "boardId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "0000000000"
+      },
+      "options": {
+        "limit": 10
+      }
+    },
+    "credentialsKey": "mondayComApi (authentication 'accessToken') | mondayComOAuth2Api ('oAuth2')",
+    "incertitudes": [
+      "boardId : identifiant fictif.",
+      "Filtres serveur : itemFilters.rules[]{columnId,operator,value} (loadOptions) non détaillés."
+    ]
+  },
+  "n8n-nodes-base.slack#message.post": {
+    "typeVersion": 2.7,
+    "parameters": {
+      "resource": "message",
+      "operation": "post",
+      "authentication": "oAuth2",
+      "select": "channel",
+      "channelId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "CANAL_EXEMPLE"
+      },
+      "messageType": "text",
+      "text": "Exemple.",
+      "otherOptions": {
+        "includeLinkToWorkflow": false
+      }
+    },
+    "credentialsKey": "slackOAuth2Api (authentication oAuth2) | slackApi (authentication accessToken)",
+    "incertitudes": [
+      "includeLinkToWorkflow vaut true par défaut (lien vers le workflow ajouté au message) : mis à false."
+    ]
+  },
+  "n8n-nodes-base.slack#message.sendAndWait": {
+    "typeVersion": 2.7,
+    "parameters": {
+      "resource": "message",
+      "operation": "sendAndWait",
+      "authentication": "oAuth2",
+      "select": "channel",
+      "channelId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "CANAL_EXEMPLE"
+      },
+      "message": "Exemple. À valider.",
+      "responseType": "approval",
+      "approvalOptions": {
+        "values": {
+          "approvalType": "double",
+          "approveLabel": "Valider",
+          "disapproveLabel": "Refuser",
+          "buttonApprovalStyle": "primary",
+          "buttonDisapprovalStyle": "secondary"
+        }
+      },
+      "options": {
+        "limitWaitTime": {
+          "values": {
+            "limitType": "afterTimeInterval",
+            "resumeAmount": 24,
+            "resumeUnit": "hours"
+          }
+        },
+        "appendAttribution": false
+      }
+    },
+    "credentialsKey": "slackOAuth2Api (authentication oAuth2) | slackApi (authentication accessToken)",
+    "incertitudes": [
+      "Délai par défaut du type : 45 minutes ; 24 h mis ici (limitWaitTime.values.limitType/resumeAmount/resumeUnit). À l'échéance l'exécution reprend : le type ne dit pas si approved vaut false ou si la clé est absente.",
+      "Sortie : data.approved (booléen) et data.respondedAt.",
+      "captureResponder / approvers (restriction des approbateurs) exigent une configuration supplémentaire de l'application Slack (commentaire du type).",
+      "responseType accepte aussi 'freeText' et 'customForm'."
+    ]
+  },
+  "n8n-nodes-base.microsoftTeams#chatMessage.create": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "chatMessage",
+      "operation": "create",
+      "authentication": "microsoftTeamsOAuth2Api",
+      "chatId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "CHAT_EXEMPLE"
+      },
+      "contentType": "text",
+      "message": "Exemple.",
+      "options": {
+        "includeLinkToWorkflow": false
+      }
+    },
+    "credentialsKey": "microsoftTeamsOAuth2Api | microsoftOAuth2Api | microsoftEntraServicePrincipalApi (selon `authentication`)",
+    "incertitudes": [
+      "Avec microsoftEntraServicePrincipalApi, chatId/message/contentType sont masqués (displayOptions du type) : cette forme n'est pas couverte."
+    ]
+  },
+  "n8n-nodes-base.microsoftTeams#channelMessage.create": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "channelMessage",
+      "operation": "create",
+      "authentication": "microsoftTeamsOAuth2Api",
+      "teamId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "EQUIPE_EXEMPLE"
+      },
+      "channelId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "CANAL_EXEMPLE"
+      },
+      "contentType": "text",
+      "message": "Exemple.",
+      "options": {
+        "includeLinkToWorkflow": false
+      }
+    },
+    "credentialsKey": "microsoftTeamsOAuth2Api | microsoftOAuth2Api | microsoftEntraServicePrincipalApi (selon `authentication`)",
+    "incertitudes": []
+  },
+  "n8n-nodes-base.microsoftTeams#chatMessage.sendAndWait": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "chatMessage",
+      "operation": "sendAndWait",
+      "authentication": "microsoftTeamsOAuth2Api",
+      "chatId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "CHAT_EXEMPLE"
+      },
+      "message": "Exemple. À valider.",
+      "responseType": "approval",
+      "approvalOptions": {
+        "values": {
+          "approvalType": "double",
+          "approveLabel": "Valider",
+          "disapproveLabel": "Refuser"
+        }
+      },
+      "options": {
+        "limitWaitTime": {
+          "values": {
+            "limitType": "afterTimeInterval",
+            "resumeAmount": 24,
+            "resumeUnit": "hours"
+          }
+        },
+        "appendAttribution": false
+      }
+    },
+    "credentialsKey": "microsoftTeamsOAuth2Api | microsoftOAuth2Api | microsoftEntraServicePrincipalApi (selon `authentication`)",
+    "incertitudes": [
+      "sendAndWait n'existe que pour chatMessage ; PAS pour channelMessage (search_nodes : channelMessage = create, softDeleteMessage, get, getAll, getAllReplies, reply, undoSoftDeleteMessage).",
+      "Pas d'option de style de bouton ni de captureResponder pour Teams (absents du type)."
+    ]
+  },
+  "n8n-nodes-base.gmailTool#message.getAll (outil d'agent)": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "resource": "message",
+      "operation": "getAll",
+      "authentication": "oAuth2",
+      "returnAll": false,
+      "limit": 10,
+      "simple": true,
+      "filters": {
+        "readStatus": "unread",
+        "q": "newer_than:7d"
+      }
+    },
+    "credentialsKey": "gmailOAuth2 (authentication oAuth2) | googleApi (authentication serviceAccount)",
+    "incertitudes": [
+      "Confirmé par get_node_types (gmailTool, resource message, operation getAll) : mêmes paramètres que gmail message.getAll, plus filters.receivedAfter / receivedBefore.",
+      "Le mécanisme exact par lequel l'agent remplit des paramètres (expressions $fromAI) n'est pas décrit par get_node_types : à vérifier avant d'écrire des paramètres dynamiques."
+    ]
+  },
+  "n8n-nodes-base.microsoftOutlookTool#message.getAll (outil d'agent)": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "message",
+      "operation": "getAll",
+      "authentication": "microsoftOutlookOAuth2Api",
+      "returnAll": false,
+      "limit": 10,
+      "output": "simple",
+      "filtersUI": {
+        "values": {
+          "filterBy": "filters",
+          "filters": {
+            "readStatus": "unread"
+          }
+        }
+      }
+    },
+    "credentialsKey": "microsoftOutlookOAuth2Api | microsoftOAuth2Api | microsoftEntraServicePrincipalApi (selon `authentication`)",
+    "incertitudes": [
+      "Confirmé par get_node_types (microsoftOutlookTool, message, getAll) : le filtre s'appelle `filtersUI.values.filters` (et non `filters` au premier niveau comme dans le déclencheur)."
+    ]
+  },
+  "n8n-nodes-base.airtableTool#record.search (outil d'agent)": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "resource": "record",
+      "operation": "search",
+      "authentication": "airtableTokenApi",
+      "base": {
+        "__rl": true,
+        "mode": "id",
+        "value": "appEXEMPLE"
+      },
+      "table": {
+        "__rl": true,
+        "mode": "id",
+        "value": "tblEXEMPLE"
+      },
+      "filterByFormula": "={Nom} = 'Exemple.'",
+      "returnAll": false,
+      "limit": 10
+    },
+    "credentialsKey": "airtableTokenApi (authentication 'airtableTokenApi') | airtableOAuth2Api ('airtableOAuth2Api')",
+    "incertitudes": [
+      "Existence de n8n-nodes-base.airtableTool confirmée par search_nodes (usage agentTool, version 2.2)."
+    ]
+  },
+  "n8n-nodes-base.hubspotTool#contact.search (outil d'agent)": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "resource": "contact",
+      "operation": "search",
+      "authentication": "oAuth2",
+      "returnAll": false,
+      "limit": 10,
+      "filterGroupsUi": {
+        "filterGroupsValues": [
+          {
+            "filtersUi": {
+              "filterValues": [
+                {
+                  "propertyName": "email",
+                  "type": "email",
+                  "operator": "EQ",
+                  "value": "={{ $json.email }}"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "additionalFields": {
+        "query": "Exemple."
+      }
+    },
+    "credentialsKey": "hubspotOAuth2Api (authentication 'oAuth2') | hubspotAppToken ('appToken') | hubspotApi ('apiKey')",
+    "incertitudes": [
+      "Existence de n8n-nodes-base.hubspotTool confirmée par search_nodes (usage agentTool, version 2.2)."
+    ]
+  },
+  "n8n-nodes-base.notionTool#databasePage.getAll (outil d'agent)": {
+    "typeVersion": 3,
+    "parameters": {
+      "resource": "databasePage",
+      "operation": "getAll",
+      "authentication": "apiKey",
+      "dataSourceId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "00000000-0000-0000-0000-000000000000"
+      },
+      "returnAll": false,
+      "limit": 10,
+      "filterType": "none",
+      "simple": true
+    },
+    "credentialsKey": "notionApi (authentication 'apiKey') | notionOAuth2Api ('oAuth2')",
+    "incertitudes": [
+      "Existence de n8n-nodes-base.notionTool confirmée par search_nodes (usage agentTool, version 3)."
+    ]
+  },
+  "n8n-nodes-base.mondayComTool#item.getItems (outil d'agent)": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "item",
+      "operation": "getItems",
+      "authentication": "accessToken",
+      "boardId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "0000000000"
+      },
+      "options": {
+        "limit": 10
+      }
+    },
+    "credentialsKey": "mondayComApi (authentication 'accessToken') | mondayComOAuth2Api ('oAuth2')",
+    "incertitudes": [
+      "Existence de n8n-nodes-base.mondayComTool confirmée par search_nodes (usage agentTool, version 2)."
+    ]
+  },
+  "n8n-nodes-base.slackHitlTool#message.sendAndWait (validation humaine)": {
+    "typeVersion": 2.7,
+    "parameters": {
+      "resource": "message",
+      "operation": "sendAndWait",
+      "authentication": "oAuth2",
+      "select": "channel",
+      "channelId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "CANAL_EXEMPLE"
+      },
+      "message": "Exemple. Outil : {{ $tool.name }} ; paramètres : {{ $tool.parameters }}",
+      "responseType": "approval",
+      "approvalOptions": {
+        "values": {
+          "approvalType": "double",
+          "approveLabel": "Valider",
+          "disapproveLabel": "Refuser"
+        }
+      },
+      "options": {
+        "limitWaitTime": {
+          "values": {
+            "limitType": "afterTimeInterval",
+            "resumeAmount": 24,
+            "resumeUnit": "hours"
+          }
+        },
+        "appendAttribution": false
+      }
+    },
+    "credentialsKey": "slackOAuth2Api (authentication oAuth2) | slackApi (authentication accessToken)",
+    "incertitudes": [
+      "Aide du constructeur : le type est celui du nœud de base, seuls les paramètres send-and-wait s'appliquent ; se branche sur l'agent dans subnodes.tools et porte les outils à valider dans ses propres subnodes.tools ; utiliser {{ $tool.name }} et {{ $tool.parameters }} dans le message.",
+      "get_node_types exige resource/operation avec la graphie à soulignés (message / send_and_wait) pour ce nœud ; la sortie renvoie ensuite le type du nœud slack message sendAndWait (2.7), donc les noms camelCase ci-dessus sont ceux à écrire dans le JSON.",
+      "Le préfixe `=` d'une expression n8n n'est pas ajouté ici dans le message ; selon la façon dont l'agent évalue {{ $tool.* }}, il faudra peut-être écrire `={{ ... }}` : non vérifiable sans exécution."
+    ]
+  },
+  "n8n-nodes-base.microsoftTeamsHitlTool#chatMessage.sendAndWait (validation humaine)": {
+    "typeVersion": 2,
+    "parameters": {
+      "resource": "chatMessage",
+      "operation": "sendAndWait",
+      "authentication": "microsoftTeamsOAuth2Api",
+      "chatId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "CHAT_EXEMPLE"
+      },
+      "message": "Exemple. Outil : {{ $tool.name }} ; paramètres : {{ $tool.parameters }}",
+      "responseType": "approval",
+      "approvalOptions": {
+        "values": {
+          "approvalType": "double",
+          "approveLabel": "Valider",
+          "disapproveLabel": "Refuser"
+        }
+      },
+      "options": {
+        "limitWaitTime": {
+          "values": {
+            "limitType": "afterTimeInterval",
+            "resumeAmount": 24,
+            "resumeUnit": "hours"
+          }
+        },
+        "appendAttribution": false
+      }
+    },
+    "credentialsKey": "microsoftTeamsOAuth2Api | microsoftOAuth2Api | microsoftEntraServicePrincipalApi (selon `authentication`)",
+    "incertitudes": [
+      "Aide du constructeur : le type est celui du nœud de base, seuls les paramètres send-and-wait s'appliquent ; se branche sur l'agent dans subnodes.tools et porte les outils à valider dans ses propres subnodes.tools ; utiliser {{ $tool.name }} et {{ $tool.parameters }} dans le message.",
+      "Les paramètres sont repris du nœud microsoftTeams chatMessage sendAndWait ; get_node_types n'a pas été rappelé avec les discriminateurs sur microsoftTeamsHitlTool lui-même (seule la liste des ressources/opérations a été vue : chat_message send_and_wait existe)."
+    ]
+  },
+  "@n8n/n8n-nodes-langchain.agent#agent IA": {
+    "typeVersion": 3.1,
+    "parameters": {
+      "promptType": "define",
+      "text": "={{ $json.message }}",
+      "hasOutputParser": true,
+      "options": {
+        "systemMessage": "Exemple. Tu es un assistant. Outils disponibles : voir connexions.",
+        "maxIterations": 10,
+        "passthroughBinaryImages": false,
+        "returnIntermediateSteps": false,
+        "enableStreaming": false
+      }
+    },
+    "credentialsKey": "(aucun : le modèle, la mémoire, les outils et le parseur sont des sous-nœuds reliés par connexions ai_languageModel / ai_tool / ai_outputParser)",
+    "incertitudes": [
+      "3.1 est la version la plus récente offerte par ce serveur (search_nodes).",
+      "Le type déclare model (obligatoire), memory, tools, outputParser comme SUBNODES, pas comme paramètres : ils vont dans `connections` du JSON d'export.",
+      "hasOutputParser:true exige un outputParserStructured relié ; sinon la sortie est une chaîne dans $json.output.",
+      "enableStreaming vaut true par défaut : mis à false car le déclencheur n'est pas un chat (non vérifié en exécution).",
+      "`needsFallback` (booléen) existe dans le type sans description ; non utilisé."
+    ]
+  },
+  "@n8n/n8n-nodes-langchain.lmChatAnthropic#modele Anthropic": {
+    "typeVersion": 1.6,
+    "parameters": {
+      "model": {
+        "__rl": true,
+        "mode": "id",
+        "value": "claude-sonnet-5"
+      },
+      "options": {
+        "maxTokensToSample": 4096,
+        "thinkingMode": "disabled",
+        "promptCaching": "disabled"
+      }
+    },
+    "credentialsKey": "anthropicApi",
+    "incertitudes": [
+      "Le modèle est un resource locator (mode 'list' ou 'id'). Valeur par défaut du type : claude-sonnet-5. L'identifiant exact d'un autre modèle (p. ex. une version 5.5) doit venir de la liste du compte (searchModels) : non vérifiable ici.",
+      "temperature, topK, topP sont IGNORÉS sur Claude Opus 4.7+ et Claude Sonnet 5+ (commentaires du type) : le conseil « température basse » des bonnes pratiques triage ne s'applique pas à ces modèles.",
+      "thinkingMode accepte disabled | adaptive | manual ; effort (low à max selon modèle) seulement en adaptive ; le mode manual est rejeté par Opus 4.7+.",
+      "promptCaching : disabled | 5m | 1h."
+    ]
+  },
+  "@n8n/n8n-nodes-langchain.outputParserStructured#schema manuel": {
+    "typeVersion": 1.3,
+    "parameters": {
+      "schemaType": "manual",
+      "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"categorie\": { \"type\": \"string\", \"enum\": [\"devis\", \"question\", \"autre\"] },\n    \"raisonnement\": { \"type\": \"string\" }\n  },\n  \"required\": [\"categorie\", \"raisonnement\"]\n}",
+      "autoFix": false
+    },
+    "credentialsKey": "(aucun)",
+    "incertitudes": [
+      "Valeurs de schemaType : 'fromJson' (défaut, jsonSchemaExample) ou 'manual' (inputSchema, schéma JSON ; $ref non pris en charge).",
+      "Sortie enveloppée dans une clé `output` : $json.output.categorie (aide du constructeur).",
+      "autoFix:true ajoute un appel au modèle et exige un sous-nœud model relié."
+    ]
+  },
+  "@n8n/n8n-nodes-langchain.toolWorkflow#sous-workflow en outil": {
+    "typeVersion": 2.2,
+    "parameters": {
+      "description": "Exemple. Décrire ce que fait ce sous-workflow, pour le modèle.",
+      "source": "database",
+      "workflowId": {
+        "__rl": true,
+        "mode": "id",
+        "value": "ID_WORKFLOW_EXEMPLE"
+      },
+      "workflowInputs": {
+        "mappingMode": "defineBelow",
+        "value": {},
+        "matchingColumns": [],
+        "schema": []
+      }
+    },
+    "credentialsKey": "(aucun)",
+    "incertitudes": [
+      "workflowInputs est un resource mapper rempli à partir du déclencheur du sous-workflow ciblé ; sans ce workflow, son `schema` ne peut pas être écrit : laissé vide.",
+      "source 'parameter' + workflowJson permet d'embarquer le sous-workflow en JSON."
+    ]
+  },
+  "@n8n/n8n-nodes-langchain.toolHttpRequest#outil HTTP (RETIRÉ)": {
+    "typeVersion": 1.1,
+    "parameters": {
+      "toolDescription": "Exemple. Décrire ce que fait cet appel.",
+      "method": "GET",
+      "url": "https://exemple.invalid/api/{identifiant}",
+      "authentication": "none",
+      "sendQuery": true,
+      "specifyQuery": "keypair",
+      "parametersQuery": {
+        "values": [
+          {
+            "name": "q",
+            "valueProvider": "modelRequired"
+          }
+        ]
+      },
+      "placeholderDefinitions": {
+        "values": [
+          {
+            "name": "identifiant",
+            "description": "Exemple.",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "credentialsKey": "(aucun si authentication none ; sinon selon genericAuthType / nodeCredentialType)",
+    "incertitudes": [
+      "NŒUD RETIRÉ (@deprecated dans le type, aide du constructeur : « Do not use this node »). Utiliser n8n-nodes-base.httpRequestTool (4.5).",
+      "Le paramètre de description s'appelle `toolDescription` et non `description`.",
+      "httpRequestTool (4.5) : existence confirmée par search_nodes ; son jeu de paramètres exact (p. ex. toolDescription) n'a pas été relu avec get_node_types ici. Les paramètres de httpRequest 4.5 (voir plus bas) s'y appliquent d'après les @tool displayOptions."
+    ]
+  },
+  "n8n-nodes-base.switch#rules (routage par chaîne)": {
+    "typeVersion": 3.5,
+    "parameters": {
+      "mode": "rules",
+      "rules": {
+        "values": [
+          {
+            "conditions": {
+              "options": {
+                "caseSensitive": false,
+                "leftValue": "",
+                "typeValidation": "strict"
+              },
+              "conditions": [
+                {
+                  "leftValue": "={{ $json.categorie }}",
+                  "rightValue": "devis",
+                  "operator": {
+                    "type": "string",
+                    "operation": "equals"
+                  }
+                }
+              ],
+              "combinator": "and"
+            },
+            "renameOutput": true,
+            "outputKey": "devis"
+          },
+          {
+            "conditions": {
+              "options": {
+                "caseSensitive": false,
+                "leftValue": "",
+                "typeValidation": "strict"
+              },
+              "conditions": [
+                {
+                  "leftValue": "={{ $json.categorie }}",
+                  "rightValue": "question",
+                  "operator": {
+                    "type": "string",
+                    "operation": "equals"
+                  }
+                }
+              ],
+              "combinator": "and"
+            },
+            "renameOutput": true,
+            "outputKey": "question"
+          }
+        ]
+      },
+      "options": {
+        "fallbackOutput": "extra",
+        "renameFallbackOutput": "autre"
+      }
+    },
+    "credentialsKey": "(aucun)",
+    "incertitudes": [
+      "3.5 est la version offerte (et non 3.2/3.x plus anciennes).",
+      "`rules.values` (pas `rules.rules`) ; renameOutput + outputKey nomment la sortie ; sans fallbackOutput:'extra' les éléments non reconnus sont perdus en silence.",
+      "Chaque condition d'un export réel porte souvent un `id` ; il est facultatif dans le type (FilterConditionValue.id?)."
+    ]
+  },
+  "n8n-nodes-base.if#conditions": {
+    "typeVersion": 2.4,
+    "parameters": {
+      "conditions": {
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "strict",
+          "version": 2
+        },
+        "conditions": [
+          {
+            "leftValue": "={{ $json.champ }}",
+            "rightValue": "valeur",
+            "operator": {
+              "type": "string",
+              "operation": "equals"
+            }
+          }
+        ],
+        "combinator": "and"
+      },
+      "looseTypeValidation": false,
+      "options": {}
+    },
+    "credentialsKey": "(aucun)",
+    "incertitudes": [
+      "Version offerte : 2.4 (et non 2.2).",
+      "Valeur de conditions.options.version : l'aide du constructeur cite 1 dans le texte et 2 dans l'exemple ; 2 retenu, non tranché."
+    ]
+  },
+  "n8n-nodes-base.set#manual (assignments)": {
+    "typeVersion": 3.5,
+    "parameters": {
+      "mode": "manual",
+      "assignments": {
+        "assignments": [
+          {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "name": "champ",
+            "value": "Exemple.",
+            "type": "string"
+          }
+        ]
+      },
+      "includeOtherFields": false,
+      "options": {}
+    },
+    "credentialsKey": "(aucun)",
+    "incertitudes": [
+      "Version offerte : 3.5 (et non 3.4). Chaque assignation exige id, name, value, type (type AssignmentCollectionValue)."
+    ]
+  },
+  "n8n-nodes-base.code#runOnceForAllItems": {
+    "typeVersion": 2,
+    "parameters": {
+      "mode": "runOnceForAllItems",
+      "language": "javaScript",
+      "jsCode": "return $input.all();"
+    },
+    "credentialsKey": "(aucun)",
+    "incertitudes": [
+      "Le bac à sable n'a aucun accès réseau (fetch, axios interdits) ; Python natif sans imports par défaut (aide du constructeur)."
+    ]
+  },
+  "n8n-nodes-base.httpRequest#GET avec queryParameters": {
+    "typeVersion": 4.5,
+    "parameters": {
+      "method": "GET",
+      "url": "https://exemple.invalid/api",
+      "authentication": "none",
+      "sendQuery": true,
+      "specifyQuery": "keypair",
+      "queryParameters": {
+        "parameters": [
+          {
+            "name": "q",
+            "value": "exemple"
+          }
+        ]
+      },
+      "options": {
+        "timeout": 10000
+      }
+    },
+    "credentialsKey": "(aucun si authentication none ; sinon httpHeaderAuth, httpBearerAuth, httpQueryAuth, httpBasicAuth, httpTemplatedCustomAuth, oAuth2Api… selon genericAuthType)",
+    "incertitudes": [
+      "Version offerte : 4.5 (et non 4.2). La 4.2 reste probablement lisible mais n'est pas confirmée par cet outil.",
+      "Jamais de clé dans queryParameters/headerParameters : utiliser un credential (aide du constructeur)."
+    ]
+  },
+  "n8n-nodes-base.httpRequest#POST avec jsonBody": {
+    "typeVersion": 4.5,
+    "parameters": {
+      "method": "POST",
+      "url": "https://exemple.invalid/api",
+      "authentication": "none",
+      "sendBody": true,
+      "contentType": "json",
+      "specifyBody": "json",
+      "jsonBody": "={\n  \"message\": \"Exemple.\"\n}",
+      "options": {
+        "timeout": 10000
+      }
+    },
+    "credentialsKey": "(aucun si authentication none ; sinon selon genericAuthType)",
+    "incertitudes": [
+      "executeOnce : réglage de NIVEAU NŒUD (à côté de `parameters`, pas dedans). Il n'apparaît pas dans les types de get_node_types, donc non confirmé par l'outil ; forme d'export connue : \"executeOnce\": true.",
+      "Même remarque pour retryOnFail, onError, alwaysOutputData : réglages de nœud hors parameters, non couverts par get_node_types."
+    ],
+    "reglagesNoeudNonConfirmes": {
+      "executeOnce": true
+    }
+  }
+}
