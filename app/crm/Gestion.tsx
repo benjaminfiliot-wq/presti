@@ -18,7 +18,7 @@ import { OUTILS } from './outils/vue'
 /** Les deux portes. `3d` ouvre l'atelier vivant (onglet « atelier » du CRM), `tableau` le tableau de bord normal. */
 export const PORTES = [
   { cle: '3d', label: 'CRM 3D', href: '/crm?vue=atelier', detail: 'Votre entreprise en maquette : chantiers, clients, stock et équipe, à jour toute seule. Un clic sur un objet ouvre sa fiche.' },
-  { cle: 'tableau', label: 'Tableau de bord', href: '/tableau-de-bord', detail:'La vue normale : ce qui est à faire aujourd’hui, vos demandes, vos chiffres du jour.' },
+  { cle: 'tableau', label: 'Tableau de bord', href: '/dashboard', detail:'La vue normale : ce qui est à faire aujourd’hui, vos demandes, vos chiffres du jour.' },
 ] as const
 
 export type EcranGestion = { cle: string; label: string; href: string; detail: string; groupe: 'Pièces' | 'Chantiers et clients' | 'Pilotage'; drapeau?: 'crmPlanning' }
