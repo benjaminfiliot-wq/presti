@@ -37,6 +37,9 @@ est `outillage/OUTILLAGE.md`.
 
 | 036-010 | **les maquettes de l'interface**, cinq écrans (juge à navigateur, 18 mutants) : centre de commande (barre du jour, « Votre matin, en une page », « Où vous perdez de l'argent », cartes « À valider » avec ligne « fait : … » et bouton manuel, « Tout valider », hors norme déjà préparé, panneau « une question à la fois ») ; « Ce que vos assistants ont fait » ; « Connexions » (tous les outils de la matrice) ; « Mes départements » (Studio et Signature) ; **CRM « atelier »** (onglets existants gardés, chiffres avec source et date, prochaine action, historique « fait : … », import d'un export en trois temps) | `plans/011-cadrage-01-11/p6-signature/maquettes/`, captures dans `.orchestre/preuves/036-010/captures/` |
 
+| 036-011 | **l'interface en code**, cinq écrans sous `app/systeme/` : centre de commande, « Ce que vos assistants ont fait », « Connexions », « Mes départements », clients et chantiers (CRM « atelier », lecture de `lib/crm/`, `app/crm/` intouché). Lectures seules (`app/api/systeme/`), verrous par `peut()`, drapeau `systemeAgents` baissé (404, rien dans le DOM). Typage complet vert ; l'aperçu Vercel de la branche (`3b366bc`) compile (READY) | `app/systeme/`, drapeau baissé |
+| 036-012 | **l'intégration** : déploiement des copies par client à blanc et son juge, suite transverse du § 1.7 (17 mutants), runbook, plan de migration des automatisations codées, base des KPIs, mode ombre, **ordre de mise en service** | `plans/011-cadrage-01-11/p6-signature/mise-en-service.md` |
+
 **Au total : 20 gabarits outillés, environ 1 000 nœuds de vrais outils.**
 - Les sept départements des artisans : 11 gabarits.
 - Le catalogue Entreprise : 9 gabarits.
@@ -46,27 +49,20 @@ Tous sont inactifs, sans identifiant, avec la porte de simulation, et chacun a s
 Le juge commun `scripts/n8n-specs-qa.mjs` tient maintenant les gabarits outillés : 110 mutants, dont 22 nouveaux. Chaque juge est inscrit au
 lanceur `scripts/tout-verifier.mjs`.
 
-## En cours au moment d'écrire (agents sur Oracle, Hermes sur l'API)
+## En cours (sur l'API, hors abonnement)
 
-- 036-011 : les cinq écrans en code, sous `app/systeme/`, derrière le drapeau `systemeAgents` baissé (rien dans le DOM, routes en 404). La page
-  du CRM lit `lib/crm/` sans toucher `app/crm/` : on ne rase rien.
-- **036-012 est vérifié** : l'intégration.
-  - Le déploiement d'une copie par client, **à blanc**, avec son juge.
-  - La suite transverse du § 1.7.
-  - `runbook.md`.
-  - `migration-automatisations.md`, `kpis-base.md` et `mode-ombre.md`.
-  - **`mise-en-service.md`, l'ordre exact de tes gestes** : 12 étapes, chacune avec sa preuve et son retour arrière.
-- 036-017 : Hermes écrit une fiche connecteur par outil (portées, quotas, coût, expiration), environ 40 au total.
+- 036-017, Hermes : **14 fiches connecteurs écrites sur une quarantaine**. Ce sont Agenda Google et Outlook, OneDrive, Excel, fiche Google,
+  Twilio, Telegram, Slack, Teams, Facebook Graph, Instagram, LinkedIn, TikTok et YouTube.
+- Cinq passes de plus sont en file. L'automatisation horaire d'Orca les lance une à une ; Claude Code relira ensuite les portées.
 
 ## Ce qui reste pour la « définition de terminé » du prompt 1 (p6:416-422)
 
-- **Les écrans en code** (036-011, en cours), puis ta validation des maquettes avant de lever le drapeau.
-- **L'intégration** (036-012) :
-  - déploiement d'une copie par client, d'abord à blanc ;
-  - tests transverses ;
-  - runbook couper / rejouer / reprendre ;
-  - plan de migration des automatisations codées.
-- **Puis tes gestes** (liste plus bas), un compte Studio et un compte Signature volontaires, le mode ombre, la mise en production.
+Tout ce qui se construisait sans toi est construit et vérifié. Le reste suit `mise-en-service.md`, dans l'ordre :
+- **Ta validation des écrans**, sur les captures de `.orchestre/preuves/036-010/captures/`.
+- **Tes gestes** (liste plus bas).
+- **Un compte Studio et un compte Signature volontaires**, puis la copie de chacun déployée.
+- **Le mode ombre**, un département à la fois.
+- **La mise en production** : drapeaux levés après les migrations, vérifiés en direct.
 - **Prompt 2 (Entreprise)** : sa première réponse, l'organisation multi-membres, le CRM et les applications sur mesure, ton organisation en
   client zéro.
 
