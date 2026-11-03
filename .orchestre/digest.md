@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-11-03T20:39:55Z
+# Digest — 2026-11-03T21:15:00Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (hermes, antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 203 tâche(s) PASS, 520824 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
-**État** — file : 62 · en cours : 1 · faites : 475 · refusées : 17
+**Mesure** — déléguées (hermes, antigravity, codex) : 212 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 203 tâche(s) PASS, 520824 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
+**État** — file : 61 · en cours : 1 · faites : 477 · refusées : 17
 
 ## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -19,11 +19,11 @@
 - 4 question(s) en attente : `028-008` — `node scripts/orchestre.mjs repondre 028-008 <n>`
 - 4 question(s) en attente : `028-014` — `node scripts/orchestre.mjs repondre 028-014 <n>`
 - 4 question(s) en attente : `reparation-C-juges-perimes` — `node scripts/orchestre.mjs repondre reparation-C-juges-perimes <n>`
-- sauvegarde vieille de 564 h — `node scripts/instantane-quotidien.mjs --pousser`
+- sauvegarde vieille de 565 h — `node scripts/instantane-quotidien.mjs --pousser`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 036-036 | feature | en-cours | claude-code | — | depuis 2026-11-03T20:23:02Z · Chaque système d'agents de Studio et Signature doit marcher (Benj, 03/11 au soir) : seul l'Accueil a prouvé la chaîne réelle (essai de l'ombre réussi, 036-034). Les six autres départements (devis, suivi, facturation, après-chantier, opérations, direction) doivent recevoir leurs vrais événements, préparer une carte en ombre, et le prouver ; et les API publiques gratuites (dépôt public-apis, que Benj a donné) remplacent un appel au modèle partout où une donnée publique suffit, pour économiser sa clé API |
+| 036-041 | feature | en-cours | cx-tableau2 | — | depuis 2026-11-03T21:14:10Z · Passe de design du tableau de bord (036-039) : les données sont justes et sourcées, mais l'écran est trop pauvre pour l'exigence de Benj (« un vrai bon dashboard avec toutes les informations »). Chiffres clés en grand, courbe de l'argent sur douze mois, listes utiles (prochains rendez-vous, devis en attente, factures en retard, meilleurs clients, articles sous le seuil), sources au survol en date française, accent corail et couleurs d'état, densité d'un poste de pilotage ; le juge de 036-039 reste vert |
 | 035-013 | audit | file | claude-code | — | Prompt 5, tâche 035-013 de la première réponse — un audit offensif, distinct de l'auteur, des tâches 035-003 à 035-007 (le socle lib-*, les deux chaînes, la démonstration ent-exemple-*) avant toute publication : isolation entre organisations, porte de simulation, liste « jamais en automatique », idempotence au rejeu, coûts bornés, aucune donnée réelle ni secret dans les exports ; par les agents presti-audit-attaque et presti-gestion-fiabilite ; verdict TIENT ou NE TIENT PAS |
 | 029-001 | test | file | codex-1 | — | L'assistant de gestion est vérifié en conditions réelles : la suite assistant-qa passe ses parties L (comptes de test sur la base réelle) et M (vrai modèle), puis aucun compte de test ne reste en base |
 | 026-120 | feature | file | antigravity | — | Remplir le cadre des panneaux de la station : chaque salle cliquée ouvre son panneau (Recettes et Trésorerie, Usine à sites, Atelier des maquettes, Salle de réunion, Salle des envois avec les gestes du fondateur, Standard, Rédaction, Salle des machines ; les quatre autres ouvrent la fiche de leurs agents en attendant 026-164), et chaque agent sa fiche (tâches récentes, coût par tâche, consignes, boîtes, réponses, Pause), lus par la route de la station seulement pendant qu'ils sont ouverts, sourcés, sans aucun bouton d'envoi, à 390 px comme à 1440 px |
@@ -84,8 +84,9 @@
 | 028-021 | feature | file | codex | — | Nouvelle séquence de prospection PAR ÉTAPES (méthode de Benj du 08/10) : messages courts qui questionnent d'abord (d'où viennent vos clients ? que trouve-t-on sur Google quand on vous cherche ? un chantier vous rapporte combien ?), relances programmées, puis maquette ; respect de toutes les gardes de conformité existantes |
 | 029-002 | test | file | antigravity | — | La qualité des réponses de l'assistant de gestion est mesurée avec le vrai modèle sur les scénarios de plans/016-assistant.md §7 (ai-eval --assistant), et chaque scénario échoué est expliqué |
 | 036-022 | feature | file | claude-code | — | Prompt 6, mise en service (Benj, 03/11 vers 16 h 30 : « active aussi toutes les automatisations en les testant bien sûr » ; « les migrations, je te laisse gérer tout » ; « tu peux créer un compte test gratuitement pour tester ») : suivre plans/011-cadrage-01-11/p6-signature/mise-en-service.md étape par étape — migrations posées par la session principale (0185, puis 0192 reprise de 032-047 et jugée, puis 0193), réglages de n8n, publication des enfants avant les parents, puis activation en MODE OMBRE sur un compte de test créé par l'API admin et supprimé après, comparaison, puis réel par offre et par type |
-| 036-038 | feature | file | claude-code | — | Le palier « réel » de Studio et Signature, prêt à servir compte par compte (Benj, 03/11 au soir : « règle ça », canal d'envoi « l'identifiant Resend », créé dans n8n sous le nom « Resend (Presti) »). Studio réel : rien ne part sans le clic « Valider ». Signature réel : seuls les types que l'offre permet, par le Pilote (10 minutes pour annuler). Jamais deux envois pour un même fait : quand n8n prend un type pour un compte, le code de l'app qui faisait ce type pour ce compte se tait. Construit et prouvé sur un compte de test ; aucun vrai compte n'est passé en réel |
-| 036-039 | feature | file | antigravity | — | Un vrai tableau de bord pour l'artisan (Benj, 03/11 au soir : « le dashboard actuel est très médiocre ») : toute son entreprise sur une page, mise à jour en continu, et chaque chiffre lu dans ses vraies données. Demandes et messages, devis (créés, envoyés, acceptés, montants), factures (émises, payées, impayées), argent encaissé et à encaisser, clients, tarifs, stock, chantiers, agenda, relances, ce que ses assistants ont préparé, ses crédits. Nouvelle route /tableau-de-bord derrière le drapeau tableauComplet (baissé), juge à mutants |
+| 036-038 | feature | file | codex | — | Le palier « réel » de Studio et Signature, prêt à servir compte par compte (Benj, 03/11 au soir : « règle ça », canal d'envoi « l'identifiant Resend », créé dans n8n sous le nom « Resend (Presti) »). Studio réel : rien ne part sans le clic « Valider ». Signature réel : seuls les types que l'offre permet, par le Pilote (10 minutes pour annuler). Jamais deux envois pour un même fait : quand n8n prend un type pour un compte, le code de l'app qui faisait ce type pour ce compte se tait. Construit et prouvé sur un compte de test ; aucun vrai compte n'est passé en réel |
+| 036-036 | feature | fait | cx-depts | PASS | 2026-11-03T21:14:59Z · 1s · 0 l. |
+| 036-039 | feature | fait | cx-tableau | PASS | 2026-11-03T21:09:40Z · 2s · 0 l. |
 | 036-037 | contenu | fait | claude-code | PASS | 2026-11-03T20:39:53Z · 6s · 6142 l. |
 | 036-035 | feature | fait | claude-code | PASS | 2026-11-03T19:58:31Z · 0s · 1059 l. |
 | 036-034 | feature | fait | claude-code | PASS | 2026-11-03T19:27:12Z · 0s · 13575 l. |
@@ -122,6 +123,5 @@
 | 036-001 | feature | fait | claude-code | PASS | 2026-11-03T11:01:32Z · 76s · 0 l. |
 | 036-002 | feature | fait | claude-code | PASS | 2026-11-03T10:22:50Z · 78s · 2566 l. |
 | 036-000 | feature | fait | claude-code | PASS | 2026-11-03T09:53:31Z · 1s · 0 l. |
-| 035-007 | feature | fait | claude-code | PASS | 2026-11-03T09:02:59Z · 41s · 16128 l. |
 
-… 455 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 456 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

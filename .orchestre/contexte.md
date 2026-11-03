@@ -1,11 +1,11 @@
-# Carte du code — presti (2026-11-03T20:39:55Z)
+# Carte du code — presti (2026-11-03T21:17:10Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
 
 SaaS pour les artisans du bâtiment : plateforme de conversation, devis, factures, site à la demande Pile : Next.js + Supabase + Vercel.
 
-## Pages (60) — `app/**/page.tsx`
+## Pages (61) — `app/**/page.tsx`
 - `/abonnement` : ·
 - `/aide` : ·
 - `/assistant` : ·
@@ -45,6 +45,7 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/site` : [slug]/[...reste], [slug]/infos-legales, [slug], acheter, commander/merci, commander
 - `/studio` : commander/[jeton]
 - `/systeme` : clients, connexions, departements, fait, ·
+- `/tableau-de-bord` : ·
 - `/tarifs` : ·
 
 ## API (225) — `app/api/**/route.ts`, préfixe `/api`
@@ -102,7 +103,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - plans : gratuit (Essai, 0 €/mois, BASE) · essentiel (Essentiel, 29 €/mois, BASE) · studio (Studio, 30 €/mois, STUDIO) · signature (Signature, 60 €/mois, SIGNATURE) · entreprise (Presti pour l’entreprise, 0 €/mois, ENTREPRISE) · business (Business, 0 €/mois, ENTREPRISE)
 - grille complète (41 lignes) : Niveau d’automatisation · La plateforme : page de conversation à votre marque · Réponse aux demandes de vos clients · Comptes clients (lien magique, historique) · Écran « Ma plateforme » : réglages de l’assistant et apparence de votre page · Personnalisation · Relances des conversations (J+2, J+5, J+10) · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA sur vos prix : vous relisez et envoyez · Factures + export XML Factur-X · Devis par lots : un sous-total par corps de métier · Factures d’acompte, situations de travaux et facture de solde · Relances des factures impayées une fois activées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client · Écran « Mes chiffres » : chiffre d’affaires, impayés, devis à relancer, vos fichiers rangés par l’assistant · Alerte e-mail quand une facture reste impayée, automatique une fois activée · Export mensuel du journal des factures à votre comptable, automatique une fois activé · Pipeline des demandes et fiches clients · Chantiers : statuts, tâches, matériaux réservés · Équipe et véhicules affectés aux chantiers · Carte Atelier : chantiers, équipe et alertes (retards, livraisons, stock bas), en temps réel · Devis, factures et relances menés par la conversation · Stock et tarifs pilotés par la conversation · Le CRM piloté par la conversation · Briefing du matin : urgences, retards, ce qui vous attend · Vous confirmez ce qui part chez un client ; journal des actions, annulables · Limites · Pilote automatique : ce que vous choisissez part seul après 10 minutes pour annuler (jamais un prix estimé, jamais un paiement) · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Telegram : votre bot, messages reçus et envoyés depuis Presti · Vos réseaux regroupés : LinkedIn, Facebook, Instagram, TikTok, plateformes de devis (par leurs e-mails de notification) · Un lien et un QR code par réseau vers votre page · Import des prospects de vos publicités (fichier CSV) · Crédits chaque mois · Espace pour vos images (logo, réalisations) · Espace pour les photos de chantier envoyées par vos clients · Export de vos données · Support par écrit
 
-## Bibliothèque — `lib/**/*.ts` (381 fichiers, exports nommés)
+## Bibliothèque — `lib/**/*.ts` (385 fichiers, exports nommés)
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
 - `lib/accesOffre.ts` (7) : Ecran, ECRANS, RefusOffre, AccesOffre, decisionEcran, decisionPourEcran, libelleOffreMinimale
 - `lib/accesOffreServeur.ts` (2) : GardeOffre, exigerCapacite
@@ -325,7 +326,9 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/essaiGratuit.ts` (16) : estPlanPayant, essaiJours, creditsEssai, normaliserEmail, FaitsEssai, RaisonRefus, DecisionEssai, decisionEssai, …
 - `lib/essaiGratuitServeur.ts` (4) : empreinteEmail, evaluerEssai, marquerEssai, alerteFinEssai
 - `lib/essais.ts` (1) : ouvertPour
-- `lib/evenements/ecrivain.ts` (13) : DELAI_MS, TYPES_EVENEMENT, TypeEvenement, ObjetEvenement, Fait, Evenement, Ecriture, ClientEvenements, …
+- `lib/evenements/departements.ts` (12) : DELAI_LECTURE_MS, MAX_COMPTES, MAX_LIGNES, DELAI_AVIS_JOURS, FENETRE_CHANTIER_JOURS, MAX_CONTESTATIONS, ClientReleve, BilanReleve, …
+- `lib/evenements/ecrivain.ts` (21) : DELAI_MS, TYPES_EVENEMENT, TypeEvenement, ObjetEvenement, Fait, Evenement, Ecriture, ClientEvenements, …
+- `lib/evenements/joursFeries.ts` (4) : SOURCE_JOURS_FERIES, DELAI_JOURS_FERIES_MS, JourFerie, jourFerieMetropole
 - `lib/facturation.ts` (15) : DATE_CIBS, FIN_TOLERANCE_CGI, BaseMention, mentionFranchise, toleranceCgiEncoreValable, sirenValide, formaterSiren, CategorieOperation, …
 - `lib/factureDepuisDevis.ts` (6) : LigneIn, ResultatFacture, ParamsFacture, SimulationFacture, creerFacture, simulerFacture
 - `lib/factureEmission.ts` (7) : JETON_NUMERO, DemandeEmission, ResultatEmission, EMISSION_INDISPONIBLE, fonctionAbsente, refusDeLaBase, emettreFacture
@@ -474,6 +477,8 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/suspension.ts` (3) : SuspensionEnCours, suspensionEnCours, MESSAGE_PUBLIC_INDISPONIBLE
 - `lib/tableau-de-bord/calculer.ts` (16) : Nombre, LigneFacture, LigneDevis, LigneDemande, Entrees, Compte, MoisChiffre, DevisARelancer, …
 - `lib/tableau-de-bord/exemple.ts` (1) : indicateursExemple
+- `lib/tableau/calculer.ts` (6) : Indicateur, Bloc, LigneListe, ListeTableau, VueTableau, calculerTableau
+- `lib/tableau/charger.ts` (3) : Ligne, DonneesTableau, chargerTableau
 - `lib/themeFonds.ts` (2) : FOND_THEME, fondDuTheme
 - `lib/typeImage.ts` (2) : ResultatTypeImage, detecterTypeImage
 - `lib/urls.ts` (15) : ArtisanAdresse, BASE_PRESTI, DOMAINE_NEUTRE, SOUS_DOMAINES, SLUGS_RESERVES, PREFIXE_ADRESSE_PURGEE, ModeUrl, modeUrl, …
@@ -488,7 +493,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 ## Migrations — `supabase/migrations` (182)
 - dernières : 0192_accuse_reception_n8n.sql, 0193_systeme_agents.sql, 0194_cartes_agents.sql, 0195_deposer_message.sql, 0196_cle_boite_vault.sql
 
-## Scripts — `scripts/` (599 .mjs, dont 88 suites e2e)
+## Scripts — `scripts/` (600 .mjs, dont 88 suites e2e)
 
-## Orchestre — file : 62 · en cours : 1 · faites : 475 · refusées : 17
+## Orchestre — file : 61 · en cours : 1 · faites : 477 · refusées : 17
 

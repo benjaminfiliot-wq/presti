@@ -1276,3 +1276,7 @@
 {"id":"036-034","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T19:27:12Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":13575,"dossier":"fait"}
 {"id":"036-035","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T19:58:31Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1059,"dossier":"fait"}
 {"id":"036-037","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T20:39:53Z","duree_s":6,"agent":"claude-code","executant":"claude-code","lignes":6142,"dossier":"fait"}
+{"id":"036-039","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T21:09:36Z","duree_s":4,"agent":"cx-tableau","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"036-039","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T21:09:40Z","duree_s":2,"agent":"cx-tableau","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"036-036","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T21:14:56Z","duree_s":1,"agent":"cx-depts","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"036-036","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T21:14:59Z","duree_s":1,"agent":"cx-depts","executant":"codex","lignes":0,"dossier":"fait"}

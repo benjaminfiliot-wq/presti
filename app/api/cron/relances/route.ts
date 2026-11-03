@@ -27,6 +27,11 @@ import { peut } from '@/lib/plans'
 import { notifierArtisan } from '@/lib/notifications'
 import { historiqueRelances, relanceRecente } from '@/lib/relancesRegistre'
 import { sujetDuFil } from '@/lib/relances'
+import { ecrireEvenement, evenementRelanceDue, type Ecriture } from '@/lib/evenements/ecrivain'
+import { releverEvenementsDuMatin, type BilanReleve } from '@/lib/evenements/departements'
+import { clientOppose } from '@/lib/crm/apresOpposition'
+import { jourDeParis } from '@/lib/evenements/departements'
+import { jourFerieMetropole } from '@/lib/evenements/joursFeries'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
@@ -59,8 +64,10 @@ export async function GET(req: Request) {
 
   // La pause d'abord : aucune lecture de relance ni de contact tant qu'on ne sait pas que la sortie est permise.
   const enPause = !(await sortiePermise()).permise
+  // Un seul GET public pour le passage, sans identifiant ni adresse. En cas de panne, la relance reste due.
+  const jourFerie = enPause ? { etat: 'inconnu' } as const : await jourFerieMetropole(jourDeParis(new Date()))
   let relances: { id: string; lead_id: string; rang: number | null; planifiee_le: string }[] = []
-  if (!enPause) {
+  if (!enPause && jourFerie.etat === 'ouvre') {
     const lecture = await supabaseAdmin
       .from('relances')
       .select('id, lead_id, rang, planifiee_le')
@@ -77,6 +84,9 @@ export async function GET(req: Request) {
   let interrompue = false
   let plafond = false
   const contactes = new Set<string>()
+  // 036-036 : les faits « relance due » pour le Cerveau de n8n (Suivi), rangés sans être attendus dans la boucle : chaque écriture est
+  // bornée (1,5 s), ne lève jamais, et n'est lue qu'à la fin pour le bilan. Drapeau baissé : rien n'est écrit, rien ne change.
+  const evenementsRelance: Promise<Ecriture>[] = []
 
   for (const r of relances) {
     // La pause est relue à CHAQUE relance : posée en cours de passage, le lot s'arrête ici.
@@ -142,10 +152,21 @@ export async function GET(req: Request) {
       skipped++
       continue
     }
+    // 036-036 : la relance a passé les contrôles de l'app (demande « repondu », main non prise, registre des 3 jours lu, aucun sujet
+    // d'escalade) : le fait est rangé pour le Suivi, AVANT la prise et l'envoi (l'ombre montre ce que l'agent aurait fait). Idempotent
+    // (clé `relance_due:<demande>:r<rang>`), sans texte (le canal est un code), jamais attendu ici.
     // Prise de la relance AVANT toute dépense (modèle, mail) : la mise à jour est conditionnelle, donc atomique. Un second passage
     // (simultané, rejoué par le bouton, ou après une écriture en panne) ne la prend pas et n'envoie rien.
     const prise = await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id).eq('envoyee', false).select('id')
     if (prise.error || !prise.data?.length) { skipped++; continue }
+
+    if (actif('systemeAgents')) {
+      const canal = typeof lead.contact === 'string' && lead.contact.includes('@') ? 'email' : typeof lead.contact === 'string' && /\d{6,}/.test(lead.contact.replace(/\D/g, '')) ? 'sms' : 'aucun'
+      evenementsRelance.push(ecrireEvenement(supabaseAdmin, evenementRelanceDue({ artisanId: lead.artisan_id, leadId: lead.id, rang: r.rang ?? 1,
+        echeance: typeof r.planifiee_le === 'string' ? r.planifiee_le : null, canal, registreLu: true, sujetEscalade: false, pauseGenerale: false,
+        // Aucune lecture d'opposition de cette conversation : inconnu, jamais affirmé « faux ».
+        stop: null })))
+    }
 
     const rang = r.rang ?? 1
 
@@ -241,6 +262,22 @@ export async function GET(req: Request) {
   }
 
   // Purge des comptes en fin de grâce (§6) — dans ce cron parce que Vercel Hobby n'en accepte que deux.
+  // 036-036 : le bilan des faits « relance due », puis le relevé du matin des autres départements (impayés échus, chantiers terminés, stock
+  // sous le seuil, point du matin). Derrière `systemeAgents` ; jamais bloquant (aucune exception ne sort, chaque lecture est bornée).
+  let evenements: { relances: { ecrits: number; echecs: number }; matin: BilanReleve | 'pause' } | 'fermés' = 'fermés'
+  if (actif('systemeAgents')) {
+    const faits = await Promise.all(evenementsRelance)
+    const relancesEv = { ecrits: faits.filter((x) => x.ok).length, echecs: faits.filter((x) => !x.ok).length }
+    let matin: BilanReleve | 'pause' = 'pause'
+    // La contestation d'un impayé est calculée par le code des impayés (messages entrants du client, mots d'escalade) : un booléen, jamais le texte.
+    const contestation = async (artisanId: string, factureId: string): Promise<boolean | null> => {
+      try { const f = await magasinSupabase.facture(artisanId, factureId); return f ? (await magasinSupabase.contestation(artisanId, f)) !== null : null } catch { return null }
+    }
+    if (!enPause) { try { matin = await releverEvenementsDuMatin(supabaseAdmin, new Date(), { contestation, oppose: clientOppose }) } catch (e) { console.warn('[cron/relances] relevé des événements', e) } }
+    evenements = { relances: relancesEv, matin }
+    if (relancesEv.echecs || (matin !== 'pause' && !matin.ok)) console.warn('[cron/relances] événements des départements :', JSON.stringify(evenements).slice(0, 400))
+  }
+
   const purge = await purgerComptes().catch((e) => ({ purges: 0, en_attente: 0, erreur: String(e) }))
   // Le cache mutualisé des prix (0056) se purge ici : Vercel n'autorise que deux tâches
   // planifiées sur cette formule, toutes deux déjà prises.
@@ -374,5 +411,5 @@ export async function GET(req: Request) {
     due: relances.length, sent, prepared, skipped, pause: enPause || interrompue, plafond, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
     boite: releveResume,
   }, courriers === 'messagerie fermée' || releveOk || releveNonConfiguree)
-  return NextResponse.json({ ok: true, pause: enPause || interrompue, plafond, due: relances.length, sent, prepared, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, expirations, alertes, courriers, compta, impayes, rappels: rappelsMatin, apres_chantier: apresChantier })
+  return NextResponse.json({ ok: true, pause: enPause || interrompue, jour_ferie: jourFerie.etat, plafond, due: relances.length, sent, prepared, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, expirations, alertes, courriers, compta, impayes, rappels: rappelsMatin, apres_chantier: apresChantier, evenements })
 }

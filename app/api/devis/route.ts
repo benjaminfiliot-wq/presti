@@ -6,6 +6,7 @@ import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 import { actif } from '@/lib/flags'
 import { normaliserLot, typeDevisDemande } from '@/lib/facturesTypes'
 import { colonnesLotsPresentes, INDISPONIBLE_0176 } from '@/lib/facturesTypesServeur'
+import { ecrireEvenement, evenementDevisAPreparer } from '@/lib/evenements/ecrivain'
 
 type LigneIn = { designation?: string; quantite?: number; unite?: string; prix_unitaire_ht?: number; tva_taux?: number }
 
@@ -100,6 +101,13 @@ export async function POST(req: Request) {
         await supabaseAdmin.from('devis').delete().eq('id', devis.id).eq('artisan_id', uid).eq('statut', 'brouillon')
         return NextResponse.json({ error: 'Enregistrement des lignes impossible : le devis n’a pas été créé. Votre saisie est conservée à l’écran.' }, { status: 500 })
       }
+    }
+
+    // 036-036 : le fait « devis à préparer » pour le chef Devis de n8n (carte « devis prêt » en ombre). Après l'écriture du devis ET de ses
+    // lignes ; idempotent (`devis_a_preparer:<devis>`), sans texte, jamais bloquant : son échec n'est qu'une ligne de journal, le devis est créé.
+    if (actif('systemeAgents')) {
+      const ev = await ecrireEvenement(supabaseAdmin, evenementDevisAPreparer({ artisanId: uid, devisId: devis.id, leadId, lignes: lignesEcrites.length }))
+      if (!ev.ok) console.warn('[devis] événement devis_a_preparer non rangé :', ev.raison)
     }
 
     return NextResponse.json({ ok: true, id: devis.id, numero: devis.numero })
