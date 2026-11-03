@@ -1251,3 +1251,5 @@
 {"id":"036-018","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T13:52:49Z","duree_s":12,"agent":"claude-code","executant":"claude-code","lignes":22140,"dossier":"fait"}
 {"id":"036-010","verdict":"FAIL","ligne":"Error: ENOENT: no such file or directory, mkdir 'C:\\C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\036-010\\captures'","code":1,"date":"2026-11-03T14:20:25Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":13037,"dossier":"fait"}
 {"id":"036-010","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T14:21:44Z","duree_s":49,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"036-012","verdict":"FAIL","ligne":"✗ suite : « une suite deux fois dans le lanceur » → LAISSE LA SUITE VERTE (L1 scripts/deployer-client-n8n-qa.mjs n'est ni dans SUITES ni dans HORS_LANCEUR : un ","code":1,"date":"2026-11-03T14:28:32Z","duree_s":9,"agent":"claude-code","executant":"claude-code","lignes":2241,"dossier":"fait"}
+{"id":"036-012","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T14:31:07Z","duree_s":115,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
