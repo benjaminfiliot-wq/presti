@@ -1,0 +1,31 @@
+{
+  "gabarit-artisan-devis": {
+    "Préparer": "92339622efa92691de8fbdc9dc996145b33432c5dd3af0699742ac4513d502b5",
+    "Constituer le dossier": "449d3b9aeb89424399ecfb08e1926c64509b88ea4217746a13278d66a13e79f2",
+    "Modèle enregistré (simulation)": "0cebc0e435e32eceae12c050832c621809a8b1647fa31c2a1d84d8b58b42871f",
+    "Revalider les lignes": "60381cc6d52cb0b243827581dc5c5e1295b61c3dbf7bf7d5a2680da5d0b92bff",
+    "Préparer l'appel du chef": "930733ffe771f38058c6b84339eff2e00eaf3aa6d48d7edbb4846b5acacdecbd",
+    "Décider de la voie": "93e4a1e6041863dd5727b0a4ad5a9fe1f8ca7a5e6d937901c41840fbc17e27c2",
+    "Effets prévus": "b6d07edb295febcf994566d1ffe43660290b400bdbc489a9ae35c6ea077f5a24",
+    "Bilan": "e21aa84d0064e8414e0fdbcfb5b5251c2dfe2efdabf2e585c3db30537aeca6a0"
+  },
+  "gabarit-artisan-facturation": {
+    "Préparer": "7fc55fbeebe0180b7ea2a2d9f2cdab117a1bed106dcaa597c54994cd7cf7c560",
+    "Constituer le dossier": "c7e37a8ce529f709846ca19e858dfcac02760442fe968e3e63dcab4e3d41c952",
+    "Modèle enregistré (simulation)": "e5343dbe0ec9a123bde42998f4eadf29cb17cc3cf98da78598469ba09701a83f",
+    "Revalider le texte": "d453391b5d04d63ae2aa1a290d7c4359ae407996571674b18e4f164a1e15c6c5",
+    "Décider de la voie": "6da8c3631c86d70465f79ce72f46eb144f1e38bef4936e7d9411c20b45917fbe",
+    "Effets prévus": "9f4721d0986dcf9c75b3f7789dd77fe367505776575cc9d78b2ed55a166407e6",
+    "SMS préparé": "e0b0cbfd8d9953b0b607fe49190fc1d02ee42d38d74b40a1909001bbd480197e"
+  },
+  "gabarit-artisan-suivi": {
+    "Préparer": "7995d6300c101b64c1bc06327720cba8479ef3d152346628b263f62dbcd5ba4a",
+    "Constituer la relance due": "ddfdc685ccabb3222d071772edd4c60e91b50efd5dae1c1500fda65f036e5734",
+    "Préparer l'appel du contrôleur": "6357f48b4fa862badfcfe74a79e3be47d35544a75c3ca49b761405c706d57e72",
+    "Modèle enregistré (simulation)": "1b906a3daa314c4e4c5189768fa342986a4bd92f51b2c427913f9974d250efc2",
+    "Revalider le message": "fcf87b8e8b3dda6b1be6a87f27c42add15141c63e6c02d9db6ac35ba3e27b110",
+    "Décider de la voie": "2d4d9ad98cf3d61cf16a171b4d95b59d8765c9b5c43cc4d4bde72700f063b9f3",
+    "Effets prévus": "8d4e5a58733bfe943647b7b34336a03af7c4993e35e40087e9fc9007ffc339dd",
+    "SMS préparé": "b5940cbde50a184f1ba74088dd7be865d9337e5b82f4341d36ab83f8054f822c"
+  }
+}

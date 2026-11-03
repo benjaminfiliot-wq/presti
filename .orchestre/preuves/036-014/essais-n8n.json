@@ -1,0 +1,1068 @@
+[
+  {
+    "gabarit": "gabarit-artisan-suivi",
+    "titre": "une relance due, Signature : envoi prévu en simulation, rien ne part",
+    "execution": "659",
+    "statut_n8n": "success",
+    "noeud_final": "Effets prévus",
+    "sortie_n8n": {
+      "cle": "relance:conversation:00000000-0000-4000-8000-000000000011:0",
+      "simulation": true,
+      "voie": "envoi",
+      "motif": "envoi_seul",
+      "route": "gmail",
+      "effets_prevus": [
+        "envoi_gmail",
+        "registre",
+        "conversation"
+      ],
+      "effets_faits": []
+    },
+    "sortie_hors_ligne": {
+      "cle": "relance:conversation:00000000-0000-4000-8000-000000000011:0",
+      "simulation": true,
+      "voie": "envoi",
+      "motif": "envoi_seul",
+      "route": "gmail",
+      "effets_prevus": [
+        "envoi_gmail",
+        "registre",
+        "conversation"
+      ],
+      "effets_faits": []
+    },
+    "identique_au_rejeu": true,
+    "memes_noeuds_executes": true,
+    "noeuds_executes_n8n": [
+      "Tous les jours à 9 h",
+      "Préparer",
+      "Relire la configuration",
+      "Lire les relances dues",
+      "Constituer la relance due",
+      "Préparer l'appel du contrôleur",
+      "Contrôler le conflit (lib-controler-conflit)",
+      "Le dossier peut-il être relancé ?",
+      "Porte simulation (modèle)",
+      "Modèle enregistré (simulation)",
+      "Revalider le message",
+      "Décider de la voie",
+      "Porte simulation (effets)",
+      "Effets prévus"
+    ],
+    "entrees": {
+      "Tous les jours à 9 h": [
+        {}
+      ],
+      "Relire la configuration": [
+        {
+          "artisan_id": "00000000-0000-4000-8000-000000000225",
+          "enseigne": "Exemple. Menuiserie",
+          "ton": "courtois",
+          "signature": "Exemple.",
+          "offre": "signature",
+          "capacites": [
+            "assistant",
+            "assistant.pilote",
+            "plateforme.ia.auto",
+            "relances.auto",
+            "factures.relances.auto",
+            "crm"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "relance_impaye": true,
+              "relance_devis": true
+            }
+          },
+          "parties_depuis_24h": 2,
+          "plafond_jour": 20,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "cles_existantes": [],
+          "maintenant": "2026-11-09T10:00:00.000+01:00",
+          "simulation": true,
+          "boite": "gmail",
+          "stockage": "drive",
+          "paliers_conversation_jours": [
+            2,
+            5,
+            10
+          ],
+          "paliers_devis_jours": [
+            7
+          ],
+          "mots_escalade_artisan": [],
+          "sms_api": "aucune",
+          "expediteur": "noreply"
+        }
+      ],
+      "Lire les relances dues": [
+        {
+          "objet_type": "conversation",
+          "objet_id": "00000000-0000-4000-8000-000000000011",
+          "dossier_id": "00000000-0000-4000-8000-000000000012",
+          "statut": "repondu",
+          "canal": "email",
+          "paliers_envoyes": [],
+          "jours_depuis_dernier": 3,
+          "main_prise": false,
+          "exclu": false,
+          "stop": false,
+          "opposition": false,
+          "sensible": false,
+          "carte": "aucune",
+          "ecartee_le": null,
+          "historique": {
+            "ok": true,
+            "traces": []
+          },
+          "delai_annulation_ecoule": true
+        }
+      ],
+      "Lire le destinataire": [
+        {
+          "objet_id": "00000000-0000-4000-8000-000000000011",
+          "client_email": "client@exemple.invalid",
+          "client_telephone": "+33600000000",
+          "telegram_chat": "42",
+          "whatsapp_numero_pro": "1",
+          "sms_expediteur": "ARTISAN"
+        }
+      ],
+      "Contrôler le conflit (lib-controler-conflit)": [
+        {
+          "contrat": "lib-controler-conflit@1",
+          "statut": "ok",
+          "simulation": true,
+          "resultat": {
+            "continuer": true,
+            "issue": "continue",
+            "motifs": []
+          }
+        }
+      ]
+    }
+  },
+  {
+    "gabarit": "gabarit-artisan-suivi",
+    "titre": "une relance avec STOP : rien (aucun appel, aucun effet)",
+    "execution": "660",
+    "statut_n8n": "success",
+    "noeud_final": "Constituer la relance due",
+    "sortie_n8n": null,
+    "sortie_hors_ligne": null,
+    "identique_au_rejeu": true,
+    "memes_noeuds_executes": true,
+    "noeuds_executes_n8n": [
+      "Tous les jours à 9 h",
+      "Préparer",
+      "Relire la configuration",
+      "Lire les relances dues",
+      "Constituer la relance due"
+    ],
+    "entrees": {
+      "Tous les jours à 9 h": [
+        {}
+      ],
+      "Relire la configuration": [
+        {
+          "artisan_id": "00000000-0000-4000-8000-000000000225",
+          "enseigne": "Exemple. Menuiserie",
+          "ton": "courtois",
+          "signature": "Exemple.",
+          "offre": "signature",
+          "capacites": [
+            "assistant",
+            "assistant.pilote",
+            "plateforme.ia.auto",
+            "relances.auto",
+            "factures.relances.auto",
+            "crm"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "relance_impaye": true,
+              "relance_devis": true
+            }
+          },
+          "parties_depuis_24h": 2,
+          "plafond_jour": 20,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "cles_existantes": [],
+          "maintenant": "2026-11-09T10:00:00.000+01:00",
+          "simulation": true,
+          "boite": "gmail",
+          "stockage": "drive",
+          "paliers_conversation_jours": [
+            2,
+            5,
+            10
+          ],
+          "paliers_devis_jours": [
+            7
+          ],
+          "mots_escalade_artisan": [],
+          "sms_api": "aucune",
+          "expediteur": "noreply"
+        }
+      ],
+      "Lire les relances dues": [
+        {
+          "objet_type": "conversation",
+          "objet_id": "00000000-0000-4000-8000-000000000011",
+          "dossier_id": "00000000-0000-4000-8000-000000000012",
+          "statut": "repondu",
+          "canal": "email",
+          "paliers_envoyes": [],
+          "jours_depuis_dernier": 3,
+          "main_prise": false,
+          "exclu": false,
+          "stop": true,
+          "opposition": false,
+          "sensible": false,
+          "carte": "aucune",
+          "ecartee_le": null,
+          "historique": {
+            "ok": true,
+            "traces": []
+          },
+          "delai_annulation_ecoule": true
+        }
+      ],
+      "Lire le destinataire": [
+        {
+          "objet_id": "00000000-0000-4000-8000-000000000011",
+          "client_email": "client@exemple.invalid",
+          "client_telephone": "+33600000000",
+          "telegram_chat": "42",
+          "whatsapp_numero_pro": "1",
+          "sms_expediteur": "ARTISAN"
+        }
+      ],
+      "Contrôler le conflit (lib-controler-conflit)": [
+        {
+          "contrat": "lib-controler-conflit@1",
+          "statut": "ok",
+          "simulation": true,
+          "resultat": {
+            "continuer": true,
+            "issue": "continue",
+            "motifs": []
+          }
+        }
+      ]
+    }
+  },
+  {
+    "gabarit": "gabarit-artisan-facturation",
+    "titre": "un paiement lu dans Stripe : la relance d’impayé s’arrête (carte « vérifier le paiement »), aucun envoi",
+    "execution": "663",
+    "statut_n8n": "success",
+    "noeud_final": "Effets prévus",
+    "sortie_n8n": {
+      "cle": "paiement_lu:00000000-0000-4000-8000-000000000021:",
+      "simulation": true,
+      "kind": "paiement_lu",
+      "voie": "carte",
+      "motif": "paiement_lu",
+      "effets_prevus": [
+        "carte_paiement_lu"
+      ],
+      "effets_faits": []
+    },
+    "sortie_hors_ligne": {
+      "cle": "paiement_lu:00000000-0000-4000-8000-000000000021:",
+      "simulation": true,
+      "kind": "paiement_lu",
+      "voie": "carte",
+      "motif": "paiement_lu",
+      "effets_prevus": [
+        "carte_paiement_lu"
+      ],
+      "effets_faits": []
+    },
+    "identique_au_rejeu": true,
+    "memes_noeuds_executes": true,
+    "noeuds_executes_n8n": [
+      "Tous les jours à 8 h 30",
+      "Préparer",
+      "Relire la configuration",
+      "Lire les factures",
+      "Lire les chantiers terminés",
+      "Lire les paiements Stripe",
+      "Constituer le dossier",
+      "Faut-il rédiger ?",
+      "Revalider le texte",
+      "Décider de la voie",
+      "Porte simulation (effets)",
+      "Effets prévus"
+    ],
+    "entrees": {
+      "Tous les jours à 8 h 30": [
+        {}
+      ],
+      "Relire la configuration": [
+        {
+          "artisan_id": "00000000-0000-4000-8000-000000000225",
+          "enseigne": "Exemple. Menuiserie",
+          "ton": "courtois",
+          "signature": "Exemple.",
+          "offre": "signature",
+          "capacites": [
+            "assistant",
+            "assistant.pilote",
+            "plateforme.ia.auto",
+            "relances.auto",
+            "factures.relances.auto",
+            "crm"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "relance_impaye": true,
+              "relance_devis": true
+            }
+          },
+          "parties_depuis_24h": 2,
+          "plafond_jour": 20,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "cles_existantes": [],
+          "maintenant": "2026-11-09T10:00:00.000+01:00",
+          "simulation": true,
+          "boite": "gmail",
+          "stockage": "drive",
+          "relances_impayes": {
+            "actif": true,
+            "jours": [
+              3,
+              10,
+              21
+            ]
+          },
+          "comptable": "sheets"
+        }
+      ],
+      "Lire les factures": [
+        {
+          "facture_id": "00000000-0000-4000-8000-000000000021",
+          "numero": "FAC-EX-0021",
+          "statut": "emise",
+          "emise": true,
+          "envoyee": true,
+          "total_ttc_centimes": 120000,
+          "total_ttc_affiche": "1 200,00 € TTC",
+          "echeance_affichee": "1er novembre 2026",
+          "retard_affiche": "8 jours de retard",
+          "jours_retard": 8,
+          "salutation": "Madame, Monsieur",
+          "contestation": false,
+          "motif": null,
+          "paliers_envoyes": [],
+          "canal": "email",
+          "stop": false,
+          "sensible": false,
+          "delai_annulation_ecoule": true
+        }
+      ],
+      "Lire les chantiers terminés": [],
+      "Lire le destinataire": [
+        {
+          "objet_id": "00000000-0000-4000-8000-000000000021",
+          "client_email": "client@exemple.invalid",
+          "client_telephone": "+33600000000"
+        }
+      ],
+      "Lire les paiements Stripe": [
+        {
+          "id": "ch_Exemple",
+          "paid": true,
+          "refunded": false,
+          "amount": 120000,
+          "metadata": {
+            "facture_id": "00000000-0000-4000-8000-000000000021"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "gabarit": "gabarit-artisan-facturation",
+    "titre": "une facture NON émise : jamais envoyée, jamais relancée",
+    "execution": "664",
+    "statut_n8n": "success",
+    "noeud_final": "Constituer le dossier",
+    "sortie_n8n": null,
+    "sortie_hors_ligne": null,
+    "identique_au_rejeu": true,
+    "memes_noeuds_executes": true,
+    "noeuds_executes_n8n": [
+      "Tous les jours à 8 h 30",
+      "Préparer",
+      "Relire la configuration",
+      "Lire les factures",
+      "Lire les chantiers terminés",
+      "Lire les paiements Stripe",
+      "Constituer le dossier"
+    ],
+    "entrees": {
+      "Tous les jours à 8 h 30": [
+        {}
+      ],
+      "Relire la configuration": [
+        {
+          "artisan_id": "00000000-0000-4000-8000-000000000225",
+          "enseigne": "Exemple. Menuiserie",
+          "ton": "courtois",
+          "signature": "Exemple.",
+          "offre": "signature",
+          "capacites": [
+            "assistant",
+            "assistant.pilote",
+            "plateforme.ia.auto",
+            "relances.auto",
+            "factures.relances.auto",
+            "crm"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "relance_impaye": true,
+              "relance_devis": true
+            }
+          },
+          "parties_depuis_24h": 2,
+          "plafond_jour": 20,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "cles_existantes": [],
+          "maintenant": "2026-11-09T10:00:00.000+01:00",
+          "simulation": true,
+          "boite": "gmail",
+          "stockage": "drive",
+          "relances_impayes": {
+            "actif": true,
+            "jours": [
+              3,
+              10,
+              21
+            ]
+          },
+          "comptable": "sheets"
+        }
+      ],
+      "Lire les factures": [
+        {
+          "facture_id": "00000000-0000-4000-8000-000000000021",
+          "numero": "FAC-EX-0021",
+          "statut": "brouillon",
+          "emise": false,
+          "envoyee": false,
+          "total_ttc_centimes": 120000,
+          "total_ttc_affiche": "1 200,00 € TTC",
+          "echeance_affichee": "1er novembre 2026",
+          "retard_affiche": "8 jours de retard",
+          "jours_retard": 8,
+          "salutation": "Madame, Monsieur",
+          "contestation": false,
+          "motif": null,
+          "paliers_envoyes": [],
+          "canal": "email",
+          "stop": false,
+          "sensible": false,
+          "delai_annulation_ecoule": true
+        }
+      ],
+      "Lire les chantiers terminés": [],
+      "Lire le destinataire": [
+        {
+          "objet_id": "00000000-0000-4000-8000-000000000021",
+          "client_email": "client@exemple.invalid",
+          "client_telephone": "+33600000000"
+        }
+      ],
+      "Lire les paiements Stripe": []
+    }
+  },
+  {
+    "gabarit": "gabarit-artisan-devis",
+    "titre": "Signature, tous les prix tarifés : envoi PRÉVU, rien ne part (simulation)",
+    "execution": "656",
+    "statut_n8n": "success",
+    "noeud_final": "Effets prévus",
+    "sortie_n8n": {
+      "cle": "devis:00000000-0000-4000-8000-000000000001",
+      "simulation": true,
+      "voie": "envoi",
+      "motif": "prix_sources",
+      "numero": "DEV-EX-0002",
+      "total_affiche": "1 200,00 € TTC",
+      "effets_prevus": [
+        "pdf_drive",
+        "envoi_gmail",
+        "registre"
+      ],
+      "effets_faits": []
+    },
+    "sortie_hors_ligne": {
+      "cle": "devis:00000000-0000-4000-8000-000000000001",
+      "simulation": true,
+      "voie": "envoi",
+      "motif": "prix_sources",
+      "numero": "DEV-EX-0002",
+      "total_affiche": "1 200,00 € TTC",
+      "effets_prevus": [
+        "pdf_drive",
+        "envoi_gmail",
+        "registre"
+      ],
+      "effets_faits": []
+    },
+    "identique_au_rejeu": true,
+    "memes_noeuds_executes": true,
+    "noeuds_executes_n8n": [
+      "Toutes les 10 minutes",
+      "Préparer",
+      "Relire la configuration",
+      "Lire les demandes à chiffrer",
+      "Lire les tarifs",
+      "Lire les devis prêts",
+      "Lire les lignes des devis",
+      "Lire les repères de prix",
+      "Constituer le dossier",
+      "Porte simulation (modèle)",
+      "Modèle enregistré (simulation)",
+      "Revalider les lignes",
+      "Préparer l'appel du chef",
+      "Appeler presti-dep-devis (montants par le code)",
+      "Décider de la voie",
+      "Porte simulation (effets)",
+      "Effets prévus"
+    ],
+    "entrees": {
+      "Toutes les 10 minutes": [
+        {}
+      ],
+      "Relire la configuration": [
+        {
+          "artisan_id": "00000000-0000-4000-8000-000000000225",
+          "enseigne": "Exemple. Menuiserie",
+          "ton": "courtois",
+          "signature": "Exemple.",
+          "offre": "signature",
+          "capacites": [
+            "assistant",
+            "assistant.pilote",
+            "plateforme.ia.auto",
+            "relances.auto",
+            "factures.relances.auto",
+            "crm"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "relance_impaye": true,
+              "relance_devis": true
+            }
+          },
+          "parties_depuis_24h": 2,
+          "plafond_jour": 20,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "cles_existantes": [],
+          "maintenant": "2026-11-09T10:00:00.000+01:00",
+          "simulation": true,
+          "boite": "gmail",
+          "stockage": "drive"
+        }
+      ],
+      "Lire les demandes à chiffrer": [
+        {
+          "lead_id": "00000000-0000-4000-8000-000000000001",
+          "devis_id": "00000000-0000-4000-8000-000000000002",
+          "qualifiee": true,
+          "escalade": false,
+          "resume_demande": "Exemple. Porte et pose.",
+          "delai_annulation_ecoule": true,
+          "enregistrement_modele": {
+            "resume": "Exemple.",
+            "lignes": [
+              {
+                "designation": "Exemple. Porte",
+                "quantite": 1,
+                "unite": "u",
+                "reference_tarif": "REF-PORTE",
+                "motif": "Exemple."
+              },
+              {
+                "designation": "Exemple. Pose",
+                "quantite": 1,
+                "unite": "u",
+                "reference_tarif": "REF-POSE",
+                "motif": "Exemple."
+              }
+            ]
+          }
+        }
+      ],
+      "Lire les tarifs": [
+        {
+          "reference": "REF-PORTE",
+          "designation": "Exemple. Porte d’entrée",
+          "unite": "u",
+          "prix_unitaire_ht_centimes": 70000,
+          "source_prix": "vos tarifs · Exemple. Porte"
+        },
+        {
+          "reference": "REF-POSE",
+          "designation": "Exemple. Pose",
+          "unite": "forfait",
+          "prix_unitaire_ht_centimes": 30000,
+          "source_prix": "vos tarifs · Exemple. Pose"
+        },
+        {
+          "reference": "REF-ESTIME",
+          "designation": "Exemple. Finitions",
+          "unite": "forfait",
+          "prix_unitaire_ht_centimes": 42000,
+          "source_prix": ""
+        }
+      ],
+      "Lire les devis prêts": [
+        {
+          "artisan_id": "00000000-0000-4000-8000-000000000225",
+          "devis_id": "00000000-0000-4000-8000-000000000002",
+          "lead_id": "00000000-0000-4000-8000-000000000001",
+          "numero": "DEV-EX-0002",
+          "statut": "brouillon",
+          "total_ttc_centimes": 120000,
+          "total_ttc_affiche": "1 200,00 € TTC"
+        }
+      ],
+      "Lire les lignes des devis": [],
+      "Lire les repères de prix": [
+        {
+          "reference": "REF-ESTIME",
+          "repere_affiche": "420,00 € HT",
+          "repere_chantier_le": "2026-02-02"
+        }
+      ],
+      "Lire le destinataire": [
+        {
+          "objet_id": "00000000-0000-4000-8000-000000000001",
+          "client_email": "client@exemple.invalid",
+          "client_telephone": "+33600000000"
+        }
+      ],
+      "Appeler presti-dep-devis (montants par le code)": [
+        {
+          "contrat": "presti-dep-devis@1",
+          "statut": "ok",
+          "simulation": true,
+          "resultat": {
+            "devis_prets": [
+              {
+                "devis_id": "00000000-0000-4000-8000-000000000002",
+                "numero": "DEV-EX-0002",
+                "total_ttc_affiche": "1 200,00 € TTC",
+                "tous_prix_sources": true,
+                "a_estimer": 0
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "gabarit": "gabarit-artisan-devis",
+    "titre": "un prix estimé : carte, jamais d’envoi (simulation)",
+    "execution": "657",
+    "statut_n8n": "success",
+    "noeud_final": "Effets prévus",
+    "sortie_n8n": {
+      "cle": "devis:00000000-0000-4000-8000-000000000001",
+      "simulation": true,
+      "voie": "carte",
+      "motif": "prix_non_source",
+      "numero": "DEV-EX-0002",
+      "total_affiche": "1 200,00 € TTC",
+      "effets_prevus": [
+        "registre"
+      ],
+      "effets_faits": []
+    },
+    "sortie_hors_ligne": {
+      "cle": "devis:00000000-0000-4000-8000-000000000001",
+      "simulation": true,
+      "voie": "carte",
+      "motif": "prix_non_source",
+      "numero": "DEV-EX-0002",
+      "total_affiche": "1 200,00 € TTC",
+      "effets_prevus": [
+        "registre"
+      ],
+      "effets_faits": []
+    },
+    "identique_au_rejeu": true,
+    "memes_noeuds_executes": true,
+    "noeuds_executes_n8n": [
+      "Toutes les 10 minutes",
+      "Préparer",
+      "Relire la configuration",
+      "Lire les demandes à chiffrer",
+      "Lire les tarifs",
+      "Lire les devis prêts",
+      "Lire les lignes des devis",
+      "Lire les repères de prix",
+      "Constituer le dossier",
+      "Porte simulation (modèle)",
+      "Modèle enregistré (simulation)",
+      "Revalider les lignes",
+      "Préparer l'appel du chef",
+      "Appeler presti-dep-devis (montants par le code)",
+      "Décider de la voie",
+      "Porte simulation (effets)",
+      "Effets prévus"
+    ],
+    "entrees": {
+      "Toutes les 10 minutes": [
+        {}
+      ],
+      "Relire la configuration": [
+        {
+          "artisan_id": "00000000-0000-4000-8000-000000000225",
+          "enseigne": "Exemple. Menuiserie",
+          "ton": "courtois",
+          "signature": "Exemple.",
+          "offre": "signature",
+          "capacites": [
+            "assistant",
+            "assistant.pilote",
+            "plateforme.ia.auto",
+            "relances.auto",
+            "factures.relances.auto",
+            "crm"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "relance_impaye": true,
+              "relance_devis": true
+            }
+          },
+          "parties_depuis_24h": 2,
+          "plafond_jour": 20,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "cles_existantes": [],
+          "maintenant": "2026-11-09T10:00:00.000+01:00",
+          "simulation": true,
+          "boite": "gmail",
+          "stockage": "drive"
+        }
+      ],
+      "Lire les demandes à chiffrer": [
+        {
+          "lead_id": "00000000-0000-4000-8000-000000000001",
+          "devis_id": "00000000-0000-4000-8000-000000000002",
+          "qualifiee": true,
+          "escalade": false,
+          "resume_demande": "Exemple. Porte et pose.",
+          "delai_annulation_ecoule": true,
+          "enregistrement_modele": {
+            "resume": "Exemple.",
+            "lignes": [
+              {
+                "designation": "Exemple. Porte",
+                "quantite": 1,
+                "unite": "u",
+                "reference_tarif": "REF-PORTE",
+                "motif": "Exemple."
+              },
+              {
+                "designation": "Exemple. Finitions",
+                "quantite": 1,
+                "unite": "u",
+                "reference_tarif": "REF-ESTIME",
+                "motif": "Exemple."
+              }
+            ]
+          }
+        }
+      ],
+      "Lire les tarifs": [
+        {
+          "reference": "REF-PORTE",
+          "designation": "Exemple. Porte d’entrée",
+          "unite": "u",
+          "prix_unitaire_ht_centimes": 70000,
+          "source_prix": "vos tarifs · Exemple. Porte"
+        },
+        {
+          "reference": "REF-POSE",
+          "designation": "Exemple. Pose",
+          "unite": "forfait",
+          "prix_unitaire_ht_centimes": 30000,
+          "source_prix": "vos tarifs · Exemple. Pose"
+        },
+        {
+          "reference": "REF-ESTIME",
+          "designation": "Exemple. Finitions",
+          "unite": "forfait",
+          "prix_unitaire_ht_centimes": 42000,
+          "source_prix": ""
+        }
+      ],
+      "Lire les devis prêts": [
+        {
+          "artisan_id": "00000000-0000-4000-8000-000000000225",
+          "devis_id": "00000000-0000-4000-8000-000000000002",
+          "lead_id": "00000000-0000-4000-8000-000000000001",
+          "numero": "DEV-EX-0002",
+          "statut": "brouillon",
+          "total_ttc_centimes": 120000,
+          "total_ttc_affiche": "1 200,00 € TTC"
+        }
+      ],
+      "Lire les lignes des devis": [],
+      "Lire les repères de prix": [
+        {
+          "reference": "REF-ESTIME",
+          "repere_affiche": "420,00 € HT",
+          "repere_chantier_le": "2026-02-02"
+        }
+      ],
+      "Lire le destinataire": [
+        {
+          "objet_id": "00000000-0000-4000-8000-000000000001",
+          "client_email": "client@exemple.invalid",
+          "client_telephone": "+33600000000"
+        }
+      ],
+      "Appeler presti-dep-devis (montants par le code)": [
+        {
+          "contrat": "presti-dep-devis@1",
+          "statut": "ok",
+          "simulation": true,
+          "resultat": {
+            "devis_prets": [
+              {
+                "devis_id": "00000000-0000-4000-8000-000000000002",
+                "numero": "DEV-EX-0002",
+                "total_ttc_affiche": "1 200,00 € TTC",
+                "tous_prix_sources": false,
+                "a_estimer": 1
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "gabarit": "gabarit-artisan-devis",
+    "titre": "Studio : brouillon (simulation), jamais d’envoi",
+    "execution": "658",
+    "statut_n8n": "success",
+    "noeud_final": "Effets prévus",
+    "sortie_n8n": {
+      "cle": "devis:00000000-0000-4000-8000-000000000001",
+      "simulation": true,
+      "voie": "brouillon",
+      "motif": "studio",
+      "numero": "DEV-EX-0002",
+      "total_affiche": "1 200,00 € TTC",
+      "effets_prevus": [
+        "pdf_drive",
+        "brouillon_gmail",
+        "registre"
+      ],
+      "effets_faits": []
+    },
+    "sortie_hors_ligne": {
+      "cle": "devis:00000000-0000-4000-8000-000000000001",
+      "simulation": true,
+      "voie": "brouillon",
+      "motif": "studio",
+      "numero": "DEV-EX-0002",
+      "total_affiche": "1 200,00 € TTC",
+      "effets_prevus": [
+        "pdf_drive",
+        "brouillon_gmail",
+        "registre"
+      ],
+      "effets_faits": []
+    },
+    "identique_au_rejeu": true,
+    "memes_noeuds_executes": true,
+    "noeuds_executes_n8n": [
+      "Toutes les 10 minutes",
+      "Préparer",
+      "Relire la configuration",
+      "Lire les demandes à chiffrer",
+      "Lire les tarifs",
+      "Lire les devis prêts",
+      "Lire les lignes des devis",
+      "Lire les repères de prix",
+      "Constituer le dossier",
+      "Porte simulation (modèle)",
+      "Modèle enregistré (simulation)",
+      "Revalider les lignes",
+      "Préparer l'appel du chef",
+      "Appeler presti-dep-devis (montants par le code)",
+      "Décider de la voie",
+      "Porte simulation (effets)",
+      "Effets prévus"
+    ],
+    "entrees": {
+      "Toutes les 10 minutes": [
+        {}
+      ],
+      "Relire la configuration": [
+        {
+          "artisan_id": "00000000-0000-4000-8000-000000000225",
+          "enseigne": "Exemple. Menuiserie",
+          "ton": "courtois",
+          "signature": "Exemple.",
+          "offre": "studio",
+          "capacites": [
+            "assistant",
+            "crm"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": false,
+            "types": {}
+          },
+          "parties_depuis_24h": 2,
+          "plafond_jour": 20,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "cles_existantes": [],
+          "maintenant": "2026-11-09T10:00:00.000+01:00",
+          "simulation": true,
+          "boite": "gmail",
+          "stockage": "drive"
+        }
+      ],
+      "Lire les demandes à chiffrer": [
+        {
+          "lead_id": "00000000-0000-4000-8000-000000000001",
+          "devis_id": "00000000-0000-4000-8000-000000000002",
+          "qualifiee": true,
+          "escalade": false,
+          "resume_demande": "Exemple. Porte et pose.",
+          "delai_annulation_ecoule": true,
+          "enregistrement_modele": {
+            "resume": "Exemple.",
+            "lignes": [
+              {
+                "designation": "Exemple. Porte",
+                "quantite": 1,
+                "unite": "u",
+                "reference_tarif": "REF-PORTE",
+                "motif": "Exemple."
+              },
+              {
+                "designation": "Exemple. Pose",
+                "quantite": 1,
+                "unite": "u",
+                "reference_tarif": "REF-POSE",
+                "motif": "Exemple."
+              }
+            ]
+          }
+        }
+      ],
+      "Lire les tarifs": [
+        {
+          "reference": "REF-PORTE",
+          "designation": "Exemple. Porte d’entrée",
+          "unite": "u",
+          "prix_unitaire_ht_centimes": 70000,
+          "source_prix": "vos tarifs · Exemple. Porte"
+        },
+        {
+          "reference": "REF-POSE",
+          "designation": "Exemple. Pose",
+          "unite": "forfait",
+          "prix_unitaire_ht_centimes": 30000,
+          "source_prix": "vos tarifs · Exemple. Pose"
+        },
+        {
+          "reference": "REF-ESTIME",
+          "designation": "Exemple. Finitions",
+          "unite": "forfait",
+          "prix_unitaire_ht_centimes": 42000,
+          "source_prix": ""
+        }
+      ],
+      "Lire les devis prêts": [
+        {
+          "artisan_id": "00000000-0000-4000-8000-000000000225",
+          "devis_id": "00000000-0000-4000-8000-000000000002",
+          "lead_id": "00000000-0000-4000-8000-000000000001",
+          "numero": "DEV-EX-0002",
+          "statut": "brouillon",
+          "total_ttc_centimes": 120000,
+          "total_ttc_affiche": "1 200,00 € TTC"
+        }
+      ],
+      "Lire les lignes des devis": [],
+      "Lire les repères de prix": [
+        {
+          "reference": "REF-ESTIME",
+          "repere_affiche": "420,00 € HT",
+          "repere_chantier_le": "2026-02-02"
+        }
+      ],
+      "Lire le destinataire": [
+        {
+          "objet_id": "00000000-0000-4000-8000-000000000001",
+          "client_email": "client@exemple.invalid",
+          "client_telephone": "+33600000000"
+        }
+      ],
+      "Appeler presti-dep-devis (montants par le code)": [
+        {
+          "contrat": "presti-dep-devis@1",
+          "statut": "ok",
+          "simulation": true,
+          "resultat": {
+            "devis_prets": [
+              {
+                "devis_id": "00000000-0000-4000-8000-000000000002",
+                "numero": "DEV-EX-0002",
+                "total_ttc_affiche": "1 200,00 € TTC",
+                "tous_prix_sources": true,
+                "a_estimer": 0
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]
