@@ -1264,3 +1264,6 @@
 {"id":"037-000","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T16:37:39Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1493,"dossier":"fait"}
 {"id":"036-025","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T16:41:50Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1035,"dossier":"fait"}
 {"id":"036-027","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T17:01:46Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":1119,"dossier":"fait"}
+{"id":"036-026","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T17:11:30Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":6826,"dossier":"fait"}
+{"id":"036-028","verdict":"FAIL","ligne":"Error: ENOENT: no such file or directory, open 'C:\\Users\\benja\\Documents\\presti\\plans\\011-cadrage-01-11\\p6-signature\\audit-0311-conformite.md'","code":1,"date":"2026-11-03T17:18:34Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":876,"dossier":"fait"}
+{"id":"036-029","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T17:18:37Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1070,"dossier":"fait"}

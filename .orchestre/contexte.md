@@ -1,11 +1,11 @@
-# Carte du code — presti (2026-11-03T17:02:06Z)
+# Carte du code — presti (2026-11-03T17:18:39Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
 
 SaaS pour les artisans du bâtiment : plateforme de conversation, devis, factures, site à la demande Pile : Next.js + Supabase + Vercel.
 
-## Pages (58) — `app/**/page.tsx`
+## Pages (59) — `app/**/page.tsx`
 - `/abonnement` : ·
 - `/aide` : ·
 - `/assistant` : ·
@@ -21,6 +21,7 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/dashboard` : ·
 - `/devis` : [id], ·
 - `/direction` : ·
+- `/entreprise` : ·
 - `/essai-formulaire` : ·
 - `/factures` : ·
 - `/faq` : ·
@@ -487,5 +488,5 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 
 ## Scripts — `scripts/` (597 .mjs, dont 88 suites e2e)
 
-## Orchestre — file : 60 · en cours : 1 · faites : 465 · refusées : 17
+## Orchestre — file : 60 · en cours : 0 · faites : 467 · refusées : 18
 

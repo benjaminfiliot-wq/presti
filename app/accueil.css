@@ -119,7 +119,26 @@
   .lp-cpt-kpis{grid-template-columns:1fr 1fr}
 }
 
-/* 036-023 — carte « Presti pour l'entreprise, sur mesure » : pleine largeur sous Studio et Signature, sobre, sans prix. */
-.lp-plans .lp-ent{grid-column:1 / -1;height:auto}
-.lp-ent .lp-ent-devis{font-size:.9rem;opacity:.75;margin:.2rem 0 .6rem}
-.lp-ent .lp-btn{align-self:flex-start}
+/* 036-023 — carte « Presti pour l'entreprise, sur mesure » : pleine largeur sous Studio et Signature, sans prix.
+   036-026 — enrichie : promesse, six points, les cinq temps en une ligne, le bouton et le lien vers /entreprise. */
+.lp-plans .lp-ent{grid-column:1 / -1;height:auto;padding:clamp(1.4rem,3.2vw,2.2rem);background:radial-gradient(ellipse 70% 90% at 0% 0%,rgba(217,119,87,.11),transparent 62%),var(--surf)}
+.lp-ent-tete{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:clamp(1.2rem,4vw,2.6rem);align-items:start}
+.lp-ent-kick{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--co2);margin-bottom:.45rem}
+.lp-ent-promesse{margin:.7rem 0 0;font-family:var(--font-display);font-weight:700;font-size:clamp(1.25rem,2.3vw,1.6rem);line-height:1.18;letter-spacing:-.02em;color:var(--ink);text-wrap:balance}
+.lp-ent .lp-for{color:var(--ink2);font-weight:500;font-size:.88rem;line-height:1.5;text-wrap:pretty}
+.lp-ent .lp-ent-devis{display:inline-block;margin:.9rem 0 0;padding:.3rem .7rem;border-radius:999px;font-size:.8rem;color:var(--ink2);background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.lp-ent .lp-ent-points{margin:0}
+.lp-ent .lp-ent-points li{text-wrap:pretty}
+.lp-ent-temps{list-style:none;margin:1.6rem 0 0;padding:1.1rem 0 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;counter-reset:none}
+.lp-ent-temps li{position:relative;display:inline-flex;align-items:center;gap:.5rem;font-size:.86rem;color:var(--ink2)}
+.lp-ent-temps li i{font-style:normal;display:inline-grid;place-items:center;width:1.45rem;height:1.45rem;border-radius:50%;font-family:var(--font-mono);font-size:.68rem;color:var(--co2);border:1px solid rgba(217,119,87,.4);background:rgba(217,119,87,.1)}
+.lp-ent-temps li+li::before{content:"";position:absolute;left:-1.05rem;top:50%;width:.6rem;height:1px;background:var(--line)}
+.lp-ent-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.4rem;margin-top:1.5rem}
+.lp-plan.lp-ent .lp-btn{width:auto;margin-top:0}
+.lp-ent-lien{display:inline-flex;align-items:center;min-height:44px;color:var(--co2);font-weight:600;font-size:.92rem;text-decoration:underline;text-decoration-color:rgba(232,148,111,.45);text-underline-offset:.2em;transition:text-decoration-color .2s}
+@media (hover:hover) and (pointer:fine){.lp-ent-lien:hover{text-decoration-color:var(--co2)}}
+@media (max-width:760px){
+  .lp-ent-tete{grid-template-columns:1fr}
+  .lp-ent-temps li+li::before{display:none}
+  .lp-plan.lp-ent .lp-btn{width:100%;justify-content:center}
+}

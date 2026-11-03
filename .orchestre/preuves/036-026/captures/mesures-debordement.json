@@ -1,0 +1,74 @@
+[
+ {
+  "page": "entreprise",
+  "largeur": 390,
+  "sw": 390,
+  "cw": 390,
+  "deborde": [],
+  "marge": 16,
+  "h": 13401
+ },
+ {
+  "page": "entreprise",
+  "largeur": 1440,
+  "sw": 1440,
+  "cw": 1440,
+  "deborde": [],
+  "marge": 24,
+  "h": 8764
+ },
+ {
+  "page": "carte",
+  "largeur": 390,
+  "sw": 390,
+  "cw": 390,
+  "deborde": [],
+  "marge": 24,
+  "h": 1116
+ },
+ {
+  "page": "carte",
+  "largeur": 1440,
+  "sw": 1440,
+  "cw": 1440,
+  "deborde": [],
+  "marge": 24,
+  "h": 900
+ },
+ {
+  "page": "contact-entreprise",
+  "largeur": 390,
+  "sw": 390,
+  "cw": 390,
+  "deborde": [],
+  "marge": 22.4,
+  "h": 2355
+ },
+ {
+  "page": "contact-entreprise",
+  "largeur": 1440,
+  "sw": 1440,
+  "cw": 1440,
+  "deborde": [],
+  "marge": 22.4,
+  "h": 1552
+ },
+ {
+  "page": "contact-defaut",
+  "largeur": 390,
+  "sw": 390,
+  "cw": 390,
+  "deborde": [],
+  "marge": 22.4,
+  "h": 2273
+ },
+ {
+  "page": "contact-defaut",
+  "largeur": 1440,
+  "sw": 1440,
+  "cw": 1440,
+  "deborde": [],
+  "marge": 22.4,
+  "h": 1489
+ }
+]

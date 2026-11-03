@@ -314,7 +314,7 @@ export default function Home() {
         {/* TARIFS */}
         <section className="lp-blk" id="tarifs">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick"><i>06</i>Abonnements</span><h2>Deux formules : tout préparé, ou tout automatique.</h2><p>Avec {OFFRE_PLATEFORME}, tout est automatisé et préparé pour vous, et rien ne part sans votre clic. Avec {OFFRE_AUTO}, tout part automatiquement. Chaque formule vous donne des crédits chaque mois ; il n&apos;y a pas de recharge à l&apos;unité.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick"><i>06</i>Abonnements</span><h2>Deux formules : tout préparé, ou tout automatique. Et le sur-mesure pour l&apos;entreprise.</h2><p>Avec {OFFRE_PLATEFORME}, tout est automatisé et préparé pour vous, et rien ne part sans votre clic. Avec {OFFRE_AUTO}, tout part automatiquement. Chaque formule vous donne des crédits chaque mois ; il n&apos;y a pas de recharge à l&apos;unité.</p></div>
 
             {/* Les prix d'abord : mesuré le 06/10 en 390 px, l'explication des crédits (529 px) passait
                 avant la première formule. Elle suit maintenant la grille. */}

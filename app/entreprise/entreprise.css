@@ -1,0 +1,184 @@
+/* La page /entreprise (036-026). Posée dans .lp : elle reprend la palette chaude et sombre de la landing (globals.css, ~l.947) et
+   son accent corail #D97757. Namespace .ent-* : rien ici ne touche une autre page. Règle de coût de la landing : seuls transform et
+   opacity s'animent ; mouvement réduit = tout immobile ; sans JavaScript, tout est visible (le masquage n'est armé que par Motion). */
+
+.ent .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* — 1. En-tête — */
+.ent-hero{position:relative;isolation:isolate;padding:clamp(4rem,10vw,7.5rem) 0 clamp(3rem,7vw,5rem);overflow:hidden}
+.ent-hero::before{content:"";position:absolute;inset:-20% -10% auto;height:120%;z-index:-1;pointer-events:none;background:radial-gradient(48% 55% at 22% 18%,rgba(217,119,87,.2),transparent 70%),radial-gradient(30% 40% at 88% 10%,rgba(217,119,87,.08),transparent 70%)}
+.ent-hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(60% 70% at 25% 10%,#000,transparent 78%);mask-image:radial-gradient(60% 70% at 25% 10%,#000,transparent 78%)}
+.ent-hero h1{margin:1.1rem 0 0;max-width:17ch;font-family:var(--font-display);font-weight:800;font-size:clamp(2.45rem,6.4vw,5rem);line-height:1;letter-spacing:-.045em;color:var(--ink);text-wrap:balance}
+.ent-hero h1 .g{background:linear-gradient(110deg,#F6C6A8 0%,var(--co2) 35%,var(--co) 70%,#C8623F 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em}
+.ent-lede{max-width:58ch;margin:1.5rem 0 0;font-size:clamp(1.05rem,1.6vw,1.2rem);line-height:1.6;color:var(--ink2);text-wrap:pretty}
+.ent-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2rem}
+.ent-faits{list-style:none;margin:2.2rem 0 0;padding:0;display:flex;flex-wrap:wrap;gap:.5rem}
+.ent-faits li{padding:.4rem .8rem;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-family:var(--font-mono);font-size:.74rem;letter-spacing:.02em;color:var(--ink2)}
+@media (prefers-reduced-motion:no-preference){
+  .ent-hero .lp-kick,.ent-hero h1,.ent-lede,.ent-cta,.ent-faits{animation:ent-entree .9s var(--ease-apple) both}
+  .ent-hero h1{animation-delay:.06s}
+  .ent-lede{animation-delay:.14s}
+  .ent-cta{animation-delay:.22s}
+  .ent-faits{animation-delay:.3s}
+}
+@keyframes ent-entree{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* — 2. Ce que vous obtenez — */
+.ent-obtenez .lp-head2{max-width:640px}
+.ent-obtenez .lp-head2 h2{font-size:clamp(2rem,4.4vw,3.2rem);letter-spacing:-.035em;text-wrap:balance}
+.ent-bloc{margin-top:clamp(2.6rem,6vw,4.2rem)}
+.ent-bloc-t{max-width:62ch}
+.ent-bloc-t h3,.ent-europe h3{margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(1.35rem,2.4vw,1.75rem);letter-spacing:-.025em;color:var(--ink);text-wrap:balance}
+.ent-bloc-t p,.ent-europe p{margin:.7rem 0 0;color:var(--ink2);line-height:1.62;text-wrap:pretty}
+
+/* L'organigramme : un rail vertical à gauche, un point par rang ; le travail descend du haut vers les outils. */
+.ent-org{--p:clamp(1rem,3vw,1.9rem);position:relative;margin:1.6rem 0 0;padding:var(--p);border:1px solid var(--line);border-radius:24px;background:radial-gradient(ellipse 60% 40% at 15% 0%,rgba(217,119,87,.08),transparent 70%),linear-gradient(180deg,var(--surf),var(--bg2));box-shadow:0 40px 90px -60px rgba(0,0,0,.9)}
+.ent-rang{position:relative;display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:1.2rem;padding:1.1rem 0 1.1rem 1.7rem}
+.ent-rang+.ent-rang{border-top:1px dashed var(--line)}
+.ent-rang::before{content:"";position:absolute;left:.4rem;top:0;bottom:0;width:1px;background:linear-gradient(180deg,rgba(217,119,87,.55),rgba(217,119,87,.25))}
+.ent-rang:first-of-type::before{top:1.6rem}
+.ent-rang:last-of-type::before{bottom:auto;height:1.6rem}
+.ent-rang::after{content:"";position:absolute;left:calc(.4rem - 5px);top:calc(1.6rem - 5px);width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--co);box-shadow:0 0 12px rgba(217,119,87,.45)}
+.ent-rang-l{display:flex;flex-direction:column;gap:.15rem;padding-top:.3rem}
+.ent-rang-l small{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.ent-rang-l b{font-family:var(--font-display);font-size:1.02rem;color:var(--ink)}
+.ent-noeuds{display:grid;gap:.7rem}
+.ent-noeuds--2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ent-noeud{border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem;background:rgba(255,255,255,.025)}
+.ent-noeud b{display:block;font-family:var(--font-display);font-weight:700;font-size:1.02rem;color:var(--ink)}
+.ent-noeud em{display:block;margin-top:.3rem;font-style:normal;font-size:.9rem;line-height:1.5;color:var(--ink2);text-wrap:pretty}
+.ent-noeud--vous{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.05)}
+.ent-noeud--cerveau{border-color:rgba(217,119,87,.5);background:linear-gradient(160deg,rgba(217,119,87,.16),rgba(217,119,87,.04));box-shadow:0 18px 50px -30px var(--co-glow)}
+.ent-noeud--cerveau b{color:var(--co2)}
+.ent-noeud--outils{border-style:dashed}
+.ent-services{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12.5rem),1fr));gap:.7rem}
+.ent-service{border:1px solid var(--line);border-radius:14px;padding:.85rem 1rem;background:rgba(255,255,255,.025)}
+.ent-service-chef{display:block;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--co2)}
+.ent-service > b{display:block;margin-top:.25rem;font-family:var(--font-display);font-weight:700;font-size:.98rem;color:var(--ink)}
+.ent-service ul{list-style:none;margin:.6rem 0 0;padding:.6rem 0 0;border-top:1px solid var(--line2);display:grid;gap:.3rem}
+.ent-service ul li{position:relative;padding-left:.9rem;font-size:.85rem;color:var(--ink2)}
+.ent-service ul li::before{content:"";position:absolute;left:0;top:.6em;width:.4rem;height:1px;background:var(--muted)}
+.ent-autres{margin:.8rem 0 0;font-size:.88rem;color:var(--muted)}
+/* Le pouls : un trait lumineux qui descend le rail. Il dit le sens du travail ; il ne tourne que si le mouvement est permis. */
+.ent-pouls{display:none}
+@media (prefers-reduced-motion:no-preference){
+  .ent-pouls{display:block;position:absolute;left:calc(var(--p) + .4rem - 1px);top:calc(var(--p) + 1.6rem);bottom:calc(var(--p) + 1rem);width:3px;overflow:hidden;pointer-events:none;z-index:1;border-radius:2px}
+  .ent-pouls::after{content:"";position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(180deg,transparent 0%,transparent 42%,rgba(240,170,135,.95) 50%,transparent 58%,transparent 100%);transform:translateY(-60%);animation:ent-pouls 4.8s cubic-bezier(.45,0,.25,1) infinite}
+}
+@keyframes ent-pouls{from{transform:translateY(-60%)}to{transform:translateY(60%)}}
+
+/* Les outils : étiquettes de texte, aucun logo. */
+.ent-outils{margin:1.6rem 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:.8rem}
+.ent-outils-g{border:1px solid var(--line);border-radius:16px;padding:1rem 1.1rem;background:var(--surf)}
+.ent-outils dt{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.ent-outils dd{margin:.7rem 0 0}
+.ent-outils ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.4rem}
+.ent-tag{padding:.32rem .62rem;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.035);font-family:var(--font-mono);font-size:.78rem;color:var(--ink)}
+
+/* Les applications : sept cartes, deux larges (3 + 3 + 3 sur grand écran). */
+.ent-apps{list-style:none;margin:1.6rem 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
+.ent-app{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:18px;padding:1.3rem 1.3rem 1.4rem;background:var(--surf)}
+.ent-app--large{grid-column:span 2;background:radial-gradient(ellipse 70% 80% at 0% 0%,rgba(217,119,87,.1),transparent 65%),var(--surf)}
+.ent-app-pour{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--co2)}
+.ent-app b{display:block;margin-top:.5rem;font-family:var(--font-display);font-weight:700;font-size:1.15rem;letter-spacing:-.015em;color:var(--ink)}
+.ent-app p{margin:.55rem 0 0;font-size:.93rem;line-height:1.55;color:var(--ink2);text-wrap:pretty}
+
+/* Les données en Europe. */
+.ent-europe{display:flex;gap:1.1rem;align-items:flex-start;margin-top:clamp(2.6rem,6vw,4rem);padding:clamp(1.2rem,3vw,1.8rem);border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.02)}
+.ent-europe-i{flex:none;display:grid;place-items:center;width:2.8rem;height:2.8rem;border-radius:12px;background:rgba(217,119,87,.12);border:1px solid rgba(217,119,87,.32)}
+.ent-europe-i svg{width:1.35rem;height:1.35rem;stroke:var(--co2)}
+.ent-europe p{max-width:75ch}
+
+/* — 3. Le tableau comparatif (section claire) — */
+.ent-table-cadre{margin-top:2.2rem;border:1px solid var(--line);border-radius:20px;background:var(--surf);overflow:hidden;box-shadow:0 30px 70px -50px rgba(60,40,20,.45)}
+.ent-table{width:100%;border-collapse:collapse;font-size:.93rem;line-height:1.5}
+.ent-table th,.ent-table td{padding:.95rem 1.1rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--line2)}
+.ent-table tbody tr:last-child th,.ent-table tbody tr:last-child td{border-bottom:0}
+.ent-table thead th{font-family:var(--font-display);font-weight:700;font-size:1.02rem;color:var(--ink);background:var(--surf2)}
+.ent-table tbody th{width:13%;font-family:var(--font-mono);font-weight:600;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ent-table td{width:24%;color:var(--ink2);text-wrap:pretty}
+.ent-table .ent-col{width:39%;background:rgba(217,119,87,.08);color:var(--ink)}
+.ent-table thead .ent-col{background:#D97757;color:#1B0F0A}
+
+/* — 4. Les cinq temps — */
+.ent-temps{list-style:none;margin:2.6rem 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1rem;position:relative}
+.ent-temps::before{content:"";position:absolute;left:1.3rem;right:1.3rem;top:1.3rem;height:1px;background:linear-gradient(90deg,rgba(217,119,87,.6),rgba(217,119,87,.15))}
+.ent-temps-e{position:relative;display:flex;flex-direction:column}
+.ent-temps-n{display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--bg);border:1.5px solid var(--co);font-family:var(--font-mono);font-size:.9rem;color:var(--co2);box-shadow:0 0 0 6px var(--bg)}
+.ent-temps-e b{margin-top:1.1rem;font-family:var(--font-display);font-weight:700;font-size:1.12rem;color:var(--ink)}
+.ent-temps-e p{margin:.5rem 0 0;font-size:.9rem;line-height:1.55;color:var(--ink2);text-wrap:pretty}
+
+/* — 5. Les garanties — */
+.ent-gar{list-style:none;margin:2.4rem 0 0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.9rem}
+.ent-gar-e{grid-column:span 2;display:flex;flex-direction:column;gap:.5rem;border:1px solid var(--line);border-radius:16px;padding:1.3rem 1.25rem;background:var(--surf)}
+.ent-gar-e:nth-child(4),.ent-gar-e:nth-child(5){grid-column:span 3}
+.ent-gar-i{display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:11px;background:rgba(217,119,87,.12);border:1px solid rgba(217,119,87,.3)}
+.ent-gar-i svg{width:1.2rem;height:1.2rem;stroke:var(--co2)}
+.ent-gar-e b{margin-top:.3rem;font-family:var(--font-display);font-weight:700;font-size:1.05rem;color:var(--ink)}
+.ent-gar-e p{margin:0;font-size:.92rem;line-height:1.55;color:var(--ink2);text-wrap:pretty}
+
+/* Boutons : un retour au toucher, sans exagération. */
+.ent .lp-btn:active{transform:scale(.97)}
+
+/* — Écrans moyens — */
+@media (max-width:980px){
+  .ent-apps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ent-app--large{grid-column:span 2}
+  .ent-temps{grid-template-columns:1fr;gap:0}
+  .ent-temps::before{left:1.3rem;right:auto;top:1.3rem;bottom:1.3rem;width:1px;height:auto;background:linear-gradient(180deg,rgba(217,119,87,.6),rgba(217,119,87,.15))}
+  .ent-temps-e{display:grid;grid-template-columns:2.6rem minmax(0,1fr);column-gap:1.1rem;padding-bottom:1.5rem}
+  .ent-temps-e:last-child{padding-bottom:0}
+  .ent-temps-n{grid-row:span 2}
+  .ent-temps-e b{margin-top:.5rem}
+  .ent-gar{grid-template-columns:1fr 1fr}
+  .ent-gar-e,.ent-gar-e:nth-child(4),.ent-gar-e:nth-child(5){grid-column:auto}
+}
+
+/* — Téléphone (390 px) : 16 px de marge, aucun défilement horizontal ; le tableau s'empile en cartes. — */
+@media (max-width:760px){
+  .ent .container{padding:0 1rem}
+  .ent-cta .lp-btn{flex:1 1 100%;justify-content:center}
+  .ent-rang{grid-template-columns:1fr;gap:.6rem;padding-left:1.5rem}
+  .ent-rang-l{flex-direction:row;align-items:baseline;gap:.6rem;padding-top:.1rem}
+  .ent-rang:first-of-type::before{top:1.45rem}
+  .ent-rang:last-of-type::before{height:1.45rem}
+  .ent-rang::after{top:calc(1.45rem - 5px)}
+  .ent-pouls{top:calc(var(--p) + 1.45rem)}
+  .ent-noeuds--2{grid-template-columns:1fr}
+  .ent-apps{grid-template-columns:1fr}
+  .ent-app--large{grid-column:auto}
+  .ent-gar{grid-template-columns:1fr}
+  .ent-europe{flex-direction:column}
+  .ent-table-cadre{border:0;background:none;box-shadow:none;overflow:visible}
+  .ent-table,.ent-table tbody,.ent-table tr,.ent-table th,.ent-table td{display:block;width:auto}
+  .ent-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .ent-table tbody tr{margin-bottom:.8rem;border:1px solid var(--line);border-radius:16px;background:var(--surf);overflow:hidden}
+  .ent-table tbody th{width:auto;padding:.8rem 1rem .5rem;border-bottom:1px solid var(--line2);background:var(--surf2)}
+  .ent-table td,.ent-table .ent-col{width:auto;padding:.55rem 1rem;border-bottom:1px solid var(--line2)}
+  .ent-table td::before{content:attr(data-col);display:block;margin-bottom:.15rem;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .ent-table .ent-col::before{color:#A4502F}
+  .ent-table tbody tr td:last-child{border-bottom:0}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .ent .lp-btn:active{transform:none}
+}
+
+/* Le sommaire de l'en-tête : il remplit la colonne droite sur grand écran et mène aux sections. Masqué sous 980 px (navigation
+   seulement : tout ce qu'il nomme suit dans la page). */
+.ent-hero-grille{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr);gap:clamp(2rem,5vw,4rem);align-items:end}
+.ent-sommaire{border:1px solid var(--line);border-radius:20px;padding:1.2rem 1.3rem;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));backdrop-filter:blur(8px)}
+.ent-sommaire-t{display:block;margin-bottom:.5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--co2)}
+.ent-sommaire ul{list-style:none;margin:0;padding:0}
+.ent-sommaire li+li{border-top:1px solid var(--line2)}
+.ent-sommaire a{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:44px;color:var(--ink2);font-size:.95rem;transition:color .2s}
+.ent-sommaire a i{font-style:normal;color:var(--muted);transition:transform .2s var(--ease-apple),color .2s}
+@media (hover:hover) and (pointer:fine){.ent-sommaire a:hover{color:var(--ink)}.ent-sommaire a:hover i{color:var(--co2);transform:translateY(2px)}}
+.ent-sommaire a:focus-visible{outline:2px solid var(--co2);outline-offset:2px;border-radius:6px}
+#organigramme,#outils,#applications,#donnees,#comparer,#garanties,#parcours{scroll-margin-top:88px}
+@media (prefers-reduced-motion:no-preference){.ent-sommaire{animation:ent-entree .9s .36s var(--ease-apple) both}}
+@media (max-width:980px){.ent-hero-grille{grid-template-columns:1fr}.ent-sommaire{display:none}}
+/* L'appel sous les cinq temps : le lecteur sait maintenant comment ça se passe. */
+.ent-relance{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.8rem 1.2rem;margin-top:2.6rem;padding-top:1.8rem;border-top:1px solid var(--line)}
+.ent-relance p{margin:0;color:var(--ink2)}
+@media (max-width:760px){.ent-relance .lp-btn{flex:1 1 100%;justify-content:center}}
