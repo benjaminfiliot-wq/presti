@@ -10,7 +10,7 @@ import { notFound, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import { ArticleCorps, libelle } from '@/app/AidePanneau'
-import { ARTICLES, chercher, type Article } from '@/lib/aide'
+import { ARTICLES, chercher, PAGE_MES_OUTILS, type Article } from '@/lib/aide'
 import { actif } from '@/lib/flags'
 import { videosVisibles, type AideVideo } from '@/lib/aideVideos'
 import VideoAide from './VideoAide'
@@ -21,15 +21,18 @@ import { AUTOMATIQUE_AVEC_ASSISTANT, AUTOMATIQUE_SANS_ASSISTANT, offreAide, visi
 
 // Ordre de lecture = ordre du menu de la console. Les articles dont la page n'est listée
 // nulle part tombent dans « Autres » : un nouvel article n'est jamais perdu.
+// 03/11 (036-037) : le menu a changé (app/AppShell.tsx:40-44). Devis, Factures, Mes tarifs et Inventaire s'ouvrent depuis « Outil de gestion » :
+// leurs groupes suivent le sien, et l'outil de gestion porte ses deux portes, « Vos assistants » et « Mes outils ».
 const GROUPES: { id: string; titre: string; pages: string[] }[] = [
   { id: 'dashboard', titre: 'Tableau de bord', pages: ['/dashboard'] },
   { id: 'messages', titre: 'Messages', pages: ['/messages', '/messages/canaux'] },
-  { id: 'devis', titre: 'Devis', pages: ['/devis', '/devis/[id]'] },
-  { id: 'factures', titre: 'Factures', pages: ['/factures'] },
+  { id: 'crm', titre: 'Outil de gestion', pages: ['/crm', PAGE_MES_OUTILS] },
+  { id: 'devis', titre: 'Outil de gestion · Devis', pages: ['/devis', '/devis/[id]'] },
+  { id: 'factures', titre: 'Outil de gestion · Factures', pages: ['/factures'] },
+  { id: 'tarifs', titre: 'Outil de gestion · Mes tarifs', pages: ['/tarifs'] },
+  { id: 'inventaire', titre: 'Outil de gestion · Stock', pages: ['/inventaire'] },
+  { id: 'crm3d', titre: 'Outil de gestion · CRM 3D', pages: ['/crm#accueil', '/crm/chantiers/[id]', '/crm#agenda'] },
   { id: 'chiffres', titre: 'Mes chiffres', pages: ['/chiffres'] },
-  { id: 'tarifs', titre: 'Mes tarifs', pages: ['/tarifs'] },
-  { id: 'inventaire', titre: 'Inventaire', pages: ['/inventaire'] },
-  { id: 'crm', titre: 'CRM atelier', pages: ['/crm', '/crm#accueil', '/crm/chantiers/[id]', '/crm#agenda'] },
   { id: 'assistant', titre: 'Assistant de gestion', pages: ['/assistant', '/parametres?onglet=pilote'] },
   { id: 'profil', titre: 'Ma page', pages: ['/profil'] },
   { id: 'plateforme', titre: 'Ma plateforme', pages: ['/plateforme'] },
@@ -38,13 +41,20 @@ const GROUPES: { id: string; titre: string; pages: string[] }[] = [
   { id: 'parametres', titre: 'Paramètres', pages: ['/parametres?onglet=legal', '/parametres?onglet=securite', '/parametres?onglet=donnees'] },
 ]
 
+// Le nom de l'écran sous le titre d'un article. 03/11 : « CRM atelier » est devenu « Outil de gestion » (porte « CRM 3D ») ; « Mes outils » est neuf.
+// Ces libellés priment ici sur ceux du panneau « ? » (app/AidePanneau.tsx, hors de ce lot).
+const LIBELLES_AIDE: Record<string, string> = {
+  '/crm': 'Outil de gestion', [PAGE_MES_OUTILS]: 'Outil de gestion · Mes outils', '/crm#accueil': 'CRM 3D · accueil', '/crm#agenda': 'CRM 3D · planning',
+}
+const libelleAide = (page: string): string => LIBELLES_AIDE[page] ?? libelle(page)
+
 function ArticleDetails({ article, ouvert }: { article: Article; ouvert: boolean }) {
   return (
     <details className="aide-art" id={article.id} open={ouvert}>
       <summary>
         <span>{article.titre}</span>
         <PastilleOffre offre={offreAide(article.id)} />
-        <span className="pg">{libelle(article.page)}</span>
+        <span className="pg">{libelleAide(article.page)}</span>
       </summary>
       <div className="aide-art-b"><ArticleCorps article={article} /></div>
     </details>

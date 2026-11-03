@@ -7,8 +7,13 @@ Pourquoi : vault `C:/Users/benja/Documents/SaaS`, notes posées le 01/11/2026 (p
 `10 Presti/04 Décisions/ADR-003 — Infrastructure auto-hébergée sur Oracle.md`.
 
 ## Agents
-- Claude Code et Hermes Agent sont les SEULS agents qui font le travail.
-- Pas d'Antigravity, pas de Codex, pas d'autre exécutant.
+- Claude Code et Hermes Agent sont les agents qui font le travail.
+- **03/11/2026 au soir, Benj** : « utilise aussi Antigravity et Codex pour terminer », pour économiser sa clé API Claude.
+  - Antigravity (Gemini, `node scripts/antigravity.mjs lancer … --model=pro`) et Codex (abonnement ChatGPT, `node scripts/executant.mjs
+    lancer … --moteur=codex`) sont de nouveau exécutants (`.orchestre/orchestre.json`).
+  - Ils ne prennent que du code, des contenus et des tests : jamais une donnée de prospect ni de client, jamais un secret.
+  - Le jugement (schéma, argent, sécurité, cerveaux, verdicts) reste à Claude Code.
+- Pas d'autre exécutant.
 - Claude Code : développement, maintenance, tests, revue de code, verdicts.
 - Hermes Agent : intelligence, compréhension des demandes, choix des outils, orchestration,
   préparation des tâches.

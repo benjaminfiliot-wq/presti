@@ -1,6 +1,7 @@
 // « Qui a quoi » : les fonctionnalités du centre d'aide, offre par offre. Les cases sont calculées avec peut() (lib/plans.ts), jamais retapées.
 // Sous le tableau : les essais gratuits sans carte (durées ESSAI_JOURS, crédits creditsEssai, plafond ESSAI_CREDITS_PLAFOND).
-import { creditsParMois, ESSAIS_AIDE, inclus, lignesOffresVisibles, NOM_OFFRE, OFFRES_AIDE, PLAFOND_CREDITS_ESSAI } from '@/lib/aideAutomatique'
+// 03/11 (036-037) : une ligne « Prix » lue dans PLANS (prixParMois), et l'offre Entreprise, sur devis (PLANS.entreprise.surDevis), sans montant.
+import { creditsParMois, ENTREPRISE_AIDE, ESSAIS_AIDE, inclus, lignesOffresVisibles, NOM_OFFRE, OFFRES_AIDE, PLAFOND_CREDITS_ESSAI, prixParMois } from '@/lib/aideAutomatique'
 import { PLANS } from '@/lib/plans'
 
 export default function TableauOffres() {
@@ -13,6 +14,10 @@ export default function TableauOffres() {
         <div className="aide-tab-r aide-tab-head" role="row">
           <span role="columnheader">Fonctionnalité</span>
           {OFFRES_AIDE.map((o) => <span role="columnheader" key={o}>{NOM_OFFRE[o]}</span>)}
+        </div>
+        <div className="aide-tab-r" role="row" data-ligne="prix">
+          <span className="aide-tab-l" role="rowheader">Prix par mois</span>
+          {OFFRES_AIDE.map((o) => <span role="cell" key={o} data-o={NOM_OFFRE[o]} className="oui">{prixParMois(o)}</span>)}
         </div>
         {lignes.map((l) => (
           <div className="aide-tab-r" role="row" key={l.id}>
@@ -28,6 +33,11 @@ export default function TableauOffres() {
           {OFFRES_AIDE.map((o) => <span role="cell" key={o} data-o={NOM_OFFRE[o]} className="oui">{creditsParMois(o)}</span>)}
         </div>
       </div>
+      {ENTREPRISE_AIDE.surDevis ? (
+        <p className="aide-auto-intro" id="offre-entreprise" data-offre-entreprise>
+          <b>{ENTREPRISE_AIDE.nom}</b> : une offre sur mesure pour les entreprises, sur devis, sans prix public. <a href={ENTREPRISE_AIDE.page}>Tout savoir sur l’offre Entreprise</a>
+        </p>
+      ) : null}
       <div className="aide-essai" id="essais-gratuits">
         <h3>Essayer gratuitement, sans carte</h3>
         <p>Pour un premier abonnement, un essai gratuit existe sans carte bancaire, une seule fois par compte :</p>

@@ -336,6 +336,8 @@ export const FLAGS = {
    *  migration 0194). Valider ou refuser ne fait que noter la décision : rien n'est envoyé par l'app, sur aucune offre. Baissé : rien
    *  dans le DOM, route 404. On colle 0194, PUIS on lève (sans ses colonnes, la route répond « indisponible »). */
   boiteAgents: true,
+  /** 03/11/2026 — tâche 036-039 (Antigravity) : le vrai tableau de bord de l'artisan, route /tableau-de-bord. Baissé : 404, rien dans le DOM. */
+  tableauComplet: false,
 } as const
 
 export type Flag = keyof typeof FLAGS

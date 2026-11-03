@@ -45,7 +45,7 @@ export function titrePastille(o: OffreAide): string {
  * (les deux familles partagent les mêmes identifiants quand elles parlent du même écran).
  * `null` : aucun verrou d'offre sur l'écran. `'a_part'` : ne fait partie d'aucune offre (le site se commande à part).
  */
-export const CAPACITE_AIDE: Record<string, Capacite | null | 'a_part'> = {
+export const CAPACITE_AIDE: Record<string, Capacite | null | 'a_part' | 'sur_devis'> = {
   // source : lib/plans.ts BASE (devis.ia, devis.prix_artisan, factures) ; STUDIO (plateforme.*, chiffres, inventaire.*, canaux.email, assistant) ; SIGNATURE (crm, assistant.pilote, *.auto)
   dashboard: null, tarifs: 'devis.prix_artisan', profil: null, abonnement: null, support: null, offres: null, parametres: null,
   'parametres.legal': null, 'parametres.notifications': null, 'parametres.securite': null, 'parametres.donnees': null,
@@ -54,12 +54,21 @@ export const CAPACITE_AIDE: Record<string, Capacite | null | 'a_part'> = {
   chiffres: 'chiffres', inventaire: 'inventaire.stock',
   crm: 'crm', 'crm.accueil': 'crm', 'crm.chantier': 'crm', 'crm.agenda': 'crm', assistant: 'assistant', pilote: 'assistant.pilote',
   site: 'a_part',
+  // 03/11 (036-037) — source : app/crm/Gestion.tsx:14-15 (l'outil de gestion s'ouvre pour tous les comptes) ; app/api/assistant/agents/route.ts:18 (garde de
+  // l'assistant : capacité assistant) ; app/crm/Gestion.tsx:78 et app/crm/outils/vue.tsx:17-24 (Gmail : canaux.email ; Agenda, Drive : assistant — dès Studio) ;
+  // app/OffreEntreprise.tsx (carte montrée à tous, dans Abonnement)
+  // L'offre Entreprise n'est ni Studio ni Signature : sa pastille dit « Sur devis » (PLANS.entreprise.surDevis), jamais « Gratuit ».
+  gestion: null, assistants: 'assistant', 'mes-outils': 'canaux.email', entreprise: 'sur_devis',
 }
 
+/** Ce que dit la pastille : une offre, « sur devis » (l'offre Entreprise, 03/11) ou `null` (« commandé à part »). */
+export type PastilleAide = OffreAide | 'sur_devis' | null
+
 /** L'offre à afficher pour une entrée du centre d'aide, ou `null` quand l'entrée est « commandée à part ». */
-export function offreAide(id: string): OffreAide | null {
+export function offreAide(id: string): PastilleAide {
   const c = CAPACITE_AIDE[id]
   if (c === 'a_part') return null
+  if (c === 'sur_devis') return PLANS.entreprise.surDevis ? 'sur_devis' : null
   return offrePremiere(c ?? null)
 }
 
@@ -135,6 +144,15 @@ export const AUTOMATIQUE_SANS_ASSISTANT: EntreeAuto[] = [
     titre: 'Les données trop anciennes s’effacent seules',
     texte: `Chaque jour, Presti efface ce qui a dépassé la durée annoncée dans la politique de confidentialité : les conversations sans échange depuis ${mois(DUREES_MOIS.conversation)} (sauf celles liées à un devis signé ou à une facture) et les empreintes anti-abus après ${mois(DUREES_MOIS.anti_abus)}. Vos factures, elles, ne sont jamais effacées : elles sont conservées ${DUREES_MOIS.comptable / 12} ans.`,
     cap: null,
+  },
+  // 03/11 (036-037) — source : app/crm/BoiteAgents.tsx:48-50 (boîte montrée seulement s'il y a des cartes), :60-63 (mode essai, rien n'est envoyé, répondez
+  // comme d'habitude, « Valider » ou « Refuser » aide à régler) ; lib/agents/n8n/cartes.ts:4-6 ; app/api/assistant/agents/route.ts:14-18 (n'envoie rien, sur aucune offre)
+  {
+    id: 'assistants-essai',
+    titre: 'Vos assistants préparent des propositions, en mode essai',
+    texte: 'Quand un département de vos assistants est en marche sur votre compte, il prépare des propositions et les pose dans la boîte « À valider » de l’outil de gestion. En mode essai, rien n’est envoyé à vos clients : répondez comme d’habitude ; « Valider » ou « Refuser » sert à régler vos assistants.',
+    cap: 'assistant',
+    flag: 'boiteAgents',
   },
   // source : lib/crm/rappelsTour.ts:1-6, :51 (offre avec CRM) ; app/api/cron/relances/route.ts:297-310
   {
@@ -253,12 +271,22 @@ export const LIGNES_OFFRES: LigneOffres[] = [
   { id: 'expert', label: 'Modèle Expert', cap: 'plateforme.ia.expert' },
   { id: 'regles', label: 'Règles d’automatisation', cap: 'plateforme.regles', flag: 'plateformeRegles' },
   { id: 'compta-auto', label: 'Alerte d’impayés par e-mail et export mensuel à votre comptable', cap: 'chiffres.auto', flag: 'comptaAlerteImpayes' },
-  { id: 'crm', label: 'CRM atelier : maquette 3D vivante, chantiers, équipe, planning', cap: 'crm', flag: 'crm' },
+  { id: 'crm', label: 'CRM 3D : votre entreprise en maquette vivante, chantiers, équipe, planning', cap: 'crm', flag: 'crm' },
   { id: 'assistant', label: 'Assistant de gestion (vous confirmez ce qui part chez un client)', cap: 'assistant', flag: 'assistant' },
+  // 03/11 (036-037) — source : app/crm/Gestion.tsx:76-78 et app/crm/outils/vue.tsx:17-24 (Google seulement) ; app/crm/BoiteAgents.tsx:60-63 (mode essai)
+  { id: 'mes-outils', label: 'Mes outils : brancher Gmail, Google Agenda et Google Drive', cap: 'canaux.email', flag: 'connexions' },
+  { id: 'assistants', label: 'Vos assistants par département et la boîte « À valider » (mode essai : rien n’est envoyé)', cap: 'assistant', flag: 'boiteAgents' },
   { id: 'pilote', label: `Pilote automatique : ce que vous choisissez part seul après ${PILOTE_DELAI_MIN} minutes pour annuler`, cap: 'assistant.pilote', flag: 'piloteAutomatique' },
 ]
 
 export const lignesOffresVisibles = (): LigneOffres[] => LIGNES_OFFRES.filter((l) => !l.flag || FLAGS[l.flag])
+
+/** Le prix par mois d'une offre, LU dans PLANS (lib/plans.ts) : jamais écrit en dur dans l'aide (03/11 : Studio et Signature ont changé de prix).
+ *  Court (« 30 € ») : il tient dans une case du tableau, dont la ligne s'appelle « Prix par mois ». */
+export const prixParMois = (o: OffreAide): string => `${PLANS[o].prixMois} €`
+
+/** L'offre Entreprise sous le tableau : son nom et « sur devis » viennent de PLANS.entreprise (surDevis), aucun montant. */
+export const ENTREPRISE_AIDE = { nom: PLANS.entreprise.label, surDevis: PLANS.entreprise.surDevis === true, page: '/entreprise' } as const
 
 /** La case d'une fonctionnalité pour une offre. */
 export const inclus = (o: OffreAide, cap: Capacite): boolean => peut(o, cap)

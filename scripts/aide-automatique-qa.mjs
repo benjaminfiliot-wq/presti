@@ -11,15 +11,24 @@
 //  6. la règle de l'assistant : tout ce qui part chez un client, est comptable, irréversible ou supprime est une CONFIRMATION dans SPEC
 //     (lib/assistant/outils-actions.ts), la carte vaut 24 h, l'assistant n'est lancé par aucun passage planifié ;
 //  7. l'essai gratuit : durées, crédits et plafond lus dans le code, jamais retapés ;
-//  8. aucun octet de contrôle dans les fichiers de la section.
+//  8. aucun octet de contrôle dans les fichiers de la section ;
+//  9. (03/11, tâche 036-037) ce qui a changé le 03/11, et rien de plus : les prix de Studio et Signature LUS dans lib/plans.ts (jamais écrits en dur),
+//     l'offre Entreprise sur devis (aucun montant, aucun chiffre de gain, aucun témoignage), l'outil de gestion (deux portes, devis et factures dedans),
+//     « Mes outils » (Google seulement), « Vos assistants » par département et la boîte « À valider » en mode essai (aucune promesse d'envoi seul),
+//     chaque sujet neuf sous le drapeau qui montre son écran ; chaque contrôle neuf a son mutant ;
+// 10. les captures 390 et 1440 du centre d'aide, rendu par ses vrais composants, hors ligne (aucune requête sortante), dans .orchestre/preuves/036-037/.
 // Il s'attaque aussi lui-même : chaque contrôle de texte est rejoué sur une copie fautive et DOIT rougir.
 //
-// Usage : node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/aide-automatique-qa.mjs   (aucun réseau, aucun compte)
+// Usage : node scripts/aide-automatique-qa.mjs   (aucun réseau, aucun compte ; le résolveur TypeScript se charge seul, ou par --import ./scripts/ts-loader.mjs)
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
+import { createRequire } from 'node:module'
 import { pathToFileURL } from 'node:url'
 
 const RACINE = process.cwd()
+// 036-037 : le vérificateur de la tâche lance ce juge sans --import ; le résolveur des imports TypeScript se pose ici (sans effet s'il l'est déjà).
+await import(pathToFileURL(path.join(RACINE, 'scripts/ts-loader.mjs')).href)
 const lire = (f) => fs.readFileSync(path.join(RACINE, f), 'utf8')
 const charger = (f) => import(pathToFileURL(path.join(RACINE, f)).href)
 let ok = 0, ko = 0
@@ -98,7 +107,7 @@ const attendue = (o) => (o === 'gratuit' ? 'toutes' : o)
 const incoherents = []
 for (const a of AIDE.ARTICLES) {
   const o = A.offreAide(a.id)
-  if (o === null) continue
+  if (o === null || o === 'sur_devis') continue // « commandé à part » ou « sur devis » (Entreprise, 03/11) : pas une des deux offres
   if (attendue(o) !== a.disponibleAvec) incoherents.push(`${a.id} : pastille ${o} ≠ disponibleAvec ${a.disponibleAvec}`)
 }
 for (const v of V) {
@@ -172,6 +181,199 @@ for (const f of FICHIERS) {
 const page = lire('app/aide/page.tsx')
 T('la page /aide montre « Ce qui est automatique » et « Qui a quoi » et les cherche', /<Automatique \/>/.test(page) && /<TableauOffres \/>/.test(page) && /autoTrouvees/.test(page))
 T('chaque article du centre d’aide affiche sa pastille', /<PastilleOffre offre=\{offreAide\(article\.id\)\}/.test(page))
+
+
+const SUJETS_NEUFS_IDS = ['gestion', 'assistants', 'mes-outils', 'entreprise']
+// ── 9. Ce qui a changé le 03/11 (tâche 036-037), et rien de plus ──────────────────────────────────────────────────────────
+console.log('\n── 9. Le 03/11 : prix, Entreprise, outil de gestion, « Mes outils », « Vos assistants »')
+const art = (liste, id) => liste.find((a) => a.id === id)
+const texteArticle = (a) => (a ? [a.titre, a.aQuoiCaSert, ...a.commentOnSenSert, a.pourVosClients, a.credits].join(' ') : '')
+const SOURCES_AIDE = { aide: lire('lib/aide.ts'), auto: lire('lib/aideAutomatique.ts'), tableau: lire('app/aide/TableauOffres.tsx'), page: lire('app/aide/page.tsx'), automatique: lire('app/aide/Automatique.tsx') }
+
+// Effaceur de commentaires ligne à ligne : `sansCommentaires` (plus haut) avale du code dès qu'un chemin « app/** » traîne dans un commentaire
+// (son /* … */ court jusqu'au prochain */) ; ici, seuls un commentaire de ligne et un bloc qui OUVRE une ligne sont retirés.
+const sansCommentairesLignes = (src) => src.replace(/^[ \t]*\/\*[\s\S]*?\*\//gm, '').replace(/(^|[ \t])\/\/.*$/gm, '$1')
+// 9a. Les prix : lus dans PLANS, jamais écrits en dur. Un montant mensuel en chiffres dans une source de l'aide (hors commentaires) est une faute.
+const prixEnDur = (sources) => Object.entries(sources).filter(([, src]) => {
+  const s = sansCommentairesLignes(src)
+  return /\b\d+(?:[,.]\d+)?\s*(?:€|euros?)\s*(?:HT\s*|TTC\s*)?(?:par mois|\/\s*mois|mensuels?)/i.test(s) ||
+    /(?:Studio|Signature|Entreprise)[^\n.;]{0,40}?(?<![}\w])\d+(?:[,.]\d+)?\s*(?:€|euros?)/.test(s)
+}).map(([nom]) => nom)
+T('l’effaceur de commentaires garde le code (la phrase des prix de lib/aide.ts y reste)', sansCommentairesLignes(SOURCES_AIDE.aide).includes('(${PLANS.studio.prixMois} € par mois)') && sansCommentairesLignes(SOURCES_AIDE.tableau).includes('{prixParMois(o)}'))
+T('aucun prix d’offre écrit en dur dans l’aide (lib/aide.ts, lib/aideAutomatique.ts, app/aide/*)', prixEnDur(SOURCES_AIDE).length === 0, prixEnDur(SOURCES_AIDE).join(', '))
+T('(mutation) « 30 € par mois » écrit en dur dans l’article des offres est vu', prixEnDur({ ...SOURCES_AIDE, aide: SOURCES_AIDE.aide.replace('${PLANS.studio.prixMois} € par mois', `${P.PLANS.studio.prixMois} € par mois`) }).includes('aide'))
+T('(mutation) un prix Signature écrit en dur dans le tableau est vu', prixEnDur({ ...SOURCES_AIDE, tableau: SOURCES_AIDE.tableau.replace('{prixParMois(o)}', `Signature ${P.PLANS.signature.prixMois} €`) }).includes('tableau'))
+const offresArt = art(AIDE.ARTICLES, 'offres')
+const ditLesPrix = (t) => t.includes(`${P.PLANS.studio.label} (${P.PLANS.studio.prixMois} € par mois)`) && t.includes(`${P.PLANS.signature.label} (${P.PLANS.signature.prixMois} € par mois)`)
+T(`l’article des offres dit les prix de lib/plans.ts (${P.PLANS.studio.label} ${P.PLANS.studio.prixMois} €, ${P.PLANS.signature.label} ${P.PLANS.signature.prixMois} €)`, ditLesPrix(texteArticle(offresArt)))
+T('(mutation) un ancien prix (59 €) dans le texte rendu est vu', !ditLesPrix(texteArticle(offresArt).replace(`(${P.PLANS.studio.prixMois} € par mois)`, '(59 € par mois)')))
+T('« Qui a quoi » a une ligne « Prix par mois » calculée par prixParMois (lu dans PLANS)', /data-ligne="prix"/.test(SOURCES_AIDE.tableau) && /\{prixParMois\(o\)\}/.test(SOURCES_AIDE.tableau) &&
+  /Prix par mois/.test(SOURCES_AIDE.tableau) && A.OFFRES_AIDE.every((o) => A.prixParMois(o) === `${P.PLANS[o].prixMois} €`))
+const pastilleEntreprise = (offreAide) => offreAide('entreprise') === 'sur_devis'
+T('l’article Entreprise porte la pastille « Sur devis », jamais « Gratuit »', pastilleEntreprise(A.offreAide) && /offre === 'sur_devis'/.test(lire('app/aide/PastilleOffre.tsx')) && />Sur devis</.test(lire('app/aide/PastilleOffre.tsx')))
+T('(mutation) une pastille Entreprise rendue « gratuit » est vue', !pastilleEntreprise((id) => (id === 'entreprise' ? 'gratuit' : A.offreAide(id))))
+
+// 9b. L'offre Entreprise : sur devis, aucun montant, aucun chiffre de gain, aucun témoignage.
+const fauteVente = (t) => {
+  const f = []
+  if (/\d\s*(?:€|euros?)/i.test(t)) f.push('montant')
+  if (/\d+\s*%|\bx\s?\d\b|\d+\s*fois plus|(?:gagn|économis)\p{L}*\s+(?:jusqu’à\s+)?\d/iu.test(t)) f.push('chiffre de gain')
+  if (/témoign|«[^»]{3,}»\s*[—–-]\s*\p{Lu}\p{L}+,/iu.test(t)) f.push('témoignage')
+  return f
+}
+const entArt = art(AIDE.ARTICLES, 'entreprise')
+const tEnt = texteArticle(entArt)
+T(`article « ${P.PLANS.entreprise.label} » : présent, sur devis, sans prix public`, !!entArt && P.PLANS.entreprise.surDevis === true && /sur devis/.test(tEnt) && /pas de prix public/.test(tEnt) && tEnt.includes(P.PLANS.entreprise.label))
+T('article Entreprise : aucun montant, aucun chiffre de gain, aucun témoignage', fauteVente(tEnt).length === 0, fauteVente(tEnt).join(', '))
+T('(mutation) « 30 % de temps gagné » est vu', fauteVente(tEnt + ' 30 % de temps gagné.').includes('chiffre de gain'))
+T('(mutation) un témoignage « … » — Marc, plombier, est vu', fauteVente(tEnt + ' « Un vrai gain » — Marc, plombier.').includes('témoignage'))
+T('(mutation) un prix Entreprise (« 199 € ») est vu', fauteVente(tEnt + ' À partir de 199 €.').includes('montant'))
+T('sous « Qui a quoi » : l’offre Entreprise, sur devis, vers /entreprise (lue dans PLANS.entreprise)', A.ENTREPRISE_AIDE.surDevis === true && A.ENTREPRISE_AIDE.nom === P.PLANS.entreprise.label &&
+  /ENTREPRISE_AIDE\.surDevis/.test(SOURCES_AIDE.tableau) && /href=\{ENTREPRISE_AIDE\.page\}/.test(SOURCES_AIDE.tableau) && fs.existsSync(path.join(RACINE, 'app/entreprise/page.tsx')))
+T('les gestes de l’article Entreprise existent sur la carte et la page (« Parler à l’équipe », « Tout savoir sur l’offre Entreprise », « Parlons de votre entreprise »)',
+  /Parler à l’équipe/.test(lire('app/OffreEntreprise.tsx')) && /Tout savoir sur l’offre Entreprise/.test(lire('app/OffreEntreprise.tsx')) && /Parlons de votre <span>entreprise/.test(lire('app/contact/page.tsx')))
+
+// 9c. L'outil de gestion : les deux portes et chaque écran nommé dans l'article existent dans app/crm/Gestion.tsx ; devis et factures sont sortis du menu.
+const GESTION = lire('app/crm/Gestion.tsx'), SHELL = lire('app/AppShell.tsx')
+const libellesGestion = [...GESTION.matchAll(/\{ cle: '[a-z0-9]+', label: '([^']+)'/g)].map((m) => m[1])
+const ecransManquants = (t, libelles) => libelles.filter((l) => !t.includes(l))
+const gesArt = art(AIDE.ARTICLES, 'gestion')
+T(`l’article « Outil de gestion » nomme les ${libellesGestion.length} portes et écrans de app/crm/Gestion.tsx`, libellesGestion.length >= 12 && ecransManquants(texteArticle(gesArt), libellesGestion).length === 0, ecransManquants(texteArticle(gesArt), libellesGestion).join(', '))
+T('(mutation) un article qui oublie « Factures » est vu', ecransManquants(texteArticle(gesArt).replaceAll('Factures', 'Pièces comptables'), libellesGestion).includes('Factures'))
+const menuSansPieces = (shell) => !/href: '\/(devis|factures|tarifs|inventaire)'/.test(shell) && /label: 'Outil de gestion', href: '\/crm'/.test(shell)
+T('le menu n’a plus Devis, Factures, Mes tarifs, Inventaire, et a « Outil de gestion » (l’article le dit)', menuSansPieces(SHELL) && /ne sont plus dans le menu/.test(gesArt?.aQuoiCaSert ?? ''))
+T('(mutation) « Devis » remis au menu est vu', !menuSansPieces(SHELL.replace("{ key: 'dashboard',", "{ key: 'devis', label: 'Devis', href: '/devis' },\n      { key: 'dashboard',")))
+T('/crm ouvre d’abord l’outil de gestion : le panneau « ? » de /crm montre son article', AIDE.ARTICLES.find((a) => a.page === '/crm')?.id === 'gestion')
+const sansCrmAtelier = (textes) => !textes.some((t) => /CRM atelier/.test(t))
+const textesRendus = [...AIDE.ARTICLES.map(texteArticle), ...A.LIGNES_OFFRES.map((l) => l.label), ...[...A.AUTOMATIQUE_SANS_ASSISTANT, ...A.AUTOMATIQUE_AVEC_ASSISTANT].map((e) => `${e.titre} ${e.texte}`),
+  ...[...sansCommentairesLignes(SOURCES_AIDE.page).matchAll(/titre: '([^']+)'/g)].map((m) => m[1])]
+T('plus aucun « CRM atelier » dans l’aide : l’écran s’appelle « Outil de gestion », la maquette « CRM 3D »', sansCrmAtelier(textesRendus) && /titre: 'CRM 3D/.test(SOURCES_AIDE.aide))
+// Les « Réglages liés » se lisent avec les libellés de app/AidePanneau.tsx : un sujet neuf ne renvoie vers aucun libellé périmé.
+const LIBELLES_PANNEAU = Object.fromEntries([...lire('app/AidePanneau.tsx').matchAll(/^\s*'([^']+)': '([^']+)',/gm)].map((m) => [m[1], m[2]]))
+const liensPerimes = (articles) => articles.filter((a) => SUJETS_NEUFS_IDS.includes(a.id)).flatMap((a) => a.reglagesLies.filter((r) => /CRM atelier/.test(LIBELLES_PANNEAU[r] ?? '')).map((r) => `${a.id} → ${r}`))
+T('les « Réglages liés » des sujets neufs ne montrent aucun libellé périmé (« CRM atelier »)', Object.keys(LIBELLES_PANNEAU).length > 10 && liensPerimes(AIDE.TOUS_ARTICLES).length === 0, liensPerimes(AIDE.TOUS_ARTICLES).join(', '))
+T('(mutation) « Vos assistants » qui renvoie vers /crm est vu', liensPerimes(AIDE.TOUS_ARTICLES.map((a) => (a.id === 'assistants' ? { ...a, reglagesLies: ['/crm'] } : a))).length === 1)
+T('(mutation) un « CRM atelier » resté dans un titre est vu', !sansCrmAtelier([...textesRendus, 'CRM atelier : votre entreprise en maquette vivante']))
+
+// 9d. « Mes outils » : seuls les outils dont le circuit existe (OUTILS de app/crm/outils/vue.tsx, tous Google) sont annoncés.
+const VUE = lire('app/crm/outils/vue.tsx')
+const OUTILS_REELS = [...(VUE.match(/export const OUTILS[^=]*=\s*\[([\s\S]*?)\n\]/)?.[1] ?? '').matchAll(/nom: '([^']+)'/g)].map((m) => m[1])
+const AUTRES_OUTILS = ['Outlook', 'Slack', 'Teams', 'WhatsApp', 'Microsoft', 'Dropbox', 'OneDrive', 'Notion', 'iCloud', 'Yahoo', 'Trello', 'HubSpot', 'Salesforce', 'Pipedrive', 'Calendly', 'Instagram', 'Facebook', 'Messenger', 'Zapier', 'Qonto', 'Pennylane']
+const outilsAbsents = (textes, reels) => {
+  const f = new Set()
+  for (const t of textes) {
+    for (const o of AUTRES_OUTILS) if (new RegExp(`\\b${o}\\b`).test(t)) f.add(o)
+    for (const m of t.matchAll(/«\s*(?:Re)?[Cc]onnecter ([^»]+?)\s*»/g)) if (!reels.includes(m[1].trim())) f.add(m[1].trim())
+  }
+  return [...f]
+}
+const SUJETS_NEUFS = ['gestion', 'assistants', 'mes-outils', 'entreprise']
+const textesNeufs = [...SUJETS_NEUFS.map((id) => texteArticle(art(AIDE.TOUS_ARTICLES, id))), ...A.LIGNES_OFFRES.filter((l) => ['mes-outils', 'assistants'].includes(l.id)).map((l) => l.label),
+  ...A.AUTOMATIQUE_SANS_ASSISTANT.filter((e) => e.id === 'assistants-essai').map((e) => `${e.titre} ${e.texte}`)]
+T(`les outils à brancher lus dans app/crm/outils/vue.tsx : ${OUTILS_REELS.join(', ')} (tous Google)`, OUTILS_REELS.length >= 1 && OUTILS_REELS.every((o) => /^G/.test(o) && /Gmail|Google/.test(o)))
+T('aucun outil absent n’est annoncé dans les sujets du 03/11 (Google seulement)', outilsAbsents(textesNeufs, OUTILS_REELS).length === 0, outilsAbsents(textesNeufs, OUTILS_REELS).join(', '))
+T('(mutation) « Connecter Outlook » annoncé est vu', outilsAbsents([...textesNeufs, 'Cliquez « Connecter Outlook » pour brancher votre boîte.'], OUTILS_REELS).includes('Outlook'))
+T('(mutation) « Slack se branche aussi » est vu', outilsAbsents([...textesNeufs, 'Slack se branche aussi.'], OUTILS_REELS).includes('Slack'))
+const outArt = art(AIDE.ARTICLES, 'mes-outils')
+const tOut = texteArticle(outArt)
+T('l’article « Mes outils » nomme chaque outil réel, son bouton « Connecter … » et le retrait', !!outArt && OUTILS_REELS.every((o) => tOut.includes(`« Connecter ${o} »`)) && /« Retirer »/.test(tOut) && /« Retirer l’accès »/.test(tOut) && /rien n’est supprimé chez Google/.test(tOut))
+T('les gestes cités existent dans la vue (« Connecter ${o.nom} », « Retirer », « Retirer l’accès », « Connecté », « Reconnecter »)', /`Connecter \$\{o\.nom\}`/.test(VUE) && /\}>Retirer<\/button>/.test(VUE) && /'Retirer l’accès'/.test(VUE) && /texte: 'Connecté'/.test(VUE) && /`Reconnecter \$\{o\.nom\}`/.test(VUE) && /Rien n’est supprimé chez Google/.test(VUE))
+T('« Mes outils » commence à l’offre où l’écran l’ouvre (canaux.email : Studio)', A.offreAide('mes-outils') === 'studio' && /peut\(fondateur \? 'business' : plan, o\.capacite\)/.test(GESTION))
+
+// 9e. « Vos assistants » : un par département, la boîte « À valider » en mode essai ; aucune promesse d'envoi seul (le palier réel n'est pas servi).
+const promesseEnvoiSeul = (t) => /\b(?:envoi(?:e|ent)?|répond(?:ent)?|part(?:ent)?|écri(?:t|vent))\b[^.;:]{0,30}?(?:\bseule?s?\b|tout seuls?|à votre place|sans vous|automatiquement|d’eux-mêmes)|envoyée?s?\s+(?:seule?s?|automatiquement)\s+par\s+(?:vos\s+)?assistants|assistants?\s+(?:envoie|envoient|répond|répondent)\b/iu.test(t)
+const textesAssistants = [texteArticle(art(AIDE.TOUS_ARTICLES, 'assistants')), ...A.LIGNES_OFFRES.filter((l) => l.id === 'assistants').map((l) => l.label), ...A.AUTOMATIQUE_SANS_ASSISTANT.filter((e) => e.id === 'assistants-essai').map((e) => `${e.titre} ${e.texte}`)]
+T('aucun texte des assistants ne promet un envoi seul', textesAssistants.length === 3 && !textesAssistants.some(promesseEnvoiSeul) && !textesNeufs.some(promesseEnvoiSeul))
+T('(mutation) « vos assistants répondent seuls à vos clients » est vu', promesseEnvoiSeul('Vos assistants répondent seuls à vos clients.'))
+T('(mutation) « l’assistant envoie la relance à votre place » est vu', promesseEnvoiSeul('L’assistant de l’Accueil envoie la relance à votre place.'))
+T('chaque texte des assistants dit « rien n’est envoyé »', textesAssistants.every((t) => /[Rr]ien n’est envoyé|rien n’est envoyé/.test(t) || /Rien ne leur est envoyé/.test(t)))
+const BOITE = lire('app/crm/BoiteAgents.tsx'), ROUTE_AGENTS = lire('app/api/assistant/agents/route.ts')
+T('le code est toujours en mode essai : la boîte le dit et la route n’envoie rien (sinon, l’aide est à revoir)', /Mode essai/.test(BOITE) && /Rien n’est envoyé à vos clients, répondez comme d’habitude/.test(BOITE) && /« Valider » ou « Refuser » nous aide à les régler/.test(BOITE) && /CETTE ROUTE N'ENVOIE RIEN/.test(ROUTE_AGENTS))
+const tAss = texteArticle(art(AIDE.ARTICLES, 'assistants'))
+const CARTES = await charger('lib/agents/n8n/cartes.ts')
+const nomsDep = CARTES.DEPARTEMENTS.map((d) => CARTES.NOMS_DEPARTEMENTS[d])
+T(`l’article nomme les ${nomsDep.length} départements de lib/agents/n8n/cartes.ts, la boîte « À valider », « Valider » et « Refuser »`, nomsDep.every((n) => tAss.includes(n)) && /« À valider »/.test(tAss) && /« Valider »/.test(tAss) && /« Refuser »/.test(tAss) && /mode essai/.test(tAss) && /comme d’habitude/.test(tAss))
+T('le message cité après « Valider » est celui de la boîte (« Carte validée. Rien n’est parti »)', tAss.includes('« Carte validée. Rien n’est parti »') && BOITE.includes('Carte validée. Rien n’est parti : le mode réel n’est pas ouvert.'))
+T('« Vos assistants » commence à l’offre de la garde de la boîte (assistant : Studio)', A.offreAide('assistants') === 'studio' && /gardeAssistant\(req\)/.test(ROUTE_AGENTS))
+
+// 9f. Chaque sujet neuf sous le drapeau qui montre son écran — le même, lu dans le code de l'écran ; un sujet sans drapeau doit le justifier.
+const SUJETS_DRAPEAUX = [
+  { id: 'gestion', drapeau: 'crm', fichier: 'app/AppShell.tsx', garde: "enEssai('crm') ? [{ key: 'crm'" },
+  { id: 'assistants', drapeau: 'boiteAgents', fichier: 'app/crm/BoiteAgents.tsx', garde: "if (!actif('boiteAgents')) return null" },
+  { id: 'mes-outils', drapeau: 'connexions', fichier: 'app/crm/Gestion.tsx', garde: "actif('connexions')" },
+  { id: 'entreprise', drapeau: undefined, fichier: 'app/OffreEntreprise.tsx', garde: null }, // montrée à tous : aucune garde dans le code
+]
+const sujetsSansDrapeau = (articles) => SUJETS_DRAPEAUX.filter((s) => art(articles, s.id)?.drapeau !== s.drapeau).map((s) => s.id)
+T('chaque sujet neuf porte le drapeau de son écran (gestion → crm, assistants → boiteAgents, mes-outils → connexions ; Entreprise : aucun)', sujetsSansDrapeau(AIDE.TOUS_ARTICLES).length === 0, sujetsSansDrapeau(AIDE.TOUS_ARTICLES).join(', '))
+T('(mutation) « Mes outils » sans drapeau est vu', sujetsSansDrapeau(AIDE.TOUS_ARTICLES.map((a) => (a.id === 'mes-outils' ? { ...a, drapeau: undefined } : a))).includes('mes-outils'))
+T('les écrans sont bien gardés par ces drapeaux (et l’Entreprise par aucun)', SUJETS_DRAPEAUX.every((s) => (s.garde ? lire(s.fichier).includes(s.garde) : !/actif\(|enEssai\(/.test(sansCommentairesLignes(lire(s.fichier))))))
+T('les drapeaux des articles existent dans lib/flags.ts', AIDE.TOUS_ARTICLES.every((a) => !a.drapeau || a.drapeau in F.FLAGS))
+T('ARTICLES = les articles dont le drapeau est levé (articlesVisibles)', AIDE.ARTICLES.length === AIDE.articlesVisibles(AIDE.TOUS_ARTICLES).length && AIDE.ARTICLES.length === AIDE.TOUS_ARTICLES.filter((a) => !a.drapeau || F.FLAGS[a.drapeau]).length)
+T('(mutation) drapeau boiteAgents baissé : « Vos assistants » disparaît de l’aide', !AIDE.articlesVisibles(AIDE.TOUS_ARTICLES, { ...F.FLAGS, boiteAgents: false }).some((a) => a.id === 'assistants') && AIDE.articlesVisibles(AIDE.TOUS_ARTICLES, { ...F.FLAGS, boiteAgents: false }).some((a) => a.id === 'gestion'))
+T('(mutation) drapeau connexions baissé : « Mes outils » disparaît, de l’aide comme du tableau', !AIDE.articlesVisibles(AIDE.TOUS_ARTICLES, { ...F.FLAGS, connexions: false }).some((a) => a.id === 'mes-outils') && A.LIGNES_OFFRES.find((l) => l.id === 'mes-outils')?.flag === 'connexions')
+T('l’entrée « automatique » des assistants et la ligne du tableau sont sous boiteAgents', A.AUTOMATIQUE_SANS_ASSISTANT.find((e) => e.id === 'assistants-essai')?.flag === 'boiteAgents' && A.LIGNES_OFFRES.find((l) => l.id === 'assistants')?.flag === 'boiteAgents')
+T('chaque sujet neuf a son groupe dans /aide (Outil de gestion : /crm et /crm/outils)', /\{ id: 'crm', titre: 'Outil de gestion', pages: \['\/crm', PAGE_MES_OUTILS\] \}/.test(SOURCES_AIDE.page) && AIDE.PAGE_MES_OUTILS === '/crm/outils' && !/\/crm\/outils/.test(SOURCES_AIDE.page) && AIDE.ARTICLES.filter((a) => SUJETS_NEUFS.includes(a.id)).every((a) => ['/crm', '/crm/outils', '/abonnement'].includes(a.page)))
+
+// ── 10. Les captures 390 et 1440 du centre d'aide, rendu par ses vrais composants ─────────────────────────────────────────
+console.log('\n── 10. Les captures (centre d’aide rendu hors ligne, données du code, aucune requête sortante)')
+{
+  const PREUVE = '.orchestre/preuves/036-037'
+  const exiger = createRequire(path.join(RACINE, 'package.json'))
+  const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'aide-qa-'))
+  try {
+    const ts = exiger('typescript')
+    const { renderToStaticMarkup } = exiger('react-dom/server')
+    const React = exiger('react')
+    const urlDe = (m) => pathToFileURL(exiger.resolve(m)).href
+    // Les composants de l'aide, transpilés tels quels ; leurs imports d'app pointent vers leurs copies transpilées, ceux de lib/ vers les vrais modules.
+    const COMPOSANTS = { PastilleOffre: 'app/aide/PastilleOffre.tsx', AidePanneau: 'app/AidePanneau.tsx', TableauOffres: 'app/aide/TableauOffres.tsx', Automatique: 'app/aide/Automatique.tsx' }
+    for (const [nom, f] of Object.entries(COMPOSANTS)) {
+      let js = ts.transpileModule(lire(f), { compilerOptions: { jsx: ts.JsxEmit.ReactJSX, module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText
+      js = js.replace(/(['"])react\/jsx-runtime\1/g, `'${urlDe('react/jsx-runtime')}'`).replace(/from (['"])react\1/g, `from '${urlDe('react')}'`)
+        .replace(/(['"])(?:@\/app\/aide\/|\.\/)(PastilleOffre)\1/g, "'./$2.mjs'").replace(/(['"])@\/app\/AidePanneau\1/g, "'./AidePanneau.mjs'")
+        .replace(/(['"])@\/lib\/([\w/.-]+)\1/g, (_, q, m) => `'${pathToFileURL(path.join(RACINE, 'lib', m + (fs.existsSync(path.join(RACINE, 'lib', m + '.ts')) ? '.ts' : '.tsx'))).href}'`)
+      fs.writeFileSync(path.join(TMP, `${nom}.mjs`), js)
+    }
+    const imp = (n) => import(pathToFileURL(path.join(TMP, `${n}.mjs`)).href)
+    const [{ default: TableauOffres }, { default: Automatique }, { ArticleCorps }, { default: PastilleOffre }] = await Promise.all(['TableauOffres', 'Automatique', 'AidePanneau', 'PastilleOffre'].map(imp))
+    const h = React.createElement
+    const LIB = { '/crm': 'Outil de gestion', '/crm/outils': 'Outil de gestion · Mes outils', '/abonnement': 'Abonnement' }
+    const detail = (a, ouvert) => h('details', { className: 'aide-art', id: a.id, open: ouvert, key: a.id },
+      h('summary', null, h('span', null, a.titre), h(PastilleOffre, { offre: A.offreAide(a.id) }), h('span', { className: 'pg' }, LIB[a.page] ?? a.page)),
+      h('div', { className: 'aide-art-b' }, h(ArticleCorps, { article: a })))
+    const neufs = SUJETS_NEUFS.map((id) => art(AIDE.ARTICLES, id)).filter(Boolean)
+    const corps = renderToStaticMarkup(h('div', null,
+      h('h1', { style: { margin: '0 0 1rem' } }, 'Centre d’aide · ce qui a changé le 03/11'),
+      h('section', { className: 'aide-grp', id: 'grp-crm' }, h('h2', null, 'Outil de gestion'), ...neufs.filter((a) => a.id !== 'entreprise').map((a) => detail(a, true))),
+      h(TableauOffres), h('section', { className: 'aide-grp' }, h('h2', null, 'Abonnement'), detail(entArt, true)), h(Automatique)))
+    T('le rendu contient les prix lus dans PLANS, la ligne Entreprise et les quatre sujets', corps.includes(`>${P.PLANS.studio.prixMois} €<`) && corps.includes(`>${P.PLANS.signature.prixMois} €<`) && /data-offre="sur_devis"/.test(corps) && /data-offre-entreprise/.test(corps) && SUJETS_NEUFS.every((id) => corps.includes(`id="${id}"`)) && /id="auto-assistants-essai"/.test(corps))
+    const css = ['app/base.css', 'app/globals.css'].map(lire).join('\n')
+    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${css}
+      body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+      .banc{max-width:1100px;margin:0 auto;padding:32px 40px} @media (max-width:720px){.banc{padding:20px 16px}}</style></head><body><main class="banc">${corps}</main></body></html>`
+    const { chromium } = exiger('playwright')
+    const navigateur = await chromium.launch({ args: ['--no-sandbox'] })
+    try {
+      fs.mkdirSync(path.join(RACINE, PREUVE), { recursive: true })
+      for (const [nom, l, hauteur] of [['capture-1440.png', 1440, 900], ['capture-390.png', 390, 844]]) {
+        const ctx = await navigateur.newContext({ viewport: { width: l, height: hauteur }, deviceScaleFactor: 1 })
+        const pg = await ctx.newPage()
+        let sortantes = 0
+        await pg.route('**/*', (r) => { sortantes++; return r.abort() })
+        await pg.setContent(html, { waitUntil: 'load' })
+        const debord = await pg.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
+        const cible = path.join(RACINE, PREUVE, nom)
+        await pg.screenshot({ path: cible, fullPage: true })
+        const png = fs.readFileSync(cible)
+        const largeur = png.readUInt32BE(16)
+        T(`${nom} : PNG de ${largeur} px, ${png.length} octets, sans débordement horizontal (${debord}), ${sortantes} requête sortante refusée`, png.subarray(1, 4).toString() === 'PNG' && largeur === l && png.length > 20000 && debord <= 0)
+        await ctx.close()
+      }
+    } finally { await navigateur.close() }
+  } catch (e) {
+    T('les captures sont prises', false, String(e?.stack ?? e).slice(0, 300))
+  } finally { fs.rmSync(TMP, { recursive: true, force: true }) }
+}
 
 console.log(`\n${ko ? '❌' : '✅'} ${ok} contrôles passés, ${ko} échecs`)
 process.exit(ko ? 1 : 0)

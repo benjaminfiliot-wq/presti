@@ -19,12 +19,11 @@
   },
   "executants": [
     "hermes",
-    "claude-code"
-  ],
-  "executantsHistoriques": [
+    "claude-code",
     "antigravity",
     "codex"
   ],
+  "executantsHistoriques": [],
   "maxMinutes": 65,
   "lectureLibre": [
     ".orchestre/**",

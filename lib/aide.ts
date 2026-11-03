@@ -12,6 +12,8 @@
 // minutes », pas de pourcentages inventés).
 
 import { ASSISTANT_TOURS_MAX, CREDIT_COST, ESSAI_JOURS, PLAFOND_PIECES_CHANTIER_MO, PLANS } from './plans'
+import { FLAGS, type Flag } from './flags'
+import { DEPARTEMENTS, NOMS_DEPARTEMENTS } from './agents/n8n/cartes'
 
 export type Article = {
   id: string
@@ -24,6 +26,19 @@ export type Article = {
   reglagesLies: string[]
   /** « toutes » : la fonctionnalité est dans toutes les offres, essai compris (25/10 : deux offres, l'Essentiel n'est plus vendu). */
   disponibleAvec: 'toutes' | 'studio' | 'signature'
+  /** 03/11 (036-037) : l'article n'existe que si ce drapeau (lib/flags.ts) est levé — le même qui montre l'écran qu'il décrit.
+   *  Une fonctionnalité non finie n'apparaît pas, son aide non plus. */
+  drapeau?: Flag
+}
+
+/** L'écran « Mes outils » (app/crm/outils). Écrit ici seulement : app/ ne doit pas porter ce chemin hors de l'écran gardé par le drapeau
+ *  `connexions` (scripts/connecter-ecran-qa.mjs, C6) ; le centre d'aide l'importe. */
+export const PAGE_MES_OUTILS = '/crm/outils'
+
+// 03/11 : la liste lisible des départements de vos assistants (« Accueil, Devis, … et Direction »), lue dans lib/agents/n8n/cartes.ts.
+const departements = (): string => {
+  const noms = DEPARTEMENTS.map((d) => NOMS_DEPARTEMENTS[d])
+  return `${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]}`
 }
 
 export type InfoBulle = {
@@ -42,7 +57,8 @@ const creditsGeneration = (): string => {
   return `${base} (modèle Standard ou Pro), ${expert} crédits (modèle Expert)`
 }
 
-export const ARTICLES: Article[] = [
+// Tous les articles écrits, drapeaux levés ou non. Ce que l'artisan lit, c'est ARTICLES (en bas du fichier) : les seuls dont le drapeau est levé.
+export const TOUS_ARTICLES: Article[] = [
   // source: app/outils/page.tsx ; app/api/tools/reponse/route.ts (15/10 : fait partie de la plateforme, verrou `plateforme.conversation` : Studio et au-dessus)
   {
     id: 'outils',
@@ -329,19 +345,47 @@ export const ARTICLES: Article[] = [
     disponibleAvec: 'studio',
   },
 
+  // 03/11 (036-037). Placé AVANT l'article « crm » : /crm s'ouvre maintenant sur cet écran, c'est donc lui que le panneau « ? » montre.
+  // source: app/AppShell.tsx:40-44 (« Outil de gestion » au menu sous le drapeau crm ; Devis, Factures, Mes tarifs, Inventaire sortis du menu) ;
+  // app/crm/Gestion.tsx:14-16 (aucune donnée lue, ouvert à tous les comptes, aucune adresse supprimée), :19-22 (PORTES : « CRM 3D », « Tableau de bord »),
+  // :27-38 (ECRANS et leurs trois groupes), :75 et :88 (badge « Offre Signature » sur la porte 3D sans la capacité crm), :95 (BoiteAgents), :78 et :111-119 (« Mes outils »)
+  {
+    id: 'gestion',
+    page: '/crm',
+    titre: 'L’outil de gestion : CRM 3D ou tableau de bord, avec vos devis et vos factures',
+    aQuoiCaSert:
+      'Vos devis, vos factures, vos tarifs et votre stock ne sont plus dans le menu : tout s’ouvre depuis « Outil de gestion ». ' +
+      'En haut, deux portes : « CRM 3D », votre entreprise en maquette, et « Tableau de bord », la vue normale de ce qui est à faire aujourd’hui. ' +
+      'Dessous, chaque écran est rangé en trois groupes : « Pièces » (Devis, Factures, Mes tarifs, Stock), « Chantiers et clients » (Clients, Chantiers, Planning, Équipe et véhicules) et « Pilotage » (Pipeline, Mes chiffres). ' +
+      'Les anciennes adresses marchent toujours : un favori vers vos devis ou vos factures ouvre le même écran qu’avant.',
+    commentOnSenSert: [
+      'Ouvrez « Outil de gestion » dans le menu.',
+      'Choisissez « CRM 3D » pour la maquette, ou « Tableau de bord » pour la vue normale.',
+      'Pour un devis ou une facture, cliquez « Devis » ou « Factures » dans le groupe « Pièces » : ce sont les écrans que vous connaissez.',
+      'Sans l’offre Signature, la porte « CRM 3D » porte la mention « Offre Signature » ; tous les autres écrans restent ceux de votre offre.',
+      'Si vos assistants vous ont préparé des propositions, la boîte « À valider » s’affiche sous les deux portes (article « Vos assistants »).',
+    ],
+    pourVosClients: 'Rien ne change pour eux : cet écran range vos écrans, il n’envoie rien à personne.',
+    credits: 'Aucun : ouvrir l’outil de gestion ne consomme pas de crédit.',
+    reglagesLies: ['/devis', '/factures', '/dashboard'],
+    disponibleAvec: 'toutes',
+    drapeau: 'crm',
+  },
+
   // source: app/crm/page.tsx ; app/crm/atelier/Atelier.tsx (réglages : métier, lieu, statut) ; lib/crm/infrastructure.ts:127-131 (18 métiers), :342 Atelier.tsx (saisie libre) ;
-  // lib/crm/carte.ts:1-9 (position réelle, adresse sans le nom du client) ; app/crm/atelier/Stock.tsx:7-8 (le stock de l'atelier EST l'inventaire) ; app/crm/useTempsReel.ts
+  // lib/crm/carte.ts:1-9 (position réelle, adresse sans le nom du client) ; app/crm/atelier/Stock.tsx:7-8 (le stock de l'atelier EST l'inventaire) ; app/crm/useTempsReel.ts ;
+  // 03/11 : app/crm/Gestion.tsx:20 (la porte « CRM 3D » ouvre /crm?vue=atelier)
   {
     id: 'crm',
     page: '/crm',
-    titre: 'CRM atelier : votre entreprise en maquette vivante',
+    titre: 'CRM 3D : votre entreprise en maquette vivante',
     aQuoiCaSert:
       'Le CRM montre votre entreprise comme une maquette en 3D (avec un repli en 2D si votre appareil ne suit pas) : votre local, vos chantiers, votre équipe, vos véhicules, avec les alertes posées dessus. ' +
       'La maquette s’adapte à vous : à votre métier (choisi dans la liste, rattaché à l’une des 18 maquettes de métier, ou écrit librement avec « Écrire mon métier »), à votre lieu (chez vous, atelier, entrepôt, ou un camion-atelier si vous n’avez pas de local), à votre statut (à votre compte ou en société) et à vos véhicules. ' +
       'Chaque chantier est placé à sa position réelle d’après son adresse, avec un bâtiment qui change selon le type de chantier. Tout ce qui se voit est cliquable : un objet ouvre ce qui le concerne. ' +
       'Le stock de l’atelier est votre inventaire : le remplir ici le remplit aussi dans Inventaire. La maquette se met à jour en direct.',
     commentOnSenSert: [
-      'Ouvrez « CRM atelier » dans le menu : la maquette s’affiche.',
+      'Ouvrez « Outil de gestion » dans le menu, puis la porte « CRM 3D » : la maquette s’affiche.',
       'Dans « Réglages de l’atelier », choisissez votre métier dans la liste ou écrivez-le, puis votre lieu de travail : la maquette change.',
       'Cliquez sur un objet (bâtiment, chantier, véhicule, stock, bureau…) : un panneau s’ouvre avec ses informations et les actions possibles.',
       'Ajoutez ou comptez du stock directement depuis une structure de stockage : c’est le même stock que dans Inventaire.',
@@ -352,6 +396,64 @@ export const ARTICLES: Article[] = [
     credits: 'Aucun crédit : le CRM ne fait appel à l’IA pour rien.',
     reglagesLies: ['/crm', '/inventaire', '/abonnement'],
     disponibleAvec: 'signature',
+  },
+
+  // 03/11 (036-037). Les assistants de l'artisan, par département, et la boîte « À valider ». Le palier réel n'est PAS servi : rien n'est envoyé.
+  // source: lib/agents/n8n/cartes.ts:11-16 (DEPARTEMENTS, NOMS_DEPARTEMENTS), :4-6 (valider ne fait rien partir) ; app/crm/BoiteAgents.tsx:48-50 (la boîte
+  // n'existe que s'il y a des cartes), :55-57 (titre « À valider » et compteur), :60-63 (« Mode essai … Rien n’est envoyé à vos clients, répondez comme
+  // d’habitude. « Valider » ou « Refuser » nous aide à les régler. »), :88-100 (département, proposition, « Pourquoi », « Sources »), :72-73 (« Déjà
+  // traitées »), :105-106 (Valider, Refuser) ; app/api/assistant/agents/route.ts:14-19 (la route n'envoie rien, sur aucune offre ; garde de l'assistant :
+  // offre avec la capacité assistant), aucun appel aux crédits ; RAPPORT-0311.md « Vers 21 h 30 » (départements mis en marche compte par compte par Presti)
+  {
+    id: 'assistants',
+    page: '/crm',
+    titre: 'Vos assistants : un par département, et la boîte « À valider »',
+    aQuoiCaSert:
+      `Vos assistants sont rangés par département de votre entreprise : ${departements()}. ` +
+      'Chacun prépare le travail de son département et le pose dans la boîte « À valider » de l’outil de gestion : ce qu’il propose, pourquoi, et la source de chaque fait. ' +
+      'Aujourd’hui, ils sont en mode essai : ils s’entraînent sur vos vraies demandes, mais rien n’est envoyé à vos clients. Continuez de répondre comme d’habitude. ' +
+      'Les départements se mettent en marche un par un, compte par compte, réglés par l’équipe Presti : tant qu’aucun n’a rien préparé pour vous, la boîte n’apparaît pas.',
+    commentOnSenSert: [
+      'Ouvrez « Outil de gestion » : la boîte « À valider » est sous les deux portes, avec le nombre de propositions en attente.',
+      'Lisez une proposition : le département qui l’a préparée, le texte proposé, « Pourquoi », et ses « Sources ».',
+      'Cliquez « Valider » si elle est juste, « Refuser » sinon. En mode essai, ce clic note seulement votre avis : l’écran répond « Carte validée. Rien n’est parti », et votre choix sert à régler vos assistants.',
+      'Répondez à votre client comme d’habitude : valider une proposition ne lui a rien envoyé.',
+      'Les propositions déjà traitées se retrouvent dans « Déjà traitées ».',
+    ],
+    pourVosClients: 'Rien ne leur est envoyé : en mode essai, ni « Valider » ni « Refuser » ne fait partir un message.',
+    credits: 'Aucun : valider ou refuser une proposition ne consomme pas de crédit.',
+    // Pas de lien vers /crm : app/AidePanneau.tsx (hors de ce lot) le nomme encore « CRM atelier ».
+    reglagesLies: ['/messages'],
+    disponibleAvec: 'studio',
+    drapeau: 'boiteAgents',
+  },
+
+  // 03/11 (036-037). « Mes outils » et le bouton « Connecter » : Google seulement (Gmail, Google Agenda, Google Drive), le seul circuit qui existe.
+  // source: app/crm/outils/vue.tsx:17-24 (OUTILS : trois outils Google, leur rôle mot pour mot), :86-93 (« Connecté » seulement après une vraie lecture),
+  // :146 (autorisation expirée : travail en pause, rien n'est perdu), :150-154 (« Retirer », « Retirer l’accès » : autorisation effacée, rien supprimé
+  // chez Google), :165 (« Connecter … », « Reconnecter … »), :194 (chapô), :224 (pied) ; MOTIFS_RETOUR.portee_refusee (:55) ; app/crm/Gestion.tsx:76-78 et
+  // :111-119 (le lien « Mes outils » sous le drapeau connexions, si l'offre ouvre au moins un outil : canaux.email ou assistant, dès Studio)
+  {
+    id: 'mes-outils',
+    page: PAGE_MES_OUTILS,
+    titre: 'Mes outils : brancher Google, et le retirer',
+    aQuoiCaSert:
+      'Dans « Mes outils », vous branchez les outils Google que vous utilisez déjà, pour que vos assistants y lisent ce qu’il faut pour préparer le travail. ' +
+      'Trois outils se branchent, tous chez Google : Gmail (les demandes qui arrivent dans votre boîte, en lecture seule : rien n’est envoyé ni effacé depuis Gmail), ' +
+      'Google Agenda (vos créneaux occupés, pour ne jamais proposer une heure déjà prise, sans le titre ni les invités de vos rendez-vous) et ' +
+      'Google Drive (seulement les fichiers créés pour vous ou ceux que vous ouvrez vous-même). Aucun autre outil ne se branche ici.',
+    commentOnSenSert: [
+      'Ouvrez « Outil de gestion », puis « Mes outils », en bas de l’écran.',
+      'Cliquez « Connecter Gmail », « Connecter Google Agenda » ou « Connecter Google Drive » : Google vous demande d’autoriser l’accès. Laissez toutes les cases cochées, sinon rien n’est branché.',
+      'De retour dans Presti, un message dit si l’outil est connecté. Il n’est dit « Connecté » qu’après une vraie lecture réussie.',
+      'Pour couper l’accès : « Retirer », puis « Retirer l’accès ». L’autorisation est effacée tout de suite et vos assistants n’y ont plus accès ; rien n’est supprimé chez Google.',
+      'Si l’autorisation a expiré, le bouton devient « Reconnecter Gmail » (ou le nom de l’outil concerné) : le travail qui dépend de l’outil est en pause, rien n’est perdu, et il reprend dès la reconnexion.',
+    ],
+    pourVosClients: 'Vos clients ne voient rien de cet écran : brancher ou retirer un outil n’envoie aucun message.',
+    credits: 'Aucun : brancher ou retirer un outil ne consomme pas de crédit.',
+    reglagesLies: ['/abonnement'],
+    disponibleAvec: 'studio',
+    drapeau: 'connexions',
   },
 
   // source: lib/crm/accueil.ts:1-14 (salle d'attente, arrivée en direct) ; lib/crm/assistants.ts:1-9 (poste des assistants) ; app/crm/atelier/Vivant.tsx
@@ -664,11 +766,39 @@ export const ARTICLES: Article[] = [
       `${PLANS.signature.label} — en mode « Automatique » (Ma plateforme), la réponse part seule, jour et nuit ; les relances des conversations et des impayés partent seules ; le Pilote automatique envoie ce que vous lui confiez après 10 minutes pour annuler ; vos règles d’automatisation préparent le devis.`,
       `${PLANS.signature.label} — en plus : le CRM, le modèle Expert, l’alerte impayés et l’export mensuel à votre comptable.`,
       'Dans les deux offres, jamais : un devis dont un prix ne vient pas de vos tarifs ne part seul, et aucun encaissement ni remboursement ne se fait sans vous.',
+      // 03/11 : lib/plans.ts:120 (entreprise, surDevis) ; app/OffreEntreprise.tsx:57-63 (carte de /abonnement : « Sur devis », « Parler à l’équipe »)
+      `Pour une entreprise avec une équipe, une troisième offre existe : « ${PLANS.entreprise.label} », sur devis (article « ${PLANS.entreprise.label} »).`,
     ],
     pourVosClients:
       'Vos clients reçoivent les mêmes messages, à votre nom. En Signature, ils les reçoivent sans attendre que vous soyez disponible ; un message envoyé seul par l’assistant le dit.',
     credits: `Les mêmes règles dans les deux offres : ${creditsGeneration()} (Expert : offre Signature). ${PLANS.studio.label} : ${PLANS.studio.creditsMois} crédits par mois ; ${PLANS.signature.label} : ${PLANS.signature.creditsMois}.`,
     reglagesLies: ['/abonnement', '/plateforme', '/parametres?onglet=pilote'],
+    disponibleAvec: 'toutes',
+  },
+
+  // 03/11 (036-037). L'offre Entreprise : aucun prix public, aucun chiffre de gain, aucun outil nommé (seul Google se branche aujourd'hui).
+  // Sans drapeau : la carte est montrée à tous, sans condition (app/abonnement/page.tsx:9 importe OffreEntreprise, qui n'appelle aucun actif()).
+  // source: lib/plans.ts:15-18 (sur mesure, sur devis, sans prix public, même autonomie que Signature), :119-120 (entreprise : surDevis, crédits de Signature
+  // tant que le contrat n'en fixe pas d'autres) ; app/OffreEntreprise.tsx:57-63 (carte de /abonnement : « Sur devis », « Parler à l’équipe », « Tout savoir sur
+  // l’offre Entreprise ») ; app/entreprise/page.tsx:112 (« le prix se fixe après le rendez-vous de découverte, dans la proposition »), :136 ;
+  // app/contact/page.tsx:24-34 (?motif=entreprise : « Parlons de votre entreprise »)
+  {
+    id: 'entreprise',
+    page: '/abonnement',
+    titre: `${PLANS.entreprise.label} : l’offre sur devis`,
+    aQuoiCaSert:
+      `À côté de ${PLANS.studio.label} et ${PLANS.signature.label}, une troisième offre est faite pour les entreprises : « ${PLANS.entreprise.label} ». ` +
+      'Elle est construite sur mesure : votre équipe, vos outils, vos automatisations, avec la même autonomie que Signature. ' +
+      'Elle n’a pas de prix public : le prix se fixe sur devis, après un premier rendez-vous.',
+    commentOnSenSert: [
+      `Dans Abonnement, repérez la carte « ${PLANS.entreprise.label} ».`,
+      'Cliquez « Tout savoir sur l’offre Entreprise » : la page explique ce qui est construit pour l’entreprise, comment ça se passe et ce qui est garanti.',
+      'Cliquez « Parler à l’équipe » : la page « Parlons de votre entreprise » s’ouvre, avec son formulaire de contact.',
+      'Le prix se fixe après le rendez-vous, dans une proposition, sur devis.',
+    ],
+    pourVosClients: 'Aucun effet direct : vos clients vous écrivent toujours à vous, à votre nom.',
+    credits: `Ceux de ${PLANS.signature.label} (${PLANS.entreprise.creditsMois} par mois), tant que le contrat n’en fixe pas d’autres.`,
+    reglagesLies: ['/abonnement'],
     disponibleAvec: 'toutes',
   },
 
@@ -1203,6 +1333,13 @@ export const INFOBULLES: InfoBulle[] = [
     exemple: 'Vous ouvrez Presti depuis un nouveau téléphone : l’email « Votre code Presti : 482 913 » arrive en quelques secondes, vous tapez 482913, et vous êtes connecté.',
   },
 ]
+
+/** Les articles montrés : sans drapeau, ou drapeau levé. Pur (les drapeaux en argument) pour que le juge le rejoue drapeau baissé. */
+export const articlesVisibles = (liste: readonly Article[], drapeaux: Readonly<Record<string, boolean>> = FLAGS): Article[] =>
+  liste.filter((a) => !a.drapeau || drapeaux[a.drapeau] === true)
+
+/** Ce que l'artisan lit (centre d'aide, panneau « ? », recherche) : une fonctionnalité non finie n'apparaît pas, son article non plus. */
+export const ARTICLES: Article[] = articlesVisibles(TOUS_ARTICLES)
 
 // Recherche plein texte simple sur les articles : insensible à la casse et aux accents.
 const sansAccents = (s: string) =>
