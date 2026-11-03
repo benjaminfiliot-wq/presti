@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-11-03T13:26:59Z
+# Digest — 2026-11-03T13:29:19Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 179 tâche(s) PASS, 335976 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
-**État** — file : 62 · en cours : 3 · faites : 451 · refusées : 17
+**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 180 tâche(s) PASS, 344790 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
+**État** — file : 62 · en cours : 2 · faites : 452 · refusées : 17
 
 ## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -23,7 +23,6 @@
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 036-015 | feature | en-cours | claude-code | — | depuis 2026-11-03T12:50:02Z · Prompt 6, outillage, lot 3 : les gabarits OUTILLÉS des départements Après-chantier et réputation, Opérations (agenda, chantiers, stock) et Direction des artisans, avec les vrais nœuds de leurs outils (fiche Google Business Profile, Google Agenda et Outlook, Google Drive et OneDrive, Google Sheets et Excel, Gmail, Outlook, WhatsApp, Telegram, Twilio, Slack, Teams), un agent IA par spécialiste (Claude, parseur, outils de lecture), porte « simulation » devant chaque effet — inactifs, sans identifiant |
 | 036-016 | feature | en-cours | claude-code | — | depuis 2026-11-03T12:51:41Z · Prompt 6, outillage, lot 4 (prompt 2, Entreprise) : le catalogue de gabarits OUTILLÉS de l'Entreprise sur mesure, première moitié — Accueil et qualification, Leads et acquisition, Ventes et CRM, Marketing et réseaux — avec les vrais nœuds (Gmail, Outlook, IMAP, WhatsApp, Facebook Lead Ads et Instagram par l'API Graph, LinkedIn, TikTok par l'API, Typeform, Jotform, Tally, Calendly, Cal.com par l'API, Brevo, Mailchimp, ActiveCampaign, Lemlist, ManyChat par l'API, HubSpot, Pipedrive, Salesforce, Zoho CRM, Odoo, Airtable, Notion, monday, Yousign ou DocuSign par l'API, Slack et Teams avec validation d'équipe), agents IA (Claude, parseur, outils de lecture), porte « simulation » — inactifs, sans identifiant |
 | 036-018 | feature | en-cours | claude-code | — | depuis 2026-11-03T13:22:46Z · Prompt 6, outillage, lot 5 (prompt 2, Entreprise) : le catalogue de gabarits OUTILLÉS de l'Entreprise sur mesure, seconde moitié — Opérations, Administratif, Finance, Après-vente et réputation, Direction et équipe — avec les vrais nœuds (Google Agenda et Outlook, ClickUp, monday, Notion, Google Drive et OneDrive, Docs, Sheets et Excel, Gmail et Outlook, Stripe, QuickBooks, Xero, Pennylane, Tiime, Sage et Qonto par l'API, fiche Google, Trustpilot et Chatwoot par l'API, Zendesk, Slack, Teams, Google Chat avec validation d'équipe), agents IA (Claude, parseur, outils de lecture), porte « simulation » — inactifs, sans identifiant |
 | 035-013 | audit | file | claude-code | — | Prompt 5, tâche 035-013 de la première réponse — un audit offensif, distinct de l'auteur, des tâches 035-003 à 035-007 (le socle lib-*, les deux chaînes, la démonstration ent-exemple-*) avant toute publication : isolation entre organisations, porte de simulation, liste « jamais en automatique », idempotence au rejeu, coûts bornés, aucune donnée réelle ni secret dans les exports ; par les agents presti-audit-attaque et presti-gestion-fiabilite ; verdict TIENT ou NE TIENT PAS |
@@ -88,6 +87,7 @@
 | 036-010 | feature | file | claude-code | — | Prompt 6, lot 10 : les maquettes statiques des quatre écrans du § 1.3 — centre de commande (barre du jour, page du matin, « À valider » à feu vert par ligne et pour tout le lot, exceptions préparées), « Ce que vos assistants ont fait » (colonnes, « fait : … », coût IA), « Connexions », « Mes départements » (Studio verrouillé par l'offre) — en 390 et 1440 px, critiquées avant d'être rendues |
 | 036-011 | feature | file | claude-code | — | Prompt 6, lot 11 : les quatre écrans des maquettes validées par 036-010, en code, derrière le drapeau `systemeAgents` BAISSÉ (rien dans le DOM, routes en 404), lus depuis Supabase en lecture seule, avec le double chemin et « une question à la fois » ; verrou d'offre par peut() seulement |
 | 036-012 | feature | file | claude-code | — | Prompt 6, lot 12 : tous les juges n8n inscrits au lanceur, la suite transverse des tests obligatoires du § 1.7, le runbook (couper, rejouer, reprendre), le plan de migration des automatisations codées en cinq pas, la base de départ des KPIs (requêtes en lecture), et le dossier du mode ombre prêt pour un compte volontaire — rien de publié, rien d'appliqué |
+| 036-015 | feature | fait | claude-code | PASS | 2026-11-03T13:29:18Z · 12s · 8814 l. |
 | 036-014 | feature | fait | claude-code | PASS | 2026-11-03T13:26:58Z · 2s · 8666 l. |
 | 036-013 | feature | fait | claude-code | PASS | 2026-11-03T13:19:12Z · 21s · 8194 l. |
 | 036-009 | feature | fait | claude-code | PASS | 2026-11-03T13:09:47Z · 55s · 2618 l. |

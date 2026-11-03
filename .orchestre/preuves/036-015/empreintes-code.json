@@ -1,0 +1,30 @@
+{
+  "gabarit-artisan-apres": {
+    "Compte et mode": "e3f20fd990d475b7f8a5be502287b4df08202d7a5b1aab88d45c00ab6e0c9571",
+    "Décider": "a797897d8782f2ef5ee91c3efa5b12d79417bfabad6fbc0f64dccc64394d8898",
+    "Effets prévus": "24a8155254bd51ade24c839341a089dd2d9ac1242182752f6cd5c5cd24c9d4ba",
+    "Revalider la réponse": "ee7ba76fdcb53cb67518de4fbb69701a8c0698891ddc6295722d7d3afcf3f1b7",
+    "Préparer la carte": "f62db68fa191c422471ba735db9e8efa9a27aa467af7857c27c9d4f1c1cd0704",
+    "Assembler la demande": "0403f02ff0003b2a65c0abff47667f939e36890779520a26d1048453fa41176d"
+  },
+  "gabarit-artisan-direction": {
+    "Compte et mode": "863c5ce16e5167377615ac0e4e25dfd641d720ca7d6ec052f3dcaeea7bb1903b",
+    "Compter": "4d53dfc2da12eaf2ca5fb132ff01cd45174ad0ed481cbac0fbe89f8e6cf02113",
+    "Effets prévus": "a44fa6977a723940ddce2eb074a1c2bf6c2d43c68203fdcb96ca556232e840d6",
+    "Revalider la page": "d1416a5ba8dddc4604dc58cf26064a28bae571a1dfc5be2d104541a64e9edf4a",
+    "Revalider le rapport": "04f8cbef93098ae852c84bc604553e6677d4d81de3759db1be07271be422a50d"
+  },
+  "gabarit-artisan-operations": {
+    "Compte et mode": "80e4405455fa29d972a190a132ebbcc235d1a8844b6071f4011a38e26a6fb245",
+    "Créneaux à vérifier": "f30671a2521fbe7126ab8e7bc21affc5c73c168be48fe74bc64e9add365a8a85",
+    "Garder les créneaux libres": "c782f7373cf446dd9e900d742d6c156e00ee30fbf29c5f4f142836e196075cfb",
+    "Décider": "0a1ceb719a37208141656a800e605c7e86f355f952b485df846d5b354fbf6b9d",
+    "Effets prévus": "d506a4614b4c82ccd0a69ef7205fff02c708a36b578cf02375c267ae74f9c62e",
+    "Revalider la proposition": "02c6297e2aaea4175f22ce3d1824b7d54065e2f401941f8a3e5aee04d3481622",
+    "Préparer la carte": "ade0512ba819ade99f4cf32e836be5f9d32063775f3b0d513d9a112350c84d91",
+    "Assembler le rappel": "dac167e12044d0f833f05e92835c89176bdf4c99a545f86f0b083587c8b831a1",
+    "Revalider la commande": "10130438eb61f2dc485ddd6426262ed2b5aa707949ed63d544cda441fbd46fa3",
+    "Revalider le classement": "902f09f7ffb54195f8bca47481dcddae86b0c69ba65899543025644055c746ba",
+    "Aperçu de l'import": "754be312a7cb9b1246829d79be1517c17b3c35419d54d2488131810e2cdcab0f"
+  }
+}
