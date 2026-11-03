@@ -6,6 +6,26 @@ est `outillage/OUTILLAGE.md`.
 
 ## En bref
 
+**Fin d'après-midi (mis à jour à 17 h 50)**
+- **En ligne à 17 h 30 (`556eab2`, vérifié en direct)** : la carte « Presti pour l'entreprise », sur devis, sous Studio et Signature, avec
+  « Parler à l'équipe ». Tu l'as jugée trop pauvre : **036-026** la refait plus vendeuse et plus complète. Ce lot ajoute une page `/entreprise`
+  (ce que l'entreprise obtient, ses outils, ses sept applications, le parcours en cinq temps, les garanties, les questions fréquentes) et un
+  contact adapté. Tout y est vrai : aucun prix, aucun chiffre de gain, aucun témoignage. Il te sera montré en aperçu avant la production.
+- **Migrations posées** : 0185, 0192, 0193, 0187, 0190 et 0191, chacune contrôlée après pose. Restent 0183, 0186, puis 0184 et 0188.
+- **n8n, en simulation** :
+  - **036-024** : 32 workflows publiés, plus les détecteurs et le briefing, trouvés déjà actifs.
+  - **036-025** : ton identifiant « Anthropic account » est affecté aux deux nœuds Haiku, et les six workflows bloqués ont été publiés. Les
+    bancs ont alors montré une panne : le modèle épuise son plafond de sortie (300 et 700 jetons) sans écrire un mot. Et `lib-lire-photo` ne
+    reçoit pas l'image : il décrirait une photo qu'il ne voit pas. La chaîne de rédaction a donc été dépubliée proprement : Cerveau, suivi,
+    facturation, rédaction.
+  - **036-027 répare** ce réglage du modèle, fait passer l'image, rejoue les bancs, puis republie.
+  - Aucune exécution planifiée en erreur depuis 16 h 14 UTC.
+- **Prompt 2 (Entreprise)** : son plan est écrit (037-000, `p6-entreprise/premiere-reponse.md`). Il compte 16 lots, dont le CRM et les
+  applications sur mesure, et pose 5 décisions avec leur réponse par défaut. **Il attend ton « approuvé ».**
+- **Le branchement automatique des comptes (036-021, voie O3 a)** est construit et vérifié : `presti-provisionnement`, le déployeur et son
+  juge à mutants.
+
+**Plus tôt dans la journée**
 - **16 h 30 : les nouveaux prix sont en ligne** (`0750e69`, déployé et vérifié en direct).
   - Studio est à 30 €, Signature à 60 € : l'accueil affiche 30 € et 60 €, `llms.txt` aussi, plus aucun 99 €.
   - L'unique essai Signature est passé de 99 € à 60 €, avec ton accord. Il reste en essai jusqu'au 13/11, sans prélèvement.
@@ -20,12 +40,13 @@ est `outillage/OUTILLAGE.md`.
     - « CRM atelier » devient « Outil de gestion » ;
     - `/crm` s'ouvre sur deux portes, « CRM 3D » et « Tableau de bord », avec tous les écrans métier dessous ;
     - aucune route n'est supprimée.
-- **Posés, à lancer** :
-  - 036-021, le branchement automatique des comptes (voie O3 a) ;
-  - 036-022, la mise en service : migrations, puis mode ombre sur un compte de test, puis activation.
-- **Hors production** :
-  - tout le travail du jour est commité en local et sauvegardé sur la branche `nuit-0311`, jamais poussé sur `main` ;
-  - dans n8n, tous les workflows sont **inactifs, en simulation, sans aucun identifiant**.
+- **Production** : trois mises en ligne le 03/11, toutes vérifiées en direct :
+  - `0750e69`, les prix ;
+  - `fa5141a`, l'outil de gestion ;
+  - `556eab2`, la carte Entreprise.
+
+  Le reste est sur la branche de sauvegarde `nuit-0311`. Dans n8n, les gabarits restent inactifs, sans identifiant, avec la porte de
+  simulation.
 - **La correction de 14 h**, après ta remarque : les workflows n'affichaient aucun outil (132 nœuds Code pour un seul agent IA). Ils reçoivent
   maintenant leurs vrais nœuds, comme dans les vidéos et les 2 669 workflows des dépôts : Gmail, Outlook, IMAP, WhatsApp, Telegram, Facebook
   et Instagram, agents IA avec leurs outils.
@@ -84,11 +105,12 @@ Tout ce qui se construisait sans toi est construit et vérifié. Le reste suit `
 
 ## Ce qui t'attend (gestes que la sécurité te réserve)
 
-1. **Décision O3** : comment brancher les comptes d'un client sur sa copie (`OUTILLAGE.md` § 4).
-   - (a) Presti crée l'identifiant n8n par l'API au moment du « Connecter ».
-   - (b) La copie lit le jeton chiffré et appelle l'API par un nœud HTTP.
-2. **Exposer ou non un webhook n8n** : temps réel de WhatsApp, Telegram et Facebook Lead Ads. Sinon, ces canaux passent par Presti et la base.
-3. **Migrations posées le 03/11 vers 18 h**, par le connecteur Supabase, chacune contrôlée après pose :
+0. **Ce soir** :
+   - « approuvé » sur le plan du prompt 2, ou une décision corrigée ;
+   - ton « oui » sur l'aperçu de la page Entreprise refaite (036-026), avant sa mise en production.
+1. **Décision O3 : tranchée** (voie a, Presti crée l'identifiant n8n au « Connecter ») et construite par 036-021.
+2. **Webhook n8n : tranché**, seulement si nécessaire. Pour l'instant, non : Presti reçoit, n8n lit chaque minute.
+3. **Migrations posées le 03/11 en fin d'après-midi**, par le connecteur Supabase, chacune contrôlée après pose :
    - 0185 (automatisation, 7 contrôles verts), 0192 (accusé de réception, 8), 0193 (système d'agents, 9), 0187 (`factures.envoyee_le`),
      0190 (demandes de démo), 0191 (suivi des envois).
    - **Les tables de l'activation des automatisations sont donc en place.**
@@ -96,23 +118,7 @@ Tout ce qui se construisait sans toi est construit et vérifié. Le reste suit `
      - 0183 (organisations) et 0186 (SMS) ;
      - **0184 et 0188, les gardes de session dont dépend chaque requête connectée**. Selon leur propre fichier, elles se posent seulement
        après le banc de 0138 (PGlite) et un essai à sec, et 0184 après 0183.
-   - L'ancien état, relu à 17 h 15, suit.
-
-   **Migrations : l'état réel en base, relu le 03/11 vers 17 h 15.**
-   - **Seule 0189** (le rôle `n8n_lecture`) est posée.
-   - Ne sont pas posées : 0183 (organisations), 0185 (automatisation), 0186 (SMS), 0187 (`factures.envoyee_le`), 0190 (demandes de démo),
-     0191 (suivi des envois), 0193 (système d'agents) et 0192. Pour 0184 et 0188, qui ne créent pas de table, l'état n'a pas été relu.
-   - **Ce qui bloque** : `scripts/appliquer-migration.mjs` lit le fichier sur le disque et pose tout dans une transaction. Il est refusé par la
-     base (`28P01`, mot de passe changé depuis le 14/09). Le connecteur Supabase oblige, lui, à recopier chaque migration dans l'appel : près
-     de 1 000 lignes pour 0185, 0192 et 0193, deux fois (essai à sec, puis pose).
-   - **Le geste qui débloque, à toi** : mettre l'adresse de connexion actuelle de la base dans `.env.local` (`DIRECT_URL`), par
-     `node scripts/ranger-env.mjs` (Supabase → Project Settings → Database). Je ne saisis jamais un mot de passe. Ensuite, chaque migration se
-     pose d'une commande.
-   - Ordre, et jamais un autre : **0185, puis 0192, puis 0193** (`mise-en-service.md`, étapes 3 à 5).
-   - Avant tout, on relit l'état réel en base. Aucune hypothèse sur 0186, 0189 ou 0191 : elles sont peut-être déjà posées.
-   - **0192** (accusé de réception par n8n) vient du lot 032-047, arrêté ce matin. Elle n'existe que sur Oracle et n'a pas été vérifiée. Or
-     0193 l'exige comme prérequis : elle est à reprendre et à juger avant toute pose.
-   - Chaque migration attend ton « go » écrit. On colle, puis on lève le drapeau.
+   - `scripts/appliquer-migration.mjs` reste refusé par la base (`28P01`) : le connecteur Supabase est la voie. Ce n'est pas un blocage.
 4. **Google** :
    - la vérification de l'application OAuth pour Gmail, avec évaluation de sécurité annuelle (coût chiffré dans `premiere-reponse.md`,
      décision 2) ;
@@ -121,10 +127,9 @@ Tout ce qui se construisait sans toi est construit et vérifié. Le reste suit `
    - un compte Studio et un compte Signature volontaires (accord écrit) ;
    - l'accord écrit de ton organisation pour le client zéro ;
    - la clé de déchiffrement de n8n dans son conteneur (décision 1).
-6. **Hermes** : une clé API propre à Hermes, dans un espace à plafond mensuel (console Claude Platform). Il tourne maintenant sur l'API, sur le
-   même crédit que les artisans en production.
+6. **Hermes** : sa clé API propre est faite (tu l'as dit le 03/11). Les agents d'Oracle tournent sur ta clé API depuis le 03/11 après-midi.
 7. **Usage supplémentaire de l'abonnement** (payant) : seulement si tu veux continuer avant la remise à zéro de dimanche 08/11 vers 7 h.
-8. **Mise en production** : un push sur `main` déploie. Rien n'y part sans ton accord.
+8. **Mise en production** : un push sur `main` déploie. La page Entreprise refaite te sera montrée en aperçu avant.
 
 ## Incidents du jour, sans dégât sur la production
 
@@ -134,3 +139,6 @@ Tout ce qui se construisait sans toi est construit et vérifié. Le reste suit `
 - **13 h 58** : Orca s'est mis à jour seul. Les crochets ont bloqué les écritures pendant six minutes, puis tout est reparti.
 - **Toute la journée** : l'application Codex (OpenAI), ouverte sur le dépôt, laisse des verrous git orphelins. Je les retire avant chaque
   commit.
+- **17 h 25** : `scripts/attendre-deploiement.mjs` a annoncé « en ligne » alors que la production compilait encore. Il avait pris l'aperçu de
+  `nuit-0311`, qui porte le même commit et était déjà prêt. Le contrôle de la page l'a vu : la carte était absente en direct. Le script ne
+  regarde plus que la production (`target=production`). On a attendu le vrai déploiement, puis vérifié en direct.
