@@ -1280,3 +1280,9 @@
 {"id":"036-039","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T21:09:40Z","duree_s":2,"agent":"cx-tableau","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"036-036","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T21:14:56Z","duree_s":1,"agent":"cx-depts","executant":"codex","lignes":0,"dossier":"en-cours"}
 {"id":"036-036","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T21:14:59Z","duree_s":1,"agent":"cx-depts","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"036-038","verdict":"FAIL","ligne":"Error: Cannot find module 'C:\\Users\\benja\\Documents\\presti\\scripts\\reel-qa.mjs'","code":1,"date":"2026-11-03T21:30:27Z","duree_s":0,"agent":"cx-reel","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"036-038","verdict":"FAIL","ligne":"FAIL — double envoi app et n8n","code":1,"date":"2026-11-03T21:36:58Z","duree_s":0,"agent":"cx-reel","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"036-038","verdict":"FAIL","ligne":"FAIL — Studio envoie sans clic","code":1,"date":"2026-11-03T21:44:12Z","duree_s":0,"agent":"cx-reel","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"036-041","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T21:53:22Z","duree_s":3,"agent":"ag-tableau2","executant":"antigravity","lignes":3816,"dossier":"en-cours"}
+{"id":"036-041","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T21:53:50Z","duree_s":5,"agent":"ag-tableau2","executant":"antigravity","lignes":3816,"dossier":"fait"}
+{"id":"036-038","verdict":"FAIL","ligne":"FAIL — Studio envoie sans clic","code":1,"date":"2026-11-03T21:54:57Z","duree_s":0,"agent":"cx-reel2","executant":"codex","lignes":0,"dossier":"en-cours"}

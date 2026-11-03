@@ -430,3 +430,4 @@ async function principal() {
   return ko ? 1 : 0
 }
 try { process.exitCode = await principal() } finally { fs.rmSync(TMP, { recursive: true, force: true }); fs.rmSync(CACHE, { recursive: true, force: true }) }
+await import('../lib/tableau/qa.mjs')

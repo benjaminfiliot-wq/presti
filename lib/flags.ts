@@ -337,7 +337,7 @@ export const FLAGS = {
    *  dans le DOM, route 404. On colle 0194, PUIS on lève (sans ses colonnes, la route répond « indisponible »). */
   boiteAgents: true,
   /** 03/11/2026 — tâche 036-039 (Antigravity) : le vrai tableau de bord de l'artisan, route /tableau-de-bord. Baissé : 404, rien dans le DOM. */
-  tableauComplet: false,
+  tableauComplet: true,
 } as const
 
 export type Flag = keyof typeof FLAGS
