@@ -6,6 +6,20 @@ est `outillage/OUTILLAGE.md`.
 
 ## En bref
 
+**Vers 23 h 30 : état au moment de l'arrêt**
+- **En ligne** : les six autres départements (`bd06225`), leurs vrais événements, les jours fériés par une API publique gratuite, et les sept
+  départements du compte payant en ombre. Le centre d'aide est refait (`8c32421`) et le registre RGPD à jour (§ 23 ter). L'identifiant
+  « Resend (Presti) » est dans n8n.
+- **Retiré** : le nouveau tableau de bord (036-039 par Codex, 036-041 par Antigravity), jugé « absolument horrible ». Son drapeau
+  `tableauComplet` est baissé (`/tableau-de-bord` répond 404), et la porte revient à `/dashboard` (`7decad6`). Le code reste derrière le
+  drapeau, « on le fera plus tard ».
+- **Pas prêt : le palier réel (036-038, Codex, deux passes, FAIL)**.
+  - Six contrôles échouent : types de Signature, impayé sans opt-in, marque, mention IA, essais n8n, export.
+  - Ses changements partiels de `app/api/leads/route.ts` et `app/api/cron/relances/route.ts` sont **dans l'arbre de travail, non commités** :
+    ne pas les commiter sans relecture.
+  - Aucun compte n'est en réel.
+- **Plus de clé API Anthropic pour construire** (Benj) : Codex et Antigravity seulement.
+
 **Vers 22 h : les comptes payants en ombre (Benj : « tous les payants »)**
 - En base, il n'y a qu'**un seul compte payant** : un Signature, en essai jusqu'au 13/11. Les deux autres comptes sont gratuits ; les comptes
   de démonstration et le fondateur sont exclus.
