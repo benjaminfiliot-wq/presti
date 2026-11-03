@@ -1,0 +1,864 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "tache": "036-004",
+  "source": "plans/011-cadrage-01-11/p6-signature/premiere-reponse.md, ligne 036-004 et § 3.3",
+  "titre": "presti-dep-suivi@1 — le département Suivi et relances, et lib-controler-conflit@1",
+  "regle": "Hors contrat = rejet (statut « rejete »), une ligne de journal, rien ne part. Toute requête filtre sur artisan_id (« Supabase account » passe outre la RLS).",
+  "entree": {
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nom_artisan",
+        "offre",
+        "capacites",
+        "pilote",
+        "parties_depuis_24h",
+        "plafond_jour",
+        "interrupteur_general",
+        "interrupteur_departement",
+        "pause_generale",
+        "mots_escalade_artisan",
+        "fournisseurs",
+        "horaires",
+        "paliers_conversation_jours",
+        "paliers_devis_jours",
+        "jour_du_lot",
+        "ton",
+        "signature",
+        "interet"
+      ],
+      "properties": {
+        "nom_artisan": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 70,
+          "pattern": "^[^@]*$"
+        },
+        "offre": {
+          "enum": [
+            "studio",
+            "signature",
+            "essentiel",
+            "essai"
+          ]
+        },
+        "capacites": {
+          "type": "array",
+          "maxItems": 60,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z_.]{2,40}$"
+          }
+        },
+        "pilote": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "drapeau",
+            "actif",
+            "types"
+          ],
+          "properties": {
+            "drapeau": {
+              "type": "boolean"
+            },
+            "actif": {
+              "type": "boolean"
+            },
+            "types": {
+              "type": "object"
+            }
+          }
+        },
+        "parties_depuis_24h": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "plafond_jour": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "interrupteur_general": {
+          "type": "boolean"
+        },
+        "interrupteur_departement": {
+          "type": "boolean"
+        },
+        "pause_generale": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "mots_escalade_artisan": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "string",
+            "maxLength": 60
+          }
+        },
+        "fournisseurs": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "string",
+            "maxLength": 60
+          }
+        },
+        "horaires": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "jours_permis",
+            "heures_permises"
+          ],
+          "properties": {
+            "jours_permis": {
+              "type": "array",
+              "maxItems": 7,
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              }
+            },
+            "heures_permises": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "debut",
+                "fin"
+              ],
+              "properties": {
+                "debut": {
+                  "type": "string",
+                  "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                },
+                "fin": {
+                  "type": "string",
+                  "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                }
+              }
+            }
+          }
+        },
+        "paliers_conversation_jours": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 365
+          }
+        },
+        "paliers_devis_jours": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 365
+          }
+        },
+        "jour_du_lot": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+        },
+        "ton": {
+          "type": "string",
+          "maxLength": 300,
+          "pattern": "^[^@]*$"
+        },
+        "signature": {
+          "type": "string",
+          "maxLength": 120,
+          "pattern": "^[^@]*$"
+        },
+        "interet": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "poids",
+            "seuils"
+          ],
+          "properties": {
+            "poids": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "consulte",
+                "question_posee",
+                "expire_bientot",
+                "relance_sans_reponse"
+              ],
+              "properties": {
+                "consulte": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "question_posee": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "expire_bientot": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "relance_sans_reponse": {
+                  "type": "integer",
+                  "minimum": -100,
+                  "maximum": 0
+                }
+              }
+            },
+            "seuils": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "chaud",
+                "tiede"
+              ],
+              "properties": {
+                "chaud": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
+                "tiede": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 99
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "donnees": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evenements",
+        "maintenant",
+        "cles_existantes"
+      ],
+      "properties": {
+        "evenements": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "artisan_id",
+              "type",
+              "cle",
+              "donnees"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "artisan_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "enum": [
+                  "relance_due"
+                ]
+              },
+              "cle": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "pattern": "^[A-Za-z0-9_:.-]+$"
+              },
+              "donnees": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "objet_type",
+                  "objet_id",
+                  "dossier_id",
+                  "statut",
+                  "depuis_le",
+                  "paliers_envoyes",
+                  "main_prise",
+                  "exclu",
+                  "carte",
+                  "ecartee_le",
+                  "stop",
+                  "historique",
+                  "messages_entrants",
+                  "canal",
+                  "destinataire",
+                  "faits",
+                  "signaux"
+                ],
+                "properties": {
+                  "objet_type": {
+                    "enum": [
+                      "devis",
+                      "conversation"
+                    ]
+                  },
+                  "objet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "dossier_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "statut": {
+                    "enum": [
+                      "envoye",
+                      "brouillon",
+                      "accepte",
+                      "refuse",
+                      "expire",
+                      "repondu",
+                      "nouveau",
+                      "en_discussion",
+                      "gagne",
+                      "perdu"
+                    ]
+                  },
+                  "depuis_le": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "paliers_envoyes": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 10
+                    }
+                  },
+                  "main_prise": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "exclu": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "carte": {
+                    "enum": [
+                      "aucune",
+                      "en_attente",
+                      "en_cours",
+                      null
+                    ]
+                  },
+                  "ecartee_le": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 40
+                  },
+                  "stop": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "historique": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "ok"
+                    ],
+                    "properties": {
+                      "ok": {
+                        "type": "boolean"
+                      },
+                      "erreur": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "ignorees": {
+                        "type": "array",
+                        "maxItems": 10,
+                        "items": {
+                          "type": "string",
+                          "maxLength": 40
+                        }
+                      },
+                      "traces": {
+                        "type": "array",
+                        "maxItems": 100,
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "chemin",
+                            "le"
+                          ],
+                          "properties": {
+                            "chemin": {
+                              "enum": [
+                                "assistant",
+                                "crm",
+                                "impayes",
+                                "conversation"
+                              ]
+                            },
+                            "le": {
+                              "type": "string",
+                              "maxLength": 40
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "messages_entrants": {
+                    "type": "array",
+                    "maxItems": 12,
+                    "items": {
+                      "type": "string",
+                      "maxLength": 600
+                    }
+                  },
+                  "canal": {
+                    "enum": [
+                      "email",
+                      "sms",
+                      "aucun"
+                    ]
+                  },
+                  "destinataire": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "opposition",
+                      "consentement_sms"
+                    ],
+                    "properties": {
+                      "opposition": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "consentement_sms": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "faits": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "numero",
+                      "objet",
+                      "client",
+                      "montant_ttc_centimes",
+                      "emis_le"
+                    ],
+                    "properties": {
+                      "numero": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "maxLength": 30,
+                        "pattern": "^[A-Z0-9-]+$"
+                      },
+                      "objet": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "maxLength": 120,
+                        "pattern": "^[^@{}]*$"
+                      },
+                      "client": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "maxLength": 70,
+                        "pattern": "^[^@]*$"
+                      },
+                      "montant_ttc_centimes": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": 0
+                      },
+                      "emis_le": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                      }
+                    }
+                  },
+                  "signaux": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "consulte",
+                      "question_posee",
+                      "expire_dans_jours",
+                      "relances_sans_reponse"
+                    ],
+                    "properties": {
+                      "consulte": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "question_posee": {
+                        "type": "boolean"
+                      },
+                      "expire_dans_jours": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": -3650,
+                        "maximum": 3650
+                      },
+                      "relances_sans_reponse": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 10
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "maintenant": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "cles_existantes": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "type": "string",
+            "maxLength": 80
+          }
+        }
+      }
+    }
+  },
+  "specialistes": {
+    "lib-controler-conflit@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "mots_escalade_artisan"
+        ],
+        "properties": {
+          "mots_escalade_artisan": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "string",
+              "maxLength": 60
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "objet_type",
+          "objet_id",
+          "dossier_id",
+          "statut",
+          "main_prise",
+          "exclu",
+          "carte",
+          "ecartee_le",
+          "historique",
+          "stop",
+          "messages_entrants",
+          "maintenant"
+        ],
+        "properties": {
+          "objet_type": {
+            "enum": [
+              "devis",
+              "conversation"
+            ]
+          },
+          "objet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dossier_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "statut": {
+            "enum": [
+              "envoye",
+              "brouillon",
+              "accepte",
+              "refuse",
+              "expire",
+              "repondu",
+              "nouveau",
+              "en_discussion",
+              "gagne",
+              "perdu"
+            ]
+          },
+          "main_prise": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "exclu": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "carte": {
+            "enum": [
+              "aucune",
+              "en_attente",
+              "en_cours",
+              null
+            ]
+          },
+          "ecartee_le": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 40
+          },
+          "historique": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ok"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "erreur": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "ignorees": {
+                "type": "array",
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "maxLength": 40
+                }
+              },
+              "traces": {
+                "type": "array",
+                "maxItems": 100,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "chemin",
+                    "le"
+                  ],
+                  "properties": {
+                    "chemin": {
+                      "enum": [
+                        "assistant",
+                        "crm",
+                        "impayes",
+                        "conversation"
+                      ]
+                    },
+                    "le": {
+                      "type": "string",
+                      "maxLength": 40
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "stop": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "messages_entrants": {
+            "type": "array",
+            "maxItems": 12,
+            "items": {
+              "type": "string",
+              "maxLength": 600
+            }
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "motifs": [
+        "lecture_manquante",
+        "dossier_conclu",
+        "client_en_discussion",
+        "main_prise",
+        "exclu",
+        "client_sensible",
+        "deja_en_cours",
+        "ecartee_recemment",
+        "deja_relance",
+        "doublon_dossier"
+      ],
+      "motifs_qui_annulent": [
+        "dossier_conclu",
+        "client_en_discussion",
+        "main_prise",
+        "exclu",
+        "client_sensible"
+      ],
+      "constantes": {
+        "delai_registre_jours": 3,
+        "refus_recent_jours": 7,
+        "chemins": [
+          "assistant",
+          "crm",
+          "impayes",
+          "conversation"
+        ]
+      }
+    }
+  },
+  "cadences": {
+    "conversation_jours": [
+      2,
+      5,
+      10
+    ],
+    "devis_jours": [
+      7
+    ],
+    "source_devis": "lib/crm/assistants.ts:108 (« devis envoyé sans réponse depuis plus de 7 jours »)"
+  },
+  "interet": {
+    "defaut": {
+      "poids": {
+        "consulte": 40,
+        "question_posee": 30,
+        "expire_bientot": 10,
+        "relance_sans_reponse": -10
+      },
+      "seuils": {
+        "chaud": 60,
+        "tiede": 30
+      }
+    },
+    "regle": "note = somme des poids des signaux présents (consulté, question posée, expire dans 7 jours ou moins) + (poids négatif × relances sans réponse), bornée de 0 à 100 ; tranche chaud / tiède / froid par seuils. Calculée par le CODE, jamais par un modèle ; sert à ORDONNER la carte de lot, jamais à décider d'un envoi."
+  },
+  "lectures": {
+    "relances dues (devis envoyés, conversations répondues)": "GET devis?select=id,numero,objet,client_nom,total_ttc,statut,envoye_le,validite_jours,lead_id&artisan_id=eq.<compte>&statut=eq.envoye&limit=200",
+    "conversations répondues": "GET leads?select=id,statut,prise_en_main&artisan_id=eq.<compte>&statut=eq.repondu&limit=200",
+    "relances planifiées": "GET relances?select=id,lead_id,rang,planifiee_le,envoyee&envoyee=eq.false&lead_id=in.(<conversations du compte>)&limit=200",
+    "registre : actions de l’assistant": "GET assistant_actions?select=objet_id,maj_le&artisan_id=eq.<compte>&outil=in.(relancer_devis,relancer_facture)&statut=eq.executee&objet_id=in.(<devis du dossier>)&limit=100",
+    "registre : rappels du CRM": "GET crm_rappels?select=devis_id,envoye_le&artisan_id=eq.<compte>&devis_id=in.(<devis du dossier>)&envoye_le=not.is.null&limit=100",
+    "registre : relances d’impayés": "GET relances_impayes?select=facture_id,envoyee_le&artisan_id=eq.<compte>&facture_id=in.(<factures du dossier>)&envoyee_le=not.is.null&limit=100",
+    "registre : relances de conversation": "GET messages?select=lead_id,sent_at,etat&lead_id=in.(<conversations du compte>)&type=eq.relance&sens=eq.out&limit=100",
+    "cartes ouvertes et refus récents": "GET assistant_actions?select=outil,objet_id,statut,maj_le&artisan_id=eq.<compte>&outil=eq.relancer_devis&statut=in.(en_attente,en_cours,refusee)&limit=200",
+    "« Ne plus relancer »": "GET relances_exclusions?select=cible_id&artisan_id=eq.<compte>&limit=500",
+    "derniers messages du client (une conversation)": "GET messages?select=contenu&lead_id=eq.<conversation du compte>&sens=eq.in&order=sent_at.desc&limit=5"
+  },
+  "registre": {
+    "devis": {
+      "table": "assistant_actions",
+      "lu_par": "historiqueRelances : assistant_actions.select('maj_le').eq('artisan_id').in('outil', ['relancer_devis','relancer_facture']).eq('statut','executee').in('objet_id', devis du dossier)",
+      "colonnes": [
+        "artisan_id",
+        "conversation_id",
+        "tour",
+        "outil",
+        "mode",
+        "statut",
+        "titre",
+        "entrees",
+        "apercu",
+        "objet_type",
+        "objet_id"
+      ],
+      "maj_le": "défaut now() à l’écriture"
+    },
+    "conversation": {
+      "table": "messages",
+      "lu_par": "historiqueRelances : messages.select('sent_at, etat').eq('lead_id').eq('type','relance').eq('sens','out') (hors etat proposition ou rejete)",
+      "colonnes": [
+        "lead_id",
+        "sens",
+        "type",
+        "contenu"
+      ],
+      "sent_at": "défaut now() à l’écriture"
+    }
+  },
+  "carte_de_lot": {
+    "format": "lib/assistant/cartes.ts:366 (apercuLotRelances : retenus {numero, client, montant_ttc, envoye_le, message}, exclus {numero, client, motif}, critère de l’ordre)",
+    "maximum": 20,
+    "jour": "lundi (config.jour_du_lot, Europe/Paris)"
+  },
+  "sortie": {
+    "statut": [
+      "ok",
+      "rien_a_faire",
+      "rejete",
+      "erreur"
+    ],
+    "issues": [
+      "prepare",
+      "part_seul",
+      "attente_lot",
+      "reste_du",
+      "annule",
+      "rien"
+    ]
+  },
+  "studio_signature": {
+    "studio": "tout en carte : une carte par conversation, UNE carte de lot le lundi pour les devis ; jamais une ligne du pilote ni un envoi",
+    "signature": "conversation : part seul si relances.auto ; devis : file du pilote si assistant.pilote, drapeau, pilote actif, type relance_devis activé, plafond ; sinon carte de lot du lundi"
+  }
+}

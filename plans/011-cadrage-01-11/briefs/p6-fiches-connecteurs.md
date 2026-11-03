@@ -39,6 +39,10 @@ Test hors ligne qui le prouvera : <ce que le juge vérifiera>
 Points à vérifier par Claude Code : <ce que la documentation ne dit pas clairement>
 ```
 
+**Reprise** (03/11, 14 h 10) : une première passe a écrit Google Agenda, Outlook Agenda, OneDrive, Telegram et Slack. Une fiche déjà présente
+dans le dossier de sortie reste telle quelle. Tu écris les suivantes dans l'ordre de la liste, autant que la passe le permet, puis tu mets
+`INDEX.md` à jour.
+
 **Sortie** : un fichier par outil, `plans/011-cadrage-01-11/p6-signature/outillage/connecteurs/<outil-en-minuscules>.md`. Puis un index
 `plans/011-cadrage-01-11/p6-signature/outillage/connecteurs/INDEX.md`, une ligne par outil : nœud, coût, quotas, voie d'entrée.
 

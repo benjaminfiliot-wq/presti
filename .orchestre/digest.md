@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-11-03T11:58:16Z
+# Digest — 2026-11-03T13:09:48Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 174 tâche(s) PASS, 279382 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
-**État** — file : 62 · en cours : 3 · faites : 446 · refusées : 17
+**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 177 tâche(s) PASS, 319116 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
+**État** — file : 62 · en cours : 4 · faites : 449 · refusées : 17
 
 ## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -19,13 +19,14 @@
 - 4 question(s) en attente : `028-008` — `node scripts/orchestre.mjs repondre 028-008 <n>`
 - 4 question(s) en attente : `028-014` — `node scripts/orchestre.mjs repondre 028-014 <n>`
 - 4 question(s) en attente : `reparation-C-juges-perimes` — `node scripts/orchestre.mjs repondre reparation-C-juges-perimes <n>`
-- sauvegarde vieille de 555 h — `node scripts/instantane-quotidien.mjs --pousser`
+- sauvegarde vieille de 556 h — `node scripts/instantane-quotidien.mjs --pousser`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 036-004 | feature | en-cours | claude-code | — | depuis 2026-11-03T11:02:00Z · Prompt 6, lot 4 : `presti-dep-suivi` (relances de conversation et de devis, carte de lot du lundi, note d'intérêt calculée par le code), `lib-controler-conflit` (déjà en cours, déjà relancé, client sensible), et le registre commun qui compte aussi les envois de n8n — INACTIFS, en simulation, avec les pas 1 à 3 de la migration du cron des relances |
-| 036-008 | feature | en-cours | claude-code | — | depuis 2026-11-03T11:57:44Z · Prompt 6, lot 8 : `presti-dep-operations` — créneaux libres LUS dans l'agenda (jamais inventés), rappel de la veille, gardien du stock (seuil bas → commande fournisseur préparée), import contrôlé d'un export — avec `lib-agenda-creneaux` et `lib-synchroniser-outil` épinglés, INACTIFS, en simulation ; aucun rendez-vous posé seul (décision 5) |
-| 036-009 | feature | en-cours | claude-code | — | depuis 2026-11-03T11:58:15Z · Prompt 6, lot 9 : les fiches connecteurs du § 0.4 (Gmail, Outlook, agendas, Drive, Sheets, fiche Google, WhatsApp, Telegram, SMS, Stripe de l'artisan), le code « Connecter / Retirer » (OAuth avec état et PKCE, jeton chiffré au format secretBox pour l'app et pour n8n) derrière le drapeau `connexions` BAISSÉ, et la demande de vérification Google rédigée, non envoyée |
+| 036-013 | feature | en-cours | claude-code | — | depuis 2026-11-03T12:49:04Z · Prompt 6, outillage, lot 1 : les gabarits OUTILLÉS du département Accueil et réponse des artisans (Studio, Signature), avec les vrais nœuds de leurs outils (Gmail, Outlook, IMAP et SMTP, WhatsApp, Telegram, Facebook et Instagram par l'API Graph, Facebook Lead Ads lu par l'API, e-mails des plateformes de devis), un agent IA par spécialiste (Claude, parseur structuré, outils de lecture), la porte « simulation » devant chaque effet — inactifs, sans identifiant, prêts à être copiés pour chaque client |
+| 036-014 | feature | en-cours | claude-code | — | depuis 2026-11-03T12:49:34Z · Prompt 6, outillage, lot 2 : les gabarits OUTILLÉS des départements Devis, Suivi et relances, Facturation et encaissement des artisans, avec les vrais nœuds de leurs outils (Gmail, Outlook, SMTP, WhatsApp, Telegram, Twilio, Google Drive et OneDrive, Google Sheets et Excel, Stripe en lecture, signature Yousign ou DocuSign par l'API), un agent IA par spécialiste (Claude, parseur, outils de lecture), montants par le code seul, porte « simulation » devant chaque effet — inactifs, sans identifiant |
+| 036-015 | feature | en-cours | claude-code | — | depuis 2026-11-03T12:50:02Z · Prompt 6, outillage, lot 3 : les gabarits OUTILLÉS des départements Après-chantier et réputation, Opérations (agenda, chantiers, stock) et Direction des artisans, avec les vrais nœuds de leurs outils (fiche Google Business Profile, Google Agenda et Outlook, Google Drive et OneDrive, Google Sheets et Excel, Gmail, Outlook, WhatsApp, Telegram, Twilio, Slack, Teams), un agent IA par spécialiste (Claude, parseur, outils de lecture), porte « simulation » devant chaque effet — inactifs, sans identifiant |
+| 036-016 | feature | en-cours | claude-code | — | depuis 2026-11-03T12:51:41Z · Prompt 6, outillage, lot 4 (prompt 2, Entreprise) : le catalogue de gabarits OUTILLÉS de l'Entreprise sur mesure, première moitié — Accueil et qualification, Leads et acquisition, Ventes et CRM, Marketing et réseaux — avec les vrais nœuds (Gmail, Outlook, IMAP, WhatsApp, Facebook Lead Ads et Instagram par l'API Graph, LinkedIn, TikTok par l'API, Typeform, Jotform, Tally, Calendly, Cal.com par l'API, Brevo, Mailchimp, ActiveCampaign, Lemlist, ManyChat par l'API, HubSpot, Pipedrive, Salesforce, Zoho CRM, Odoo, Airtable, Notion, monday, Yousign ou DocuSign par l'API, Slack et Teams avec validation d'équipe), agents IA (Claude, parseur, outils de lecture), porte « simulation » — inactifs, sans identifiant |
 | 035-013 | audit | file | claude-code | — | Prompt 5, tâche 035-013 de la première réponse — un audit offensif, distinct de l'auteur, des tâches 035-003 à 035-007 (le socle lib-*, les deux chaînes, la démonstration ent-exemple-*) avant toute publication : isolation entre organisations, porte de simulation, liste « jamais en automatique », idempotence au rejeu, coûts bornés, aucune donnée réelle ni secret dans les exports ; par les agents presti-audit-attaque et presti-gestion-fiabilite ; verdict TIENT ou NE TIENT PAS |
 | 029-001 | test | file | codex-1 | — | L'assistant de gestion est vérifié en conditions réelles : la suite assistant-qa passe ses parties L (comptes de test sur la base réelle) et M (vrai modèle), puis aucun compte de test ne reste en base |
 | 026-120 | feature | file | antigravity | — | Remplir le cadre des panneaux de la station : chaque salle cliquée ouvre son panneau (Recettes et Trésorerie, Usine à sites, Atelier des maquettes, Salle de réunion, Salle des envois avec les gestes du fondateur, Standard, Rédaction, Salle des machines ; les quatre autres ouvrent la fiche de leurs agents en attendant 026-164), et chaque agent sa fiche (tâches récentes, coût par tâche, consignes, boîtes, réponses, Pause), lus par la route de la station seulement pendant qu'ils sont ouverts, sourcés, sans aucun bouton d'envoi, à 390 px comme à 1440 px |
@@ -88,6 +89,9 @@
 | 036-010 | feature | file | claude-code | — | Prompt 6, lot 10 : les maquettes statiques des quatre écrans du § 1.3 — centre de commande (barre du jour, page du matin, « À valider » à feu vert par ligne et pour tout le lot, exceptions préparées), « Ce que vos assistants ont fait » (colonnes, « fait : … », coût IA), « Connexions », « Mes départements » (Studio verrouillé par l'offre) — en 390 et 1440 px, critiquées avant d'être rendues |
 | 036-011 | feature | file | claude-code | — | Prompt 6, lot 11 : les quatre écrans des maquettes validées par 036-010, en code, derrière le drapeau `systemeAgents` BAISSÉ (rien dans le DOM, routes en 404), lus depuis Supabase en lecture seule, avec le double chemin et « une question à la fois » ; verrou d'offre par peut() seulement |
 | 036-012 | feature | file | claude-code | — | Prompt 6, lot 12 : tous les juges n8n inscrits au lanceur, la suite transverse des tests obligatoires du § 1.7, le runbook (couper, rejouer, reprendre), le plan de migration des automatisations codées en cinq pas, la base de départ des KPIs (requêtes en lecture), et le dossier du mode ombre prêt pour un compte volontaire — rien de publié, rien d'appliqué |
+| 036-009 | feature | fait | claude-code | PASS | 2026-11-03T13:09:47Z · 55s · 2618 l. |
+| 036-008 | feature | fait | claude-code | PASS | 2026-11-03T13:08:47Z · 203s · 11263 l. |
+| 036-004 | feature | fait | claude-code | PASS | 2026-11-03T12:24:31Z · 616s · 25853 l. |
 | 036-007 | feature | fait | claude-code | PASS | 2026-11-03T11:54:38Z · 180s · 8436 l. |
 | 036-006 | feature | fait | claude-code | PASS | 2026-11-03T11:45:45Z · 86s · 0 l. |
 | 036-005 | feature | fait | claude-code | PASS | 2026-11-03T11:41:09Z · 52s · 6762 l. |
@@ -119,9 +123,5 @@
 | 032-030 | feature | fait | claude-code | PASS | 2026-11-02T20:11:28Z · 18s · 2899 l. |
 | 032-029 | audit | fait | claude-code | PASS | 2026-11-02T20:06:41Z · 0s · 13413 l. |
 | 032-026 | feature | fait | claude-code | PASS | 2026-11-02T20:06:38Z · 91s · 2785 l. |
-| 032-028 | audit | fait | claude-code | PASS | 2026-11-02T19:47:50Z · 0s · 4512 l. |
-| 032-027 | contenu | fait | claude-code | PASS | 2026-11-02T19:46:11Z · 0s · 4744 l. |
-| 032-025 | feature | fait | claude-code | PASS | 2026-11-02T19:46:10Z · 2s · 3857 l. |
-| 032-024 | feature | fait | claude-code | PASS | 2026-11-02T19:46:06Z · 6s · 2059 l. |
 
-… 428 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 432 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

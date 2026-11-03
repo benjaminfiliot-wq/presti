@@ -1,0 +1,749 @@
+{
+  "id": "v0I7822xbpDICXd8",
+  "name": "presti-banc-operations",
+  "active": false,
+  "isArchived": false,
+  "versionId": "1faadee3-0be1-4733-bc5d-090d18d2cbf8",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 23,
+  "createdAt": "2026-11-03T12:12:10.406Z",
+  "updatedAt": "2026-11-03T12:12:10.406Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 180,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "presti-banc-operations (036-008) : banc d'essai des Opérations, dix cas fictifs, jamais publié. Inactif.",
+  "canExecute": true,
+  "connections": {
+    "Banc (jamais publié)": {
+      "main": [
+        [
+          {
+            "node": "Cas : rappel de la veille",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : stock sous le seuil",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : rendez-vous sans clic (Signature)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : rendez-vous après le clic",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : interrupteur coupé",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : créneaux libres",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : agenda illisible",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : semaine pleine",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : aperçu de l’import",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : écriture sans aperçu validé",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : rappel de la veille": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-operations (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-operations (1)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : stock sous le seuil": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-operations (2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-operations (2)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : rendez-vous sans clic (Signature)": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-operations (3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-operations (3)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : rendez-vous après le clic": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-operations (4)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-operations (4)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : interrupteur coupé": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-operations (5)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-operations (5)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : créneaux libres": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-agenda-creneaux (6)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-agenda-creneaux (6)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : agenda illisible": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-agenda-creneaux (7)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-agenda-creneaux (7)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : semaine pleine": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-agenda-creneaux (8)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-agenda-creneaux (8)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : aperçu de l’import": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-synchroniser-outil (9)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-synchroniser-outil (9)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : écriture sans aperçu validé": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-synchroniser-outil (10)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-synchroniser-outil (10)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "64189855-d62a-4a8c-b7f5-8fe7ae454310",
+      "name": "Banc (jamais publié)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "5c10d43a-1f96-4bc4-ba45-8cf85a00b5c8",
+      "name": "Cas : rappel de la veille",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -640
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Six rendez-vous : deux de demain avec canal consenti, un sans consentement, une opposition, un autre jour, un sans canal.\nconst cas = {\"contrat\":\"presti-dep-operations@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000901\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:rappel\",\"trace\":{\"execution_parent\":\"Exemple. essai : operations\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"nom_artisan\":\"Exemple. Bâti-Démo\",\"max_creneaux\":3,\"duree_min\":60,\"marge_min\":120,\"age_max_agenda_min\":60,\"horaires\":{\"jours_permis\":[1,2,3,4,5,6],\"heures_permises\":{\"debut\":\"08:00\",\"fin\":\"18:00\"}},\"pilote\":{\"drapeau\":true,\"actif\":true,\"types\":{\"reponse_prospect\":true,\"relance_devis\":true}},\"max_lignes\":200,\"max_pages\":5,\"cibles_signees\":[\"mes_chiffres\"]},\"donnees\":{\"evenements\":[],\"genre\":\"rappel\",\"maintenant\":\"2026-11-03T16:00:00.000Z\",\"rappel\":{\"rendez_vous\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000911\",\"debut\":\"2026-11-04T13:30:00.000Z\",\"canal\":\"sms_lien\",\"consentement\":true,\"opposition\":false},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000912\",\"debut\":\"2026-11-04T08:00:00.000Z\",\"canal\":\"email\",\"consentement\":true,\"opposition\":false},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000913\",\"debut\":\"2026-11-04T13:30:00.000Z\",\"canal\":\"sms_lien\",\"consentement\":false,\"opposition\":false},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000914\",\"debut\":\"2026-11-04T13:30:00.000Z\",\"canal\":\"sms_lien\",\"consentement\":true,\"opposition\":true},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000915\",\"debut\":\"2026-11-06T08:00:00.000Z\",\"canal\":\"sms_lien\",\"consentement\":true,\"opposition\":false},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000916\",\"debut\":\"2026-11-04T13:30:00.000Z\",\"canal\":\"aucun\",\"consentement\":true,\"opposition\":false}],\"cles_existantes\":[]}}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "d25da071-ea8e-4b29-acbf-6863b5ff96bd",
+      "name": "Appeler presti-dep-operations (1)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -640
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "74bDhTw6cEBzPORZ"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "7085f826-93b5-4456-a5a1-4996eca19f3c",
+      "name": "Bilan du banc",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Bilan agrégé, sans donnée : par contrat, le nombre de sorties par statut. Un effet fait en simulation, ou un appel en erreur, compte en défaut.\nconst bilan = {};\nlet defauts = 0;\nfor (const { json: s } of $input.all()) {\n  const c = typeof s.contrat === 'string' ? s.contrat : 'appel en erreur';\n  bilan[c] = bilan[c] || {};\n  const st = typeof s.statut === 'string' ? s.statut : 'erreur';\n  bilan[c][st] = (bilan[c][st] || 0) + 1;\n  if (!s.contrat || (s.simulation === true && Array.isArray(s.effets_faits) && s.effets_faits.length)) defauts++;\n}\nreturn [{ json: { bilan: bilan, defauts: defauts } }];"
+      }
+    },
+    {
+      "id": "04bf02ed-4a1a-4eb3-aa89-c0ec8e850973",
+      "name": "Cas : stock sous le seuil",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -480
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Cinq articles : trois sous le seuil, dont une commande déjà ouverte ; une commande prête, une sans fournisseur, une sans quantité.\nconst cas = {\"contrat\":\"presti-dep-operations@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000901\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:stock\",\"trace\":{\"execution_parent\":\"Exemple. essai : operations\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"nom_artisan\":\"Exemple. Bâti-Démo\",\"max_creneaux\":3,\"duree_min\":60,\"marge_min\":120,\"age_max_agenda_min\":60,\"horaires\":{\"jours_permis\":[1,2,3,4,5,6],\"heures_permises\":{\"debut\":\"08:00\",\"fin\":\"18:00\"}},\"pilote\":{\"drapeau\":true,\"actif\":true,\"types\":{\"reponse_prospect\":true,\"relance_devis\":true}},\"max_lignes\":200,\"max_pages\":5,\"cibles_signees\":[\"mes_chiffres\"]},\"donnees\":{\"evenements\":[],\"genre\":\"stock\",\"maintenant\":\"2026-11-03T08:00:00.000Z\",\"stock\":{\"source\":{\"lue\":true,\"le\":\"2026-11-03\"},\"articles\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000921\",\"nom\":\"Exemple. joint 40 mm\",\"quantite\":2,\"seuil\":5,\"unite\":\"pièce\",\"fournisseur_id\":\"00000000-0000-4000-8000-000000000931\",\"qte_reappro\":20},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000922\",\"nom\":\"Exemple. vis 4x40\",\"quantite\":5,\"seuil\":5,\"unite\":\"boîte\",\"fournisseur_id\":\"00000000-0000-4000-8000-000000000931\",\"qte_reappro\":null},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000923\",\"nom\":\"Exemple. mastic\",\"quantite\":1,\"seuil\":3,\"unite\":\"tube\",\"fournisseur_id\":null,\"qte_reappro\":6},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000924\",\"nom\":\"Exemple. câble 2,5\",\"quantite\":40,\"seuil\":10,\"unite\":\"m\",\"fournisseur_id\":\"00000000-0000-4000-8000-000000000931\",\"qte_reappro\":100},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000925\",\"nom\":\"Exemple. colle\",\"quantite\":0,\"seuil\":2,\"unite\":\"pot\",\"fournisseur_id\":\"00000000-0000-4000-8000-000000000931\",\"qte_reappro\":4},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000926\",\"nom\":\"Exemple. sans seuil\",\"quantite\":0,\"seuil\":0,\"unite\":\"pièce\",\"fournisseur_id\":null,\"qte_reappro\":null}],\"fournisseurs\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"id\":\"00000000-0000-4000-8000-000000000931\",\"nom\":\"Exemple. Négoce Dupont\",\"delai_jours\":2}],\"prix\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"article_id\":\"00000000-0000-4000-8000-000000000921\",\"fournisseur_id\":\"00000000-0000-4000-8000-000000000931\",\"prix_ht_centimes\":185,\"vu_le\":\"2026-10-20\",\"source\":\"saisie\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"article_id\":\"00000000-0000-4000-8000-000000000922\",\"fournisseur_id\":\"00000000-0000-4000-8000-000000000931\",\"prix_ht_centimes\":1290,\"vu_le\":\"2026-08-01\",\"source\":\"recherche_ia\"}],\"commandes_ouvertes\":[\"00000000-0000-4000-8000-000000000925\"],\"cles_existantes\":[]}}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "59dbaf56-9300-4148-a12e-06def76cfb5b",
+      "name": "Appeler presti-dep-operations (2)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -480
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "74bDhTw6cEBzPORZ"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "27810904-f446-4d36-8558-a1cde68b2b09",
+      "name": "Cas : rendez-vous sans clic (Signature)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Signature, pilote actif, aucune validation de l’artisan : le rendez-vous ne se pose pas.\nconst cas = {\"contrat\":\"presti-dep-operations@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000901\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:poser-sans-clic\",\"trace\":{\"execution_parent\":\"Exemple. essai : operations\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"nom_artisan\":\"Exemple. Bâti-Démo\",\"max_creneaux\":3,\"duree_min\":60,\"marge_min\":120,\"age_max_agenda_min\":60,\"horaires\":{\"jours_permis\":[1,2,3,4,5,6],\"heures_permises\":{\"debut\":\"08:00\",\"fin\":\"18:00\"}},\"pilote\":{\"drapeau\":true,\"actif\":true,\"types\":{\"reponse_prospect\":true,\"relance_devis\":true}},\"max_lignes\":200,\"max_pages\":5,\"cibles_signees\":[\"mes_chiffres\"]},\"donnees\":{\"evenements\":[],\"genre\":\"poser\",\"maintenant\":\"2026-11-03T09:31:00.000Z\",\"poser\":{\"carte\":{\"cle\":\"cr:exemple:rdv:1:2026-11-03\",\"proposee_le\":\"2026-11-03T08:01:00.000Z\",\"creneaux\":[{\"debut\":\"2026-11-03T12:00:00.000Z\",\"fin\":\"2026-11-03T13:00:00.000Z\"},{\"debut\":\"2026-11-03T14:00:00.000Z\",\"fin\":\"2026-11-03T15:00:00.000Z\"},{\"debut\":\"2026-11-04T11:00:00.000Z\",\"fin\":\"2026-11-04T12:00:00.000Z\"}]},\"validation\":null,\"agenda\":{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"outil\":\"google_agenda\",\"lue\":true,\"lu_le\":\"2026-11-03T09:29:00.000Z\",\"couvre\":{\"du\":\"2026-11-03\",\"au\":\"2026-11-09\"},\"occupe\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-03T10:00:00.000Z\",\"fin\":\"2026-11-03T11:30:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-03T13:00:00.000Z\",\"fin\":\"2026-11-03T14:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-04T07:00:00.000Z\",\"fin\":\"2026-11-04T11:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-05T07:00:00.000Z\",\"fin\":\"2026-11-05T17:00:00.000Z\"}]},\"cles_existantes\":[]}}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "a7583bfc-3d0c-4901-8935-1e727519686e",
+      "name": "Appeler presti-dep-operations (3)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -320
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "74bDhTw6cEBzPORZ"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "9c21139f-51cb-48ed-bf4c-556b42bf0ca4",
+      "name": "Cas : rendez-vous après le clic",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. L’artisan a cliqué sur l’un des créneaux proposés, encore libre : la pose est PRÉVUE, jamais faite.\nconst cas = {\"contrat\":\"presti-dep-operations@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000901\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:poser-clic\",\"trace\":{\"execution_parent\":\"Exemple. essai : operations\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"nom_artisan\":\"Exemple. Bâti-Démo\",\"max_creneaux\":3,\"duree_min\":60,\"marge_min\":120,\"age_max_agenda_min\":60,\"horaires\":{\"jours_permis\":[1,2,3,4,5,6],\"heures_permises\":{\"debut\":\"08:00\",\"fin\":\"18:00\"}},\"pilote\":{\"drapeau\":true,\"actif\":true,\"types\":{\"reponse_prospect\":true,\"relance_devis\":true}},\"max_lignes\":200,\"max_pages\":5,\"cibles_signees\":[\"mes_chiffres\"]},\"donnees\":{\"evenements\":[],\"genre\":\"poser\",\"maintenant\":\"2026-11-03T09:31:00.000Z\",\"poser\":{\"carte\":{\"cle\":\"cr:exemple:rdv:1:2026-11-03\",\"proposee_le\":\"2026-11-03T08:01:00.000Z\",\"creneaux\":[{\"debut\":\"2026-11-03T12:00:00.000Z\",\"fin\":\"2026-11-03T13:00:00.000Z\"},{\"debut\":\"2026-11-03T14:00:00.000Z\",\"fin\":\"2026-11-03T15:00:00.000Z\"},{\"debut\":\"2026-11-04T11:00:00.000Z\",\"fin\":\"2026-11-04T12:00:00.000Z\"}]},\"validation\":{\"valide_par\":\"artisan\",\"valide_le\":\"2026-11-03T09:30:00.000Z\",\"creneau\":{\"debut\":\"2026-11-03T14:00:00.000Z\",\"fin\":\"2026-11-03T15:00:00.000Z\"}},\"agenda\":{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"outil\":\"google_agenda\",\"lue\":true,\"lu_le\":\"2026-11-03T09:29:00.000Z\",\"couvre\":{\"du\":\"2026-11-03\",\"au\":\"2026-11-09\"},\"occupe\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-03T10:00:00.000Z\",\"fin\":\"2026-11-03T11:30:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-03T13:00:00.000Z\",\"fin\":\"2026-11-03T14:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-04T07:00:00.000Z\",\"fin\":\"2026-11-04T11:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-05T07:00:00.000Z\",\"fin\":\"2026-11-05T17:00:00.000Z\"}]},\"cles_existantes\":[]}}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "6588e0b4-3b07-4313-a70d-cef911db1eed",
+      "name": "Appeler presti-dep-operations (4)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "74bDhTw6cEBzPORZ"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "d821bc18-c997-4581-8f68-ded4b4fca584",
+      "name": "Cas : interrupteur coupé",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Le département est coupé : rien n’est appelé.\nconst cas = {\"contrat\":\"presti-dep-operations@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000901\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:coupe\",\"trace\":{\"execution_parent\":\"Exemple. essai : operations\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":false,\"nom_artisan\":\"Exemple. Bâti-Démo\",\"max_creneaux\":3,\"duree_min\":60,\"marge_min\":120,\"age_max_agenda_min\":60,\"horaires\":{\"jours_permis\":[1,2,3,4,5,6],\"heures_permises\":{\"debut\":\"08:00\",\"fin\":\"18:00\"}},\"pilote\":{\"drapeau\":true,\"actif\":true,\"types\":{\"reponse_prospect\":true,\"relance_devis\":true}},\"max_lignes\":200,\"max_pages\":5,\"cibles_signees\":[\"mes_chiffres\"]},\"donnees\":{\"evenements\":[],\"genre\":\"rappel\",\"maintenant\":\"2026-11-03T08:00:00.000Z\"}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "2cc1c6db-b854-464e-9523-bdee02d558a8",
+      "name": "Appeler presti-dep-operations (5)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "74bDhTw6cEBzPORZ"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "321e1ec4-5aac-4291-807b-6dea7ce29cc2",
+      "name": "Cas : créneaux libres",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Mardi après-midi, mercredi après-midi : trois créneaux lus dans l’agenda, deux par jour au plus.\nconst cas = {\"contrat\":\"lib-agenda-creneaux@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000901\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:creneaux\",\"trace\":{\"execution_parent\":\"Exemple. essai : operations\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"interrupteur_general\":true,\"interrupteur_departement\":true,\"max_creneaux\":3,\"duree_min\":60,\"marge_min\":120,\"age_max_agenda_min\":60,\"horaires\":{\"jours_permis\":[1,2,3,4,5,6],\"heures_permises\":{\"debut\":\"08:00\",\"fin\":\"18:00\"}}},\"donnees\":{\"maintenant\":\"2026-11-03T08:00:00.000Z\",\"fenetre\":{\"du\":\"2026-11-03\",\"au\":\"2026-11-09\"},\"agenda\":{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"outil\":\"google_agenda\",\"lue\":true,\"lu_le\":\"2026-11-03T07:50:00.000Z\",\"couvre\":{\"du\":\"2026-11-03\",\"au\":\"2026-11-09\"},\"occupe\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-03T10:00:00.000Z\",\"fin\":\"2026-11-03T11:30:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-03T13:00:00.000Z\",\"fin\":\"2026-11-03T14:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-04T07:00:00.000Z\",\"fin\":\"2026-11-04T11:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-05T07:00:00.000Z\",\"fin\":\"2026-11-05T17:00:00.000Z\"}]},\"deja_propose\":[],\"rendez_vous_ref\":\"exemple:rdv:1\"}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "c3fb45a2-3842-4398-ace7-ed0e65457fb8",
+      "name": "Appeler lib-agenda-creneaux (6)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "414xd7DQaRmEgoTs"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "2f454d56-4837-4add-b1b8-c983effc49f2",
+      "name": "Cas : agenda illisible",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. La lecture a échoué : aucun créneau, et la carte le dit.\nconst cas = {\"contrat\":\"lib-agenda-creneaux@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000901\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:agenda-illisible\",\"trace\":{\"execution_parent\":\"Exemple. essai : operations\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"interrupteur_general\":true,\"interrupteur_departement\":true,\"max_creneaux\":3,\"duree_min\":60,\"marge_min\":120,\"age_max_agenda_min\":60,\"horaires\":{\"jours_permis\":[1,2,3,4,5,6],\"heures_permises\":{\"debut\":\"08:00\",\"fin\":\"18:00\"}}},\"donnees\":{\"maintenant\":\"2026-11-03T08:00:00.000Z\",\"fenetre\":{\"du\":\"2026-11-03\",\"au\":\"2026-11-09\"},\"agenda\":{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"outil\":\"google_agenda\",\"lue\":false,\"lu_le\":null,\"couvre\":null,\"occupe\":[]},\"deja_propose\":[],\"rendez_vous_ref\":\"exemple:rdv:1\"}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "471ee9dd-d741-4c69-8c26-4ac17e8920fc",
+      "name": "Appeler lib-agenda-creneaux (7)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        320
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "414xd7DQaRmEgoTs"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "a43e7c31-98ba-4fdb-950b-69e6d43a1ef6",
+      "name": "Cas : semaine pleine",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        480
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Tout est occupé : aucun créneau libre, rien d’inventé.\nconst cas = {\"contrat\":\"lib-agenda-creneaux@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000901\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:semaine-pleine\",\"trace\":{\"execution_parent\":\"Exemple. essai : operations\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"interrupteur_general\":true,\"interrupteur_departement\":true,\"max_creneaux\":3,\"duree_min\":60,\"marge_min\":120,\"age_max_agenda_min\":60,\"horaires\":{\"jours_permis\":[1,2,3,4,5,6],\"heures_permises\":{\"debut\":\"08:00\",\"fin\":\"18:00\"}}},\"donnees\":{\"maintenant\":\"2026-11-03T08:00:00.000Z\",\"fenetre\":{\"du\":\"2026-11-03\",\"au\":\"2026-11-09\"},\"agenda\":{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"outil\":\"google_agenda\",\"lue\":true,\"lu_le\":\"2026-11-03T07:50:00.000Z\",\"couvre\":{\"du\":\"2026-11-03\",\"au\":\"2026-11-09\"},\"occupe\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"debut\":\"2026-11-03T00:00:00.000Z\",\"fin\":\"2026-11-10T00:00:00.000Z\"}]},\"deja_propose\":[],\"rendez_vous_ref\":\"exemple:rdv:1\"}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "777b2173-d52d-4128-b572-7a88e89fb27e",
+      "name": "Appeler lib-agenda-creneaux (8)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        480
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "414xd7DQaRmEgoTs"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "fb0bc349-4bfd-4a4e-be79-b3f2a728a90c",
+      "name": "Cas : aperçu de l’import",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        640
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Sept lignes : deux lues, une déclarée, une sans provenance, un doublon, une provenance vide, une déjà importée.\nconst cas = {\"contrat\":\"lib-synchroniser-outil@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000901\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:apercu\",\"trace\":{\"execution_parent\":\"Exemple. essai : operations\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"interrupteur_general\":true,\"interrupteur_departement\":true,\"max_lignes\":200,\"max_pages\":5,\"cibles_signees\":[\"mes_chiffres\"]},\"donnees\":{\"maintenant\":\"2026-11-03T08:00:00.000Z\",\"phase\":\"apercu\",\"export\":{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"outil\":\"tableur\",\"lu_le\":\"2026-11-03T07:00:00.000Z\",\"pagination\":{\"pages_lues\":2,\"derniere_page_vide\":true},\"lignes\":[{\"ref_externe\":\"exemple-1\",\"jour\":\"2026-10-11\",\"libelle\":\"Exemple. ligne 1\",\"montant_centimes\":10000,\"sens\":\"sortie\",\"provenance\":\"lu\",\"lu_dans\":\"tableur du client\",\"lu_le\":\"2026-11-02\"},{\"ref_externe\":\"exemple-2\",\"jour\":\"2026-10-12\",\"libelle\":\"Exemple. ligne 2\",\"montant_centimes\":20000,\"sens\":\"entree\",\"provenance\":\"lu\",\"lu_dans\":\"tableur du client\",\"lu_le\":\"2026-11-02\"},{\"ref_externe\":\"exemple-3\",\"jour\":\"2026-10-13\",\"libelle\":\"Exemple. ligne 3\",\"montant_centimes\":30000,\"sens\":\"sortie\",\"provenance\":\"declare\",\"lu_dans\":null,\"lu_le\":null,\"declare_par\":\"artisan\"},{\"ref_externe\":\"exemple-4\",\"jour\":\"2026-10-14\",\"libelle\":\"Exemple. ligne 4\",\"montant_centimes\":40000,\"sens\":\"entree\"},{\"ref_externe\":\"exemple-1\",\"jour\":\"2026-10-15\",\"libelle\":\"Exemple. ligne 5\",\"montant_centimes\":50000,\"sens\":\"sortie\",\"provenance\":\"lu\",\"lu_dans\":\"tableur du client\",\"lu_le\":\"2026-11-02\"},{\"ref_externe\":\"exemple-6\",\"jour\":\"2026-10-16\",\"libelle\":\"Exemple. ligne 6\",\"montant_centimes\":60000,\"sens\":\"entree\",\"provenance\":\"lu\",\"lu_dans\":\"   \",\"lu_le\":\"2026-11-02\"},{\"ref_externe\":\"exemple-7\",\"jour\":\"2026-10-17\",\"libelle\":\"Exemple. ligne 7\",\"montant_centimes\":70000,\"sens\":\"sortie\",\"provenance\":\"lu\",\"lu_dans\":\"tableur du client\",\"lu_le\":\"2026-11-02\"}]},\"apercu_valide\":null,\"cles_connues\":[\"imp:exemple-7\"]}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "7cf9121b-5e37-4d56-a89d-a06ed90df7c5",
+      "name": "Appeler lib-synchroniser-outil (9)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        640
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "znIxgrxNzUvGeanu"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "d3302a48-6130-43a6-a4e5-c0acfda92690",
+      "name": "Cas : écriture sans aperçu validé",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Phase « ecrire » sans validation de l’artisan : rien ne s’écrit.\nconst cas = {\"contrat\":\"lib-synchroniser-outil@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000901\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:ecrire-sans-apercu\",\"trace\":{\"execution_parent\":\"Exemple. essai : operations\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"interrupteur_general\":true,\"interrupteur_departement\":true,\"max_lignes\":200,\"max_pages\":5,\"cibles_signees\":[\"mes_chiffres\"]},\"donnees\":{\"maintenant\":\"2026-11-03T08:00:00.000Z\",\"phase\":\"ecrire\",\"export\":{\"artisan_id\":\"00000000-0000-4000-8000-000000000901\",\"outil\":\"tableur\",\"lu_le\":\"2026-11-03T07:00:00.000Z\",\"pagination\":{\"pages_lues\":2,\"derniere_page_vide\":true},\"lignes\":[{\"ref_externe\":\"exemple-1\",\"jour\":\"2026-10-11\",\"libelle\":\"Exemple. ligne 1\",\"montant_centimes\":10000,\"sens\":\"sortie\",\"provenance\":\"lu\",\"lu_dans\":\"tableur du client\",\"lu_le\":\"2026-11-02\"},{\"ref_externe\":\"exemple-2\",\"jour\":\"2026-10-12\",\"libelle\":\"Exemple. ligne 2\",\"montant_centimes\":20000,\"sens\":\"entree\",\"provenance\":\"lu\",\"lu_dans\":\"tableur du client\",\"lu_le\":\"2026-11-02\"},{\"ref_externe\":\"exemple-3\",\"jour\":\"2026-10-13\",\"libelle\":\"Exemple. ligne 3\",\"montant_centimes\":30000,\"sens\":\"sortie\",\"provenance\":\"declare\",\"lu_dans\":null,\"lu_le\":null,\"declare_par\":\"artisan\"},{\"ref_externe\":\"exemple-4\",\"jour\":\"2026-10-14\",\"libelle\":\"Exemple. ligne 4\",\"montant_centimes\":40000,\"sens\":\"entree\"},{\"ref_externe\":\"exemple-1\",\"jour\":\"2026-10-15\",\"libelle\":\"Exemple. ligne 5\",\"montant_centimes\":50000,\"sens\":\"sortie\",\"provenance\":\"lu\",\"lu_dans\":\"tableur du client\",\"lu_le\":\"2026-11-02\"},{\"ref_externe\":\"exemple-6\",\"jour\":\"2026-10-16\",\"libelle\":\"Exemple. ligne 6\",\"montant_centimes\":60000,\"sens\":\"entree\",\"provenance\":\"lu\",\"lu_dans\":\"   \",\"lu_le\":\"2026-11-02\"},{\"ref_externe\":\"exemple-7\",\"jour\":\"2026-10-17\",\"libelle\":\"Exemple. ligne 7\",\"montant_centimes\":70000,\"sens\":\"sortie\",\"provenance\":\"lu\",\"lu_dans\":\"tableur du client\",\"lu_le\":\"2026-11-02\"}]},\"apercu_valide\":null,\"cles_connues\":[\"imp:exemple-7\"]}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "1223325a-12e5-462e-8e53-9b312aa12069",
+      "name": "Appeler lib-synchroniser-outil (10)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        800
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "znIxgrxNzUvGeanu"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "37ddf330-d481-4b50-90c3-7b144c7f244f",
+      "name": "Sticky Note e3ad96a7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## presti-banc-operations (036-008)\nBanc d'essai des Opérations : dix cas fictifs (« Exemple. »), le seul appelant permis des enfants avec le chef.\nINACTIF, jamais publié, jamais planifié. Ne lit ni n'écrit rien en base, n'envoie rien, ne pose aucun rendez-vous.\nJuge : scripts/operations-n8n-qa.mjs",
+        "color": 4,
+        "width": 416,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-008), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

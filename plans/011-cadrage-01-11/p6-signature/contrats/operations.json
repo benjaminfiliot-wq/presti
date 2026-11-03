@@ -1,0 +1,1376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "tache": "036-008",
+  "source": "plans/011-cadrage-01-11/p6-signature/premiere-reponse.md, ligne 036-008 du § 4 et décision 5 ; lib/pilote/regles.ts:53-63 ; lib/sms/plage.ts:7-8 ; app/api/inventaire/route.ts:70 ; app/api/demandes/import/route.ts (aperçu puis confirmation)",
+  "regle": "Hors contrat = rejet (statut « rejete »), une ligne de journal, rien ne part. Toute ligne lue porte artisan_id et doit être celle du compte (« Supabase account » passe outre la RLS). Les écritures ne sont jamais faites ici : elles partent dans effets_prevus.",
+  "titre": "presti-dep-operations@1 — le département Opérations (agenda lu, rendez-vous après un clic, rappel de la veille, gardien du stock, import contrôlé)",
+  "chef": {
+    "workflow": "presti-dep-operations",
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "offre": {
+          "enum": [
+            "studio",
+            "signature",
+            "essentiel",
+            "essai"
+          ]
+        },
+        "interrupteur_general": {
+          "type": "boolean"
+        },
+        "interrupteur_departement": {
+          "type": "boolean"
+        },
+        "nom_artisan": {
+          "type": "string",
+          "maxLength": 70
+        },
+        "max_creneaux": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "duree_min": {
+          "type": "integer",
+          "minimum": 15,
+          "maximum": 480
+        },
+        "marge_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1440
+        },
+        "age_max_agenda_min": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1440
+        },
+        "horaires": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "jours_permis",
+            "heures_permises"
+          ],
+          "properties": {
+            "jours_permis": {
+              "type": "array",
+              "maxItems": 7,
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              }
+            },
+            "heures_permises": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "debut",
+                "fin"
+              ],
+              "properties": {
+                "debut": {
+                  "type": "string",
+                  "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                },
+                "fin": {
+                  "type": "string",
+                  "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                }
+              }
+            }
+          }
+        },
+        "pilote": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "drapeau",
+            "actif",
+            "types"
+          ],
+          "properties": {
+            "drapeau": {
+              "type": "boolean"
+            },
+            "actif": {
+              "type": "boolean"
+            },
+            "types": {
+              "type": "object"
+            }
+          }
+        },
+        "max_lignes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "max_pages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "cibles_signees": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "enum": [
+              "mes_chiffres"
+            ]
+          }
+        }
+      }
+    },
+    "donnees": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evenements"
+      ],
+      "properties": {
+        "evenements": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "object"
+          }
+        },
+        "genre": {
+          "enum": [
+            "creneaux",
+            "poser",
+            "rappel",
+            "stock",
+            "import"
+          ]
+        },
+        "maintenant": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "creneaux": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fenetre",
+            "agenda",
+            "deja_propose",
+            "rendez_vous_ref"
+          ],
+          "properties": {
+            "fenetre": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "du",
+                "au"
+              ],
+              "properties": {
+                "du": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "au": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                }
+              }
+            },
+            "agenda": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "outil",
+                "lue",
+                "lu_le",
+                "couvre",
+                "occupe"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "outil": {
+                  "enum": [
+                    "google_agenda",
+                    "outlook"
+                  ]
+                },
+                "lue": {
+                  "type": "boolean"
+                },
+                "lu_le": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "couvre": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": false,
+                  "required": [
+                    "du",
+                    "au"
+                  ],
+                  "properties": {
+                    "du": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    "au": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  }
+                },
+                "occupe": {
+                  "type": "array",
+                  "maxItems": 500,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "artisan_id",
+                      "debut",
+                      "fin"
+                    ],
+                    "properties": {
+                      "artisan_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "debut": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "fin": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "deja_propose": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "string",
+                "maxLength": 80
+              }
+            },
+            "rendez_vous_ref": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
+              "pattern": "^[A-Za-z0-9_:.#-]+$"
+            }
+          }
+        },
+        "poser": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "carte",
+            "validation",
+            "agenda",
+            "cles_existantes"
+          ],
+          "properties": {
+            "carte": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "cle",
+                "proposee_le",
+                "creneaux"
+              ],
+              "properties": {
+                "cle": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "pattern": "^[A-Za-z0-9_:.#-]+$"
+                },
+                "proposee_le": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "creneaux": {
+                  "type": "array",
+                  "maxItems": 3,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "debut",
+                      "fin"
+                    ],
+                    "properties": {
+                      "debut": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "fin": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "validation": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "required": [
+                "valide_par",
+                "valide_le",
+                "creneau"
+              ],
+              "properties": {
+                "valide_par": {
+                  "enum": [
+                    "artisan"
+                  ]
+                },
+                "valide_le": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "creneau": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "debut",
+                    "fin"
+                  ],
+                  "properties": {
+                    "debut": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "fin": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            },
+            "agenda": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "outil",
+                "lue",
+                "lu_le",
+                "couvre",
+                "occupe"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "outil": {
+                  "enum": [
+                    "google_agenda",
+                    "outlook"
+                  ]
+                },
+                "lue": {
+                  "type": "boolean"
+                },
+                "lu_le": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "couvre": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": false,
+                  "required": [
+                    "du",
+                    "au"
+                  ],
+                  "properties": {
+                    "du": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    "au": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  }
+                },
+                "occupe": {
+                  "type": "array",
+                  "maxItems": 500,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "artisan_id",
+                      "debut",
+                      "fin"
+                    ],
+                    "properties": {
+                      "artisan_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "debut": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "fin": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "cles_existantes": {
+              "type": "array",
+              "maxItems": 1000,
+              "items": {
+                "type": "string",
+                "maxLength": 80
+              }
+            }
+          }
+        },
+        "rappel": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "rendez_vous",
+            "cles_existantes"
+          ],
+          "properties": {
+            "rendez_vous": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "id",
+                  "debut",
+                  "canal",
+                  "consentement",
+                  "opposition"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "debut": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "canal": {
+                    "enum": [
+                      "sms_lien",
+                      "email",
+                      "aucun"
+                    ]
+                  },
+                  "consentement": {
+                    "type": "boolean"
+                  },
+                  "opposition": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "cles_existantes": {
+              "type": "array",
+              "maxItems": 1000,
+              "items": {
+                "type": "string",
+                "maxLength": 80
+              }
+            }
+          }
+        },
+        "stock": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "articles",
+            "fournisseurs",
+            "prix",
+            "commandes_ouvertes",
+            "cles_existantes"
+          ],
+          "properties": {
+            "source": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "lue",
+                "le"
+              ],
+              "properties": {
+                "lue": {
+                  "type": "boolean"
+                },
+                "le": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                }
+              }
+            },
+            "articles": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "id",
+                  "nom",
+                  "quantite",
+                  "seuil",
+                  "unite",
+                  "fournisseur_id",
+                  "qte_reappro"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "nom": {
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "quantite": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000000000
+                  },
+                  "seuil": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000000000
+                  },
+                  "unite": {
+                    "type": "string",
+                    "maxLength": 20
+                  },
+                  "fournisseur_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "uuid"
+                  },
+                  "qte_reappro": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 1000000000
+                  }
+                }
+              }
+            },
+            "fournisseurs": {
+              "type": "array",
+              "maxItems": 100,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "id",
+                  "nom",
+                  "delai_jours"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "nom": {
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "delai_jours": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 365
+                  }
+                }
+              }
+            },
+            "prix": {
+              "type": "array",
+              "maxItems": 500,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "article_id",
+                  "fournisseur_id",
+                  "prix_ht_centimes",
+                  "vu_le",
+                  "source"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "article_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "fournisseur_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "prix_ht_centimes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1000000000
+                  },
+                  "vu_le": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "source": {
+                    "enum": [
+                      "recherche_ia",
+                      "saisie",
+                      "facture"
+                    ]
+                  }
+                }
+              }
+            },
+            "commandes_ouvertes": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "cles_existantes": {
+              "type": "array",
+              "maxItems": 1000,
+              "items": {
+                "type": "string",
+                "maxLength": 80
+              }
+            }
+          }
+        },
+        "import": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "phase",
+            "export",
+            "apercu_valide",
+            "cles_connues"
+          ],
+          "properties": {
+            "phase": {
+              "enum": [
+                "apercu",
+                "ecrire"
+              ]
+            },
+            "export": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "outil",
+                "lu_le",
+                "pagination",
+                "lignes"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "outil": {
+                  "enum": [
+                    "tableur",
+                    "csv",
+                    "crm_client",
+                    "facturation_client",
+                    "autre"
+                  ]
+                },
+                "lu_le": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "pagination": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "pages_lues",
+                    "derniere_page_vide"
+                  ],
+                  "properties": {
+                    "pages_lues": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "derniere_page_vide": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "lignes": {
+                  "type": "array",
+                  "maxItems": 500,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "ref_externe",
+                      "jour",
+                      "libelle",
+                      "montant_centimes",
+                      "sens"
+                    ],
+                    "properties": {
+                      "ref_externe": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80,
+                        "pattern": "^[A-Za-z0-9_:.#-]+$"
+                      },
+                      "jour": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                      },
+                      "libelle": {
+                        "type": "string",
+                        "maxLength": 80
+                      },
+                      "montant_centimes": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 10000000000
+                      },
+                      "sens": {
+                        "enum": [
+                          "entree",
+                          "sortie"
+                        ]
+                      },
+                      "provenance": {
+                        "enum": [
+                          "lu",
+                          "declare"
+                        ]
+                      },
+                      "lu_dans": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "maxLength": 60
+                      },
+                      "lu_le": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                      },
+                      "declare_par": {
+                        "enum": [
+                          "artisan"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "apercu_valide": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "required": [
+                "cle_apercu",
+                "empreinte",
+                "valide_par",
+                "valide_le"
+              ],
+              "properties": {
+                "cle_apercu": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "pattern": "^[A-Za-z0-9_:.#-]+$"
+                },
+                "empreinte": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{14}$"
+                },
+                "valide_par": {
+                  "enum": [
+                    "artisan"
+                  ]
+                },
+                "valide_le": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            },
+            "cles_connues": {
+              "type": "array",
+              "maxItems": 5000,
+              "items": {
+                "type": "string",
+                "maxLength": 80
+              }
+            }
+          }
+        }
+      }
+    },
+    "effets_prevus": [
+      "preparer_carte",
+      "poser_rendez_vous",
+      "deposer_apercu",
+      "ecrire_ligne",
+      "noter_evenement",
+      "(effets de lib-agenda-creneaux)",
+      "(effets de lib-synchroniser-outil)"
+    ],
+    "genres": {
+      "creneaux": "au plus trois créneaux libres, LUS dans l’agenda réel (jamais inventés) ; agenda illisible, trop ancien ou d’un autre compte = aucun créneau, et la carte le dit",
+      "poser": "le rendez-vous se pose APRÈS le clic de l’artisan, en Studio comme en Signature (décision 5) ; sans clic, rien ; le créneau doit être l’un de ceux proposés et encore libre",
+      "rappel": "rappel de la veille : une CARTE (jamais envoyée seule), canal consenti, STOP, plage d’envoi lundi-samedi 8 h-20 h Paris hors fériés (lib/sms/plage.ts:7-8)",
+      "stock": "article sous son seuil (inventaire, app/api/inventaire/route.ts:70) : commande fournisseur PRÉPARÉE en carte, fournisseur de SA liste, montant calculé par le code ; jamais envoyée seule",
+      "import": "import contrôlé d’un export (B10, C3) : lecture, aperçu, validation de l’artisan, puis écriture par clé ; chaque donnée porte « lu dans <outil> le <date> » ou « déclaré »"
+    },
+    "declencheurs_voulus": {
+      "creneaux": "événement rendez_vous_a_poser (route déjà connue du Cerveau)",
+      "poser": "clic de l’artisan sur la carte (route à ajouter au Cerveau)",
+      "rappel": "événement veille_de_rendez_vous, la veille à 17 h Paris (route à ajouter)",
+      "stock": "événement stock_sous_le_seuil (route à ajouter)",
+      "import": "demande d’import dans « Mes chiffres » (route à ajouter)"
+    },
+    "type_pilote": "aucun : « rendez-vous posé », « rappel de rendez-vous » et « commande fournisseur » n’entrent pas dans OUTIL_TYPE (lib/pilote/regles.ts:53-63) ; ils pourront y entrer après les tests de 036-008 et l’accord écrit de Benj"
+  },
+  "enfants": {
+    "lib-agenda-creneaux@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "interrupteur_general",
+          "interrupteur_departement",
+          "max_creneaux",
+          "duree_min",
+          "marge_min",
+          "age_max_agenda_min",
+          "horaires"
+        ],
+        "properties": {
+          "interrupteur_general": {
+            "type": "boolean"
+          },
+          "interrupteur_departement": {
+            "type": "boolean"
+          },
+          "max_creneaux": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "duree_min": {
+            "type": "integer",
+            "minimum": 15,
+            "maximum": 480
+          },
+          "marge_min": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1440
+          },
+          "age_max_agenda_min": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1440
+          },
+          "horaires": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "jours_permis",
+              "heures_permises"
+            ],
+            "properties": {
+              "jours_permis": {
+                "type": "array",
+                "maxItems": 7,
+                "items": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 7
+                }
+              },
+              "heures_permises": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "debut",
+                  "fin"
+                ],
+                "properties": {
+                  "debut": {
+                    "type": "string",
+                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                  },
+                  "fin": {
+                    "type": "string",
+                    "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "maintenant",
+          "fenetre",
+          "agenda",
+          "deja_propose",
+          "rendez_vous_ref"
+        ],
+        "properties": {
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fenetre": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "du",
+              "au"
+            ],
+            "properties": {
+              "du": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "au": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              }
+            }
+          },
+          "agenda": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "artisan_id",
+              "outil",
+              "lue",
+              "lu_le",
+              "couvre",
+              "occupe"
+            ],
+            "properties": {
+              "artisan_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "outil": {
+                "enum": [
+                  "google_agenda",
+                  "outlook"
+                ]
+              },
+              "lue": {
+                "type": "boolean"
+              },
+              "lu_le": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              },
+              "couvre": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": false,
+                "required": [
+                  "du",
+                  "au"
+                ],
+                "properties": {
+                  "du": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "au": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  }
+                }
+              },
+              "occupe": {
+                "type": "array",
+                "maxItems": 500,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "artisan_id",
+                    "debut",
+                    "fin"
+                  ],
+                  "properties": {
+                    "artisan_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "debut": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "fin": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "deja_propose": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
+          "rendez_vous_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "pattern": "^[A-Za-z0-9_:.#-]+$"
+          }
+        }
+      },
+      "effets_prevus": [
+        "preparer_carte",
+        "noter_evenement"
+      ]
+    },
+    "lib-synchroniser-outil@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "interrupteur_general",
+          "interrupteur_departement",
+          "max_lignes",
+          "max_pages",
+          "cibles_signees"
+        ],
+        "properties": {
+          "interrupteur_general": {
+            "type": "boolean"
+          },
+          "interrupteur_departement": {
+            "type": "boolean"
+          },
+          "max_lignes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 500
+          },
+          "max_pages": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "cibles_signees": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "enum": [
+                "mes_chiffres"
+              ]
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "maintenant",
+          "phase",
+          "export",
+          "apercu_valide",
+          "cles_connues"
+        ],
+        "properties": {
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "phase": {
+            "enum": [
+              "apercu",
+              "ecrire"
+            ]
+          },
+          "export": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "artisan_id",
+              "outil",
+              "lu_le",
+              "pagination",
+              "lignes"
+            ],
+            "properties": {
+              "artisan_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "outil": {
+                "enum": [
+                  "tableur",
+                  "csv",
+                  "crm_client",
+                  "facturation_client",
+                  "autre"
+                ]
+              },
+              "lu_le": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "pagination": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "pages_lues",
+                  "derniere_page_vide"
+                ],
+                "properties": {
+                  "pages_lues": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "derniere_page_vide": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "lignes": {
+                "type": "array",
+                "maxItems": 500,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "ref_externe",
+                    "jour",
+                    "libelle",
+                    "montant_centimes",
+                    "sens"
+                  ],
+                  "properties": {
+                    "ref_externe": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80,
+                      "pattern": "^[A-Za-z0-9_:.#-]+$"
+                    },
+                    "jour": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    "libelle": {
+                      "type": "string",
+                      "maxLength": 80
+                    },
+                    "montant_centimes": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 10000000000
+                    },
+                    "sens": {
+                      "enum": [
+                        "entree",
+                        "sortie"
+                      ]
+                    },
+                    "provenance": {
+                      "enum": [
+                        "lu",
+                        "declare"
+                      ]
+                    },
+                    "lu_dans": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 60
+                    },
+                    "lu_le": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    "declare_par": {
+                      "enum": [
+                        "artisan"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "apercu_valide": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "cle_apercu",
+              "empreinte",
+              "valide_par",
+              "valide_le"
+            ],
+            "properties": {
+              "cle_apercu": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80,
+                "pattern": "^[A-Za-z0-9_:.#-]+$"
+              },
+              "empreinte": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{14}$"
+              },
+              "valide_par": {
+                "enum": [
+                  "artisan"
+                ]
+              },
+              "valide_le": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "cles_connues": {
+            "type": "array",
+            "maxItems": 5000,
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          }
+        }
+      },
+      "effets_prevus": [
+        "deposer_apercu",
+        "ecrire_ligne",
+        "noter_evenement"
+      ]
+    }
+  },
+  "agenda": {
+    "regle": "Un créneau vient de l’agenda lu, ou il n’existe pas. Chaque créneau porte « lu dans <outil> le <date> ». Le bloc occupé ne porte ni titre, ni invité, ni lieu.",
+    "lecture_voulue": "nœud Google Calendar calendar.availability pour le client zéro, ou HTTP Request avec le jeton déchiffré à l’exécution pour les artisans (décision 1) — jamais posé ici (connecteurs/agenda.md)"
+  },
+  "stock": {
+    "regle": "Le seuil est celui de l’inventaire (seuil_alerte > 0 et quantité totale ≤ seuil). Le fournisseur vient de la liste de l’artisan ; la quantité est celle que l’artisan a posée (qte_reappro), sinon « à saisir » ; le montant est prix × quantité, calculé par le code, sinon absent. Jamais un prix deviné."
+  },
+  "import": {
+    "regle": "phase « apercu » : lecture, lignes avec provenance, totaux calculés par le code, empreinte ; phase « ecrire » : seulement avec la validation de l’artisan sur CETTE empreinte, sur une cible de la liste signée (mes_chiffres), par clé (ref_externe), sans doublon.",
+    "colonne_prevue": "colonne « source » des imports (C3) : migration à écrire par une tâche dont le périmètre contient supabase/** ; non écrite ici"
+  }
+}

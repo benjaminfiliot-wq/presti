@@ -1241,3 +1241,6 @@
 {"id":"036-006","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T11:45:45Z","duree_s":86,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"036-007","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T11:54:38Z","duree_s":180,"agent":"claude-code","executant":"claude-code","lignes":8436,"dossier":"fait"}
 {"id":"035-013","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 174 min","code":null,"date":"2026-11-03T11:57:44Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"036-004","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T12:24:31Z","duree_s":616,"agent":"claude-code","executant":"claude-code","lignes":25853,"dossier":"fait"}
+{"id":"036-008","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T13:08:47Z","duree_s":203,"agent":"claude-code","executant":"claude-code","lignes":11263,"dossier":"fait"}
+{"id":"036-009","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T13:09:47Z","duree_s":55,"agent":"claude-code","executant":"claude-code","lignes":2618,"dossier":"fait"}

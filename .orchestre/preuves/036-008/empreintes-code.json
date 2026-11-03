@@ -1,0 +1,38 @@
+{
+  "lib-agenda-creneaux": {
+    "Contrat d'entrée": "3a592f2d816009f37fe9fad06354f08be4e740cfe274732b94a850b9ae87fc36",
+    "Chercher les créneaux libres": "0bd636cb3b119b40aa2063a941ca8bdd54fcffa2b3c57e08d5715dacfadc6eb3",
+    "Contrat de sortie": "fb6130393f0bf82a78c19895ba5d76fe165a501c100dcb49c77e683d717cea1e"
+  },
+  "lib-synchroniser-outil": {
+    "Contrat d'entrée": "cb52b30144c592092d486998c3b35d8e52ad812fcbbbd0a4c48cf595f08886bb",
+    "Lire l'export et rendre l'aperçu": "e66e1b01261c63d817fdf1c1d0410ec06eb77a5126f11844bec8c73c2a04aec1",
+    "Contrat de sortie": "f70ba551bd5fa6f710c553b050ae69f6c0b691372a53bee267f0a4793256969c"
+  },
+  "presti-banc-operations": {
+    "Cas : rappel de la veille": "130d7d8085e4e4817b3bad55a53fc8fcb7e0a7147a222620d95f59b809091eb9",
+    "Bilan du banc": "cf76a91d7459b33a5ef6e1a942f8e3be54d6a152a7a238cb4eba4d6ecaf64250",
+    "Cas : stock sous le seuil": "4771bd98393a61443f167f6fbfdb0d16556c5c35a5f3e264728239e474c80cbd",
+    "Cas : rendez-vous sans clic (Signature)": "e01755986787e287ae189e78f652b9263fdb44ef7654dd91d85e6b96ce7e8008",
+    "Cas : rendez-vous après le clic": "e4abae66734d5b024c371b6403352d0c97b769eff00c7930e5e58a9824e3d24a",
+    "Cas : interrupteur coupé": "67a6e8ac1e17f399bc562572c714cc4b14cc6d6766c9ff4bd6ee8ea218562bb1",
+    "Cas : créneaux libres": "521e6d80719c814b72a6f514cefe4c11eb6c06a73122975b94705ea1f640a63d",
+    "Cas : agenda illisible": "0409c625319b9ee5e446794473d6da2d91f72f262069b824b1aef7ee732c715c",
+    "Cas : semaine pleine": "f72fc23745b65f1a2cf1a97ee4cbe0b9eaf7ec46eef809789acc96a8b397823b",
+    "Cas : aperçu de l’import": "09f090c0503d5f751e5abec8675107dc55daa40af3b3be7e51edc3c6128fbdb5",
+    "Cas : écriture sans aperçu validé": "dfa5a03d61e2fa57ba5f04833ef93303c028ce6d92950e0a67ace4e39bb49b9a"
+  },
+  "presti-dep-operations": {
+    "Contrat d'entrée": "16f287c0c9f42663962d1bfaf28e276555f93fe7ef25500ee62543d3906c52b2",
+    "Contrat de sortie": "da8beabe2d324244084b166e42af5b6c2eb829c6bb8d9d0a2eab2affde06750b",
+    "Aiguiller": "e7c239252c8d3be27e0c2066ff9f1cac120dd85e552d32acaf918b894e2dfed5",
+    "Rien à faire": "66d788f91cf5af1ec68a01388e6342e52ecfddb5ab45c431a1fdc2e2ca826576",
+    "Préparer les créneaux": "9a771342e67873a08de00cbd09b256bf86e3073c4d50c2ef57438ebd9f2975b2",
+    "Habiller les créneaux": "e6338ee5dad071bab98c754b39fd82280a98cd9c3e4a0f39fae3fd4d78a1e8a5",
+    "Poser le rendez-vous": "61eb374cdc25449238567a8d864de06596d67f2f1a6cd3afcb457f70242bef3f",
+    "Rappel de la veille": "05d9339b016488722c985e7b969c96b7306e9fd6397b7f02d8ad7fe611b5f10b",
+    "Gardien du stock": "78b6d8aa4f6afb20347f794599071d31a8cd7c08069b70bf3eb9e3775966005b",
+    "Préparer l'import": "b16df0bfc2aa6411d9e9bda3256fcee7062244365584feab7e68564b6a10c52f",
+    "Habiller l'import": "8a7bc6818dc45da2a0e9d5d7f85944ecfa707323fcdf17b68b3c5b1b142b175e"
+  }
+}

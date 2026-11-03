@@ -1,0 +1,814 @@
+{
+  "id": "74bDhTw6cEBzPORZ",
+  "name": "presti-dep-operations",
+  "active": false,
+  "isArchived": false,
+  "versionId": "e56af179-f707-4b8e-946d-ff7c672718e4",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 23,
+  "createdAt": "2026-11-03T10:17:49.156Z",
+  "updatedAt": "2026-11-03T12:17:09.675Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 180,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "596OC5mL2aMBq6SD,v0I7822xbpDICXd8",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "connections": {
+    "Appelé par le Cerveau": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Aiguiller",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aiguiller": {
+      "main": [
+        [
+          {
+            "node": "Créneaux ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Créneaux ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer les créneaux",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Poser le rendez-vous ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poser le rendez-vous ?": {
+      "main": [
+        [
+          {
+            "node": "Poser le rendez-vous",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rappel de la veille ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rappel de la veille ?": {
+      "main": [
+        [
+          {
+            "node": "Rappel de la veille",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stock ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stock ?": {
+      "main": [
+        [
+          {
+            "node": "Gardien du stock",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Import ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Import ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer l'import",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rien à faire",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer les créneaux": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-agenda-creneaux",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-agenda-creneaux": {
+      "main": [
+        [
+          {
+            "node": "Habiller les créneaux",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Habiller les créneaux": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poser le rendez-vous": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rappel de la veille": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gardien du stock": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer l'import": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-synchroniser-outil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-synchroniser-outil": {
+      "main": [
+        [
+          {
+            "node": "Habiller l'import",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Habiller l'import": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à faire": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "217cbf67-ec23-42aa-bf09-526db6afa467",
+      "name": "Appelé par le Cerveau",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        80
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "a977371a-08c3-48f9-9198-9c3c2eea4f4a",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de presti-dep-operations@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'presti-dep-operations@1';\nconst SCHEMA = {\"sans_contact\":false,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[],\"properties\":{\"offre\":{\"enum\":[\"studio\",\"signature\",\"essentiel\",\"essai\"]},\"interrupteur_general\":{\"type\":\"boolean\"},\"interrupteur_departement\":{\"type\":\"boolean\"},\"nom_artisan\":{\"type\":\"string\",\"maxLength\":70},\"max_creneaux\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":3},\"duree_min\":{\"type\":\"integer\",\"minimum\":15,\"maximum\":480},\"marge_min\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1440},\"age_max_agenda_min\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":1440},\"horaires\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"jours_permis\",\"heures_permises\"],\"properties\":{\"jours_permis\":{\"type\":\"array\",\"maxItems\":7,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"heures_permises\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"debut\",\"fin\"],\"properties\":{\"debut\":{\"type\":\"string\",\"pattern\":\"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"},\"fin\":{\"type\":\"string\",\"pattern\":\"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}}}}},\"pilote\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"drapeau\",\"actif\",\"types\"],\"properties\":{\"drapeau\":{\"type\":\"boolean\"},\"actif\":{\"type\":\"boolean\"},\"types\":{\"type\":\"object\"}}},\"max_lignes\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":500},\"max_pages\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":20},\"cibles_signees\":{\"type\":\"array\",\"maxItems\":3,\"items\":{\"enum\":[\"mes_chiffres\"]}}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"evenements\"],\"properties\":{\"evenements\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\"}},\"genre\":{\"enum\":[\"creneaux\",\"poser\",\"rappel\",\"stock\",\"import\"]},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"},\"creneaux\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"fenetre\",\"agenda\",\"deja_propose\",\"rendez_vous_ref\"],\"properties\":{\"fenetre\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"du\",\"au\"],\"properties\":{\"du\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"au\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}},\"agenda\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"outil\",\"lue\",\"lu_le\",\"couvre\",\"occupe\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"outil\":{\"enum\":[\"google_agenda\",\"outlook\"]},\"lue\":{\"type\":\"boolean\"},\"lu_le\":{\"type\":[\"string\",\"null\"],\"format\":\"date-time\"},\"couvre\":{\"type\":[\"object\",\"null\"],\"additionalProperties\":false,\"required\":[\"du\",\"au\"],\"properties\":{\"du\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"au\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}},\"occupe\":{\"type\":\"array\",\"maxItems\":500,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"debut\",\"fin\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"debut\":{\"type\":\"string\",\"format\":\"date-time\"},\"fin\":{\"type\":\"string\",\"format\":\"date-time\"}}}}}},\"deja_propose\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"string\",\"maxLength\":80}},\"rendez_vous_ref\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"^[A-Za-z0-9_:.#-]+$\"}}},\"poser\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"carte\",\"validation\",\"agenda\",\"cles_existantes\"],\"properties\":{\"carte\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"cle\",\"proposee_le\",\"creneaux\"],\"properties\":{\"cle\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"^[A-Za-z0-9_:.#-]+$\"},\"proposee_le\":{\"type\":\"string\",\"format\":\"date-time\"},\"creneaux\":{\"type\":\"array\",\"maxItems\":3,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"debut\",\"fin\"],\"properties\":{\"debut\":{\"type\":\"string\",\"format\":\"date-time\"},\"fin\":{\"type\":\"string\",\"format\":\"date-time\"}}}}}},\"validation\":{\"type\":[\"object\",\"null\"],\"additionalProperties\":false,\"required\":[\"valide_par\",\"valide_le\",\"creneau\"],\"properties\":{\"valide_par\":{\"enum\":[\"artisan\"]},\"valide_le\":{\"type\":\"string\",\"format\":\"date-time\"},\"creneau\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"debut\",\"fin\"],\"properties\":{\"debut\":{\"type\":\"string\",\"format\":\"date-time\"},\"fin\":{\"type\":\"string\",\"format\":\"date-time\"}}}}},\"agenda\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"outil\",\"lue\",\"lu_le\",\"couvre\",\"occupe\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"outil\":{\"enum\":[\"google_agenda\",\"outlook\"]},\"lue\":{\"type\":\"boolean\"},\"lu_le\":{\"type\":[\"string\",\"null\"],\"format\":\"date-time\"},\"couvre\":{\"type\":[\"object\",\"null\"],\"additionalProperties\":false,\"required\":[\"du\",\"au\"],\"properties\":{\"du\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"au\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}},\"occupe\":{\"type\":\"array\",\"maxItems\":500,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"debut\",\"fin\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"debut\":{\"type\":\"string\",\"format\":\"date-time\"},\"fin\":{\"type\":\"string\",\"format\":\"date-time\"}}}}}},\"cles_existantes\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"maxLength\":80}}}},\"rappel\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"rendez_vous\",\"cles_existantes\"],\"properties\":{\"rendez_vous\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"id\",\"debut\",\"canal\",\"consentement\",\"opposition\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"debut\":{\"type\":\"string\",\"format\":\"date-time\"},\"canal\":{\"enum\":[\"sms_lien\",\"email\",\"aucun\"]},\"consentement\":{\"type\":\"boolean\"},\"opposition\":{\"type\":\"boolean\"}}}},\"cles_existantes\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"maxLength\":80}}}},\"stock\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"source\",\"articles\",\"fournisseurs\",\"prix\",\"commandes_ouvertes\",\"cles_existantes\"],\"properties\":{\"source\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"lue\",\"le\"],\"properties\":{\"lue\":{\"type\":\"boolean\"},\"le\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}},\"articles\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"id\",\"nom\",\"quantite\",\"seuil\",\"unite\",\"fournisseur_id\",\"qte_reappro\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"nom\":{\"type\":\"string\",\"maxLength\":80},\"quantite\":{\"type\":\"number\",\"minimum\":0,\"maximum\":1000000000},\"seuil\":{\"type\":\"number\",\"minimum\":0,\"maximum\":1000000000},\"unite\":{\"type\":\"string\",\"maxLength\":20},\"fournisseur_id\":{\"type\":[\"string\",\"null\"],\"format\":\"uuid\"},\"qte_reappro\":{\"type\":[\"number\",\"null\"],\"minimum\":0,\"maximum\":1000000000}}}},\"fournisseurs\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"id\",\"nom\",\"delai_jours\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"nom\":{\"type\":\"string\",\"maxLength\":80},\"delai_jours\":{\"type\":[\"integer\",\"null\"],\"minimum\":0,\"maximum\":365}}}},\"prix\":{\"type\":\"array\",\"maxItems\":500,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"article_id\",\"fournisseur_id\",\"prix_ht_centimes\",\"vu_le\",\"source\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"article_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"fournisseur_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"prix_ht_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000000},\"vu_le\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"source\":{\"enum\":[\"recherche_ia\",\"saisie\",\"facture\"]}}}},\"commandes_ouvertes\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"string\",\"format\":\"uuid\"}},\"cles_existantes\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"maxLength\":80}}}},\"import\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"phase\",\"export\",\"apercu_valide\",\"cles_connues\"],\"properties\":{\"phase\":{\"enum\":[\"apercu\",\"ecrire\"]},\"export\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"outil\",\"lu_le\",\"pagination\",\"lignes\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"outil\":{\"enum\":[\"tableur\",\"csv\",\"crm_client\",\"facturation_client\",\"autre\"]},\"lu_le\":{\"type\":\"string\",\"format\":\"date-time\"},\"pagination\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"pages_lues\",\"derniere_page_vide\"],\"properties\":{\"pages_lues\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100},\"derniere_page_vide\":{\"type\":\"boolean\"}}},\"lignes\":{\"type\":\"array\",\"maxItems\":500,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"ref_externe\",\"jour\",\"libelle\",\"montant_centimes\",\"sens\"],\"properties\":{\"ref_externe\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"^[A-Za-z0-9_:.#-]+$\"},\"jour\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"libelle\":{\"type\":\"string\",\"maxLength\":80},\"montant_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10000000000},\"sens\":{\"enum\":[\"entree\",\"sortie\"]},\"provenance\":{\"enum\":[\"lu\",\"declare\"]},\"lu_dans\":{\"type\":[\"string\",\"null\"],\"maxLength\":60},\"lu_le\":{\"type\":[\"string\",\"null\"],\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"declare_par\":{\"enum\":[\"artisan\"]}}}}}},\"apercu_valide\":{\"type\":[\"object\",\"null\"],\"additionalProperties\":false,\"required\":[\"cle_apercu\",\"empreinte\",\"valide_par\",\"valide_le\"],\"properties\":{\"cle_apercu\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"^[A-Za-z0-9_:.#-]+$\"},\"empreinte\":{\"type\":\"string\",\"pattern\":\"^[0-9a-f]{14}$\"},\"valide_par\":{\"enum\":[\"artisan\"]},\"valide_le\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"cles_connues\":{\"type\":\"array\",\"maxItems\":5000,\"items\":{\"type\":\"string\",\"maxLength\":80}}}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: presti-dep-operations@1"
+    },
+    {
+      "id": "0e180f02-bc65-4581-90a8-dfa899e2c0c6",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "entreconforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "ee25c485-8639-4fd1-a586-d1f548951d50",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de presti-dep-operations@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'presti-dep-operations@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "dd08b4d8-6614-48f1-9e22-9eaa8f787f4a",
+      "name": "Sticky Note 22f2709c",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -16
+      ],
+      "parameters": {
+        "content": "## presti-dep-operations (036-008)\nLe département Opérations : créneaux libres LUS dans l'agenda (jamais inventés), rendez-vous posé APRÈS le clic de l'artisan (Studio comme Signature), rappel de la veille (une carte, plage d'envoi), gardien du stock (commande fournisseur préparée, jamais envoyée seule), import contrôlé d'un export (aperçu, validation, écriture par clé).\nINACTIF, jamais publié, en simulation (mode A) : les lectures sont passées par l'appelant, les écritures partent dans effets_prevus. Aucun identifiant, aucun modèle.\nDéclencheurs voulus (Cerveau) : rendez_vous_a_poser, veille_de_rendez_vous, stock_sous_le_seuil.\nJuge : scripts/operations-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 224
+      }
+    },
+    {
+      "id": "29259eb9-1385-457e-a84c-e9da885345df",
+      "name": "Créneaux ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_creneaux",
+              "leftValue": "={{ $json.est_creneaux }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "c628c41a-445e-44e8-b245-d9e6939a542e",
+      "name": "Poser le rendez-vous ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        160
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_poser",
+              "leftValue": "={{ $json.est_poser }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "b9387a73-4ce5-4437-bb90-dfcf2f8531b6",
+      "name": "Rappel de la veille ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        240
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_rappel",
+              "leftValue": "={{ $json.est_rappel }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "a7e2ef58-265c-4e51-85cd-a1a4f4792769",
+      "name": "Stock ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        320
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_stock",
+              "leftValue": "={{ $json.est_stock }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "1378c95e-b5c7-4036-a67e-510ed8a35d00",
+      "name": "Import ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_import",
+              "leftValue": "={{ $json.est_import }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Faux : la route « stop » (interrupteur coupé, genre absent ou inconnu)."
+    },
+    {
+      "id": "1ace86e6-3130-45d0-a60b-c28450854180",
+      "name": "Aiguiller",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-operations · Aiguiller (036-008) : ne calcule rien. Il choisit UNE route parmi les cinq genres (creneaux, poser, rappel, stock, import) ;\n// interrupteur général ou de département coupé (absent = coupé : fail-closed), genre absent ou inconnu : « stop », rien n'est appelé.\n// Un événement connu du Cerveau sans genre explicite en donne un : rendez_vous_a_poser → creneaux, veille_de_rendez_vous → rappel, stock_sous_le_seuil → stock.\nconst GENRES = ['creneaux', 'poser', 'rappel', 'stock', 'import'];\nconst PAR_EVENEMENT = { rendez_vous_a_poser: 'creneaux', veille_de_rendez_vous: 'rappel', stock_sous_le_seuil: 'stock' };\nreturn $input.all().map((item) => {\n  const j = item.json;\n  const e = j.enveloppe, c = e.config, d = e.donnees;\n  const deduit = d.evenements.map((x) => (x && typeof x.type === 'string' && Object.prototype.hasOwnProperty.call(PAR_EVENEMENT, x.type) ? PAR_EVENEMENT[x.type] : null)).find((x) => x !== null);\n  const genre = typeof d.genre === 'string' ? d.genre : (deduit || null);\n  let route = 'stop', raison = null;\n  if (!(c.interrupteur_general === true && c.interrupteur_departement === true)) raison = 'interrupteur_coupe';\n  else if (!GENRES.includes(genre)) raison = genre === null ? 'genre_absent' : 'genre_inconnu';\n  else route = genre;\n  return { json: { ...j, route: route, raison: raison, genre: genre, est_creneaux: route === 'creneaux', est_poser: route === 'poser', est_rappel: route === 'rappel', est_stock: route === 'stock', est_import: route === 'import' } };\n});"
+      }
+    },
+    {
+      "id": "7884d2f4-6dc3-41a3-8714-597dbf402cb9",
+      "name": "Rien à faire",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        480
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-operations · Rien à faire (036-008) : la route « stop ». Aucun effet, une ligne de journal qui dit pourquoi.\nreturn $input.all().map((item) => {\n  const j = item.json, e = j.enveloppe;\n  return { json: { ...j, statut: 'rien_a_faire', resultat: { etat: j.raison || 'rien', genre: j.genre || null }, effets_prevus: [],\n    journal: [{ evenement: 'operations_saute', agent: 'presti-dep-operations', objet_ref: null, decision: ('aucun travail : ' + (j.raison || 'rien')).slice(0, 200), simulation: e.simulation }] } };\n});"
+      }
+    },
+    {
+      "id": "77191dcd-91c3-4415-af09-241d0bbade5c",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2160,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "a5db5d45-9cf2-41e4-9be2-190012e99fc9",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        240
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 036-008). Rien n'a été écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (carte, agenda, base) n'est pas branché. Il le sera au « go » de Benj, derrière cette même porte."
+    },
+    {
+      "id": "d766c6a3-eabf-40f9-88f0-65820e2547a5",
+      "name": "Préparer les créneaux",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        -300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-operations · Préparer les créneaux (036-008) : l'enveloppe de lib-agenda-creneaux@1, rien d'autre. Un bloc absent (lecture absente) donne une enveloppe\n// à agenda ILLISIBLE : l'enfant répondra « aucun créneau », jamais un créneau supposé. Les réglages absents prennent des défauts écrits ici (60 min, marge 2 h, agenda lu depuis moins d'une heure).\nreturn $input.all().map((item) => {\n  const e = item.json.enveloppe, c = e.config, d = e.donnees;\n  const jour = String(d.maintenant || '').slice(0, 10) || '1970-01-01';\n  const b = d.creneaux || { fenetre: { du: jour, au: jour }, agenda: { artisan_id: e.organisation_id, outil: 'google_agenda', lue: false, lu_le: null, couvre: null, occupe: [] }, deja_propose: [], rendez_vous_ref: 'sans_lecture' };\n  return { json: { contrat: 'lib-agenda-creneaux@1', organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: ('cr:' + e.cle_idempotence).slice(0, 80),\n    trace: { execution_parent: ('presti-dep-operations:' + e.cle_idempotence).slice(0, 80), declencheur: 'presti-dep-operations', tentative: 0 },\n    config: { interrupteur_general: c.interrupteur_general === true, interrupteur_departement: c.interrupteur_departement === true, max_creneaux: Number.isInteger(c.max_creneaux) ? c.max_creneaux : 3,\n      duree_min: Number.isInteger(c.duree_min) ? c.duree_min : 60, marge_min: Number.isInteger(c.marge_min) ? c.marge_min : 120, age_max_agenda_min: Number.isInteger(c.age_max_agenda_min) ? c.age_max_agenda_min : 60,\n      horaires: c.horaires || { jours_permis: [1, 2, 3, 4, 5], heures_permises: { debut: '08:00', fin: '18:00' } } },\n    donnees: { maintenant: d.maintenant || (jour + 'T00:00:00.000Z'), fenetre: b.fenetre, agenda: b.agenda, deja_propose: b.deja_propose, rendez_vous_ref: b.rendez_vous_ref } } };\n});"
+      }
+    },
+    {
+      "id": "38c6c40d-1c6b-44cc-8e85-ec73b8214e75",
+      "name": "Appeler lib-agenda-creneaux",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1240,
+        -300
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "414xd7DQaRmEgoTs"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "L'agenda lu, épinglé (036-008). Un échec ne fait pas échouer le passage.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "92c75c04-132a-4c50-a799-fb8385e5aa13",
+      "name": "Habiller les créneaux",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        -300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-operations · Habiller les créneaux (036-008) : la sortie de lib-agenda-creneaux devient la sortie du chef. L'enveloppe d'origine garde la clé et la simulation.\nconst orig = $('Aiguiller').first().json.enveloppe;\nconst s = $input.first().json || {};\nconst ok = typeof s.contrat === 'string';\nreturn [{ json: { enveloppe: { contrat: 'presti-dep-operations@1', simulation: orig.simulation, cle_idempotence: orig.cle_idempotence },\n  statut: ok ? s.statut : 'erreur', resultat: ok && s.resultat ? { genre: 'creneaux', creneaux: s.resultat } : null,\n  effets_prevus: ok && Array.isArray(s.effets_prevus) ? s.effets_prevus : [], journal: ok && Array.isArray(s.journal) ? s.journal : [],\n  erreurs: ok && Array.isArray(s.erreurs) && s.erreurs.length ? s.erreurs : ok ? [] : ['l’enfant lib-agenda-creneaux n’a pas répondu'] } }];"
+      }
+    },
+    {
+      "id": "7529fc61-e524-4fd0-825c-0355efe0dc7e",
+      "name": "Poser le rendez-vous",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        -150
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const AGENT = 'presti-dep-operations';\nconst refuse = (j, sim, evenement, raison) => ({ ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: [raison], journal: [{ evenement: evenement, agent: AGENT, objet_ref: null, decision: raison.slice(0, 200), simulation: sim }] });\nconst PARIS = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short' });\nconst parisParts = (ms) => { const p = {}; for (const x of PARIS.formatToParts(new Date(ms))) p[x.type] = x.value; return { annee: Number(p.year), mois: Number(p.month), jour: Number(p.day), heure: Number(p.hour) % 24, minute: Number(p.minute), sem: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(p.weekday) + 1 }; };\nconst parisJour = (ms) => { const q = parisParts(ms); return String(q.annee) + '-' + String(q.mois).padStart(2, '0') + '-' + String(q.jour).padStart(2, '0'); };\nconst parisOffsetMs = (ms) => { const q = parisParts(ms); return Date.UTC(q.annee, q.mois - 1, q.jour, q.heure, q.minute) - Math.floor(ms / 60000) * 60000; };\nconst instantParis = (jour, min) => { const [a, m, d] = jour.split('-').map(Number); const mur = Date.UTC(a, m - 1, d, 0, min); const ms = mur - parisOffsetMs(mur); return mur - parisOffsetMs(ms); };\nconst JOURS_FR = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];\nconst MOIS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];\nconst heureFr = (ms) => { const q = parisParts(ms); return q.heure + ' h ' + String(q.minute).padStart(2, '0'); };\nconst texteInstant = (ms) => { const q = parisParts(ms); return JOURS_FR[q.sem - 1] + ' ' + q.jour + ' ' + MOIS_FR[q.mois - 1] + ' à ' + heureFr(ms); };\nconst jourFr = (iso) => { const [a, m, d] = iso.split('-').map(Number); return String(d).padStart(2, '0') + '/' + String(m).padStart(2, '0') + '/' + a; };\nconst plusUnJour = (iso) => new Date(Date.parse(iso + 'T12:00:00Z') + 86400000).toISOString().slice(0, 10);\nconst chevauche = (d1, f1, d2, f2) => d1 < f2 && f1 > d2;\nconst libre = (debut, fin, occupe) => !occupe.some((o) => chevauche(debut, fin, Date.parse(o.debut), Date.parse(o.fin)));\nconst minutes = (hhmm) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));\n// presti-dep-operations · Poser le rendez-vous (036-008 ; décision 5 du plan) : le rendez-vous se pose APRÈS LE CLIC de l'artisan, en Studio comme en Signature, pilote actif ou non.\n// Sans clic (validation absente, ou pas « artisan »), rien : le rendez-vous reste une carte. Avec un clic : le créneau doit être l'un de ceux qui ont été PROPOSÉS, et il doit\n// être encore libre dans l'agenda RELU (illisible, trop ancien ou d'un autre compte : refus). Même alors, l'écriture est seulement PRÉVUE (poser_rendez_vous), jamais faite ici.\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, c = e.config, org = e.organisation_id, sim = e.simulation === true;\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: AGENT, objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    const p = d.poser;\n    if (!p || typeof d.maintenant !== 'string') return { ...j, statut: 'rien_a_faire', resultat: { etat: 'lecture_absente', genre: 'poser' }, effets_prevus: [], journal: [ligne('pose_sautee', null, 'ni la carte ni l’agenda n’ont été lus : rien n’est posé')] };\n    const a = p.agenda, maintenant = Date.parse(d.maintenant), v = p.validation;\n    if (a.artisan_id !== org || a.occupe.some((x) => x.artisan_id !== org)) return refuse(j, sim, 'pose_refusee', 'autre_compte : l’agenda lu n’est pas celui de ce compte');\n    if (!v || v.valide_par !== 'artisan') return { ...j, statut: 'refuse', resultat: { genre: 'poser', etat: 'sans_clic_artisan', pose: false }, effets_prevus: [], erreurs: ['sans_clic_artisan : un rendez-vous ne se pose qu’après le clic de l’artisan'],\n      journal: [ligne('pose_refusee', p.carte.cle, 'pas de clic de l’artisan : le rendez-vous reste une carte (' + (c.offre || 'offre inconnue') + ')')] };\n    const c0 = p.carte, dd = Date.parse(v.creneau.debut), ff = Date.parse(v.creneau.fin), clic = Date.parse(v.valide_le);\n    if (!(clic >= Date.parse(c0.proposee_le) && clic <= maintenant)) return { ...j, statut: 'refuse', resultat: { genre: 'poser', etat: 'clic_incoherent', pose: false }, effets_prevus: [], erreurs: ['clic_incoherent : le clic précède la proposition ou suit le présent'], journal: [ligne('pose_refusee', c0.cle, 'clic incohérent')] };\n    if (!c0.creneaux.some((x) => Date.parse(x.debut) === dd && Date.parse(x.fin) === ff)) return { ...j, statut: 'refuse', resultat: { genre: 'poser', etat: 'creneau_inconnu', pose: false }, effets_prevus: [], erreurs: ['creneau_inconnu : ce créneau n’a pas été proposé'], journal: [ligne('pose_refusee', c0.cle, 'créneau jamais proposé')] };\n    const cle = ('rdv:' + c0.cle + ':' + v.creneau.debut.slice(0, 16)).slice(0, 80);\n    if (p.cles_existantes.includes(cle)) return { ...j, statut: 'rien_a_faire', resultat: { genre: 'poser', etat: 'deja_pose', cle: cle }, effets_prevus: [], journal: [ligne('pose_sautee', cle, 'déjà posé : rien à refaire')] };\n    const lu = a.lu_le === null ? NaN : Date.parse(a.lu_le);\n    const age = (c.age_max_agenda_min || 60) * 60000;\n    if (!a.lue || !(lu <= maintenant) || maintenant - lu > age || a.couvre === null || !(dd >= instantParis(a.couvre.du, 0) && ff <= instantParis(plusUnJour(a.couvre.au), 0))) return { ...j, statut: 'refuse', resultat: { genre: 'poser', etat: 'agenda_illisible', pose: false }, effets_prevus: [], erreurs: ['agenda_illisible : l’agenda relu avant la pose est illisible, trop ancien ou ne couvre pas ce créneau'], journal: [ligne('pose_refusee', c0.cle, 'agenda illisible au moment de poser')] };\n    if (!libre(dd, ff, a.occupe)) return { ...j, statut: 'refuse', resultat: { genre: 'poser', etat: 'plus_libre', pose: false }, effets_prevus: [], erreurs: ['plus_libre : le créneau n’est plus libre dans l’agenda'], journal: [ligne('pose_refusee', c0.cle, 'créneau plus libre')] };\n    return { ...j, statut: 'ok', resultat: { genre: 'poser', etat: 'pose_prevue', pose: false, creneau: { debut: v.creneau.debut, fin: v.creneau.fin, texte: texteInstant(dd) }, via: 'clic_artisan', source: 'lu dans ' + a.outil + ' le ' + jourFr(a.lu_le.slice(0, 10)) },\n      effets_prevus: [\n        { effet: 'poser_rendez_vous', organisation_id: org, cle: cle, outil: a.outil, debut: v.creneau.debut, fin: v.creneau.fin, via: 'clic_artisan', valide_le: v.valide_le },\n        { effet: 'noter_evenement', organisation_id: org, type: 'rendez_vous_pose_prevu', cle: 'ev:' + cle, faits: { via: 'clic_artisan' } },\n      ], journal: [ligne('rendez_vous', cle, 'pose prévue après le clic de l’artisan, créneau proposé et libre')] };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['pose : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "51076414-3513-4272-a906-1af897130f3d",
+      "name": "Rappel de la veille",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const AGENT = 'presti-dep-operations';\nconst refuse = (j, sim, evenement, raison) => ({ ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: [raison], journal: [{ evenement: evenement, agent: AGENT, objet_ref: null, decision: raison.slice(0, 200), simulation: sim }] });\nconst PARIS = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short' });\nconst parisParts = (ms) => { const p = {}; for (const x of PARIS.formatToParts(new Date(ms))) p[x.type] = x.value; return { annee: Number(p.year), mois: Number(p.month), jour: Number(p.day), heure: Number(p.hour) % 24, minute: Number(p.minute), sem: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(p.weekday) + 1 }; };\nconst parisJour = (ms) => { const q = parisParts(ms); return String(q.annee) + '-' + String(q.mois).padStart(2, '0') + '-' + String(q.jour).padStart(2, '0'); };\nconst parisOffsetMs = (ms) => { const q = parisParts(ms); return Date.UTC(q.annee, q.mois - 1, q.jour, q.heure, q.minute) - Math.floor(ms / 60000) * 60000; };\nconst instantParis = (jour, min) => { const [a, m, d] = jour.split('-').map(Number); const mur = Date.UTC(a, m - 1, d, 0, min); const ms = mur - parisOffsetMs(mur); return mur - parisOffsetMs(ms); };\nconst JOURS_FR = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];\nconst MOIS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];\nconst heureFr = (ms) => { const q = parisParts(ms); return q.heure + ' h ' + String(q.minute).padStart(2, '0'); };\nconst texteInstant = (ms) => { const q = parisParts(ms); return JOURS_FR[q.sem - 1] + ' ' + q.jour + ' ' + MOIS_FR[q.mois - 1] + ' à ' + heureFr(ms); };\nconst jourFr = (iso) => { const [a, m, d] = iso.split('-').map(Number); return String(d).padStart(2, '0') + '/' + String(m).padStart(2, '0') + '/' + a; };\nconst plusUnJour = (iso) => new Date(Date.parse(iso + 'T12:00:00Z') + 86400000).toISOString().slice(0, 10);\nconst paques = (an) => { const a = an % 19, b = Math.floor(an / 100), c = an % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451); return [Math.floor((h + l - 7 * m + 114) / 31), ((h + l - 7 * m + 114) % 31) + 1]; };\nconst cleMJ = (m, j) => String(m).padStart(2, '0') + '-' + String(j).padStart(2, '0');\nconst feries = (an) => { const [m, j] = paques(an); const dec = (n) => { const d = new Date(Date.UTC(an, m - 1, j + n)); return cleMJ(d.getUTCMonth() + 1, d.getUTCDate()); }; return new Set(['01-01', '05-01', '05-08', '07-14', '08-15', '11-01', '11-11', '12-25', dec(1), dec(39), dec(50)]); };\nconst plageOk = (ms) => { const q = parisParts(ms); return q.sem !== 7 && !feries(q.annee).has(cleMJ(q.mois, q.jour)) && q.heure >= 8 && q.heure < 20; };\nconst prochaineOuverture = (ms) => { let jour = parisJour(ms); for (let k = 0; k < 12; k++) { const t = instantParis(jour, 480); if (t >= ms && plageOk(t)) return t; if (plageOk(ms) && k === 0) return ms; jour = plusUnJour(jour); } return null; };\n// presti-dep-operations · Rappel de la veille (036-008) : pour chaque rendez-vous de DEMAIN (jour de Paris), une CARTE « rappel de rendez-vous » à valider, jamais un envoi.\n// Le canal doit être consenti, sans opposition (STOP) ; le texte est fixe (jour, heure, nom de l'artisan, STOP), sans lien ni montant ni nom de client, au nom de l'artisan.\n// L'heure d'envoi prévue respecte la plage d'envoi de lib/sms/plage.ts:7-8 (lundi-samedi, 8 h-20 h, Paris, hors fériés) : hors plage, elle est reportée à la prochaine ouverture.\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, c = e.config, org = e.organisation_id, sim = e.simulation === true;\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: AGENT, objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    const r0 = d.rappel;\n    if (!r0 || typeof d.maintenant !== 'string') return { ...j, statut: 'rien_a_faire', resultat: { etat: 'lecture_absente', genre: 'rappel' }, effets_prevus: [], journal: [ligne('rappel_saute', null, 'les rendez-vous n’ont pas été lus : rien n’est affirmé')] };\n    if (r0.rendez_vous.some((x) => x.artisan_id !== org)) return refuse(j, sim, 'rappel_refuse', 'autre_compte : un rendez-vous lu n’est pas celui de ce compte');\n    const maintenant = Date.parse(d.maintenant), demain = plusUnJour(parisJour(maintenant));\n    const nom = typeof c.nom_artisan === 'string' && c.nom_artisan.trim() ? c.nom_artisan.trim() : null;\n    const sauts = { pas_demain: 0, sans_consentement: 0, opposition: 0, sans_canal: 0, deja_prepare: 0 };\n    const cartes = [], effets = [], journal = [];\n    const plageOkMaintenant = plageOk(maintenant);\n    for (const r of r0.rendez_vous.slice().sort((a, b) => (a.debut < b.debut ? -1 : a.debut > b.debut ? 1 : (a.id < b.id ? -1 : 1)))) {\n      const debut = Date.parse(r.debut);\n      if (parisJour(debut) !== demain) { sauts.pas_demain++; continue; }\n      if (r.opposition) { sauts.opposition++; continue; }\n      if (!r.consentement) { sauts.sans_consentement++; continue; }\n      if (r.canal === 'aucun') { sauts.sans_canal++; continue; }\n      const cle = 'rv:' + r.id;\n      if (r0.cles_existantes.includes(cle)) { sauts.deja_prepare++; continue; }\n      const envoi = prochaineOuverture(maintenant);\n      const texte = 'Bonjour, ceci est un rappel de votre rendez-vous demain à ' + heureFr(debut) + '. ' + (nom ? nom + '. ' : '') + 'Pour ne plus recevoir ces messages, répondez STOP.';\n      const carte = { cle: cle, type_action: 'rappel_rendez_vous', statut: 'a_valider', canal: r.canal, rendez_vous: r.id, texte: texte, envoyer_a: envoi === null ? null : new Date(envoi).toISOString(),\n        plage: { ok_maintenant: plageOkMaintenant, regle: 'lundi-samedi 8 h-20 h Paris, hors jours fériés (lib/sms/plage.ts:7-8)', reporte: envoi !== null && envoi !== maintenant } };\n      cartes.push(carte);\n      effets.push({ effet: 'preparer_carte', organisation_id: org, cle: cle, type_action: 'rappel_rendez_vous', statut: 'a_valider', canal: r.canal, texte: texte, envoyer_a: carte.envoyer_a, montant_centimes: null });\n      journal.push(ligne('rappel', cle, 'carte de rappel préparée pour demain à ' + heureFr(debut) + (carte.plage.reporte ? ', envoi reporté à l’ouverture de la plage' : '')));\n    }\n    if (cartes.length) effets.push({ effet: 'noter_evenement', organisation_id: org, type: 'rappels_prepares', cle: 'ev:rv:' + demain, faits: { cartes: cartes.length } });\n    journal.unshift(ligne('rappel_bilan', 'rv:' + demain, cartes.length + ' carte(s), ' + sauts.sans_consentement + ' sans consentement, ' + sauts.opposition + ' opposition(s)'));\n    return { ...j, statut: cartes.length ? 'ok' : 'rien_a_faire', resultat: { genre: 'rappel', jour: demain, cartes: cartes, sauts: sauts, envoi: 'jamais seul : une carte à valider (décision 5)' }, effets_prevus: effets, journal: journal.slice(0, 200) };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['rappel : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "8a98e248-f88c-492f-a110-7d399947adb4",
+      "name": "Gardien du stock",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        150
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const AGENT = 'presti-dep-operations';\nconst refuse = (j, sim, evenement, raison) => ({ ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: [raison], journal: [{ evenement: evenement, agent: AGENT, objet_ref: null, decision: raison.slice(0, 200), simulation: sim }] });\nconst PARIS = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short' });\nconst parisParts = (ms) => { const p = {}; for (const x of PARIS.formatToParts(new Date(ms))) p[x.type] = x.value; return { annee: Number(p.year), mois: Number(p.month), jour: Number(p.day), heure: Number(p.hour) % 24, minute: Number(p.minute), sem: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(p.weekday) + 1 }; };\nconst parisJour = (ms) => { const q = parisParts(ms); return String(q.annee) + '-' + String(q.mois).padStart(2, '0') + '-' + String(q.jour).padStart(2, '0'); };\nconst parisOffsetMs = (ms) => { const q = parisParts(ms); return Date.UTC(q.annee, q.mois - 1, q.jour, q.heure, q.minute) - Math.floor(ms / 60000) * 60000; };\nconst instantParis = (jour, min) => { const [a, m, d] = jour.split('-').map(Number); const mur = Date.UTC(a, m - 1, d, 0, min); const ms = mur - parisOffsetMs(mur); return mur - parisOffsetMs(ms); };\nconst JOURS_FR = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];\nconst MOIS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];\nconst heureFr = (ms) => { const q = parisParts(ms); return q.heure + ' h ' + String(q.minute).padStart(2, '0'); };\nconst texteInstant = (ms) => { const q = parisParts(ms); return JOURS_FR[q.sem - 1] + ' ' + q.jour + ' ' + MOIS_FR[q.mois - 1] + ' à ' + heureFr(ms); };\nconst jourFr = (iso) => { const [a, m, d] = iso.split('-').map(Number); return String(d).padStart(2, '0') + '/' + String(m).padStart(2, '0') + '/' + a; };\nconst plusUnJour = (iso) => new Date(Date.parse(iso + 'T12:00:00Z') + 86400000).toISOString().slice(0, 10);\n// presti-dep-operations · Gardien du stock (036-008) : un article sous son seuil (seuil > 0 et quantité ≤ seuil : app/api/inventaire/route.ts:70) donne une CARTE\n// « commande fournisseur » préparée, à valider. C'est de l'argent : jamais envoyée seule, en Studio comme en Signature. Le fournisseur vient de la liste de l'artisan\n// (absent : « à choisir »), la quantité est celle que l'artisan a posée (sinon « à saisir »), le montant est prix × quantité, calculé ICI, sinon absent. Jamais un prix deviné.\nconst JOURS_REVERIFICATION = 30;\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, org = e.organisation_id, sim = e.simulation === true;\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: AGENT, objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    const s = d.stock;\n    if (!s || typeof d.maintenant !== 'string') return { ...j, statut: 'rien_a_faire', resultat: { etat: 'lecture_absente', genre: 'stock' }, effets_prevus: [], journal: [ligne('stock_saute', null, 'le stock n’a pas été lu : rien n’est affirmé')] };\n    const lignes = [].concat(s.articles, s.fournisseurs, s.prix);\n    if (lignes.some((x) => x.artisan_id !== org)) return refuse(j, sim, 'stock_refuse', 'autre_compte : une ligne lue n’est pas celle de ce compte');\n    if (!s.source.lue) return { ...j, statut: 'rien_a_faire', resultat: { etat: 'stock_non_lu', genre: 'stock', texte: 'Stock non lu (lecture en erreur) : rien n’est affirmé' }, effets_prevus: [], journal: [ligne('stock_saute', null, 'lecture du stock en erreur')] };\n    const jour = parisJour(Date.parse(d.maintenant));\n    const fourn = new Map(s.fournisseurs.map((f) => [f.id, f])), ouvertes = new Set(s.commandes_ouvertes);\n    const sauts = { au_dessus_du_seuil: 0, commande_ouverte: 0, deja_prepare: 0 };\n    const cartes = [], effets = [], journal = [];\n    for (const a of s.articles.slice().sort((x, y) => (x.id < y.id ? -1 : 1))) {\n      if (!(a.seuil > 0 && a.quantite <= a.seuil)) continue;\n      if (ouvertes.has(a.id)) { sauts.commande_ouverte++; continue; }\n      const cle = 'cmd:' + a.id + ':' + jour;\n      if (s.cles_existantes.includes(cle)) { sauts.deja_prepare++; continue; }\n      const f = a.fournisseur_id === null ? null : fourn.get(a.fournisseur_id) || null;\n      const qte = typeof a.qte_reappro === 'number' && a.qte_reappro > 0 ? a.qte_reappro : null;\n      const prix = f ? s.prix.find((p) => p.article_id === a.id && p.fournisseur_id === f.id) || null : null;\n      const montant = prix && qte !== null ? Math.round(prix.prix_ht_centimes * qte) : null;\n      const age = prix ? Math.floor((Date.parse(jour + 'T00:00:00Z') - Date.parse(prix.vu_le + 'T00:00:00Z')) / 86400000) : null;\n      const manque = [];\n      if (!f) manque.push('fournisseur à choisir dans votre liste');\n      if (qte === null) manque.push('quantité à saisir');\n      if (f && !prix) manque.push('prix inconnu : aucun prix n’est deviné');\n      const titre = 'Commander ' + a.nom + (f ? ' chez ' + f.nom : '');\n      const carte = { cle: cle, type_action: 'commande_fournisseur', statut: 'a_valider', article: a.id, titre: titre, reste: a.quantite, seuil: a.seuil, unite: a.unite,\n        fournisseur: f ? { id: f.id, nom: f.nom, delai_jours: f.delai_jours } : null, quantite: qte,\n        prix: prix ? { ht_centimes: prix.prix_ht_centimes, vu_le: prix.vu_le, source: prix.source, a_reverifier: age > JOURS_REVERIFICATION } : null, montant_centimes: montant, a_completer: manque,\n        envoi: 'jamais seul : une commande est de l’argent, elle attend le clic de l’artisan' };\n      cartes.push(carte);\n      effets.push({ effet: 'preparer_carte', organisation_id: org, cle: cle, type_action: 'commande_fournisseur', statut: 'a_valider', titre: titre, fournisseur_id: f ? f.id : null, quantite: qte, montant_centimes: montant, a_completer: manque });\n      journal.push(ligne('stock_bas', cle, a.nom + ' : ' + a.quantite + ' pour un seuil de ' + a.seuil + ', commande préparée' + (manque.length ? ' (' + manque.length + ' à compléter)' : '')));\n    }\n    if (cartes.length) effets.push({ effet: 'noter_evenement', organisation_id: org, type: 'commandes_preparees', cle: 'ev:cmd:' + jour, faits: { cartes: cartes.length } });\n    journal.unshift(ligne('stock_bilan', 'cmd:' + jour, cartes.length + ' commande(s) préparée(s), ' + sauts.commande_ouverte + ' déjà ouverte(s)'));\n    return { ...j, statut: cartes.length ? 'ok' : 'rien_a_faire', resultat: { genre: 'stock', jour: jour, source: 'stock lu le ' + jourFr(s.source.le), cartes: cartes, sauts: sauts }, effets_prevus: effets, journal: journal.slice(0, 200) };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['stock : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "306f2a3c-6fe3-4a6c-ab3f-733805fb3bdd",
+      "name": "Préparer l'import",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-operations · Préparer l'import (036-008) : l'enveloppe de lib-synchroniser-outil@1, rien d'autre. Un bloc absent donne une enveloppe sans lecture : l'enfant la refuse.\n// Les plafonds ont des défauts écrits ici (200 lignes, 5 pages) ; la liste signée des cibles est « mes_chiffres » seulement, et elle est vide si le chef n'en a pas reçu.\nreturn $input.all().map((item) => {\n  const e = item.json.enveloppe, c = e.config, d = e.donnees;\n  const b = d.import || { phase: 'apercu', export: { artisan_id: e.organisation_id, outil: 'autre', lu_le: d.maintenant || '1970-01-01T00:00:00.000Z', pagination: { pages_lues: 0, derniere_page_vide: true }, lignes: [] }, apercu_valide: null, cles_connues: [] };\n  return { json: { contrat: 'lib-synchroniser-outil@1', organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: ('imp:' + e.cle_idempotence).slice(0, 80),\n    trace: { execution_parent: ('presti-dep-operations:' + e.cle_idempotence).slice(0, 80), declencheur: 'presti-dep-operations', tentative: 0 },\n    config: { interrupteur_general: c.interrupteur_general === true, interrupteur_departement: c.interrupteur_departement === true, max_lignes: Number.isInteger(c.max_lignes) ? c.max_lignes : 200,\n      max_pages: Number.isInteger(c.max_pages) ? c.max_pages : 5, cibles_signees: Array.isArray(c.cibles_signees) ? c.cibles_signees : [] },\n    donnees: { maintenant: d.maintenant || (b.export.lu_le), phase: b.phase, export: b.export, apercu_valide: b.apercu_valide, cles_connues: b.cles_connues } } };\n});"
+      }
+    },
+    {
+      "id": "cc2ed864-92a6-49d1-b136-909aa7e203cf",
+      "name": "Appeler lib-synchroniser-outil",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1940,
+        300
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "znIxgrxNzUvGeanu"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "L'export lu, aperçu puis écriture après validation (036-008). Un échec ne fait pas échouer le passage.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "ab61e0e5-856e-438b-8a73-b7ac0840558e",
+      "name": "Habiller l'import",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-operations · Habiller l'import (036-008) : la sortie de lib-synchroniser-outil devient la sortie du chef.\nconst orig = $('Aiguiller').first().json.enveloppe;\nconst s = $input.first().json || {};\nconst ok = typeof s.contrat === 'string';\nreturn [{ json: { enveloppe: { contrat: 'presti-dep-operations@1', simulation: orig.simulation, cle_idempotence: orig.cle_idempotence },\n  statut: ok ? s.statut : 'erreur', resultat: ok && s.resultat ? { genre: 'import', import: s.resultat } : null,\n  effets_prevus: ok && Array.isArray(s.effets_prevus) ? s.effets_prevus : [], journal: ok && Array.isArray(s.journal) ? s.journal : [],\n  erreurs: ok && Array.isArray(s.erreurs) && s.erreurs.length ? s.erreurs : ok ? [] : ['l’enfant lib-synchroniser-outil n’a pas répondu'] } }];"
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T12:17:09.757Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-008), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

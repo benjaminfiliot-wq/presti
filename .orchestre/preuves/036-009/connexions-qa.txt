@@ -1,0 +1,179 @@
+1. Contrôles statiques
+  ✓ lib/flags.ts : le drapeau `connexions` est BAISSÉ
+  ✓ serveur.ts : le drapeau branché est `actif('connexions')`, rien d'autre
+  ✓ serveur.ts : l'offre passe par peut() de lib/plans.ts
+  ✓ serveur.ts : la session vient d'authArtisan
+  ✓ serveur.ts : au retour, la suspension et la déconnexion de partout sont relues
+  ✓ serveur.ts : une lecture des connexions en erreur lève (jamais une liste vide)
+  ✓ serveur.ts : les 3 requêtes de lecture et de mise à jour filtrent sur artisan_id
+  ✓ serveur.ts : l'insertion ne prend l'artisan que de la ligne construite par le cœur
+  ✓ serveur.ts : aucun message d'erreur complet dans les journaux (le code seulement)
+  ✓ route demarrer : chaque méthode délègue à demarrer() avec les vraies dépendances, rien d'autre
+  ✓ route retour : chaque méthode délègue à retour() avec les vraies dépendances, rien d'autre
+  ✓ route retirer : chaque méthode délègue à retirer() avec les vraies dépendances, rien d'autre
+  ✓ aucun `plan ===` ni nom d'offre comparé en dur
+  ✓ aucune variable NEXT_PUBLIC_ (rien côté client)
+  ✓ aucun journal ne cite un jeton, un secret ou le vérificateur
+  ✓ routes.ts : la garde du drapeau est la première instruction de chaque route
+  ✓ lib/secretBox.ts est identique à HEAD (lecture seule)
+2. Le cœur, contre un faux Google et une fausse base
+  ✓ drapeau baissé : démarrer (POST) → 404
+  ✓ drapeau baissé : démarrer (GET) → 404
+  ✓ drapeau baissé : retour → 404
+  ✓ drapeau baissé : retirer → 404
+  ✓ drapeau baissé : aucun appel à Google ni à la base
+  ✓ drapeau baissé : aucun cookie posé
+  ✓ démarrer sans session → 401
+  ✓ démarrer, offre gratuite (peut() refuse) → 403
+  ✓ démarrer, outil inconnu → 400
+  ✓ Gmail fermé tant que la vérification Google n'est pas accordée → 409
+  ✓ Gmail ouvert une fois la vérification accordée (variable posée par Benj)
+  ✓ sans la clé de n8n : 503, rien ne démarre
+  ✓ clé de n8n identique à celle de l'app : refusée (503)
+  ✓ chiffrementsDisponibles() refuse deux clés identiques
+  ✓ sans application OAuth configurée : 503
+  ✓ démarrer n'appelle jamais Google côté serveur
+  ✓ google_agenda : l'URL va chez Google
+  ✓ google_agenda : portées EXACTEMENT minimales (https://www.googleapis.com/auth/calendar.freebusy)
+  ✓ google_agenda : PKCE S256
+  ✓ google_agenda : state de 32 octets aléatoires
+  ✓ google_agenda : pas de portées héritées ; accès hors ligne
+  ✓ google_agenda : redirection et type de réponse attendus
+  ✓ google_agenda : la réponse ne porte que { ok, url }
+  ✓ google_agenda : cookie d'état HttpOnly, Secure, SameSite=Lax, 10 min, préfixe __Host-
+  ✓ google_agenda : le cookie d'état est chiffré (v1), le state n'y est pas en clair
+  ✓ google_drive : l'URL va chez Google
+  ✓ google_drive : portées EXACTEMENT minimales (https://www.googleapis.com/auth/drive.file)
+  ✓ google_drive : PKCE S256
+  ✓ google_drive : state de 32 octets aléatoires
+  ✓ google_drive : pas de portées héritées ; accès hors ligne
+  ✓ google_drive : redirection et type de réponse attendus
+  ✓ google_drive : la réponse ne porte que { ok, url }
+  ✓ google_drive : cookie d'état HttpOnly, Secure, SameSite=Lax, 10 min, préfixe __Host-
+  ✓ google_drive : le cookie d'état est chiffré (v1), le state n'y est pas en clair
+  ✓ gmail : l'URL va chez Google
+  ✓ gmail : portées EXACTEMENT minimales (https://www.googleapis.com/auth/gmail.readonly)
+  ✓ gmail : PKCE S256
+  ✓ gmail : state de 32 octets aléatoires
+  ✓ gmail : pas de portées héritées ; accès hors ligne
+  ✓ gmail : redirection et type de réponse attendus
+  ✓ gmail : la réponse ne porte que { ok, url }
+  ✓ gmail : cookie d'état HttpOnly, Secure, SameSite=Lax, 10 min, préfixe __Host-
+  ✓ gmail : le cookie d'état est chiffré (v1), le state n'y est pas en clair
+  ✓ retour réussi : 303 vers le tableau de bord, connexion=ok
+  ✓ retour : le cookie d'état est effacé
+  ✓ échange : le vérificateur PKCE correspond au défi envoyé
+  ✓ échange : même redirect_uri qu'à l'autorisation
+  ✓ une seule connexion enregistrée
+  ✓ la connexion appartient au compte de la session de départ
+  ✓ « active » seulement après l'essai de lecture réussi
+  ✓ essai de lecture : les créneaux occupés (freeBusy), rien d'autre
+  ✓ compte affiché : l'adresse vérifiée, en minuscules
+  ✓ portées enregistrées : celles accordées, normalisées
+  ✓ secret_app et secret_n8n au format v1 (celui que 0193 exige)
+  ✓ aucun jeton en clair dans la ligne
+  ✓ l'app ouvre secret_app avec CANAUX_KEY
+  ✓ n8n ouvre secret_n8n avec BOITE_CLE_N8N
+  ✓ secret_n8n s'ouvre avec la seule clé de n8n et la donnée associée « connexions:<id>:n8n » (contrat de n8n)
+  ✓ CANAUX_KEY n'ouvre pas secret_n8n
+  ✓ la clé de n8n n'ouvre pas secret_app
+  ✓ un chiffré recopié sur une autre ligne ne s'ouvre pas
+  ✓ un chiffré sans sa donnée associée ne s'ouvre pas
+  ✓ secret_app recopié dans secret_n8n ne s'ouvre pas
+  ✓ la vue « Connexions » ne porte aucun secret
+  ✓ la vue « Connexions » dit l'état
+  ✓ rebrancher : la connexion est renouvelée sur place (nouveaux secrets, une seule vivante)
+  ✓ aucune réponse au navigateur ne porte un jeton, le client secret ou le code (11 réponses lues)
+  ✓ le vérificateur PKCE ne part jamais vers le navigateur
+  ✓ state différent : refus etat_invalide
+  ✓ state différent : aucun échange de code, rien d'enregistré
+  ✓ cookie absent : refus etat_invalide
+  ✓ cookie absent : aucun échange de code, rien d'enregistré
+  ✓ cookie altéré : refus etat_invalide
+  ✓ cookie altéré : aucun échange de code, rien d'enregistré
+  ✓ état échu (11 minutes) : refus etat_invalide
+  ✓ état échu (11 minutes) : aucun échange de code, rien d'enregistré
+  ✓ state d'un autre départ avec le cookie de la session A : refus
+  ✓ refus chez Google : rien n'est enregistré
+  ✓ portée élargie accordée : refus, rien d'enregistré
+  ✓ portée élargie : le jeton reçu est révoqué chez Google
+  ✓ portée principale décochée : refus, rien d'enregistré
+  ✓ essai de lecture raté : état « erreur », jamais « active »
+  ✓ offre perdue entre le départ et le retour : peut() relu, refus
+  ✓ un autre compte ne retire pas la connexion (404, rien ne change)
+  ✓ retirer sans session → 401
+  ✓ retirer, identifiant invalide → 400
+  ✓ retirer : la ligne passe à « retiree »
+  ✓ retirer : les deux jetons sont effacés, retiree_le posé
+  ✓ retirer : l'autorisation est révoquée chez Google (jeton de rafraîchissement)
+  ✓ retirer deux fois : idempotent
+  ✓ Google injoignable au retrait : le retrait chez Presti a lieu quand même
+  ✓ patchRetrait : exactement retiree + deux secrets à null
+  ✓ même compte Google : agenda et Drive branchés côte à côte
+  ✓ retirer Drive quand l'agenda du même compte vit : pas de révocation chez Google (elle couperait l'agenda)
+  ✓ Drive retiré et effacé, l'agenda intact
+  ✓ portée refusée alors que l'agenda du même compte vit : pas de révocation
+  ✓ lecture de la base en erreur au retour : refus, la connexion existante reste intacte
+  ✓ lecture en erreur : aucune révocation à l'aveugle
+  ✓ retrait pendant une panne de lecture : jetons effacés chez Presti, pas de révocation à l'aveugle
+  ✓ compte suspendu ou déconnecté de partout entre le départ et le retour : refus avant tout échange
+  ✓ autorisation expirée chez Google : jetonUtilisable ne plante pas
+  ✓ autorisation expirée : état « expiree » (l'écran le dit), aucun jeton rendu
+  ✓ autorisation expirée : une alerte, au bon compte
+  ✓ l'issue ne porte aucun jeton
+  ✓ Google injoignable : silence, ni état changé ni alerte, sans plantage
+  ✓ Google en panne (503) : silence
+  ✓ réponse illisible de Google : silence, sans plantage
+  ✓ connexion déjà expirée : silence, pas une alerte de plus
+  ✓ secret illisible : état « erreur », une alerte, sans plantage
+  ✓ jeton d'accès échu, rafraîchissement réussi : nouveau jeton
+  ✓ rafraîchi : les deux secrets rechiffrés, chacun pour son destinataire
+  ✓ jeton encore valable : aucun appel à Google
+  ✓ clé de l'app retirée : silence, sans plantage
+  ✓ sans clé de n8n : chiffrerPour refuse plutôt que d'écrire en clair
+  ✓ deux chiffrements du même texte diffèrent (iv aléatoire), format v1
+  ✓ un chiffré altéré ne s'ouvre pas (intégrité GCM)
+  ✓ cœur : 116 verts, 0 rouges (au moins 60 verts attendus)
+3. Mutants (chacun doit faire rougir le juge)
+  ✓ mutant drapeau baissé qui répond 200 (les trois routes) → tué (drapeau baissé : démarrer (POST) → 404)
+  ✓ mutant drapeau ignoré par la seule route de retour → tué (drapeau baissé : retour → 404)
+  ✓ mutant drapeau ignoré par le seul retrait → tué (drapeau baissé : aucun appel à Google ni à la base)
+  ✓ mutant state non vérifié → tué (state différent : refus etat_invalide)
+  ✓ mutant état échu accepté → tué (état échu (11 minutes) : refus etat_invalide)
+  ✓ mutant vérificateur PKCE renvoyé au navigateur → tué (google_agenda : la réponse ne porte que { ok, url })
+  ✓ mutant jetons renvoyés au client au retour → tué (retour réussi : 303 vers le tableau de bord, connexion=ok)
+  ✓ mutant secret_app stocké en clair → tué (secret_app et secret_n8n au format v1 (celui que 0193 exige))
+  ✓ mutant secret_n8n chiffré avec la clé de l'app → tué (n8n ouvre secret_n8n avec BOITE_CLE_N8N)
+  ✓ mutant chiffré non lié à sa ligne (donnée associée ôtée) → tué (secret_n8n s'ouvre avec la seule clé de n8n et la donnée associée « connexions:<id>:n8n » (contrat de n8n))
+  ✓ mutant clé de n8n égale à celle de l'app acceptée → tué (clé de n8n identique à celle de l'app : refusée (503))
+  ✓ mutant retrait qui garde le jeton → tué (retirer : les deux jetons sont effacés, retiree_le posé)
+  ✓ mutant retrait sans révocation chez Google → tué (retirer : l'autorisation est révoquée chez Google (jeton de rafraîchissement))
+  ✓ mutant jeton expiré qui fait planter → tué (Google injoignable : silence, ni état changé ni alerte, sans plantage)
+  ✓ mutant jeton expiré traité comme une panne (ni état ni alerte) → tué (autorisation expirée : état « expiree » (l'écran le dit), aucun jeton rendu)
+  ✓ mutant portée élargie (Gmail complet) → tué (gmail : portées EXACTEMENT minimales (https://www.googleapis.com/auth/gmail.readonly))
+  ✓ mutant portée élargie (agenda complet au lieu des créneaux) → tué (google_agenda : portées EXACTEMENT minimales (https://www.googleapis.com/auth/calendar.freebusy))
+  ✓ mutant portée élargie acceptée au retour → tué (portée élargie accordée : refus, rien d'enregistré)
+  ✓ mutant portées accordées auparavant réutilisées → tué (google_agenda : pas de portées héritées ; accès hors ligne)
+  ✓ mutant PKCE en clair (plain) → tué (google_agenda : PKCE S256)
+  ✓ mutant vérificateur PKCE non envoyé à l'échange → tué (retour réussi : 303 vers le tableau de bord, connexion=ok)
+  ✓ mutant offre non contrôlée au départ → tué (démarrer, offre gratuite (peut() refuse) → 403)
+  ✓ mutant offre non relue au retour → tué (offre perdue entre le départ et le retour : peut() relu, refus)
+  ✓ mutant Gmail ouvert sans vérification Google → tué (Gmail fermé tant que la vérification Google n'est pas accordée → 409)
+  ✓ mutant « active » sans essai de lecture réussi → tué (essai de lecture raté : état « erreur », jamais « active »)
+  ✓ mutant l'écran « Connexions » reçoit le secret → tué (la vue « Connexions » ne porte aucun secret)
+  ✓ mutant rebrancher par une seconde ligne au lieu de renouveler → tué (rebrancher : la connexion est renouvelée sur place (nouveaux secrets, une seule vivante))
+  ✓ mutant retrait qui révoque malgré une autre connexion du même compte Google → tué (retirer Drive quand l'agenda du même compte vit : pas de révocation chez Google (elle couperait l'agenda))
+  ✓ mutant refus de portée qui révoque malgré une autre connexion du même compte → tué (portée refusée alors que l'agenda du même compte vit : pas de révocation)
+  ✓ mutant lecture en erreur prise pour « aucune connexion » → tué (lecture en erreur : aucune révocation à l'aveugle)
+  ✓ mutant compte non revérifié au retour → tué (compte suspendu ou déconnecté de partout entre le départ et le retour : refus avant tout échange)
+  ✓ mutant statique : lecture en erreur rendue comme une liste vide → tué (serveur.ts : une lecture des connexions en erreur lève (jamais une liste vide))
+  ✓ mutant statique : suspension non relue au retour → tué (serveur.ts : au retour, la suspension et la déconnexion de partout sont relues)
+  ✓ mutant statique : drapeau forcé à vrai dans serveur.ts → tué (serveur.ts : le drapeau branché est `actif('connexions')`, rien d'autre)
+  ✓ mutant statique : requête sans filtre sur le compte → tué (serveur.ts : les 3 requêtes de lecture et de mise à jour filtrent sur artisan_id)
+  ✓ mutant statique : drapeau levé dans lib/flags.ts → tué (lib/flags.ts : le drapeau `connexions` est BAISSÉ)
+  ✓ mutant statique : route qui répond sans passer par le cœur → tué (route retour : chaque méthode délègue à retour() avec les vraies dépendances, rien d'autre)
+  ✓ mutant statique : offre comparée en dur → tué (aucun `plan ===` ni nom d'offre comparé en dur)
+  ✓ mutant statique : un jeton dans un journal → tué (aucun journal ne cite un jeton, un secret ou le vérificateur)
+
+39/39 mutants tués ; 0 échec(s).
+CONNEXIONS-QA VERT

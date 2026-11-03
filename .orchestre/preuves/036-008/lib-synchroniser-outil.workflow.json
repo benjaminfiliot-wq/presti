@@ -1,0 +1,270 @@
+{
+  "id": "znIxgrxNzUvGeanu",
+  "name": "lib-synchroniser-outil",
+  "active": false,
+  "isArchived": false,
+  "versionId": "f011f479-1938-40c9-a54d-d12aebaf2590",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 8,
+  "createdAt": "2026-11-03T12:10:48.312Z",
+  "updatedAt": "2026-11-03T12:12:26.816Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "74bDhTw6cEBzPORZ,v0I7822xbpDICXd8",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "lib-synchroniser-outil (036-008) : lit un export épinglé, rend un aperçu avec provenance ; n'écrit qu'après la validation de l'artisan, par clé. INACTIF, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par presti-dep-operations": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Lire l'export et rendre l'aperçu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire l'export et rendre l'aperçu": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "e0597fdf-da3a-4f32-b8d7-49d4aa951104",
+      "name": "Appelé par presti-dep-operations",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "ff33ab0b-437a-40cb-8358-54671090caa9",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de lib-synchroniser-outil@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'lib-synchroniser-outil@1';\nconst SCHEMA = {\"sans_contact\":true,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"interrupteur_general\",\"interrupteur_departement\",\"max_lignes\",\"max_pages\",\"cibles_signees\"],\"properties\":{\"interrupteur_general\":{\"type\":\"boolean\"},\"interrupteur_departement\":{\"type\":\"boolean\"},\"max_lignes\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":500},\"max_pages\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":20},\"cibles_signees\":{\"type\":\"array\",\"maxItems\":3,\"items\":{\"enum\":[\"mes_chiffres\"]}}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"maintenant\",\"phase\",\"export\",\"apercu_valide\",\"cles_connues\"],\"properties\":{\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"},\"phase\":{\"enum\":[\"apercu\",\"ecrire\"]},\"export\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"outil\",\"lu_le\",\"pagination\",\"lignes\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"outil\":{\"enum\":[\"tableur\",\"csv\",\"crm_client\",\"facturation_client\",\"autre\"]},\"lu_le\":{\"type\":\"string\",\"format\":\"date-time\"},\"pagination\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"pages_lues\",\"derniere_page_vide\"],\"properties\":{\"pages_lues\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100},\"derniere_page_vide\":{\"type\":\"boolean\"}}},\"lignes\":{\"type\":\"array\",\"maxItems\":500,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"ref_externe\",\"jour\",\"libelle\",\"montant_centimes\",\"sens\"],\"properties\":{\"ref_externe\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"^[A-Za-z0-9_:.#-]+$\"},\"jour\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"libelle\":{\"type\":\"string\",\"maxLength\":80},\"montant_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10000000000},\"sens\":{\"enum\":[\"entree\",\"sortie\"]},\"provenance\":{\"enum\":[\"lu\",\"declare\"]},\"lu_dans\":{\"type\":[\"string\",\"null\"],\"maxLength\":60},\"lu_le\":{\"type\":[\"string\",\"null\"],\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"declare_par\":{\"enum\":[\"artisan\"]}}}}}},\"apercu_valide\":{\"type\":[\"object\",\"null\"],\"additionalProperties\":false,\"required\":[\"cle_apercu\",\"empreinte\",\"valide_par\",\"valide_le\"],\"properties\":{\"cle_apercu\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"^[A-Za-z0-9_:.#-]+$\"},\"empreinte\":{\"type\":\"string\",\"pattern\":\"^[0-9a-f]{14}$\"},\"valide_par\":{\"enum\":[\"artisan\"]},\"valide_le\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"cles_connues\":{\"type\":\"array\",\"maxItems\":5000,\"items\":{\"type\":\"string\",\"maxLength\":80}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: lib-synchroniser-outil@1"
+    },
+    {
+      "id": "4de98d1c-efed-42b3-85f9-7264f8075e76",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-conforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "b5cb9671-257f-4490-a9c5-939fff4224ff",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "45374469-32d3-4336-bbc4-f2bb7a7b8b6b",
+      "name": "Lire l'export et rendre l'aperçu",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const AGENT = 'lib-synchroniser-outil';\nconst refuse = (j, sim, evenement, raison) => ({ ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: [raison], journal: [{ evenement: evenement, agent: AGENT, objet_ref: null, decision: raison.slice(0, 200), simulation: sim }] });\nconst PARIS = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short' });\nconst parisParts = (ms) => { const p = {}; for (const x of PARIS.formatToParts(new Date(ms))) p[x.type] = x.value; return { annee: Number(p.year), mois: Number(p.month), jour: Number(p.day), heure: Number(p.hour) % 24, minute: Number(p.minute), sem: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(p.weekday) + 1 }; };\nconst parisJour = (ms) => { const q = parisParts(ms); return String(q.annee) + '-' + String(q.mois).padStart(2, '0') + '-' + String(q.jour).padStart(2, '0'); };\nconst parisOffsetMs = (ms) => { const q = parisParts(ms); return Date.UTC(q.annee, q.mois - 1, q.jour, q.heure, q.minute) - Math.floor(ms / 60000) * 60000; };\nconst instantParis = (jour, min) => { const [a, m, d] = jour.split('-').map(Number); const mur = Date.UTC(a, m - 1, d, 0, min); const ms = mur - parisOffsetMs(mur); return mur - parisOffsetMs(ms); };\nconst JOURS_FR = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];\nconst MOIS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];\nconst heureFr = (ms) => { const q = parisParts(ms); return q.heure + ' h ' + String(q.minute).padStart(2, '0'); };\nconst texteInstant = (ms) => { const q = parisParts(ms); return JOURS_FR[q.sem - 1] + ' ' + q.jour + ' ' + MOIS_FR[q.mois - 1] + ' à ' + heureFr(ms); };\nconst jourFr = (iso) => { const [a, m, d] = iso.split('-').map(Number); return String(d).padStart(2, '0') + '/' + String(m).padStart(2, '0') + '/' + a; };\nconst plusUnJour = (iso) => new Date(Date.parse(iso + 'T12:00:00Z') + 86400000).toISOString().slice(0, 10);\n// lib-synchroniser-outil (036-008 ; B10, C3 ; gabarit fiches-depots.md:680) : lit un export ÉPINGLÉ, rend un APERÇU, et n'écrit qu'APRÈS la validation de l'artisan sur cet aperçu.\n// Deux phases : « apercu » (lecture, lignes avec provenance, totaux calculés ici, empreinte ; aucun effet d'écriture) puis « ecrire » (l'export est RELU, son empreinte doit être celle que\n// l'artisan a validée, la cible doit être dans la liste signée « mes_chiffres » ; l'écriture se fait par clé, sans doublon). Chaque donnée porte « lu dans <outil> le <date> » ou « déclaré par l'artisan » :\n// une ligne sans provenance est REJETÉE. Pagination bornée : au-delà du plafond, refus. Écritures : effets_prevus seulement.\nconst provenanceValide = (l, jourMax) => (l.provenance === 'lu' && typeof l.lu_dans === 'string' && l.lu_dans.trim() !== '' && typeof l.lu_le === 'string' && l.lu_le <= jourMax) || (l.provenance === 'declare' && l.declare_par === 'artisan');\nconst empreinte = (t) => { let h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (let i = 0; i < t.length; i++) { const ch = t.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16).padStart(14, '0'); };\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, c = e.config, org = e.organisation_id, sim = e.simulation === true;\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: AGENT, objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    const ex = d.export;\n    if (ex.artisan_id !== org) return refuse(j, sim, 'import_refuse', 'autre_compte : l’export lu n’est pas celui de ce compte');\n    if (!(c.interrupteur_general === true && c.interrupteur_departement === true)) return { ...j, statut: 'rien_a_faire', resultat: { etat: 'interrupteur_coupe', phase: d.phase }, effets_prevus: [], journal: [ligne('import_saute', null, 'interrupteur coupé : rien n’est lu ni écrit')] };\n    if (ex.pagination.pages_lues > c.max_pages) return refuse(j, sim, 'import_refuse', 'pagination_non_bornee : ' + ex.pagination.pages_lues + ' pages lues pour un plafond de ' + c.max_pages);\n    if (ex.lignes.length > c.max_lignes) return refuse(j, sim, 'import_refuse', 'trop_de_lignes : ' + ex.lignes.length + ' lignes pour un plafond de ' + c.max_lignes);\n    const jourMaintenant = d.maintenant.slice(0, 10), connues = new Set(d.cles_connues), vus = new Set();\n    const aImporter = [], rejetees = [];\n    let dejaImportees = 0;\n    for (const l of ex.lignes) {\n      if (vus.has(l.ref_externe)) { rejetees.push({ ref: l.ref_externe, raison: 'doublon_dans_export' }); continue; }\n      vus.add(l.ref_externe);\n      if (!provenanceValide(l, jourMaintenant)) { rejetees.push({ ref: l.ref_externe, raison: 'sans_provenance' }); continue; }\n      if (connues.has('imp:' + l.ref_externe)) { dejaImportees++; continue; }\n      aImporter.push({ ref_externe: l.ref_externe, jour: l.jour, libelle: l.libelle, montant_centimes: l.montant_centimes, sens: l.sens,\n        provenance: l.provenance === 'lu' ? 'lu dans ' + l.lu_dans.trim() + ' le ' + jourFr(l.lu_le) : 'déclaré par l’artisan' });\n    }\n    const entrees = aImporter.filter((x) => x.sens === 'entree').reduce((s, x) => s + x.montant_centimes, 0), sorties = aImporter.filter((x) => x.sens === 'sortie').reduce((s, x) => s + x.montant_centimes, 0);\n    const emp = empreinte(JSON.stringify(aImporter));\n    const cleApercu = ('ap:' + emp).slice(0, 80);\n    const source = 'lu dans ' + ex.outil + ' le ' + jourFr(ex.lu_le.slice(0, 10));\n    const totaux = { lignes: aImporter.length, entrees_centimes: entrees, sorties_centimes: sorties, rejetees: rejetees.length, deja_importees: dejaImportees };\n    if (d.phase === 'apercu') {\n      return { ...j, statut: 'ok', resultat: { phase: 'apercu', outil: ex.outil, source: source, a_importer: aImporter, rejetees: rejetees, totaux: totaux, empreinte: emp, cle_apercu: cleApercu, ecriture: 'non faite : elle attend la validation de l’artisan sur cet aperçu' },\n        effets_prevus: [{ effet: 'deposer_apercu', organisation_id: org, cle: cleApercu, destination: 'mes_chiffres_apercu', lignes: aImporter.length, empreinte: emp }],\n        journal: [ligne('import_apercu', cleApercu, aImporter.length + ' ligne(s) à importer, ' + rejetees.length + ' rejetée(s), rien n’est écrit')] };\n    }\n    const v = d.apercu_valide;\n    if (!v || v.valide_par !== 'artisan' || v.empreinte !== emp) return { ...j, statut: 'refuse', resultat: { phase: 'ecrire', etat: v ? 'apercu_different' : 'sans_apercu_valide', ecrit: false }, effets_prevus: [], erreurs: [v ? 'apercu_different : l’export a changé depuis l’aperçu validé' : 'sans_apercu_valide : rien ne s’écrit sans l’aperçu validé par l’artisan'],\n      journal: [ligne('import_refuse', cleApercu, v ? 'l’aperçu validé n’est plus celui de l’export' : 'pas d’aperçu validé : rien n’est écrit')] };\n    if (!(Date.parse(v.valide_le) <= Date.parse(d.maintenant))) return refuse(j, sim, 'import_refuse', 'validation_du_futur : la validation suit le présent');\n    if (!c.cibles_signees.includes('mes_chiffres')) return { ...j, statut: 'refuse', resultat: { phase: 'ecrire', etat: 'cible_non_signee', ecrit: false }, effets_prevus: [], erreurs: ['cible_non_signee : l’écriture n’est permise que vers la liste signée (mes_chiffres)'], journal: [ligne('import_refuse', cleApercu, 'cible non signée')] };\n    const effets = aImporter.map((x) => ({ effet: 'ecrire_ligne', organisation_id: org, cle: 'imp:' + x.ref_externe, cible: 'mes_chiffres', via: 'circuit « Mes chiffres » : lecture, aperçu validé, puis écriture',\n      requete: 'POST /rest/v1/compta_lignes?on_conflict=artisan_id,cle', entetes: { Prefer: 'resolution=ignore-duplicates,return=minimal' },\n      corps: { artisan_id: org, cle: 'imp:' + x.ref_externe, jour: x.jour, libelle: x.libelle, montant_centimes: x.montant_centimes, sens: x.sens, source: x.provenance } }));\n    effets.push({ effet: 'noter_evenement', organisation_id: org, type: 'import_ecrit_prevu', cle: 'ev:' + cleApercu, faits: { lignes: aImporter.length } });\n    return { ...j, statut: aImporter.length ? 'ok' : 'rien_a_faire', resultat: { phase: 'ecrire', outil: ex.outil, source: source, ecrit: false, totaux: totaux, empreinte: emp, cle_apercu: cleApercu }, effets_prevus: effets,\n      journal: [ligne('import_ecriture', cleApercu, aImporter.length + ' écriture(s) prévue(s) après la validation de l’artisan, par clé')] };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['import : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "2ce1af7a-b865-4939-91cf-9d1b996552f7",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de lib-synchroniser-outil@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-synchroniser-outil@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "cdf89851-8b6a-463d-a7dc-1211b46d3b51",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        120
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 036-008). Rien n'a été écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (carte, agenda, base) n'est pas branché. Il le sera au « go » de Benj, derrière cette même porte."
+    },
+    {
+      "id": "3a166135-9958-41d0-b1c7-6b02fe904722",
+      "name": "Sticky Note d2818599",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## lib-synchroniser-outil (036-008)\nLit un export épinglé, rend un aperçu (provenance de chaque ligne, totaux calculés par le code, empreinte) ; n'écrit qu'après la validation de l'artisan sur cet aperçu, vers la liste signée (mes_chiffres), par clé. Pagination bornée. Aucune écriture faite ici.\nContrat lib-synchroniser-outil@1 (enveloppe@1, gabarit « Contrat » de 035-003). Appelé par presti-dep-operations et par presti-banc-operations.\nINACTIF, jamais publié, en simulation (mode A) : les lectures sont passées par l'appelant, les écritures partent dans effets_prevus. Aucun identifiant.\nJuge : scripts/operations-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 400
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-008), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}
