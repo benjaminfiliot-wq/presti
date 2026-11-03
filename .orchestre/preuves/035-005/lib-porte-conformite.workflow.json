@@ -1,0 +1,278 @@
+{
+  "id": "8c8vkUeSkfgB5FAM",
+  "name": "lib-porte-conformite",
+  "active": false,
+  "isArchived": false,
+  "versionId": "91de7c87-a36c-421b-9946-d67c17d8512f",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 8,
+  "createdAt": "2026-11-03T00:26:54.409Z",
+  "updatedAt": "2026-11-03T00:30:52.955Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 60,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "availableInMCP": true,
+    "callerIds": "H33CKQ8sMB3VULfA"
+  },
+  "tags": [
+    {
+      "id": "hAnDknDebMskn4G3",
+      "name": "couche-conformite"
+    },
+    {
+      "id": "rzslIYLJg0eKogBe",
+      "name": "lib"
+    }
+  ],
+  "parentFolderId": null,
+  "description": "lib-porte-conformite (035-005) : veto avant toute exécution ; liste « jamais en automatique » = code PLUS p5:226 (B1) ; INACTIF, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par un parent": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Veto de conformité",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Veto de conformité": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "a26b08d1-b73e-4c74-8d75-ce660517362c",
+      "name": "Appelé par un parent",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "f7bd60dc-8b6a-4c76-8946-9f3e78b2ab69",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de lib-porte-conformite@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'lib-porte-conformite@1';\nconst SCHEMA = {\"sans_contact\":true,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"jamais_auto\",\"regles_metier\",\"plafond_jour\"],\"properties\":{\"jamais_auto\":{\"type\":[\"array\",\"null\"],\"maxItems\":100,\"items\":{\"type\":\"string\",\"pattern\":\"^[a-z_]{2,60}$\"}},\"regles_metier\":{\"type\":[\"object\",\"null\"],\"additionalProperties\":false,\"properties\":{\"fournisseurs\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"string\",\"maxLength\":60}},\"mots_escalade_artisan\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"string\",\"maxLength\":60}},\"jours_permis\":{\"type\":\"array\",\"maxItems\":7,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"heures_permises\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"debut\",\"fin\"],\"properties\":{\"debut\":{\"type\":\"string\",\"pattern\":\"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"},\"fin\":{\"type\":\"string\",\"pattern\":\"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}}}}},\"plafond_jour\":{\"type\":[\"integer\",\"null\"],\"minimum\":0}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"action\",\"message\",\"destinataire\"],\"properties\":{\"action\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"type_action\",\"outil\",\"prix_sources\",\"cible\",\"sans_relecture\"],\"properties\":{\"type_action\":{\"type\":\"string\",\"pattern\":\"^[a-z_]{2,60}$\"},\"outil\":{\"type\":\"string\",\"pattern\":\"^[a-z_]{2,60}$\"},\"prix_sources\":{\"type\":\"boolean\"},\"cible\":{\"enum\":[\"carte\",\"pilote\"]},\"sans_relecture\":{\"type\":\"boolean\"}}},\"message\":{\"type\":[\"object\",\"null\"],\"additionalProperties\":false,\"required\":[\"canal\",\"objet\",\"texte\"],\"properties\":{\"canal\":{\"enum\":[\"email\",\"sms\"]},\"objet\":{\"type\":[\"string\",\"null\"],\"maxLength\":120},\"texte\":{\"type\":[\"string\",\"null\"],\"maxLength\":1800}}},\"destinataire\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"opposition\",\"consentement_sms\",\"escalade\"],\"properties\":{\"opposition\":{\"type\":[\"boolean\",\"null\"]},\"consentement_sms\":{\"type\":[\"boolean\",\"null\"]},\"escalade\":{\"type\":[\"boolean\",\"null\"]}}},\"faits\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"type_relance\",\"palier\"],\"properties\":{\"type_relance\":{\"enum\":[\"relance_facture\",\"relance_devis\",\"relance_conversation\"]},\"palier\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":10},\"numero\":{\"type\":[\"string\",\"null\"],\"maxLength\":30,\"pattern\":\"^[A-Z0-9-]+$\"},\"objet\":{\"type\":[\"string\",\"null\"],\"maxLength\":120,\"pattern\":\"^[^@{}]*$\"},\"montant_ttc_centimes\":{\"type\":[\"integer\",\"null\"],\"minimum\":0},\"montant_ht_centimes\":{\"type\":[\"integer\",\"null\"],\"minimum\":0},\"echeance_le\":{\"type\":[\"string\",\"null\"],\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"emis_le\":{\"type\":[\"string\",\"null\"],\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"regime_tva\":{\"enum\":[\"tva\",\"franchise\",null]}}},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"},\"compteurs\":{\"type\":\"object\",\"additionalProperties\":false,\"properties\":{\"envoyes_aujourdhui\":{\"type\":[\"integer\",\"null\"],\"minimum\":0}}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: lib-porte-conformite@1"
+    },
+    {
+      "id": "91dcded6-01ae-4e23-85f2-b2c1cd98b1b9",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-conforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "24bb6387-4a90-4eb1-bd4f-8060e19f71e3",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "ca6193dc-f7ad-4757-b3dc-ee027bba9dd5",
+      "name": "Veto de conformité",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// lib-porte-conformite (PR § 5.5 ; fiche « Conformité », § 5.3 ; Amendement B1 ; p5:194, p5:226, p5:315) : le VETO, avant toute\n// exécution. Pur, sans modèle. Elle ne modifie jamais le message et ne peut rien envoyer. Au moindre doute, elle refuse :\n// une lecture absente (null) ou une sortie illisible vaut refus, et toute erreur aussi.\n// Refusés :\n//   - un geste « jamais en automatique » demandé en automatique (cible pilote ou sans relecture). La liste du kit = la liste du code\n//     (OUTILS_JAMAIS_AUTO, lib/pilote/regles.ts:79-82) PLUS les gestes de p5:226 (Amendement B1), plus ce que la configuration du client\n//     AJOUTE (elle ne peut rien retirer). Le juge vérifie l'inclusion. En carte, l'artisan valide : le geste passe en carte (repli) ;\n//   - un prix, une date, un délai, un créneau ou un fournisseur absent des faits ; un montant sans TTC ni HT, ou avec TVA en franchise ;\n//   - la mention d'IA absente d'un message sans relecture, ou présente sur une carte, ou un autre pied que le sien (PIED_AUTOMATIQUE,\n//     PIED_APRES : textes fixes de l'app, jamais un texte du modèle) ;\n//   - « Presti », un nom de marque d'outil ou de modèle ;\n//   - une opposition, un STOP ignoré, un SMS sans STOP ou sans consentement ;\n//   - un sujet d'escalade (drapeau lu en amont, ou mot d'escalade du code ou de l'artisan dans le message) ;\n//   - en automatique : hors horaires, ou au plafond du jour (le plus bas de la configuration et du code).\n// ─── Copie figée de la liste « jamais en automatique », des mots d’escalade, de la mention et des pieds (lib/pilote/regles.ts, lib/mentionAssistant.ts, lib/relancesImpayes.ts, lib/apresChantier.ts), comparée au code par scripts/lib-relance-n8n-qa.mjs ───\nconst COPIE = {\"OUTILS_JAMAIS_AUTO\":[\"marquer_facture_payee\",\"creer_facture\",\"creer_facture_libre\",\"rembourser\",\"payer\",\"creer_avoir\",\"supprimer_devis_brouillon\",\"supprimer_tarif\",\"supprimer_article\",\"augmenter_tarifs\"],\"PLAFOND_AUTO_JOUR\":20,\"MOTS_ESCALADE_TOUJOURS\":[\"litige\",\"litigieux\",\"sinistre\",\"avocat\",\"menace\",\"mise en demeure\",\"en demeure\",\"plainte\",\"tribunal\",\"tribunaux\",\"huissier\",\"contentieux\",\"conteste\",\"contestation\",\"arnaque\",\"escroquerie\",\"escroc\",\"urgence\",\"fuite\",\"dégât des eaux\",\"dégâts des eaux\",\"dégât d’eau\",\"dégâts d’eau\",\"inondation\",\"inondé\",\"assurance\",\"justice\",\"prud’hom\",\"juridique\",\"médiateur\",\"conciliat\",\"dgccrf\",\"gendarme\",\"préjudice\",\"indemni\",\"dédommag\",\"réclamation\",\"lettre recommandée\",\"recommandé avec\",\"en recommandé\",\"accusé de réception\",\"vice caché\",\"vices cachés\",\"opposition\",\"malfaçon\",\"décennale\",\"expert\",\"dégât\",\"incendie\",\"brûl\",\"blessé\",\"blessure\",\"électrocut\",\"monoxyde\",\"intoxi\",\"effondr\",\"écroul\",\"infiltr\",\"court-circuit\",\"court circuit\",\"danger\",\"eau partout\",\"est tombé\",\"est tombée\",\"sont tombés\",\"une chute\",\"fait une chute\",\"paierai pas\",\"payerai pas\",\"réglerai pas\",\"paie pas\",\"paye pas\",\"pas payer cette\",\"pas payer la\",\"pas payer tant\",\"refuse de payer\",\"refuse de régler\",\"rembours\",\"avis négatif\",\"mauvais avis\",\"mauvaise pub\",\"assureur\",\"menaç\",\"voleur\",\"poursuiv\",\"vous attaquer\",\"paierai rien\",\"payerai rien\",\"pas un centime\",\"bloque le paiement\",\"retiens le solde\",\"retenir le solde\",\"une étoile\",\"explos\",\"étincel\",\"ça fume\",\"pris une décharge\",\"décharge électrique\",\"s’est coupé\",\"s’est blessé\",\"signalement\",\"réclame\",\"remise en état\",\"conflit\",\"dénonce\",\"fui\",\"fuy\",\"perd de l’eau\",\"perdent de l’eau\",\"perte d’eau\",\"urgen\",\"urgemment\",\"goutte\",\"suinte\",\"déborde\",\"sous l’eau\",\"de l’eau par terre\",\"plus de chauffage\",\"plus d’eau chaude\",\"au plus vite\",\"pressant\",\"entendre parler de moi\",\"retiens le paiement\",\"rendez-moi mon argent\",\"une honte\",\"avis sur google\",\"plombs ont sauté\",\"pris feu\",\"court-jus\",\"coule du\",\"ça coule\",\"goutte du\",\"escroqu\",\"plaindre\",\"plains\",\"dommages et\",\"consommateur\",\"bâcl\",\"mal fait\",\"fraude\",\"disjoncteur saute\",\"ça disjoncte\",\"disjoncte sans\",\"refui\",\"refuy\",\"humidit\",\"humide\",\"eau coule\",\"coule le long\",\"ruissel\",\"s’échapp\",\"s’écoul\",\"eau qui sort\",\"eau sort\",\"eau se perd\",\"de l’eau sous\",\"lâche de l’eau\",\"crache de l’eau\",\"pisse de l’eau\",\"se vide tout seul\",\"perd du liquide\",\"perte de liquide\",\"c’est pressé\",\"est très pressé\",\"suis pressé\",\"odeur\"],\"MOTS_ESCALADE_ENTIERS\":[\"gaz\",\"procès\",\"police\",\"accident\",\"accidents\",\"pompiers\",\"juge\",\"ufc\",\"vol\",\"samu\",\"urssaf\"],\"MENTION\":\"Message rédigé et envoyé automatiquement par l’assistant\",\"PIED_AUTOMATIQUE\":\"Ce rappel a été envoyé automatiquement. Si vous avez déjà réglé cette facture, ou si quelque chose pose problème, répondez simplement à ce message.\",\"PIED_APRES\":\"Message envoyé à la suite de votre chantier. Si vous ne souhaitez plus en recevoir, dites-le simplement en répondant.\"};\nconst GESTES_P5_226 = [\"envoyer_devis\",\"envoi_devis\",\"modifier_prix_sans_source\",\"encaisser\",\"toucher_moyen_paiement\",\"declarer_urssaf\",\"declarer_impots\",\"supprimer_donnees\",\"passer_appel\",\"prendre_appel\",\"prendre_rendez_vous\"];\n// ─── fin de la copie figée ───\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) {\n  const p = {};\n  for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value;\n  return { jour: JOURS_ISO[p.weekday], minutes: Number(p.hour) * 60 + Number(p.minute) };\n}\nconst enMinutes = (hhmm) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));\nfunction dansLesHoraires(date, jours, heures) {\n  const p = paris(date);\n  return jours.includes(p.jour) && p.minutes >= enMinutes(heures.debut) && p.minutes < enMinutes(heures.fin);\n}\nconst PREFIXES = /^(supprimer|declarer|encaisser|rembourser|payer)_/;\nconst B1 = [[/^(envoyer_devis|envoi_devis)$/, 'devis_engageant'], [/^declarer_/, 'declaration_fiscale_ou_sociale'], [/^supprimer_/, 'suppression_de_donnees'], [/^(passer|prendre)_appel$/, 'appel_telephonique']];\nconst SEULEMENT_AUTO = new Set(['geste_jamais_auto', 'devis_engageant', 'declaration_fiscale_ou_sociale', 'suppression_de_donnees', 'appel_telephonique', 'mention_manquante', 'plafond_atteint', 'hors_horaires', 'prix_non_source_auto']);\nconst MARQUES = /presti|\\b(claude|anthropic|openai|chat ?gpt|gpt-?\\d|gemini|mistral|llama|copilot|n8n|hermes|haiku|sonnet|opus)\\b|intelligence artificielle|\\bIA\\b/i;\nconst MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];\nconst MONTANT = /(\\d{1,3}(?:[ \\u00a0\\u202f.]\\d{3})+|\\d+)(?:,(\\d{1,2}))?\\s?(?:€|euros?\\b)/gi;\nconst DATE_LETTRES = /\\b(1er|[0-3]?\\d)\\s+(janvier|f[ée]vrier|mars|avril|mai|juin|juillet|ao[ûu]t|septembre|octobre|novembre|d[ée]cembre)\\b/gi;\nconst DATE_CHIFFRES = /\\b([0-3]?\\d)[\\/.]([01]?\\d)(?:[\\/.](\\d{2,4}))?\\b/g;\nconst CRENEAU = /\\b\\d{1,2}\\s?h(?:\\s?\\d{2})?\\b|\\b(?:lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\\b|\\bdemain\\b|\\bapr[èe]s-demain\\b|\\bcette semaine\\b|\\bla semaine prochaine\\b|\\bsous\\s+\\d+\\s*(?:h\\b|heures?|jours?|semaines?|mois)|\\bd['’]ici\\b|\\bdans les\\s+\\d+|\\bdans\\s+\\d+\\s*(?:h\\b|heures?|jours?|semaines?)|\\bcr[ée]neau\\b|\\brendez-vous\\b|\\bpassage\\s+le\\b/i;\nconst FOURNISSEUR = /\\b(?:chez|fournisseur|marque|de la marque)\\s+([A-ZÀ-Ý][\\wÀ-ÿ'’-]+)/g;\nconst sansAccents = (s) => String(s ?? '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');\nconst enMots = (s) => ' ' + sansAccents(s).replace(/[^a-z0-9]+/g, ' ').trim() + ' ';\nconst AVEC_MESSAGE = /relanc|repon|rappel|message|envoy|ecrire/;\nfunction escaladeDans(texte, motsArtisan) {\n  const mots = enMots(texte);\n  for (const m of COPIE.MOTS_ESCALADE_TOUJOURS) { const k = enMots(m).trim(); if (k && mots.includes(' ' + k)) return m; }\n  for (const m of COPIE.MOTS_ESCALADE_ENTIERS) { const k = enMots(m).trim(); if (k && mots.includes(' ' + k + ' ')) return m; }\n  const brut = sansAccents(texte);\n  for (const m of motsArtisan) if (typeof m === 'string' && sansAccents(m).trim() && brut.includes(sansAccents(m).trim())) return m;\n  return null;\n}\nconst comptes = new Map();\nreturn $input.all().map((item) => {\n  const j = item.json;\n  const motifs = new Set(), notes = [];\n  let e = j.enveloppe || {};\n  try {\n    const c = e.config, d = e.donnees, a = d.action, msg = d.message, dest = d.destinataire, f = d.faits || {}, org = e.organisation_id;\n    const regles = c.regles_metier;\n    const auto = a.cible === 'pilote' || a.sans_relecture === true;\n    // Les lectures : une liste, des règles, un plafond ou un drapeau non lus (null) valent refus.\n    const lu = Array.isArray(c.jamais_auto) && regles && typeof regles === 'object' && Number.isInteger(c.plafond_jour);\n    if (!lu) motifs.add('lecture_en_erreur');\n    // Les gestes jamais automatiques (Amendement B1)\n    const kit = new Set([...COPIE.OUTILS_JAMAIS_AUTO, ...GESTES_P5_226, ...(Array.isArray(c.jamais_auto) ? c.jamais_auto : [])]);\n    const jamais = kit.has(a.outil) || kit.has(a.type_action) || PREFIXES.test(a.outil);\n    if (auto && jamais) {\n      motifs.add('geste_jamais_auto');\n      for (const [re, m] of B1) if (re.test(a.outil) || re.test(a.type_action)) motifs.add(m);\n    }\n    if (auto && a.prix_sources !== true) { motifs.add('prix_sans_source'); notes.push('prix_non_source_auto'); }\n    // Le destinataire\n    if (dest.opposition === true) motifs.add('opposition_ou_stop');\n    else if (dest.opposition !== false) motifs.add('lecture_en_erreur');\n    if (dest.escalade !== false) motifs.add('sujet_escalade');\n    // Le message\n    if (msg === null || msg === undefined) { if (AVEC_MESSAGE.test(a.outil + ' ' + a.type_action)) motifs.add('lecture_en_erreur'); }\n    else if (typeof msg.texte !== 'string' || !msg.texte.trim() || !['email', 'sms'].includes(msg.canal)) motifs.add('lecture_en_erreur');\n    else {\n      const t = msg.texte, tout = (msg.objet || '') + '\\n' + t;\n      if (MARQUES.test(tout.replace(COPIE.MENTION, '').replace(COPIE.MENTION.replace('’', \"'\"), ''))) motifs.add('marque_interdite');\n      // Montants : chacun doit être un montant des faits, calculé par le code (p5:217) ; le régime de TVA doit être dit\n      const permis = [f.montant_ttc_centimes, f.montant_ht_centimes].filter((x) => Number.isInteger(x));\n      let montants = 0;\n      for (const m of tout.matchAll(MONTANT)) {\n        montants++;\n        const centimes = Number(m[1].replace(/[ \\u00a0\\u202f.]/g, '')) * 100 + (m[2] ? Number(m[2].padEnd(2, '0')) : 0);\n        if (!permis.includes(centimes)) motifs.add('prix_sans_source');\n      }\n      if (montants && (f.regime_tva === 'franchise' ? /\\bTTC\\b|\\bHT\\b/.test(tout) : !/\\bTTC\\b|\\bHT\\b/.test(tout))) motifs.add('tva_ou_franchise');\n      if (montants && !f.regime_tva) motifs.add('lecture_en_erreur');\n      // Dates, délais, créneaux, fournisseurs : rien qui ne soit dans les faits\n      const dates = [f.echeance_le, f.emis_le].filter((x) => typeof x === 'string').map((x) => x.split('-').map(Number));\n      const connue = (jj, mm) => dates.some(([, m2, d2]) => d2 === jj && m2 === mm);\n      for (const m of tout.matchAll(DATE_LETTRES)) {\n        const mm = MOIS.findIndex((x) => sansAccents(x) === sansAccents(m[2])) + 1, jj = m[1] === '1er' ? 1 : Number(m[1]);\n        if (!connue(jj, mm)) motifs.add('delai_creneau_fournisseur_sans_source');\n      }\n      for (const m of tout.matchAll(DATE_CHIFFRES)) if (!connue(Number(m[1]), Number(m[2]))) motifs.add('delai_creneau_fournisseur_sans_source');\n      if (CRENEAU.test(tout)) motifs.add('delai_creneau_fournisseur_sans_source');\n      const fournisseurs = Array.isArray(regles && regles.fournisseurs) ? regles.fournisseurs.map(sansAccents) : [];\n      for (const m of tout.matchAll(FOURNISSEUR)) if (!fournisseurs.includes(sansAccents(m[1]))) motifs.add('delai_creneau_fournisseur_sans_source');\n      // Les pieds : la mention pour un texte du modèle envoyé sans relecture, rien sur une carte ; jamais le pied d'un autre\n      const aMention = t.includes(COPIE.MENTION) || t.includes(COPIE.MENTION.replace('’', \"'\"));\n      if (auto && !aMention) motifs.add('mention_manquante');\n      if (!auto && aMention) motifs.add('pied_errone');\n      if (t.includes(COPIE.PIED_AUTOMATIQUE) || t.includes(COPIE.PIED_APRES)) motifs.add('pied_errone');\n      // Les SMS : STOP et consentement\n      if (msg.canal === 'sms') {\n        if (!/\\bSTOP\\b/.test(t)) motifs.add('opposition_ou_stop');\n        if (dest.consentement_sms !== true) motifs.add('consentement_sms_absent');\n      }\n      // L'escalade dans le message lui-même\n      const sujet = escaladeDans(tout, Array.isArray(regles && regles.mots_escalade_artisan) ? regles.mots_escalade_artisan : []);\n      if (sujet) motifs.add('sujet_escalade');\n      if (/\\{\\{(?!salutation\\}\\})[^}]*\\}\\}/.test(t)) motifs.add('lecture_en_erreur');\n    }\n    // En automatique seulement : horaires et plafond du jour\n    if (auto) {\n      const h = regles && regles.heures_permises, jours = regles && regles.jours_permis;\n      if (!h || !Array.isArray(jours) || !d.maintenant) motifs.add('lecture_en_erreur');\n      else if (!dansLesHoraires(new Date(Date.parse(d.maintenant)), jours, h)) motifs.add('hors_horaires');\n      const deja = comptes.has(org) ? comptes.get(org) : (d.compteurs && Number.isInteger(d.compteurs.envoyes_aujourdhui) ? d.compteurs.envoyes_aujourdhui : null);\n      const plafond = Math.min(Number.isInteger(c.plafond_jour) ? c.plafond_jour : 0, COPIE.PLAFOND_AUTO_JOUR);\n      if (deja === null) motifs.add('lecture_en_erreur');\n      else if (deja >= plafond) motifs.add('plafond_atteint');\n      else if (!motifs.size) comptes.set(org, deja + 1);\n    }\n  } catch (err) {\n    motifs.add('lecture_en_erreur');\n  }\n  const liste = [...motifs].sort();\n  const verdict = liste.length ? 'refuse' : 'passe';\n  // Le repli en carte : seulement si TOUT ce qui bloque tient à l'automatisme (un geste jamais automatique, la mention, le plafond…).\n  const auto2 = e.donnees && e.donnees.action && (e.donnees.action.cible === 'pilote' || e.donnees.action.sans_relecture === true);\n  const repli = verdict === 'refuse' && auto2 && liste.every((m) => SEULEMENT_AUTO.has(m) || (m === 'prix_sans_source' && notes.includes('prix_non_source_auto') && !liste.includes('tva_ou_franchise'))) && !liste.includes('lecture_en_erreur') ? 'carte' : null;\n  const resultat = { verdict: verdict, motifs: liste, cible: verdict === 'passe' ? e.donnees.action.cible : null, repli: repli };\n  return { json: { ...j, statut: verdict === 'passe' ? 'ok' : 'refuse', resultat: resultat, effets_prevus: [],\n    journal: [{ evenement: 'conformite', agent: 'lib-porte-conformite', objet_ref: null, decision: (verdict === 'passe' ? 'passe (' + resultat.cible + ')' : 'refusé : ' + liste.join(', ') + (repli ? ' ; repli en carte possible' : '')).slice(0, 200), simulation: e.simulation !== false }] } };\n});"
+      }
+    },
+    {
+      "id": "543c4e72-229f-4aea-a426-737539a7d3c4",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de lib-porte-conformite@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-porte-conformite@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "a36e3a46-e8b6-476f-a40e-d113c7d2999e",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        960,
+        120
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 035-005). Rien n'a été lu, écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (lecture des règles et des consentements) n'est pas branché. Il le sera au « go » de Benj, avec ses tables et ses identifiants, derrière cette même porte."
+    },
+    {
+      "id": "26dd87ea-b3f2-4090-9074-23f2fb25ac24",
+      "name": "Sticky Note 18551d5d",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## lib-porte-conformite (035-005)\nVeto : gestes jamais automatiques (code PLUS p5:226, Amendement B1), prix et faits sans source, mention d'IA, marque, STOP, escalade, horaires, plafond.\nCouche conformite. Contrat lib-porte-conformite@1 (enveloppe@1), gabarit « Contrat » de 035-003.\nINACTIF, en simulation (mode A) : rien n'est lu ni écrit en base, rien n'est envoyé ; tout part dans effets_prevus.\nJuge : scripts/lib-relance-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 400
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 035-005), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

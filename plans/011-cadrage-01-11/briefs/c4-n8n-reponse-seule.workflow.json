@@ -1,0 +1,781 @@
+{
+  "workflow": {
+    "id": "5g63ItVJ41l3yP9V",
+    "name": "presti-reponse-seule",
+    "active": false,
+    "isArchived": false,
+    "activeVersionId": null,
+    "versionId": "f73e9bba-7058-43d8-8f75-38d585785024",
+    "triggerCount": 0,
+    "nodeCount": 15,
+    "settings": {
+      "timezone": "Europe/Paris",
+      "executionTimeout": 120,
+      "saveDataSuccessExecution": "none",
+      "saveDataErrorExecution": "all",
+      "errorWorkflow": "AQeHiC58UgbMR4Kr",
+      "availableInMCP": true,
+      "executionOrder": "v1"
+    },
+    "tags": [],
+    "parentFolderId": null,
+    "description": "Chantier 4, lot L18 (tâche 032-042) : la décision et la préparation de la réponse qui part seule, refaites dans n8n depuis app/api/leads/route.ts. Modèle épinglé, envois désactivés. Inactif jusqu'au go de Benj.",
+    "connections": {
+      "Toutes les minutes": {
+        "main": [
+          [
+            {
+              "node": "Fenetre du passage",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fenetre du passage": {
+        "main": [
+          [
+            {
+              "node": "Lire demandes du jour",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire demandes du jour": {
+        "main": [
+          [
+            {
+              "node": "Lire demandes",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire demandes": {
+        "main": [
+          [
+            {
+              "node": "Lire comptes",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire comptes": {
+        "main": [
+          [
+            {
+              "node": "Lire reglages",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire reglages": {
+        "main": [
+          [
+            {
+              "node": "Lire rafale",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire rafale": {
+        "main": [
+          [
+            {
+              "node": "Lire doublons",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire doublons": {
+        "main": [
+          [
+            {
+              "node": "Decider",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decider": {
+        "main": [
+          [
+            {
+              "node": "Modele epingle",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Modele epingle": {
+        "main": [
+          [
+            {
+              "node": "Courriers a envoyer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Courriers a envoyer": {
+        "main": [
+          [
+            {
+              "node": "Garder les reponses",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Garder les avis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Garder les reponses": {
+        "main": [
+          [
+            {
+              "node": "Envoyer la reponse",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Garder les avis": {
+        "main": [
+          [
+            {
+              "node": "Envoyer l avis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "id": "2769769e-0200-425f-991d-49a81fdb9c23",
+        "name": "Toutes les minutes",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 * * * * *"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "fe4055a8-1b27-46af-94ed-790e2a4d4738",
+        "name": "Fenetre du passage",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          0
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// presti-reponse-seule : la fenêtre du passage. Un passage par minute ; une demande n'est lue que 30 s après sa création (le temps\n// que le chemin codé écrive son motif), dans une fenêtre d'une minute alignée sur l'horloge : chaque demande tombe dans UNE fenêtre\n// et une seule (n8n n'écrit pas en base : l'unicité tient aux fenêtres, pas à un registre). Copie figée contrôlée par\n// scripts/reponse-seule-n8n-qa.mjs ; l'instant vient de Date.now() (le juge le fixe).\nconst PASSAGE_MS = 60000;\nconst DECALAGE_MS = 30000;\nconst DOUBLONS_MS = 86400000;\nconst RAFALE_MS = 600000;\nconst maintenant = Date.now();\nconst passage = Math.floor(maintenant / PASSAGE_MS) * PASSAGE_MS;\nconst fin = passage - DECALAGE_MS;\nconst debut = fin - PASSAGE_MS;\nconst decalageParis = (t) => {\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(new Date(t))) p[x.type] = Number(x.value);\n  return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second) - Math.floor(t / 1000) * 1000;\n};\nconst jour = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(fin));\nconst [a, m, j] = jour.split('-').map(Number);\nconst minuit0 = Date.UTC(a, m - 1, j);\nconst minuit = minuit0 - decalageParis(minuit0 - 7200000);\nconst depuisJour = Math.min(minuit, debut);\nreturn [{ json: { jour, debut: new Date(debut).toISOString(), fin: new Date(fin).toISOString(), depuis_jour: new Date(depuisJour).toISOString(), depuis_doublons: new Date(fin - DOUBLONS_MS).toISOString(), depuis_rafale: new Date(debut - RAFALE_MS).toISOString(), passage: new Date(passage).toISOString(), simulation: true } }];\n"
+        }
+      },
+      {
+        "id": "8f53d233-0aa2-440a-a667-7d3a565f0007",
+        "name": "Lire demandes du jour",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          448,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendQuery": true,
+          "specifyQuery": "keypair",
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,artisan_id,created_at"
+              },
+              {
+                "name": "and",
+                "value": "={{ '(created_at.gte.' + $('Fenetre du passage').first().json.depuis_jour + ',created_at.lt.' + $('Fenetre du passage').first().json.fin + ')' }}"
+              },
+              {
+                "name": "order",
+                "value": "created_at.asc,id.asc"
+              },
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000,
+            "pagination": {
+              "pagination": {
+                "paginationMode": "updateAParameterInEachRequest",
+                "parameters": {
+                  "parameters": [
+                    {
+                      "type": "qs",
+                      "name": "offset",
+                      "value": "={{ $pageCount * 1000 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50
+              }
+            }
+          }
+        },
+        "executeOnce": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "dTewDK98MLrNckNG",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "id": "0b7951cf-a6b4-467d-9efc-3784846225ed",
+        "name": "Lire demandes",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          672,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendQuery": true,
+          "specifyQuery": "keypair",
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,artisan_id,created_at,nom_prospect,contact,message"
+              },
+              {
+                "name": "and",
+                "value": "={{ '(created_at.gte.' + $('Fenetre du passage').first().json.debut + ',created_at.lt.' + $('Fenetre du passage').first().json.fin + ')' }}"
+              },
+              {
+                "name": "order",
+                "value": "created_at.asc,id.asc"
+              },
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000,
+            "pagination": {
+              "pagination": {
+                "paginationMode": "updateAParameterInEachRequest",
+                "parameters": {
+                  "parameters": [
+                    {
+                      "type": "qs",
+                      "name": "offset",
+                      "value": "={{ $pageCount * 1000 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50
+              }
+            }
+          }
+        },
+        "notes": "lecture-pour-envoi: Envoyer la reponse\nLue au moment d'envoyer seulement : le nom, l'adresse et le message du prospect, des demandes de la dernière minute. Le message sert à la décision (mots d'escalade), au modèle et à l'avis à l'artisan.",
+        "executeOnce": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "dTewDK98MLrNckNG",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "id": "2f4d66ae-8ea7-46b8-83e4-22919145256f",
+        "name": "Lire comptes",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          896,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendQuery": true,
+          "specifyQuery": "keypair",
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,nom,email,plan,leads_pause,notifications"
+              },
+              {
+                "name": "id",
+                "value": "={{ 'in.(' + ([...new Set($('Lire demandes').all().map(i => i.json.artisan_id).filter(Boolean))].join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+              },
+              {
+                "name": "order",
+                "value": "id"
+              },
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000,
+            "pagination": {
+              "pagination": {
+                "paginationMode": "updateAParameterInEachRequest",
+                "parameters": {
+                  "parameters": [
+                    {
+                      "type": "qs",
+                      "name": "offset",
+                      "value": "={{ $pageCount * 1000 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50
+              }
+            }
+          }
+        },
+        "notes": "lecture-pour-envoi: Envoyer l avis\nLue au moment d'envoyer seulement : le nom et l'adresse de l'artisan (marque blanche et Reply-To), son offre (la réponse seule est vendue avec Signature), sa pause et ses préférences de notification (nouvelle_demande). Elle sert aussi la réponse au prospect (Envoyer la reponse).",
+        "executeOnce": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "dTewDK98MLrNckNG",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "id": "077a352a-822e-4454-86d4-6552b1d7afdf",
+        "name": "Lire reglages",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1120,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/plateforme_config",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendQuery": true,
+          "specifyQuery": "keypair",
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "artisan_id,mode_reponse,auto_24_7,auto_debut,auto_fin,escalade_mots,limite_messages"
+              },
+              {
+                "name": "artisan_id",
+                "value": "={{ 'in.(' + ([...new Set($('Lire demandes').all().map(i => i.json.artisan_id).filter(Boolean))].join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+              },
+              {
+                "name": "order",
+                "value": "artisan_id"
+              },
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000,
+            "pagination": {
+              "pagination": {
+                "paginationMode": "updateAParameterInEachRequest",
+                "parameters": {
+                  "parameters": [
+                    {
+                      "type": "qs",
+                      "name": "offset",
+                      "value": "={{ $pageCount * 1000 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50
+              }
+            }
+          }
+        },
+        "notes": "lecture-pour-envoi: Envoyer la reponse\nLue au moment d'envoyer seulement : les réglages de Ma plateforme qui décident si la réponse part seule (mode, plage horaire, mots d'escalade, limite de messages). Aucun réglage de style.",
+        "executeOnce": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "dTewDK98MLrNckNG",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "id": "8729bfdb-34e3-4270-971c-269ca3a602f8",
+        "name": "Lire rafale",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1344,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendQuery": true,
+          "specifyQuery": "keypair",
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,artisan_id,created_at"
+              },
+              {
+                "name": "and",
+                "value": "={{ '(created_at.gte.' + $('Fenetre du passage').first().json.depuis_rafale + ',created_at.lt.' + $('Fenetre du passage').first().json.fin + ')' }}"
+              },
+              {
+                "name": "artisan_id",
+                "value": "={{ 'in.(' + ([...new Set($('Lire demandes').all().map(i => i.json.artisan_id).filter(Boolean))].join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+              },
+              {
+                "name": "order",
+                "value": "created_at.asc,id.asc"
+              },
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000,
+            "pagination": {
+              "pagination": {
+                "paginationMode": "updateAParameterInEachRequest",
+                "parameters": {
+                  "parameters": [
+                    {
+                      "type": "qs",
+                      "name": "offset",
+                      "value": "={{ $pageCount * 1000 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50
+              }
+            }
+          }
+        },
+        "executeOnce": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "dTewDK98MLrNckNG",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "id": "dbaecd5a-81da-4bd9-9800-0a31144734e5",
+        "name": "Lire doublons",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1568,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendQuery": true,
+          "specifyQuery": "keypair",
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,contact,created_at"
+              },
+              {
+                "name": "and",
+                "value": "={{ '(created_at.gte.' + $('Fenetre du passage').first().json.depuis_doublons + ',created_at.lt.' + $('Fenetre du passage').first().json.fin + ')' }}"
+              },
+              {
+                "name": "or",
+                "value": "={{ '(' + ([...new Set($('Lire demandes').all().map(i => String(i.json.contact || '').trim().toLowerCase()).filter(c => /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}$/.test(c)))].map(c => 'contact.ilike.' + c).join(',') || 'contact.eq.-') + ')' }}"
+              },
+              {
+                "name": "order",
+                "value": "created_at.asc,id.asc"
+              },
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000,
+            "pagination": {
+              "pagination": {
+                "paginationMode": "updateAParameterInEachRequest",
+                "parameters": {
+                  "parameters": [
+                    {
+                      "type": "qs",
+                      "name": "offset",
+                      "value": "={{ $pageCount * 1000 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50
+              }
+            }
+          }
+        },
+        "notes": "lecture-pour-envoi: Envoyer la reponse\nLue au moment d'envoyer seulement : les demandes des dernières 24 h faites avec les mêmes adresses, pour tenir le plafond par destinataire de lib/email.ts:81 que n8n contourne en envoyant lui-même.",
+        "executeOnce": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "dTewDK98MLrNckNG",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "id": "b5285928-a02d-4d90-adde-f4331c9e83f4",
+        "name": "Decider",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1792,
+          0
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// presti-reponse-seule : la DÉCISION de la réponse qui part seule, refaite depuis app/api/leads/route.ts:283-320 (pause, plafond par artisan,\n// puis decisionReponse de lib/plateformeConfig.ts:216-229 : main prise, modeEffectif, mot d'escalade de l'artisan, sujets d'escalade de\n// lib/pilote/regles.ts, limite de messages, plage horaire). Code pur : rien n'est envoyé, rien n'est écrit, aucun modèle n'est appelé.\n// Les listes de mots et les expressions viennent de lib/pilote/regles.ts par exporter.mjs (jamais retapées) ; copie figée contrôlée par\n// scripts/reponse-seule-n8n-qa.mjs, qui rejoue la vraie fonction sur un corpus de messages.\nconst MOTS_TOUJOURS = [\"litige\",\"litigieux\",\"sinistre\",\"avocat\",\"menace\",\"mise en demeure\",\"en demeure\",\"plainte\",\"tribunal\",\"tribunaux\",\"huissier\",\"contentieux\",\"conteste\",\"contestation\",\"arnaque\",\"escroquerie\",\"escroc\",\"urgence\",\"fuite\",\"dégât des eaux\",\"dégâts des eaux\",\"dégât d’eau\",\"dégâts d’eau\",\"inondation\",\"inondé\",\"assurance\",\"justice\",\"prud’hom\",\"juridique\",\"médiateur\",\"conciliat\",\"dgccrf\",\"gendarme\",\"préjudice\",\"indemni\",\"dédommag\",\"réclamation\",\"lettre recommandée\",\"recommandé avec\",\"en recommandé\",\"accusé de réception\",\"vice caché\",\"vices cachés\",\"opposition\",\"malfaçon\",\"décennale\",\"expert\",\"dégât\",\"incendie\",\"brûl\",\"blessé\",\"blessure\",\"électrocut\",\"monoxyde\",\"intoxi\",\"effondr\",\"écroul\",\"infiltr\",\"court-circuit\",\"court circuit\",\"danger\",\"eau partout\",\"est tombé\",\"est tombée\",\"sont tombés\",\"une chute\",\"fait une chute\",\"paierai pas\",\"payerai pas\",\"réglerai pas\",\"paie pas\",\"paye pas\",\"pas payer cette\",\"pas payer la\",\"pas payer tant\",\"refuse de payer\",\"refuse de régler\",\"rembours\",\"avis négatif\",\"mauvais avis\",\"mauvaise pub\",\"assureur\",\"menaç\",\"voleur\",\"poursuiv\",\"vous attaquer\",\"paierai rien\",\"payerai rien\",\"pas un centime\",\"bloque le paiement\",\"retiens le solde\",\"retenir le solde\",\"une étoile\",\"explos\",\"étincel\",\"ça fume\",\"pris une décharge\",\"décharge électrique\",\"s’est coupé\",\"s’est blessé\",\"signalement\",\"réclame\",\"remise en état\",\"conflit\",\"dénonce\",\"fui\",\"fuy\",\"perd de l’eau\",\"perdent de l’eau\",\"perte d’eau\",\"urgen\",\"urgemment\",\"goutte\",\"suinte\",\"déborde\",\"sous l’eau\",\"de l’eau par terre\",\"plus de chauffage\",\"plus d’eau chaude\",\"au plus vite\",\"pressant\",\"entendre parler de moi\",\"retiens le paiement\",\"rendez-moi mon argent\",\"une honte\",\"avis sur google\",\"plombs ont sauté\",\"pris feu\",\"court-jus\",\"coule du\",\"ça coule\",\"goutte du\",\"escroqu\",\"plaindre\",\"plains\",\"dommages et\",\"consommateur\",\"bâcl\",\"mal fait\",\"fraude\",\"disjoncteur saute\",\"ça disjoncte\",\"disjoncte sans\",\"refui\",\"refuy\",\"humidit\",\"humide\",\"eau coule\",\"coule le long\",\"ruissel\",\"s’échapp\",\"s’écoul\",\"eau qui sort\",\"eau sort\",\"eau se perd\",\"de l’eau sous\",\"lâche de l’eau\",\"crache de l’eau\",\"pisse de l’eau\",\"se vide tout seul\",\"perd du liquide\",\"perte de liquide\",\"c’est pressé\",\"est très pressé\",\"suis pressé\",\"odeur\"];\nconst MOTS_ENTIERS = [\"gaz\",\"procès\",\"police\",\"accident\",\"accidents\",\"pompiers\",\"juge\",\"ufc\",\"vol\",\"samu\",\"urssaf\"];\nconst FAUSSE_URGENCE = / (?:pas d|sans|aucune|rien d) urgen[a-z]*| pas urgent[a-z]*| (?:sans|aucun|pas de) degats?| une chute de (?:neige|pluie|grele|feuilles)/g;\nconst PERTE_D_EAU = / (?:perd[a-z]*|pert|pertes?)(?: (?!chauffe )[a-z0-9]+){0,5}? (?:d |de l |de |l |d l )?d?l?eaux? /;\nconst APPAREIL_PERD = / (?:chauffe eau|ballon|cumulus|radiateur|radiateurs|robinet|chaudiere|tuyau|tuyaux|joint|wc|evier|lavabo|siphon|vanne) (?:perd|perdent|perdait|perdaient|a perdu|ont perdu)(?= $| pouvez| pourriez| depuis| encore| toujours| beaucoup| un peu| pas mal| partout| de partout| par terre| par le| sous| a nouveau| merci)/;\nconst NOMS_NEUTRES = /\\b(?:chaudieres?|cuisinieres?|plaques?(?:[^a-z0-9]+de[^a-z0-9]+cuisson)?)[^a-z0-9]+(?:(?:a|au)[^a-z0-9]+)?gaz\\b|\\bbruleurs?\\b|\\battestations?[^a-z0-9]+(?:d[^a-z0-9]+)?(?:assurances?[^a-z0-9]*)?(?:decennale|rc pro|responsabilite civile)?/g;\nconst PLANS_AUTO = [\"signature\",\"entreprise\",\"business\"];\nconst MAX_PAR_ARTISAN = 8;\nconst RAFALE_MS = 600000;\nconst DEFAUT = { mode_reponse: 'assistee', auto_24_7: true, auto_debut: null, auto_fin: null, escalade_mots: [\"urgence\",\"fuite\",\"degat des eaux\",\"inondation\",\"gaz\",\"assurance\"], limite_messages: 8 };\nconst fen = $('Fenetre du passage').first().json;\nconst lire = (nom) => $(nom).all().map((i) => i.json).filter((x) => x && typeof x === 'object' && typeof x.id === 'string');\nconst ordre = (a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);\nconst texte = (v) => (typeof v === 'string' ? v : '');\nconst sansAccents = (s) => texte(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');\nconst enMots = (s) => ' ' + sansAccents(s).replace(/[^a-z0-9]+/g, ' ').trim() + ' ';\nconst RACINES_TOUJOURS = MOTS_TOUJOURS.map((m) => [m, enMots(m).trim()]);\nconst RACINES_ENTIERES = MOTS_ENTIERS.map((m) => [m, enMots(m).trim()]);\n// lib/pilote/regles.ts : sujetEscalade (les sujets qu'aucun réglage ne retire, puis les mots de l'artisan).\nconst sujetEscalade = (messages, motsArtisan) => {\n  const artisan = (Array.isArray(motsArtisan) ? motsArtisan : []).filter((m) => typeof m === 'string').map((m) => [m, sansAccents(m).trim()]).filter(([, k]) => k !== '');\n  for (const brut of messages) {\n    if (typeof brut !== 'string' || !brut.trim()) continue;\n    const mots = enMots(brut).replace(NOMS_NEUTRES, ' ').replace(FAUSSE_URGENCE, ' ').replace(/ {2,}/g, ' ');\n    for (const [m, k] of RACINES_TOUJOURS) if (k && mots.includes(' ' + k)) return m;\n    for (const [m, k] of RACINES_ENTIERES) if (k && mots.includes(' ' + k + ' ')) return m;\n    if (PERTE_D_EAU.test(mots)) return 'perte d’eau';\n    if (APPAREIL_PERD.test(mots)) return 'perte d’eau';\n    if (mots.includes(' ca sent ')) return 'ça sent';\n    const brutSansNoms = sansAccents(brut).replace(NOMS_NEUTRES, ' ');\n    for (const [m, k] of artisan) if (brutSansNoms.includes(k)) return m;\n  }\n  return null;\n};\n// lib/plateformeConfig.ts : motEscalade, heureFrance, dansLaPlage.\nconst motEscalade = (cfg, message) => {\n  const n = sansAccents(message);\n  for (const m of cfg.escalade_mots || []) { const k = sansAccents(m); if (k && n.includes(k)) return m; }\n  return null;\n};\nconst heureFrance = (d) => {\n  try { return parseInt(new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', hour12: false }).format(d), 10); } catch (e) { return d.getUTCHours(); }\n};\nconst dansLaPlage = (cfg, maintenant) => {\n  if (cfg.auto_24_7 !== false) return true;\n  const d = cfg.auto_debut, f = cfg.auto_fin;\n  if (d == null || f == null) return true;\n  const h = heureFrance(maintenant);\n  return d <= f ? h >= d && h < f : h >= d || h < f;\n};\nconst comptes = {};\nlire('Lire comptes').forEach((c) => { comptes[c.id] = c; });\nconst reglages = {};\n$('Lire reglages').all().map((i) => i.json).filter((x) => x && typeof x.artisan_id === 'string').forEach((r) => { reglages[r.artisan_id] = r; });\nconst rafale = lire('Lire rafale').sort(ordre);\nconst sortie = [];\nconst rendre = (lead, decision, motif, extra) => sortie.push({ json: { courrier: 'decision', lead_id: lead.id, decision, motif, mot: null, simulation: true, ...extra } });\nfor (const lead of lire('Lire demandes').sort(ordre)) {\n  if (!(lead.created_at >= fen.debut && lead.created_at < fen.fin)) continue;\n  const artisan = comptes[lead.artisan_id];\n  if (!artisan) { sortie.push({ json: { courrier: 'ignore', lead_id: lead.id, raison: 'compte introuvable', simulation: true } }); continue; }\n  // app/api/leads/route.ts:285 : la pause de l'artisan passe avant tout.\n  if (artisan.leads_pause === true) { rendre(lead, 'refus', 'pause'); continue; }\n  // app/api/leads/route.ts:296 : au plus huit demandes par artisan et par fenêtre de dix minutes (les suivantes sont gardées, sans réponse).\n  const dansLaRafale = rafale.filter((r) => r.artisan_id === lead.artisan_id && r.created_at <= lead.created_at && Date.parse(r.created_at) > Date.parse(lead.created_at) - RAFALE_MS);\n  const rang = dansLaRafale.filter((r) => r.created_at < lead.created_at || (r.created_at === lead.created_at && r.id <= lead.id)).length;\n  if (rang > MAX_PAR_ARTISAN) { rendre(lead, 'refus', 'throttle'); continue; }\n  // lib/plateformeConfig.ts:216-229 (decisionReponse) ; nbReponsesIA vaut 0 pour un premier message (route :319), prise_en_main est faux.\n  const cfg = { ...DEFAUT, ...(reglages[lead.artisan_id] || {}) };\n  const message = texte(lead.message);\n  const verrou = cfg.mode_reponse === 'auto' && !PLANS_AUTO.includes(artisan.plan);\n  const mode = verrou ? 'assistee' : cfg.mode_reponse;\n  if (mode === 'manuelle') { rendre(lead, 'refus', 'manuelle'); continue; }\n  const mot = motEscalade(cfg, message);\n  if (mot) { rendre(lead, 'escalade', 'escalade', { mot }); continue; }\n  if (mode === 'assistee') { rendre(lead, 'attend_artisan', verrou ? 'verrou_offre' : 'assistee'); continue; }\n  const sujet = sujetEscalade([message], cfg.escalade_mots);\n  if (sujet) { rendre(lead, 'escalade', 'escalade', { mot: sujet }); continue; }\n  if (0 >= (cfg.limite_messages == null ? 8 : cfg.limite_messages)) { rendre(lead, 'refus', 'limite'); continue; }\n  if (!dansLaPlage(cfg, new Date(lead.created_at))) { rendre(lead, 'refus', 'horaire'); continue; }\n  rendre(lead, 'part_seul', 'auto');\n}\nreturn sortie;\n"
+        }
+      },
+      {
+        "id": "65cd8a1a-4acb-4eb4-9bb4-3dd74e8e3034",
+        "name": "Modele epingle",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2016,
+          0
+        ],
+        "notes": "EPINGLE : aucun appel. Rend une réponse d’exemple fixe ; remplacé par le modèle à la publication (brief).",
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// presti-reponse-seule : la place du MODÈLE. ÉPINGLÉ : ce nœud n'appelle rien, il rend une réponse d'exemple fixe pour chaque demande dont la\n// décision est « part_seul » (rien pour les autres). Le jour où le workflow est publié, ce nœud est remplacé par le modèle (le prompt de\n// lib/ai.ts:412-438 et le garde-fou de lib/ai/antiFabrication.ts : brief, « Avant la bascule »). La garde commune n'admet encore aucun nœud de\n// modèle dans un workflow du chantier 4 (scripts/n8n-specs-qa.mjs, liste blanche de la famille c4) : voir le brief.\nconst REPONSE_EPINGLEE = 'Réponse exemple.';\nreturn $input.all().map((i) => ({ json: { ...i.json, modele: 'epingle', texte_modele: i.json.decision === 'part_seul' ? REPONSE_EPINGLEE : null } }));\n"
+        }
+      },
+      {
+        "id": "68ebf468-f469-4c1f-88de-c55df3249df1",
+        "name": "Courriers a envoyer",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2240,
+          0
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// presti-reponse-seule : ce qu'envoie le chemin codé quand la décision est « part seul » (app/api/leads/route.ts:473-509) — la réponse au\n// prospect, au nom de l'artisan, avec la mention d'IA (lib/mentionAssistant.ts:14-17), puis l'avis « Nouveau lead » à l'artisan — et, pour\n// un mot d'escalade, l'alerte à l'artisan (:383-392). Les plafonds de lib/email.ts que ce chemin passait en envoyant sont repris (:81-87).\n// Code pur : rien n'est envoyé ici, rien n'est écrit. Copie figée contrôlée par scripts/reponse-seule-n8n-qa.mjs, cas par cas contre la\n// vraie route. Les silences (manuelle, hors plage, limite) et le mode assisté sont des décisions sans courrier : leurs courriers relèvent\n// de presti-accuse-reception et de la réponse proposée.\nconst MAX_PAR_DESTINATAIRE = 3;\nconst MAX_PAR_JOUR = 30;\nconst MAX_AVIS_PAR_JOUR = 50;\nconst EXPEDITEUR = 'contact@prestiapp.fr';\nconst ENTREPRISE = 'contact@prestiapp.fr';\nconst EST_COURRIEL = /^[^\\s@]+@[^\\s@]+\\.[a-z]{2,}$/i;\nconst ADRESSE_SURE = /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}$/;\nconst lire = (nom) => $(nom).all().map((i) => i.json).filter((x) => x && typeof x === 'object' && typeof x.id === 'string');\nconst ordre = (a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);\nconst texte = (v) => (typeof v === 'string' ? v : '');\nconst sur = (v) => ADRESSE_SURE.test(texte(v).trim()) && !/\\.invalid$/i.test(texte(v).trim());\nconst nettoyer = (v) => texte(v).replace(/[\\r\\n<>\"]/g, '').trim().slice(0, 70) || 'Votre artisan';\nconst uneLigne = (v) => texte(v).replace(/[\\r\\n]+/g, ' ');\nconst actif = (prefs) => !prefs || typeof prefs !== 'object' || prefs.nouvelle_demande !== false;\nconst duJour = lire('Lire demandes du jour').sort(ordre);\nconst rangJour = {};\nduJour.forEach((d, i) => { rangJour[d.id] = i + 1; });\nconst comptes = {};\nlire('Lire comptes').forEach((c) => { comptes[c.id] = c; });\nconst demandes = {};\nlire('Lire demandes').forEach((d) => { demandes[d.id] = d; });\nconst parAdresse = {};\nlire('Lire doublons').filter((d) => typeof d.contact === 'string').sort(ordre).forEach((d) => {\n  const k = d.contact.trim().toLowerCase();\n  (parAdresse[k] = parAdresse[k] || []).push(d.id);\n});\nconst sortie = [];\nconst decisions = $('Modele epingle').all().map((i) => i.json).filter((x) => x && x.courrier === 'decision').sort((a, b) => ordre(demandes[a.lead_id] || { created_at: '', id: a.lead_id }, demandes[b.lead_id] || { created_at: '', id: b.lead_id }));\nfor (const d of decisions) {\n  const lead = demandes[d.lead_id];\n  const artisan = lead ? comptes[lead.artisan_id] : null;\n  if (!lead || !artisan) { sortie.push({ json: { courrier: 'ignore', lead_id: d.lead_id, raison: 'demande ou compte introuvable', simulation: true } }); continue; }\n  const contact = texte(lead.contact).trim();\n  const message = texte(lead.message);\n  const nomProspect = texte(lead.nom_prospect);\n  const nomArtisan = texte(artisan.nom);\n  const estCourriel = EST_COURRIEL.test(contact);\n  const avisDu = () => texte(artisan.email) && contact && actif(artisan.notifications) && sur(artisan.email) && rangJour[lead.id] <= MAX_AVIS_PAR_JOUR;\n  const repondreA = ADRESSE_SURE.test(contact) && EST_COURRIEL.test(contact) ? contact : ENTREPRISE;\n  const decision = { courrier: 'decision', lead_id: lead.id, decision: d.decision, motif: d.motif, mot: d.mot ?? null, envoi: null, avis: null, simulation: true };\n  if (d.decision === 'escalade') {\n    // app/api/leads/route.ts:383-392 : l'assistant se tait et l'artisan est alerté (le mot est dans le sujet : n8n lit le message).\n    if (avisDu()) {\n      decision.avis = 'alerte';\n      sortie.push({ json: { courrier: 'avis', lead_id: lead.id, cle: 'avis:' + lead.id, simulation: true, a: texte(artisan.email).trim(), de: 'Presti <' + EXPEDITEUR + '>', repondre_a: repondreA,\n        sujet: uneLigne('⚠️ Demande sensible (« ' + d.mot + ' ») — ' + (nomProspect || contact)),\n        texte: 'Nouveau contact via votre page Presti — à vous de répondre.\\n\\nNom : ' + (nomProspect || 'non précisé') + '\\nContact : ' + contact + '\\nBesoin : ' + (message || 'non précisé') + '\\n\\nRépondez-lui depuis votre espace (Messages).' } });\n    } else decision.avis = 'non_du';\n  } else if (d.decision === 'part_seul') {\n    const reponse = texte(d.texte_modele).trim();\n    if (!reponse) { decision.envoi = 'aucune_reponse'; }\n    else {\n      const rang = (parAdresse[contact.toLowerCase()] || []).indexOf(lead.id) + 1;\n      let partie = false;\n      if (!contact) decision.envoi = 'sans_coordonnees';\n      else if (!estCourriel) decision.envoi = 'pas_un_courriel';\n      else if (/\\.invalid$/i.test(contact)) { decision.envoi = 'adresse_de_test'; partie = true; }\n      else if (!ADRESSE_SURE.test(contact)) decision.envoi = 'adresse_atypique';\n      else if (!(rang >= 1 && rang <= MAX_PAR_DESTINATAIRE)) decision.envoi = 'plafond_destinataire';\n      else if (!(rangJour[lead.id] <= MAX_PAR_JOUR)) decision.envoi = 'plafond_jour';\n      else {\n        decision.envoi = 'a_envoyer';\n        partie = true;\n        const nom = nomArtisan.replace(/[\\r\\n]+/g, ' ').trim().slice(0, 70);\n        const corps = reponse;\n        sortie.push({ json: { courrier: 'reponse', lead_id: lead.id, cle: 'reponse:' + lead.id, simulation: true,\n          a: contact, de: nettoyer(nomArtisan.trim() || 'Votre artisan') + ' <' + EXPEDITEUR + '>', repondre_a: texte(artisan.email).trim(),\n          sujet: uneLigne('Votre demande — ' + (nomArtisan.trim() || 'Votre artisan')),\n          corps, de_artisan: nom ? ' de ' + nom : '',\n          texte: corps + '\\n\\n—\\nMessage rédigé et envoyé automatiquement par l’assistant' + (nom ? ' de ' + nom : '') + '.' } });\n      }\n      // app/api/leads/route.ts:493-509 : l'avis « Nouveau lead », avec la réponse et ce qu'il est advenu de l'e-mail au prospect.\n      if (avisDu()) {\n        decision.avis = 'nouveau_lead';\n        const etat = !estCourriel ? 'Réponse automatique (prospect sans email — à rappeler)' : partie ? 'Réponse automatique envoyée au prospect par email' : 'Réponse automatique préparée, mais l’email au prospect N’EST PAS PARTI — recontactez-le vous-même';\n        sortie.push({ json: { courrier: 'avis', lead_id: lead.id, cle: 'avis:' + lead.id, simulation: true, a: texte(artisan.email).trim(), de: 'Presti <' + EXPEDITEUR + '>', repondre_a: repondreA,\n          sujet: uneLigne('Nouveau lead — ' + (nomProspect || contact)),\n          texte: 'Nouveau contact via votre lien Presti.\\n\\nNom : ' + (nomProspect || 'non précisé') + '\\nContact : ' + contact + '\\nBesoin : ' + (message || 'non précisé') + '\\n\\n' + etat + ' :\\n---\\n' + reponse } });\n      } else decision.avis = 'non_du';\n    }\n  }\n  sortie.push({ json: decision });\n}\nreturn sortie;\n"
+        }
+      },
+      {
+        "id": "7af43685-c575-4158-a272-65f140f2c7a0",
+        "name": "Garder les reponses",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          2464,
+          -112
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "leftValue": "={{ $json.courrier }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                },
+                "rightValue": "reponse"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "2fcdfc00-5993-4981-a300-1190807ffd18",
+        "name": "Envoyer la reponse",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          2688,
+          -112
+        ],
+        "parameters": {
+          "operation": "send",
+          "fromEmail": "={{ $json.de }}",
+          "toEmail": "={{ $json.a }}",
+          "subject": "={{ $json.sujet }}",
+          "emailFormat": "text",
+          "text": "={{ $json.corps }}\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant{{ $json.de_artisan }}.",
+          "options": {
+            "appendAttribution": false,
+            "replyTo": "={{ $json.repondre_a }}"
+          }
+        },
+        "disabled": true,
+        "notes": "pied: mention\nSIMULATION : nœud désactivé, sans identifiant SMTP (à poser par Benj). Réponse rédigée par le modèle et envoyée sans relecture, au nom de l'artisan, Reply-To = son adresse, avec la mention d'IA (lib/mentionAssistant.ts:14-17).",
+        "webhookId": "a386f78c-f0bc-4dd6-9107-78ed5ba4e267"
+      },
+      {
+        "id": "299f8778-4a5f-4e0c-a1e7-0806b74f6d84",
+        "name": "Garder les avis",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          2464,
+          112
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "leftValue": "={{ $json.courrier }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                },
+                "rightValue": "avis"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "40632e38-c7c5-4577-ba5e-666842f7dd0c",
+        "name": "Envoyer l avis",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          2688,
+          112
+        ],
+        "parameters": {
+          "operation": "send",
+          "fromEmail": "={{ $json.de }}",
+          "toEmail": "={{ $json.a }}",
+          "subject": "={{ $json.sujet }}",
+          "emailFormat": "text",
+          "text": "={{ $json.texte }}",
+          "options": {
+            "appendAttribution": false,
+            "replyTo": "={{ $json.repondre_a }}"
+          }
+        },
+        "disabled": true,
+        "notes": "pied: aucun\nSIMULATION : nœud désactivé, sans identifiant SMTP (à poser par Benj). Avis de Presti à l'artisan (« Nouveau lead », ou alerte « Demande sensible »), Reply-To = le prospect.",
+        "webhookId": "b8ff88e5-14ae-4785-9169-50af7b282179"
+      }
+    ],
+    "nodeGroups": [],
+    "activeVersion": null,
+    "meta": {
+      "aiBuilderAssisted": true,
+      "builderVariant": "mcp"
+    }
+  }
+}

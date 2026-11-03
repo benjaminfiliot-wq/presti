@@ -1,0 +1,12 @@
+✓ structure
+✓ copie figée
+✓ comparaison à la route
+✓ essai n8n
+✓ garde commune (n8n-specs-qa)
+  comparé : 262 décisions en 21 cas ; 111 relances au prospect et 84 avis « à valider » identiques à ceux de la route (aux écarts écrits près : E1, E2, V1, V2, V3)
+  mutants : 76/76 font rougir le juge
+✓ relances-n8n-qa : OK
+(node:1012628) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/app/api/cron/relances/route.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

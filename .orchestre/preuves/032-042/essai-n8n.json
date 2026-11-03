@@ -1,0 +1,444 @@
+{
+  "statut": "success",
+  "execution": "406",
+  "date": "2026-11-03T00:21:39Z",
+  "note": "Sorties relevées par get_workflow_execution sur l’exécution 406 (test_workflow, pin data = essai-pin.json) ; la fenêtre sur l’horloge réelle vient de l’exécution 407.",
+  "fenetre_reelle_execution": "407",
+  "fenetre_reelle_instant": "2026-11-03T00:22:17.770Z",
+  "fenetre_reelle": {
+    "jour": "2026-11-03",
+    "debut": "2026-11-03T00:20:30.000Z",
+    "fin": "2026-11-03T00:21:30.000Z",
+    "depuis_jour": "2026-11-02T23:00:00.000Z",
+    "depuis_doublons": "2026-11-02T00:21:30.000Z",
+    "depuis_rafale": "2026-11-03T00:10:30.000Z",
+    "passage": "2026-11-03T00:22:00.000Z",
+    "simulation": true
+  },
+  "decisions": [
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000001",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000002",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000003",
+      "decision": "attend_artisan",
+      "motif": "verrou_offre",
+      "mot": null,
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000004",
+      "decision": "escalade",
+      "motif": "escalade",
+      "mot": "fuite",
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000005",
+      "decision": "escalade",
+      "motif": "escalade",
+      "mot": "avocat",
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000006",
+      "decision": "refus",
+      "motif": "manuelle",
+      "mot": null,
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000007",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000008",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000009",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000010",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true
+    }
+  ],
+  "modele": [
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000001",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true,
+      "modele": "epingle",
+      "texte_modele": "Réponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000002",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true,
+      "modele": "epingle",
+      "texte_modele": "Réponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000003",
+      "decision": "attend_artisan",
+      "motif": "verrou_offre",
+      "mot": null,
+      "simulation": true,
+      "modele": "epingle",
+      "texte_modele": null
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000004",
+      "decision": "escalade",
+      "motif": "escalade",
+      "mot": "fuite",
+      "simulation": true,
+      "modele": "epingle",
+      "texte_modele": null
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000005",
+      "decision": "escalade",
+      "motif": "escalade",
+      "mot": "avocat",
+      "simulation": true,
+      "modele": "epingle",
+      "texte_modele": null
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000006",
+      "decision": "refus",
+      "motif": "manuelle",
+      "mot": null,
+      "simulation": true,
+      "modele": "epingle",
+      "texte_modele": null
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000007",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true,
+      "modele": "epingle",
+      "texte_modele": "Réponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000008",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true,
+      "modele": "epingle",
+      "texte_modele": "Réponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000009",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true,
+      "modele": "epingle",
+      "texte_modele": "Réponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000010",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "simulation": true,
+      "modele": "epingle",
+      "texte_modele": "Réponse exemple."
+    }
+  ],
+  "courriers": [
+    {
+      "courrier": "reponse",
+      "lead_id": "1ead0000-0000-4000-8000-000000000001",
+      "cle": "reponse:1ead0000-0000-4000-8000-000000000001",
+      "simulation": true,
+      "a": "camille@exemple.test",
+      "de": "Atelier Exemple. <contact@prestiapp.fr>",
+      "repondre_a": "atelier@exemple.test",
+      "sujet": "Votre demande — Atelier Exemple.",
+      "corps": "Réponse exemple.",
+      "de_artisan": " de Atelier Exemple.",
+      "texte": "Réponse exemple.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Atelier Exemple.."
+    },
+    {
+      "courrier": "avis",
+      "lead_id": "1ead0000-0000-4000-8000-000000000001",
+      "cle": "avis:1ead0000-0000-4000-8000-000000000001",
+      "simulation": true,
+      "a": "atelier@exemple.test",
+      "de": "Presti <contact@prestiapp.fr>",
+      "repondre_a": "camille@exemple.test",
+      "sujet": "Nouveau lead — Camille Exemple.",
+      "texte": "Nouveau contact via votre lien Presti.\n\nNom : Camille Exemple.\nContact : camille@exemple.test\nBesoin : Bonjour, je voudrais un devis pour refaire ma salle de bain.\n\nRéponse automatique envoyée au prospect par email :\n---\nRéponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000001",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "envoi": "a_envoyer",
+      "avis": "nouveau_lead",
+      "simulation": true
+    },
+    {
+      "courrier": "avis",
+      "lead_id": "1ead0000-0000-4000-8000-000000000002",
+      "cle": "avis:1ead0000-0000-4000-8000-000000000002",
+      "simulation": true,
+      "a": "atelier@exemple.test",
+      "de": "Presti <contact@prestiapp.fr>",
+      "repondre_a": "contact@prestiapp.fr",
+      "sujet": "Nouveau lead — Exemple. Sans courriel",
+      "texte": "Nouveau contact via votre lien Presti.\n\nNom : Exemple. Sans courriel\nContact : 0600000000\nBesoin : Bonjour, je voudrais un devis pour refaire ma salle de bain.\n\nRéponse automatique (prospect sans email — à rappeler) :\n---\nRéponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000002",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "envoi": "pas_un_courriel",
+      "avis": "nouveau_lead",
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000003",
+      "decision": "attend_artisan",
+      "motif": "verrou_offre",
+      "mot": null,
+      "envoi": null,
+      "avis": null,
+      "simulation": true
+    },
+    {
+      "courrier": "avis",
+      "lead_id": "1ead0000-0000-4000-8000-000000000004",
+      "cle": "avis:1ead0000-0000-4000-8000-000000000004",
+      "simulation": true,
+      "a": "atelier@exemple.test",
+      "de": "Presti <contact@prestiapp.fr>",
+      "repondre_a": "fuite@exemple.test",
+      "sujet": "⚠️ Demande sensible (« fuite ») — Fuite Exemple.",
+      "texte": "Nouveau contact via votre page Presti — à vous de répondre.\n\nNom : Fuite Exemple.\nContact : fuite@exemple.test\nBesoin : Une fuite sous mon évier, vite !\n\nRépondez-lui depuis votre espace (Messages)."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000004",
+      "decision": "escalade",
+      "motif": "escalade",
+      "mot": "fuite",
+      "envoi": null,
+      "avis": "alerte",
+      "simulation": true
+    },
+    {
+      "courrier": "avis",
+      "lead_id": "1ead0000-0000-4000-8000-000000000005",
+      "cle": "avis:1ead0000-0000-4000-8000-000000000005",
+      "simulation": true,
+      "a": "atelier@exemple.test",
+      "de": "Presti <contact@prestiapp.fr>",
+      "repondre_a": "avocat@exemple.test",
+      "sujet": "⚠️ Demande sensible (« avocat ») — Avocat Exemple.",
+      "texte": "Nouveau contact via votre page Presti — à vous de répondre.\n\nNom : Avocat Exemple.\nContact : avocat@exemple.test\nBesoin : Mon avocat vous écrira demain.\n\nRépondez-lui depuis votre espace (Messages)."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000005",
+      "decision": "escalade",
+      "motif": "escalade",
+      "mot": "avocat",
+      "envoi": null,
+      "avis": "alerte",
+      "simulation": true
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000006",
+      "decision": "refus",
+      "motif": "manuelle",
+      "mot": null,
+      "envoi": null,
+      "avis": null,
+      "simulation": true
+    },
+    {
+      "courrier": "reponse",
+      "lead_id": "1ead0000-0000-4000-8000-000000000007",
+      "cle": "reponse:1ead0000-0000-4000-8000-000000000007",
+      "simulation": true,
+      "a": "doublon@exemple.test",
+      "de": "Atelier Exemple. <contact@prestiapp.fr>",
+      "repondre_a": "atelier@exemple.test",
+      "sujet": "Votre demande — Atelier Exemple.",
+      "corps": "Réponse exemple.",
+      "de_artisan": " de Atelier Exemple.",
+      "texte": "Réponse exemple.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Atelier Exemple.."
+    },
+    {
+      "courrier": "avis",
+      "lead_id": "1ead0000-0000-4000-8000-000000000007",
+      "cle": "avis:1ead0000-0000-4000-8000-000000000007",
+      "simulation": true,
+      "a": "atelier@exemple.test",
+      "de": "Presti <contact@prestiapp.fr>",
+      "repondre_a": "doublon@exemple.test",
+      "sujet": "Nouveau lead — Doublon Exemple.",
+      "texte": "Nouveau contact via votre lien Presti.\n\nNom : Doublon Exemple.\nContact : doublon@exemple.test\nBesoin : Bonjour, je voudrais un devis pour refaire ma salle de bain.\n\nRéponse automatique envoyée au prospect par email :\n---\nRéponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000007",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "envoi": "a_envoyer",
+      "avis": "nouveau_lead",
+      "simulation": true
+    },
+    {
+      "courrier": "reponse",
+      "lead_id": "1ead0000-0000-4000-8000-000000000008",
+      "cle": "reponse:1ead0000-0000-4000-8000-000000000008",
+      "simulation": true,
+      "a": "Doublon@Exemple.test",
+      "de": "Atelier Exemple. <contact@prestiapp.fr>",
+      "repondre_a": "atelier@exemple.test",
+      "sujet": "Votre demande — Atelier Exemple.",
+      "corps": "Réponse exemple.",
+      "de_artisan": " de Atelier Exemple.",
+      "texte": "Réponse exemple.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Atelier Exemple.."
+    },
+    {
+      "courrier": "avis",
+      "lead_id": "1ead0000-0000-4000-8000-000000000008",
+      "cle": "avis:1ead0000-0000-4000-8000-000000000008",
+      "simulation": true,
+      "a": "atelier@exemple.test",
+      "de": "Presti <contact@prestiapp.fr>",
+      "repondre_a": "Doublon@Exemple.test",
+      "sujet": "Nouveau lead — Doublon Exemple.",
+      "texte": "Nouveau contact via votre lien Presti.\n\nNom : Doublon Exemple.\nContact : Doublon@Exemple.test\nBesoin : Bonjour, je voudrais un devis pour refaire ma salle de bain.\n\nRéponse automatique envoyée au prospect par email :\n---\nRéponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000008",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "envoi": "a_envoyer",
+      "avis": "nouveau_lead",
+      "simulation": true
+    },
+    {
+      "courrier": "reponse",
+      "lead_id": "1ead0000-0000-4000-8000-000000000009",
+      "cle": "reponse:1ead0000-0000-4000-8000-000000000009",
+      "simulation": true,
+      "a": "doublon@exemple.test",
+      "de": "Atelier Exemple. <contact@prestiapp.fr>",
+      "repondre_a": "atelier@exemple.test",
+      "sujet": "Votre demande — Atelier Exemple.",
+      "corps": "Réponse exemple.",
+      "de_artisan": " de Atelier Exemple.",
+      "texte": "Réponse exemple.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Atelier Exemple.."
+    },
+    {
+      "courrier": "avis",
+      "lead_id": "1ead0000-0000-4000-8000-000000000009",
+      "cle": "avis:1ead0000-0000-4000-8000-000000000009",
+      "simulation": true,
+      "a": "atelier@exemple.test",
+      "de": "Presti <contact@prestiapp.fr>",
+      "repondre_a": "doublon@exemple.test",
+      "sujet": "Nouveau lead — Doublon Exemple.",
+      "texte": "Nouveau contact via votre lien Presti.\n\nNom : Doublon Exemple.\nContact : doublon@exemple.test\nBesoin : Bonjour, je voudrais un devis pour refaire ma salle de bain.\n\nRéponse automatique envoyée au prospect par email :\n---\nRéponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000009",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "envoi": "a_envoyer",
+      "avis": "nouveau_lead",
+      "simulation": true
+    },
+    {
+      "courrier": "avis",
+      "lead_id": "1ead0000-0000-4000-8000-000000000010",
+      "cle": "avis:1ead0000-0000-4000-8000-000000000010",
+      "simulation": true,
+      "a": "atelier@exemple.test",
+      "de": "Presti <contact@prestiapp.fr>",
+      "repondre_a": "DOUBLON@exemple.test",
+      "sujet": "Nouveau lead — Doublon Exemple.",
+      "texte": "Nouveau contact via votre lien Presti.\n\nNom : Doublon Exemple.\nContact : DOUBLON@exemple.test\nBesoin : Bonjour, je voudrais un devis pour refaire ma salle de bain.\n\nRéponse automatique préparée, mais l’email au prospect N’EST PAS PARTI — recontactez-le vous-même :\n---\nRéponse exemple."
+    },
+    {
+      "courrier": "decision",
+      "lead_id": "1ead0000-0000-4000-8000-000000000010",
+      "decision": "part_seul",
+      "motif": "auto",
+      "mot": null,
+      "envoi": "plafond_destinataire",
+      "avis": "nouveau_lead",
+      "simulation": true
+    }
+  ]
+}

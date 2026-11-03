@@ -1,0 +1,4238 @@
+[
+  {
+    "workflow": "lib-relancer",
+    "titre": "banc relance ; registre illisible ; un dimanche ; stop non lu",
+    "execution": "409",
+    "statut_n8n": "success",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:relancer:0",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000507",
+          "depuis_le": "2026-10-18T00:00:00.000+02:00",
+          "historique": {
+            "ok": true,
+            "traces": [
+              {
+                "chemin": "impayes",
+                "le": "2026-10-28T08:00:00Z"
+              }
+            ],
+            "ignorees": []
+          },
+          "paliers_envoyes": [
+            2
+          ],
+          "stop": false,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:relancer:1",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000508",
+          "depuis_le": "2026-10-24T00:00:00.000+02:00",
+          "historique": {
+            "ok": true,
+            "traces": [
+              {
+                "chemin": "impayes",
+                "le": "2026-10-27T08:00:00Z"
+              }
+            ],
+            "ignorees": []
+          },
+          "paliers_envoyes": [
+            1
+          ],
+          "stop": false,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:relancer:2",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000509",
+          "depuis_le": "2026-10-30T00:00:00.000+02:00",
+          "historique": {
+            "ok": true,
+            "traces": [],
+            "ignorees": []
+          },
+          "paliers_envoyes": [],
+          "stop": false,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:relancer:3",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000510",
+          "depuis_le": "2026-11-05T00:00:00.000+02:00",
+          "historique": {
+            "ok": true,
+            "traces": [],
+            "ignorees": []
+          },
+          "paliers_envoyes": [],
+          "stop": false,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:relancer:4",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000311",
+          "depuis_le": "2026-10-02T00:00:00.000+02:00",
+          "historique": {
+            "ok": true,
+            "traces": [
+              {
+                "chemin": "crm",
+                "le": "2026-11-01T10:00:00.000Z"
+              }
+            ],
+            "ignorees": []
+          },
+          "paliers_envoyes": [],
+          "stop": false,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:relancer:5",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000312",
+          "depuis_le": "2026-10-08T00:00:00.000+02:00",
+          "historique": {
+            "ok": true,
+            "traces": [],
+            "ignorees": []
+          },
+          "paliers_envoyes": [],
+          "stop": false,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:relancer:6",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "conversation",
+          "objet_id": "00000000-0000-4000-8000-000000000104",
+          "depuis_le": "2026-09-18T18:12:00Z",
+          "historique": {
+            "ok": true,
+            "traces": [],
+            "ignorees": []
+          },
+          "paliers_envoyes": [],
+          "stop": true,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:relancer:7",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "conversation",
+          "objet_id": "00000000-0000-4000-8000-000000000106",
+          "depuis_le": "2026-09-22T10:05:00Z",
+          "historique": {
+            "ok": true,
+            "traces": [],
+            "ignorees": []
+          },
+          "paliers_envoyes": [],
+          "stop": false,
+          "escalade": true,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:relancer:8",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "conversation",
+          "objet_id": "00000000-0000-4000-8000-000000000121",
+          "depuis_le": "2026-10-14T16:20:00Z",
+          "historique": {
+            "ok": true,
+            "traces": [],
+            "ignorees": []
+          },
+          "paliers_envoyes": [],
+          "stop": false,
+          "escalade": true,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:relancer:9",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "conversation",
+          "objet_id": "00000000-0000-4000-8000-000000000125",
+          "depuis_le": "2026-10-13T10:00:00Z",
+          "historique": {
+            "ok": true,
+            "traces": [],
+            "ignorees": []
+          },
+          "paliers_envoyes": [],
+          "stop": false,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:91",
+        "trace": {
+          "execution_parent": "Exemple. essai : registre illisible",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000591",
+          "depuis_le": "2026-10-30T00:00:00.000+02:00",
+          "historique": {
+            "ok": false,
+            "erreur": "Exemple. relances_impayes : lecture refusée"
+          },
+          "paliers_envoyes": [],
+          "stop": false,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:92",
+        "trace": {
+          "execution_parent": "Exemple. essai : un dimanche",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000592",
+          "depuis_le": "2026-10-30T00:00:00.000+02:00",
+          "historique": {
+            "ok": true,
+            "traces": [],
+            "ignorees": []
+          },
+          "paliers_envoyes": [],
+          "stop": false,
+          "escalade": false,
+          "maintenant": "2026-11-08T10:00:00.000+01:00"
+        }
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:93",
+        "trace": {
+          "execution_parent": "Exemple. essai : stop non lu",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000593",
+          "depuis_le": "2026-10-30T00:00:00.000+02:00",
+          "historique": {
+            "ok": true,
+            "traces": [],
+            "ignorees": []
+          },
+          "paliers_envoyes": [],
+          "stop": null,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:relancer:0",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": true,
+          "palier": 3,
+          "motif": "palier_atteint",
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000507",
+          "jours_depuis": 16,
+          "cle_idempotence": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000507",
+            "decision": "à relancer, palier 3 (J+16)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:relancer:1",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": true,
+          "palier": 3,
+          "motif": "palier_atteint",
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000508",
+          "jours_depuis": 10,
+          "cle_idempotence": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000508",
+            "decision": "à relancer, palier 3 (J+10)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:relancer:2",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": true,
+          "palier": 2,
+          "motif": "palier_atteint",
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000509",
+          "jours_depuis": 4,
+          "cle_idempotence": "h:relance:ffbbcf0fdd2af310b66101bb9dadb33bcab3542e8efe33c2",
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000509",
+            "decision": "à relancer, palier 2 (J+4)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:banc:relancer:3",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": false,
+          "palier": null,
+          "motif": "aucun_palier_atteint",
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000510",
+          "jours_depuis": -2,
+          "cle_idempotence": null,
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000510",
+            "decision": "pas de relance : aucun_palier_atteint (J+-2)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:banc:relancer:4",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": false,
+          "palier": 3,
+          "motif": "relance_recente_moins_3_jours",
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000311",
+          "jours_depuis": 32,
+          "cle_idempotence": null,
+          "derniere_relance": {
+            "chemin": "crm",
+            "le": "2026-11-01T10:00:00.000Z"
+          }
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000311",
+            "decision": "pas de relance : relance_recente_moins_3_jours (J+32)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:relancer:5",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": true,
+          "palier": 3,
+          "motif": "palier_atteint",
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000312",
+          "jours_depuis": 26,
+          "cle_idempotence": "h:relance:0985f9653cecc3d626b9352fcbdd287027577fcc265a72ab",
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000312",
+            "decision": "à relancer, palier 3 (J+26)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:banc:relancer:6",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": false,
+          "palier": 3,
+          "motif": "stop",
+          "objet_type": "conversation",
+          "objet_id": "00000000-0000-4000-8000-000000000104",
+          "jours_depuis": 45,
+          "cle_idempotence": null,
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000104",
+            "decision": "pas de relance : stop (J+45)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:banc:relancer:7",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": false,
+          "palier": 3,
+          "motif": "litige_ou_escalade",
+          "objet_type": "conversation",
+          "objet_id": "00000000-0000-4000-8000-000000000106",
+          "jours_depuis": 41,
+          "cle_idempotence": null,
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000106",
+            "decision": "pas de relance : litige_ou_escalade (J+41)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:banc:relancer:8",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": false,
+          "palier": 3,
+          "motif": "litige_ou_escalade",
+          "objet_type": "conversation",
+          "objet_id": "00000000-0000-4000-8000-000000000121",
+          "jours_depuis": 19,
+          "cle_idempotence": null,
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000121",
+            "decision": "pas de relance : litige_ou_escalade (J+19)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:relancer:9",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": true,
+          "palier": 3,
+          "motif": "palier_atteint",
+          "objet_type": "conversation",
+          "objet_id": "00000000-0000-4000-8000-000000000125",
+          "jours_depuis": 20,
+          "cle_idempotence": "h:relance:4f2aae6cb091fc403b3ac1f27dad089f67a3541189f3974d",
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000125",
+            "decision": "à relancer, palier 3 (J+20)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:essai:91",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": false,
+          "palier": 2,
+          "motif": "lecture_en_erreur",
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000591",
+          "jours_depuis": 4,
+          "cle_idempotence": null,
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000591",
+            "decision": "pas de relance : lecture_en_erreur (J+4)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:essai:92",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": false,
+          "palier": 3,
+          "motif": "hors_horaires",
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000592",
+          "jours_depuis": 9,
+          "cle_idempotence": null,
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000592",
+            "decision": "pas de relance : hors_horaires (J+9)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-relancer@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:essai:93",
+        "simulation": true,
+        "resultat": {
+          "a_relancer": false,
+          "palier": 2,
+          "motif": "lecture_en_erreur",
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000593",
+          "jours_depuis": 4,
+          "cle_idempotence": null,
+          "derniere_relance": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "relance",
+            "agent": "lib-relancer",
+            "objet_ref": "00000000-0000-4000-8000-000000000593",
+            "decision": "pas de relance : lecture_en_erreur (J+4)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  },
+  {
+    "workflow": "lib-relancer",
+    "titre": "banc relance",
+    "execution": "410",
+    "statut_n8n": "error",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-relancer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": false,
+        "cle_idempotence": "exemple:banc:relancer:0",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "paliers_jours": [
+            1,
+            3,
+            7
+          ],
+          "jours_permis": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "heures_permises": {
+            "debut": "08:00",
+            "fin": "19:00"
+          }
+        },
+        "donnees": {
+          "objet_type": "facture",
+          "objet_id": "00000000-0000-4000-8000-000000000507",
+          "depuis_le": "2026-10-18T00:00:00.000+02:00",
+          "historique": {
+            "ok": true,
+            "traces": [
+              {
+                "chemin": "impayes",
+                "le": "2026-10-28T08:00:00Z"
+              }
+            ],
+            "ignorees": []
+          },
+          "paliers_envoyes": [
+            2
+          ],
+          "stop": false,
+          "escalade": false,
+          "maintenant": "2026-11-03T09:30:00.000+01:00"
+        }
+      }
+    ],
+    "erreur": "Hors simulation : effet réel non branché (mode A, tâche 035-005). Rien n'a été lu, écrit ni envoyé."
+  },
+  {
+    "workflow": "lib-normaliser-telephone",
+    "titre": "numéros fictifs ; hors du moment d’envoyer",
+    "execution": "411",
+    "statut_n8n": "success",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:0",
+        "trace": {
+          "execution_parent": "Exemple. essai : numéros fictifs",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "moment": "envoi",
+          "telephone": "06 39 98 00 07"
+        }
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:1",
+        "trace": {
+          "execution_parent": "Exemple. essai : numéros fictifs",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "moment": "envoi",
+          "telephone": "+33 (0)6 39 98 00 07"
+        }
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:2",
+        "trace": {
+          "execution_parent": "Exemple. essai : numéros fictifs",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "moment": "envoi",
+          "telephone": "0033639980007"
+        }
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:3",
+        "trace": {
+          "execution_parent": "Exemple. essai : numéros fictifs",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "moment": "envoi",
+          "telephone": "A string"
+        }
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:4",
+        "trace": {
+          "execution_parent": "Exemple. essai : numéros fictifs",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "moment": "envoi",
+          "telephone": ""
+        }
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:5",
+        "trace": {
+          "execution_parent": "Exemple. essai : numéros fictifs",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "moment": "envoi",
+          "telephone": "06"
+        }
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:6",
+        "trace": {
+          "execution_parent": "Exemple. essai : numéros fictifs",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "moment": "envoi",
+          "telephone": null
+        }
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:7",
+        "trace": {
+          "execution_parent": "Exemple. essai : numéros fictifs",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "moment": "envoi",
+          "telephone": "Exemple. pas un numéro"
+        }
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:9",
+        "trace": {
+          "execution_parent": "Exemple. essai : hors du moment d’envoyer",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {},
+        "donnees": {
+          "moment": "qualification",
+          "telephone": "06 39 98 00 07"
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "statut": "rejete",
+        "cle_idempotence": "exemple:essai:9",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "contrat_rejete",
+            "agent": "lib-normaliser-telephone@1",
+            "objet_ref": null,
+            "decision": "entrée hors contrat : aucun effet",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "entrée.donnees.moment : valeur imposée non respectée"
+        ]
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:0",
+        "simulation": true,
+        "resultat": {
+          "e164": "+33639980007",
+          "valide": true
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "telephone_normalise",
+            "agent": "lib-normaliser-telephone",
+            "objet_ref": null,
+            "decision": "numéro valide, mis au format international",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:1",
+        "simulation": true,
+        "resultat": {
+          "e164": "+33639980007",
+          "valide": true
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "telephone_normalise",
+            "agent": "lib-normaliser-telephone",
+            "objet_ref": null,
+            "decision": "numéro valide, mis au format international",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:2",
+        "simulation": true,
+        "resultat": {
+          "e164": "+33639980007",
+          "valide": true
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "telephone_normalise",
+            "agent": "lib-normaliser-telephone",
+            "objet_ref": null,
+            "decision": "numéro valide, mis au format international",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:3",
+        "simulation": true,
+        "resultat": {
+          "e164": null,
+          "valide": false
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "telephone_normalise",
+            "agent": "lib-normaliser-telephone",
+            "objet_ref": null,
+            "decision": "numéro invalide ou absent : vidé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:4",
+        "simulation": true,
+        "resultat": {
+          "e164": null,
+          "valide": false
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "telephone_normalise",
+            "agent": "lib-normaliser-telephone",
+            "objet_ref": null,
+            "decision": "numéro invalide ou absent : vidé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:5",
+        "simulation": true,
+        "resultat": {
+          "e164": null,
+          "valide": false
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "telephone_normalise",
+            "agent": "lib-normaliser-telephone",
+            "objet_ref": null,
+            "decision": "numéro invalide ou absent : vidé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:6",
+        "simulation": true,
+        "resultat": {
+          "e164": null,
+          "valide": false
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "telephone_normalise",
+            "agent": "lib-normaliser-telephone",
+            "objet_ref": null,
+            "decision": "numéro invalide ou absent : vidé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-normaliser-telephone@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:7",
+        "simulation": true,
+        "resultat": {
+          "e164": null,
+          "valide": false
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "telephone_normalise",
+            "agent": "lib-normaliser-telephone",
+            "objet_ref": null,
+            "decision": "numéro invalide ou absent : vidé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  },
+  {
+    "workflow": "lib-rediger-message",
+    "titre": "banc relance",
+    "execution": "412",
+    "statut_n8n": "success",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-rediger-message@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:rediger-message:0",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "canal": "email",
+          "ton": "Exemple. cordial et simple, vouvoiement",
+          "signature": "Exemple. L’équipe Bâti-Démo",
+          "nom_artisan": "Exemple. Bâti-Démo",
+          "mention_ia": false
+        },
+        "donnees": {
+          "action_cle": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-007",
+            "objet": "Exemple. Mise aux normes électrique",
+            "montant_ttc_centimes": 33400,
+            "echeance_le": "2026-10-18",
+            "emis_le": "2026-09-18",
+            "regime_tva": "tva",
+            "palier": 3
+          }
+        }
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:rediger-message:1",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "canal": "email",
+          "ton": "Exemple. cordial et simple, vouvoiement",
+          "signature": "Exemple. L’équipe Bâti-Démo",
+          "nom_artisan": "Exemple. Bâti-Démo",
+          "mention_ia": false
+        },
+        "donnees": {
+          "action_cle": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-008",
+            "objet": "Exemple. Cuisine équipée",
+            "montant_ttc_centimes": 29100,
+            "echeance_le": "2026-10-24",
+            "emis_le": "2026-09-24",
+            "regime_tva": "tva",
+            "palier": 3
+          }
+        }
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:rediger-message:2",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "canal": "email",
+          "ton": "Exemple. cordial et simple, vouvoiement",
+          "signature": "Exemple. L’équipe Bâti-Démo",
+          "nom_artisan": "Exemple. Bâti-Démo",
+          "mention_ia": false
+        },
+        "donnees": {
+          "action_cle": "h:relance:ffbbcf0fdd2af310b66101bb9dadb33bcab3542e8efe33c2",
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-009",
+            "objet": "Exemple. Isolation des combles",
+            "montant_ttc_centimes": 45580,
+            "echeance_le": "2026-10-30",
+            "emis_le": "2026-09-30",
+            "regime_tva": "tva",
+            "palier": 2
+          }
+        }
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:rediger-message:3",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "canal": "email",
+          "ton": "Exemple. cordial et simple, vouvoiement",
+          "signature": "Exemple. L’équipe Bâti-Démo",
+          "nom_artisan": "Exemple. Bâti-Démo",
+          "mention_ia": false
+        },
+        "donnees": {
+          "action_cle": "h:relance:0985f9653cecc3d626b9352fcbdd287027577fcc265a72ab",
+          "faits": {
+            "type_relance": "relance_devis",
+            "numero": "DEV-2026-012",
+            "objet": "Exemple. Mise aux normes électrique",
+            "montant_ttc_centimes": null,
+            "emis_le": "2026-10-08",
+            "regime_tva": "tva",
+            "palier": 3
+          }
+        }
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:rediger-message:4",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "canal": "sms",
+          "ton": "Exemple. cordial et simple, vouvoiement",
+          "signature": "Exemple. L’équipe Bâti-Démo",
+          "nom_artisan": "Exemple. Bâti-Démo",
+          "mention_ia": false
+        },
+        "donnees": {
+          "action_cle": "h:relance:4f2aae6cb091fc403b3ac1f27dad089f67a3541189f3974d",
+          "faits": {
+            "type_relance": "relance_conversation",
+            "palier": 3
+          }
+        }
+      }
+    ],
+    "epingle_modele": [
+      {
+        "objet": "Exemple. Rappel : facture FAC-2026-007",
+        "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-007 (Exemple. Mise aux normes électrique), d'un montant de 334,00 € TTC, arrivée à échéance le 18 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+        "faits_cites": [
+          "numero",
+          "objet",
+          "montant",
+          "echeance"
+        ],
+        "champs_inconnus": []
+      },
+      {
+        "objet": "Exemple. Rappel : facture FAC-2026-008",
+        "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-008 (Exemple. Cuisine équipée), d'un montant de 291,00 € TTC, arrivée à échéance le 24 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+        "faits_cites": [
+          "numero",
+          "objet",
+          "montant",
+          "echeance"
+        ],
+        "champs_inconnus": []
+      },
+      {
+        "objet": "Exemple. Rappel : facture FAC-2026-009",
+        "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-2026-009 (Exemple. Isolation des combles), d'un montant de 455,80 € TTC, arrivée à échéance le 30 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+        "faits_cites": [
+          "numero",
+          "objet",
+          "montant",
+          "echeance"
+        ],
+        "champs_inconnus": []
+      },
+      {
+        "objet": "Exemple. Votre devis DEV-2026-012",
+        "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de notre devis DEV-2026-012 (Exemple. Mise aux normes électrique), d'un montant de 117,80 € TTC. Si vous avez une question, il vous suffit de nous répondre ; nous restons à votre disposition.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+        "faits_cites": [
+          "numero",
+          "objet",
+          "montant"
+        ],
+        "champs_inconnus": []
+      },
+      {
+        "objet": null,
+        "texte": "{{salutation}}, nous revenons vers vous au sujet de votre demande. Si vous avez une question, il vous suffit de répondre à ce message. Exemple. L’équipe Bâti-Démo",
+        "faits_cites": [],
+        "champs_inconnus": [
+          "objet"
+        ]
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rediger-message:0",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+          "objet": "Exemple. Rappel : facture FAC-2026-007",
+          "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-007 (Exemple. Mise aux normes électrique), d'un montant de 334,00 € TTC, arrivée à échéance le 18 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+          "faits_cites": [
+            "numero",
+            "objet",
+            "montant",
+            "echeance"
+          ],
+          "champs_inconnus": [],
+          "canal": "email",
+          "mention": false,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "h:redaction:9e92d0e8c4a648153ed199e4e4a4e6d33db71f8f55acfffc"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon email, à relire",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rediger-message:1",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+          "objet": "Exemple. Rappel : facture FAC-2026-008",
+          "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-008 (Exemple. Cuisine équipée), d'un montant de 291,00 € TTC, arrivée à échéance le 24 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+          "faits_cites": [
+            "numero",
+            "objet",
+            "montant",
+            "echeance"
+          ],
+          "champs_inconnus": [],
+          "canal": "email",
+          "mention": false,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "h:redaction:494d838bfcdcb1e6380aa04200bb98db34b45fbf9499db80"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon email, à relire",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rediger-message:2",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "h:relance:ffbbcf0fdd2af310b66101bb9dadb33bcab3542e8efe33c2",
+          "objet": "Exemple. Rappel : facture FAC-2026-009",
+          "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-2026-009 (Exemple. Isolation des combles), d'un montant de 455,80 € TTC, arrivée à échéance le 30 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+          "faits_cites": [
+            "numero",
+            "objet",
+            "montant",
+            "echeance"
+          ],
+          "champs_inconnus": [],
+          "canal": "email",
+          "mention": false,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "h:redaction:4b9049609534359e7d397d01861fd8ba768a1a023d822d66"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon email, à relire",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rediger-message:3",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "h:relance:0985f9653cecc3d626b9352fcbdd287027577fcc265a72ab",
+          "objet": "Exemple. Votre devis DEV-2026-012",
+          "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de notre devis DEV-2026-012 (Exemple. Mise aux normes électrique), d'un montant de 117,80 € TTC. Si vous avez une question, il vous suffit de nous répondre ; nous restons à votre disposition.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+          "faits_cites": [
+            "numero",
+            "objet",
+            "montant"
+          ],
+          "champs_inconnus": [],
+          "canal": "email",
+          "mention": false,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "h:redaction:7d63045814a2913098eb062d13b19971aa9e7ec608e67b2f"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon email, à relire",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rediger-message:4",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "h:relance:4f2aae6cb091fc403b3ac1f27dad089f67a3541189f3974d",
+          "objet": null,
+          "texte": "{{salutation}}, nous revenons vers vous au sujet de votre demande. Si vous avez une question, il vous suffit de répondre à ce message. Exemple. L’équipe Bâti-Démo\nRépondez STOP pour ne plus recevoir de message.",
+          "faits_cites": [],
+          "champs_inconnus": [
+            "objet"
+          ],
+          "canal": "sms",
+          "mention": false,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "h:redaction:97e05f2baf6fa520c75e7a49d96227297facf09c26bdcb61"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon sms, à relire ; inconnu : objet",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  },
+  {
+    "workflow": "lib-rediger-message",
+    "titre": "sans relecture : mention ajoutée ; sortie hors schéma (salutation absente) ; sortie hors schéma (champ {{prenom}}) ; sortie hors schéma (champ en trop) ; un téléphone dans les faits",
+    "execution": "413",
+    "statut_n8n": "success",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-rediger-message@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:1",
+        "trace": {
+          "execution_parent": "Exemple. essai : sans relecture : mention ajoutée",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "canal": "email",
+          "ton": "Exemple. cordial",
+          "signature": "Exemple. L’équipe Bâti-Démo",
+          "nom_artisan": "Exemple. Bâti-Démo",
+          "mention_ia": true
+        },
+        "donnees": {
+          "action_cle": "exemple:redaction:mention",
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-009",
+            "objet": "Exemple. Isolation des combles",
+            "montant_ttc_centimes": 45580,
+            "echeance_le": "2026-10-30",
+            "emis_le": "2026-09-30",
+            "regime_tva": "tva",
+            "palier": 2
+          }
+        }
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:2",
+        "trace": {
+          "execution_parent": "Exemple. essai : sortie hors schéma (salutation absente)",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "canal": "email",
+          "ton": "Exemple. cordial",
+          "signature": "Exemple. L’équipe Bâti-Démo",
+          "nom_artisan": "Exemple. Bâti-Démo",
+          "mention_ia": false
+        },
+        "donnees": {
+          "action_cle": "exemple:redaction:sans-salutation",
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-009",
+            "objet": "Exemple. Isolation des combles",
+            "montant_ttc_centimes": 45580,
+            "echeance_le": "2026-10-30",
+            "emis_le": "2026-09-30",
+            "regime_tva": "tva",
+            "palier": 2
+          }
+        }
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:3",
+        "trace": {
+          "execution_parent": "Exemple. essai : sortie hors schéma (champ {{prenom}})",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "canal": "email",
+          "ton": "Exemple. cordial",
+          "signature": "Exemple. L’équipe Bâti-Démo",
+          "nom_artisan": "Exemple. Bâti-Démo",
+          "mention_ia": false
+        },
+        "donnees": {
+          "action_cle": "exemple:redaction:champ-prenom",
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-009",
+            "objet": "Exemple. Isolation des combles",
+            "montant_ttc_centimes": 45580,
+            "echeance_le": "2026-10-30",
+            "emis_le": "2026-09-30",
+            "regime_tva": "tva",
+            "palier": 2
+          }
+        }
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:4",
+        "trace": {
+          "execution_parent": "Exemple. essai : sortie hors schéma (champ en trop)",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "canal": "email",
+          "ton": "Exemple. cordial",
+          "signature": "Exemple. L’équipe Bâti-Démo",
+          "nom_artisan": "Exemple. Bâti-Démo",
+          "mention_ia": false
+        },
+        "donnees": {
+          "action_cle": "exemple:redaction:champ-en-trop",
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-009",
+            "objet": "Exemple. Isolation des combles",
+            "montant_ttc_centimes": 45580,
+            "echeance_le": "2026-10-30",
+            "emis_le": "2026-09-30",
+            "regime_tva": "tva",
+            "palier": 2
+          }
+        }
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:5",
+        "trace": {
+          "execution_parent": "Exemple. essai : un téléphone dans les faits",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "canal": "email",
+          "ton": "Exemple. cordial",
+          "signature": "Exemple. L’équipe Bâti-Démo",
+          "nom_artisan": "Exemple. Bâti-Démo",
+          "mention_ia": false
+        },
+        "donnees": {
+          "action_cle": "exemple:redaction:telephone",
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-009",
+            "objet": "Exemple. appeler le 06 39 98 00 09",
+            "montant_ttc_centimes": 45580,
+            "echeance_le": "2026-10-30",
+            "emis_le": "2026-09-30",
+            "regime_tva": "tva",
+            "palier": 2
+          }
+        }
+      }
+    ],
+    "epingle_modele": [
+      {
+        "objet": "Exemple. Rappel : facture FAC-2026-009",
+        "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-2026-009 (Exemple. Isolation des combles), d'un montant de 455,80 € TTC, arrivée à échéance le 30 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+        "faits_cites": [
+          "numero",
+          "objet",
+          "montant",
+          "echeance"
+        ],
+        "champs_inconnus": []
+      },
+      {
+        "objet": "Exemple. Rappel : facture FAC-2026-009",
+        "texte": "Bonjour Exemple. Client\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-2026-009 (Exemple. Isolation des combles), d'un montant de 455,80 € TTC, arrivée à échéance le 30 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+        "faits_cites": [
+          "numero",
+          "objet",
+          "montant",
+          "echeance"
+        ],
+        "champs_inconnus": []
+      },
+      {
+        "objet": "Exemple. Rappel : facture FAC-2026-009",
+        "texte": "{{salutation}} {{prenom}},\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-2026-009 (Exemple. Isolation des combles), d'un montant de 455,80 € TTC, arrivée à échéance le 30 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+        "faits_cites": [
+          "numero",
+          "objet",
+          "montant",
+          "echeance"
+        ],
+        "champs_inconnus": []
+      },
+      {
+        "objet": "Exemple. Rappel : facture FAC-2026-009",
+        "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-2026-009 (Exemple. Isolation des combles), d'un montant de 455,80 € TTC, arrivée à échéance le 30 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+        "faits_cites": [
+          "numero",
+          "objet",
+          "montant",
+          "echeance"
+        ],
+        "champs_inconnus": [],
+        "prix": "12 €"
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "rejete",
+        "cle_idempotence": "exemple:essai:5",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "contrat_rejete",
+            "agent": "lib-rediger-message@1",
+            "objet_ref": null,
+            "decision": "entrée hors contrat : aucun effet",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)"
+        ]
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:1",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "exemple:redaction:mention",
+          "objet": "Exemple. Rappel : facture FAC-2026-009",
+          "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-2026-009 (Exemple. Isolation des combles), d'un montant de 455,80 € TTC, arrivée à échéance le 30 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Bâti-Démo.",
+          "faits_cites": [
+            "numero",
+            "objet",
+            "montant",
+            "echeance"
+          ],
+          "champs_inconnus": [],
+          "canal": "email",
+          "mention": true,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "00000000-0000-4000-8000-000000000001:redaction:exemple:redaction:mention"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon email, mention d’IA ajoutée",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "erreur",
+        "cle_idempotence": "exemple:essai:2",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction_hors_schema",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "sortie du modèle rejetée : rien ne sort",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "sortie du modèle hors schéma (texte sans {{salutation}} en tête) : aucun brouillon"
+        ]
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "erreur",
+        "cle_idempotence": "exemple:essai:3",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction_hors_schema",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "sortie du modèle rejetée : rien ne sort",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "sortie du modèle hors schéma (champ inconnu : {{prenom}}) : aucun brouillon"
+        ]
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "erreur",
+        "cle_idempotence": "exemple:essai:4",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction_hors_schema",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "sortie du modèle rejetée : rien ne sort",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "sortie du modèle hors schéma (champ en trop : prix) : aucun brouillon"
+        ]
+      }
+    ]
+  },
+  {
+    "workflow": "lib-porte-conformite",
+    "titre": "banc relance ; « Presti » dans le message ; opposition du destinataire ; créneau inventé ; SMS sans STOP ; pilote au plafond du jour",
+    "execution": "414",
+    "statut_n8n": "success",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-porte-conformite@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "jamais_auto": [],
+          "regles_metier": {
+            "fournisseurs": [],
+            "mots_escalade_artisan": [
+              "Exemple. mot sensible"
+            ],
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "heures_permises": {
+              "debut": "08:00",
+              "fin": "19:00"
+            }
+          },
+          "plafond_jour": 20
+        },
+        "donnees": {
+          "action": {
+            "type_action": "relance_facture",
+            "outil": "relancer_facture",
+            "prix_sources": true,
+            "cible": "carte",
+            "sans_relecture": false
+          },
+          "message": {
+            "canal": "email",
+            "objet": "Exemple. Rappel : facture FAC-2026-007",
+            "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-007 (Exemple. Mise aux normes électrique), d'un montant de 334,00 € TTC, arrivée à échéance le 18 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo"
+          },
+          "destinataire": {
+            "opposition": false,
+            "consentement_sms": true,
+            "escalade": false
+          },
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-007",
+            "objet": "Exemple. Mise aux normes électrique",
+            "montant_ttc_centimes": 33400,
+            "echeance_le": "2026-10-18",
+            "emis_le": "2026-09-18",
+            "regime_tva": "tva",
+            "palier": 3
+          },
+          "maintenant": "2026-11-03T09:30:00.000+01:00",
+          "compteurs": {
+            "envoyes_aujourdhui": 0
+          }
+        }
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "jamais_auto": [],
+          "regles_metier": {
+            "fournisseurs": [],
+            "mots_escalade_artisan": [
+              "Exemple. mot sensible"
+            ],
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "heures_permises": {
+              "debut": "08:00",
+              "fin": "19:00"
+            }
+          },
+          "plafond_jour": 20
+        },
+        "donnees": {
+          "action": {
+            "type_action": "relance_facture",
+            "outil": "relancer_facture",
+            "prix_sources": true,
+            "cible": "carte",
+            "sans_relecture": false
+          },
+          "message": {
+            "canal": "email",
+            "objet": "Exemple. Rappel : facture FAC-2026-008",
+            "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-008 (Exemple. Cuisine équipée), d'un montant de 291,00 € TTC, arrivée à échéance le 24 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo"
+          },
+          "destinataire": {
+            "opposition": false,
+            "consentement_sms": true,
+            "escalade": false
+          },
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-008",
+            "objet": "Exemple. Cuisine équipée",
+            "montant_ttc_centimes": 29100,
+            "echeance_le": "2026-10-24",
+            "emis_le": "2026-09-24",
+            "regime_tva": "tva",
+            "palier": 3
+          },
+          "maintenant": "2026-11-03T09:30:00.000+01:00",
+          "compteurs": {
+            "envoyes_aujourdhui": 0
+          }
+        }
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "h:relance:ffbbcf0fdd2af310b66101bb9dadb33bcab3542e8efe33c2",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "jamais_auto": [],
+          "regles_metier": {
+            "fournisseurs": [],
+            "mots_escalade_artisan": [
+              "Exemple. mot sensible"
+            ],
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "heures_permises": {
+              "debut": "08:00",
+              "fin": "19:00"
+            }
+          },
+          "plafond_jour": 20
+        },
+        "donnees": {
+          "action": {
+            "type_action": "relance_facture",
+            "outil": "relancer_facture",
+            "prix_sources": true,
+            "cible": "carte",
+            "sans_relecture": false
+          },
+          "message": {
+            "canal": "email",
+            "objet": "Exemple. Rappel : facture FAC-2026-009",
+            "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-2026-009 (Exemple. Isolation des combles), d'un montant de 455,80 € TTC, arrivée à échéance le 30 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo"
+          },
+          "destinataire": {
+            "opposition": false,
+            "consentement_sms": true,
+            "escalade": false
+          },
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-009",
+            "objet": "Exemple. Isolation des combles",
+            "montant_ttc_centimes": 45580,
+            "echeance_le": "2026-10-30",
+            "emis_le": "2026-09-30",
+            "regime_tva": "tva",
+            "palier": 2
+          },
+          "maintenant": "2026-11-03T09:30:00.000+01:00",
+          "compteurs": {
+            "envoyes_aujourdhui": 0
+          }
+        }
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "h:relance:0985f9653cecc3d626b9352fcbdd287027577fcc265a72ab",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "jamais_auto": [],
+          "regles_metier": {
+            "fournisseurs": [],
+            "mots_escalade_artisan": [
+              "Exemple. mot sensible"
+            ],
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "heures_permises": {
+              "debut": "08:00",
+              "fin": "19:00"
+            }
+          },
+          "plafond_jour": 20
+        },
+        "donnees": {
+          "action": {
+            "type_action": "relance_devis",
+            "outil": "relancer_devis",
+            "prix_sources": true,
+            "cible": "carte",
+            "sans_relecture": false
+          },
+          "message": {
+            "canal": "email",
+            "objet": "Exemple. Votre devis DEV-2026-012",
+            "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de notre devis DEV-2026-012 (Exemple. Mise aux normes électrique), d'un montant de 117,80 € TTC. Si vous avez une question, il vous suffit de nous répondre ; nous restons à votre disposition.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo"
+          },
+          "destinataire": {
+            "opposition": false,
+            "consentement_sms": true,
+            "escalade": false
+          },
+          "faits": {
+            "type_relance": "relance_devis",
+            "numero": "DEV-2026-012",
+            "objet": "Exemple. Mise aux normes électrique",
+            "montant_ttc_centimes": null,
+            "emis_le": "2026-10-08",
+            "regime_tva": "tva",
+            "palier": 3
+          },
+          "maintenant": "2026-11-03T09:30:00.000+01:00",
+          "compteurs": {
+            "envoyes_aujourdhui": 0
+          }
+        }
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "h:relance:4f2aae6cb091fc403b3ac1f27dad089f67a3541189f3974d",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "jamais_auto": [],
+          "regles_metier": {
+            "fournisseurs": [],
+            "mots_escalade_artisan": [
+              "Exemple. mot sensible"
+            ],
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "heures_permises": {
+              "debut": "08:00",
+              "fin": "19:00"
+            }
+          },
+          "plafond_jour": 20
+        },
+        "donnees": {
+          "action": {
+            "type_action": "relance_conversation",
+            "outil": "relancer_conversation",
+            "prix_sources": true,
+            "cible": "carte",
+            "sans_relecture": false
+          },
+          "message": {
+            "canal": "sms",
+            "objet": null,
+            "texte": "{{salutation}}, nous revenons vers vous au sujet de votre demande. Si vous avez une question, il vous suffit de répondre à ce message. Exemple. L’équipe Bâti-Démo\nRépondez STOP pour ne plus recevoir de message."
+          },
+          "destinataire": {
+            "opposition": false,
+            "consentement_sms": true,
+            "escalade": false
+          },
+          "faits": {
+            "type_relance": "relance_conversation",
+            "palier": 3
+          },
+          "maintenant": "2026-11-03T09:30:00.000+01:00",
+          "compteurs": {
+            "envoyes_aujourdhui": 0
+          }
+        }
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:porte:1",
+        "trace": {
+          "execution_parent": "Exemple. essai : « Presti » dans le message",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "jamais_auto": [],
+          "regles_metier": {
+            "fournisseurs": [],
+            "mots_escalade_artisan": [
+              "Exemple. mot sensible"
+            ],
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "heures_permises": {
+              "debut": "08:00",
+              "fin": "19:00"
+            }
+          },
+          "plafond_jour": 20
+        },
+        "donnees": {
+          "action": {
+            "type_action": "relance_facture",
+            "outil": "relancer_facture",
+            "prix_sources": true,
+            "cible": "carte",
+            "sans_relecture": false
+          },
+          "message": {
+            "canal": "email",
+            "objet": "Exemple. Rappel : facture FAC-2026-007",
+            "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-007 (Exemple. Mise aux normes électrique), d'un montant de 334,00 € TTC, arrivée à échéance le 18 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nEnvoyé avec Presti. Bien cordialement,\nExemple. L’équipe Bâti-Démo"
+          },
+          "destinataire": {
+            "opposition": false,
+            "consentement_sms": true,
+            "escalade": false
+          },
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-007",
+            "objet": "Exemple. Mise aux normes électrique",
+            "montant_ttc_centimes": 33400,
+            "echeance_le": "2026-10-18",
+            "emis_le": "2026-09-18",
+            "regime_tva": "tva",
+            "palier": 3
+          },
+          "maintenant": "2026-11-03T09:30:00.000+01:00",
+          "compteurs": {
+            "envoyes_aujourdhui": 0
+          }
+        }
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:porte:2",
+        "trace": {
+          "execution_parent": "Exemple. essai : opposition du destinataire",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "jamais_auto": [],
+          "regles_metier": {
+            "fournisseurs": [],
+            "mots_escalade_artisan": [
+              "Exemple. mot sensible"
+            ],
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "heures_permises": {
+              "debut": "08:00",
+              "fin": "19:00"
+            }
+          },
+          "plafond_jour": 20
+        },
+        "donnees": {
+          "action": {
+            "type_action": "relance_facture",
+            "outil": "relancer_facture",
+            "prix_sources": true,
+            "cible": "carte",
+            "sans_relecture": false
+          },
+          "message": {
+            "canal": "email",
+            "objet": "Exemple. Rappel : facture FAC-2026-007",
+            "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-007 (Exemple. Mise aux normes électrique), d'un montant de 334,00 € TTC, arrivée à échéance le 18 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo"
+          },
+          "destinataire": {
+            "opposition": true,
+            "consentement_sms": true,
+            "escalade": false
+          },
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-007",
+            "objet": "Exemple. Mise aux normes électrique",
+            "montant_ttc_centimes": 33400,
+            "echeance_le": "2026-10-18",
+            "emis_le": "2026-09-18",
+            "regime_tva": "tva",
+            "palier": 3
+          },
+          "maintenant": "2026-11-03T09:30:00.000+01:00",
+          "compteurs": {
+            "envoyes_aujourdhui": 0
+          }
+        }
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:porte:3",
+        "trace": {
+          "execution_parent": "Exemple. essai : créneau inventé",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "jamais_auto": [],
+          "regles_metier": {
+            "fournisseurs": [],
+            "mots_escalade_artisan": [
+              "Exemple. mot sensible"
+            ],
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "heures_permises": {
+              "debut": "08:00",
+              "fin": "19:00"
+            }
+          },
+          "plafond_jour": 20
+        },
+        "donnees": {
+          "action": {
+            "type_action": "relance_facture",
+            "outil": "relancer_facture",
+            "prix_sources": true,
+            "cible": "carte",
+            "sans_relecture": false
+          },
+          "message": {
+            "canal": "email",
+            "objet": "Exemple. Rappel : facture FAC-2026-007",
+            "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-007 (Exemple. Mise aux normes électrique), d'un montant de 334,00 € TTC, arrivée à échéance le 18 octobre 2026. Nous passerons jeudi à 14 h. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo"
+          },
+          "destinataire": {
+            "opposition": false,
+            "consentement_sms": true,
+            "escalade": false
+          },
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-007",
+            "objet": "Exemple. Mise aux normes électrique",
+            "montant_ttc_centimes": 33400,
+            "echeance_le": "2026-10-18",
+            "emis_le": "2026-09-18",
+            "regime_tva": "tva",
+            "palier": 3
+          },
+          "maintenant": "2026-11-03T09:30:00.000+01:00",
+          "compteurs": {
+            "envoyes_aujourdhui": 0
+          }
+        }
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:porte:7",
+        "trace": {
+          "execution_parent": "Exemple. essai : SMS sans STOP",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "jamais_auto": [],
+          "regles_metier": {
+            "fournisseurs": [],
+            "mots_escalade_artisan": [
+              "Exemple. mot sensible"
+            ],
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "heures_permises": {
+              "debut": "08:00",
+              "fin": "19:00"
+            }
+          },
+          "plafond_jour": 20
+        },
+        "donnees": {
+          "action": {
+            "type_action": "relance_facture",
+            "outil": "relancer_facture",
+            "prix_sources": true,
+            "cible": "carte",
+            "sans_relecture": false
+          },
+          "message": {
+            "canal": "sms",
+            "objet": null,
+            "texte": "{{salutation}}, nous revenons vers vous au sujet de votre demande. Exemple. L’équipe Bâti-Démo"
+          },
+          "destinataire": {
+            "opposition": false,
+            "consentement_sms": true,
+            "escalade": false
+          },
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-007",
+            "objet": "Exemple. Mise aux normes électrique",
+            "montant_ttc_centimes": 33400,
+            "echeance_le": "2026-10-18",
+            "emis_le": "2026-09-18",
+            "regime_tva": "tva",
+            "palier": 3
+          },
+          "maintenant": "2026-11-03T09:30:00.000+01:00",
+          "compteurs": {
+            "envoyes_aujourdhui": 0
+          }
+        }
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:porte:11",
+        "trace": {
+          "execution_parent": "Exemple. essai : pilote au plafond du jour",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "jamais_auto": [],
+          "regles_metier": {
+            "fournisseurs": [],
+            "mots_escalade_artisan": [
+              "Exemple. mot sensible"
+            ],
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "heures_permises": {
+              "debut": "08:00",
+              "fin": "19:00"
+            }
+          },
+          "plafond_jour": 20
+        },
+        "donnees": {
+          "action": {
+            "type_action": "relance_facture",
+            "outil": "relancer_facture",
+            "prix_sources": true,
+            "cible": "pilote",
+            "sans_relecture": true
+          },
+          "message": {
+            "canal": "email",
+            "objet": "Exemple. Rappel : facture FAC-2026-007",
+            "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-007 (Exemple. Mise aux normes électrique), d'un montant de 334,00 € TTC, arrivée à échéance le 18 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Bâti-Démo."
+          },
+          "destinataire": {
+            "opposition": false,
+            "consentement_sms": true,
+            "escalade": false
+          },
+          "faits": {
+            "type_relance": "relance_facture",
+            "numero": "FAC-2026-007",
+            "objet": "Exemple. Mise aux normes électrique",
+            "montant_ttc_centimes": 33400,
+            "echeance_le": "2026-10-18",
+            "emis_le": "2026-09-18",
+            "regime_tva": "tva",
+            "palier": 3
+          },
+          "maintenant": "2026-11-03T09:30:00.000+01:00",
+          "compteurs": {
+            "envoyes_aujourdhui": 20
+          }
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-porte-conformite@1",
+        "statut": "ok",
+        "cle_idempotence": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+        "simulation": true,
+        "resultat": {
+          "verdict": "passe",
+          "motifs": [],
+          "cible": "carte",
+          "repli": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "conformite",
+            "agent": "lib-porte-conformite",
+            "objet_ref": null,
+            "decision": "passe (carte)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "statut": "ok",
+        "cle_idempotence": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+        "simulation": true,
+        "resultat": {
+          "verdict": "passe",
+          "motifs": [],
+          "cible": "carte",
+          "repli": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "conformite",
+            "agent": "lib-porte-conformite",
+            "objet_ref": null,
+            "decision": "passe (carte)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "statut": "ok",
+        "cle_idempotence": "h:relance:ffbbcf0fdd2af310b66101bb9dadb33bcab3542e8efe33c2",
+        "simulation": true,
+        "resultat": {
+          "verdict": "passe",
+          "motifs": [],
+          "cible": "carte",
+          "repli": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "conformite",
+            "agent": "lib-porte-conformite",
+            "objet_ref": null,
+            "decision": "passe (carte)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "statut": "refuse",
+        "cle_idempotence": "h:relance:0985f9653cecc3d626b9352fcbdd287027577fcc265a72ab",
+        "simulation": true,
+        "resultat": {
+          "verdict": "refuse",
+          "motifs": [
+            "prix_sans_source"
+          ],
+          "cible": null,
+          "repli": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "conformite",
+            "agent": "lib-porte-conformite",
+            "objet_ref": null,
+            "decision": "refusé : prix_sans_source",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "statut": "ok",
+        "cle_idempotence": "h:relance:4f2aae6cb091fc403b3ac1f27dad089f67a3541189f3974d",
+        "simulation": true,
+        "resultat": {
+          "verdict": "passe",
+          "motifs": [],
+          "cible": "carte",
+          "repli": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "conformite",
+            "agent": "lib-porte-conformite",
+            "objet_ref": null,
+            "decision": "passe (carte)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:porte:1",
+        "simulation": true,
+        "resultat": {
+          "verdict": "refuse",
+          "motifs": [
+            "marque_interdite"
+          ],
+          "cible": null,
+          "repli": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "conformite",
+            "agent": "lib-porte-conformite",
+            "objet_ref": null,
+            "decision": "refusé : marque_interdite",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:porte:2",
+        "simulation": true,
+        "resultat": {
+          "verdict": "refuse",
+          "motifs": [
+            "opposition_ou_stop"
+          ],
+          "cible": null,
+          "repli": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "conformite",
+            "agent": "lib-porte-conformite",
+            "objet_ref": null,
+            "decision": "refusé : opposition_ou_stop",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:porte:3",
+        "simulation": true,
+        "resultat": {
+          "verdict": "refuse",
+          "motifs": [
+            "delai_creneau_fournisseur_sans_source"
+          ],
+          "cible": null,
+          "repli": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "conformite",
+            "agent": "lib-porte-conformite",
+            "objet_ref": null,
+            "decision": "refusé : delai_creneau_fournisseur_sans_source",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:porte:7",
+        "simulation": true,
+        "resultat": {
+          "verdict": "refuse",
+          "motifs": [
+            "opposition_ou_stop"
+          ],
+          "cible": null,
+          "repli": null
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "conformite",
+            "agent": "lib-porte-conformite",
+            "objet_ref": null,
+            "decision": "refusé : opposition_ou_stop",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-porte-conformite@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:porte:11",
+        "simulation": true,
+        "resultat": {
+          "verdict": "refuse",
+          "motifs": [
+            "plafond_atteint"
+          ],
+          "cible": null,
+          "repli": "carte"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "conformite",
+            "agent": "lib-porte-conformite",
+            "objet_ref": null,
+            "decision": "refusé : plafond_atteint ; repli en carte possible",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  },
+  {
+    "workflow": "lib-executer",
+    "titre": "banc relance ; clé déjà en base ; pilote en mode A ; même clé deux fois dans le lot ; interrupteur général coupé ; après la coupure, lecture ouverte",
+    "execution": "415",
+    "statut_n8n": "success",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-executer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "niveau_max": 2
+        },
+        "donnees": {
+          "verdict": "passe",
+          "cible": "carte",
+          "cle_idempotence": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+          "charge": {
+            "type_action": "relance_facture",
+            "objet_type": "facture",
+            "objet_id": "00000000-0000-4000-8000-000000000507",
+            "palier": 3,
+            "canal": "email",
+            "brouillon": {
+              "objet": "Exemple. Rappel : facture FAC-2026-007",
+              "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-007 (Exemple. Mise aux normes électrique), d'un montant de 334,00 € TTC, arrivée à échéance le 18 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo"
+            }
+          },
+          "interrupteurs": {
+            "general": true,
+            "agent": true
+          },
+          "cles_existantes": []
+        }
+      },
+      {
+        "contrat": "lib-executer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "niveau_max": 2
+        },
+        "donnees": {
+          "verdict": "passe",
+          "cible": "carte",
+          "cle_idempotence": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+          "charge": {
+            "type_action": "relance_facture",
+            "objet_type": "facture",
+            "objet_id": "00000000-0000-4000-8000-000000000508",
+            "palier": 3,
+            "canal": "email",
+            "brouillon": {
+              "objet": "Exemple. Rappel : facture FAC-2026-008",
+              "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-008 (Exemple. Cuisine équipée), d'un montant de 291,00 € TTC, arrivée à échéance le 24 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo"
+            }
+          },
+          "interrupteurs": {
+            "general": true,
+            "agent": true
+          },
+          "cles_existantes": []
+        }
+      },
+      {
+        "contrat": "lib-executer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "h:relance:4f2aae6cb091fc403b3ac1f27dad089f67a3541189f3974d",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "niveau_max": 2
+        },
+        "donnees": {
+          "verdict": "passe",
+          "cible": "carte",
+          "cle_idempotence": "h:relance:4f2aae6cb091fc403b3ac1f27dad089f67a3541189f3974d",
+          "charge": {
+            "type_action": "relance_conversation",
+            "objet_type": "conversation",
+            "objet_id": "00000000-0000-4000-8000-000000000125",
+            "palier": 3,
+            "canal": "sms",
+            "brouillon": {
+              "objet": null,
+              "texte": "{{salutation}}, nous revenons vers vous au sujet de votre demande. Si vous avez une question, il vous suffit de répondre à ce message. Exemple. L’équipe Bâti-Démo\nRépondez STOP pour ne plus recevoir de message."
+            }
+          },
+          "interrupteurs": {
+            "general": true,
+            "agent": true
+          },
+          "cles_existantes": []
+        }
+      },
+      {
+        "contrat": "lib-executer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:executer:1",
+        "trace": {
+          "execution_parent": "Exemple. essai : clé déjà en base",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "niveau_max": 2
+        },
+        "donnees": {
+          "verdict": "passe",
+          "cible": "carte",
+          "cle_idempotence": "exemple:carte:deja",
+          "charge": {
+            "type_action": "relance_facture",
+            "objet_type": "facture",
+            "objet_id": "00000000-0000-4000-8000-000000000507",
+            "palier": 3,
+            "canal": "email",
+            "brouillon": {
+              "objet": "Exemple. Rappel",
+              "texte": "{{salutation}}\n\nExemple. Brouillon court."
+            }
+          },
+          "interrupteurs": {
+            "general": true,
+            "agent": true
+          },
+          "cles_existantes": [
+            "exemple:carte:deja"
+          ]
+        }
+      },
+      {
+        "contrat": "lib-executer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:executer:2",
+        "trace": {
+          "execution_parent": "Exemple. essai : pilote en mode A",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "niveau_max": 2
+        },
+        "donnees": {
+          "verdict": "passe",
+          "cible": "pilote",
+          "cle_idempotence": "exemple:carte:pilote",
+          "charge": {
+            "type_action": "relance_facture",
+            "objet_type": "facture",
+            "objet_id": "00000000-0000-4000-8000-000000000507",
+            "palier": 3,
+            "canal": "email",
+            "brouillon": {
+              "objet": "Exemple. Rappel",
+              "texte": "{{salutation}}\n\nExemple. Brouillon court."
+            }
+          },
+          "interrupteurs": {
+            "general": true,
+            "agent": true
+          },
+          "cles_existantes": []
+        }
+      },
+      {
+        "contrat": "lib-executer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:executer:3",
+        "trace": {
+          "execution_parent": "Exemple. essai : même clé deux fois dans le lot",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "niveau_max": 2
+        },
+        "donnees": {
+          "verdict": "passe",
+          "cible": "carte",
+          "cle_idempotence": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+          "charge": {
+            "type_action": "relance_facture",
+            "objet_type": "facture",
+            "objet_id": "00000000-0000-4000-8000-000000000508",
+            "palier": 3,
+            "canal": "email",
+            "brouillon": {
+              "objet": "Exemple. Rappel",
+              "texte": "{{salutation}}\n\nExemple. Brouillon court."
+            }
+          },
+          "interrupteurs": {
+            "general": true,
+            "agent": true
+          },
+          "cles_existantes": []
+        }
+      },
+      {
+        "contrat": "lib-executer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:executer:4",
+        "trace": {
+          "execution_parent": "Exemple. essai : interrupteur général coupé",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "niveau_max": 2
+        },
+        "donnees": {
+          "verdict": "passe",
+          "cible": "carte",
+          "cle_idempotence": "exemple:carte:coupe",
+          "charge": {
+            "type_action": "relance_facture",
+            "objet_type": "facture",
+            "objet_id": "00000000-0000-4000-8000-000000000507",
+            "palier": 3,
+            "canal": "email",
+            "brouillon": {
+              "objet": "Exemple. Rappel",
+              "texte": "{{salutation}}\n\nExemple. Brouillon court."
+            }
+          },
+          "interrupteurs": {
+            "general": false,
+            "agent": true
+          },
+          "cles_existantes": []
+        }
+      },
+      {
+        "contrat": "lib-executer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:executer:5",
+        "trace": {
+          "execution_parent": "Exemple. essai : après la coupure, lecture ouverte",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "niveau_max": 2
+        },
+        "donnees": {
+          "verdict": "passe",
+          "cible": "carte",
+          "cle_idempotence": "exemple:carte:apres",
+          "charge": {
+            "type_action": "relance_facture",
+            "objet_type": "facture",
+            "objet_id": "00000000-0000-4000-8000-000000000507",
+            "palier": 3,
+            "canal": "email",
+            "brouillon": {
+              "objet": "Exemple. Rappel",
+              "texte": "{{salutation}}\n\nExemple. Brouillon court."
+            }
+          },
+          "interrupteurs": {
+            "general": true,
+            "agent": true
+          },
+          "cles_existantes": []
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-executer@1",
+        "statut": "ok",
+        "cle_idempotence": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+        "simulation": true,
+        "resultat": {
+          "ecrit": false,
+          "deja_fait": false,
+          "ref_id": null,
+          "prevu": "ecrire_carte",
+          "motif": "prevu"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "table": "opportunites",
+            "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+            "entetes": {
+              "Prefer": "resolution=ignore-duplicates,return=representation"
+            },
+            "corps": {
+              "organisation_id": "00000000-0000-4000-8000-000000000001",
+              "cle": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+              "type_action": "relance_facture",
+              "objet_type": "facture",
+              "objet_id": "00000000-0000-4000-8000-000000000507",
+              "palier": 3,
+              "canal": "email",
+              "brouillon": {
+                "objet": "Exemple. Rappel : facture FAC-2026-007",
+                "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-007 (Exemple. Mise aux normes électrique), d'un montant de 334,00 € TTC, arrivée à échéance le 18 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo"
+              }
+            }
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "execution",
+            "agent": "lib-executer",
+            "objet_ref": "00000000-0000-4000-8000-000000000507",
+            "decision": "ecrire_carte prévu (simulation)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-executer@1",
+        "statut": "ok",
+        "cle_idempotence": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+        "simulation": true,
+        "resultat": {
+          "ecrit": false,
+          "deja_fait": false,
+          "ref_id": null,
+          "prevu": "ecrire_carte",
+          "motif": "prevu"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "table": "opportunites",
+            "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+            "entetes": {
+              "Prefer": "resolution=ignore-duplicates,return=representation"
+            },
+            "corps": {
+              "organisation_id": "00000000-0000-4000-8000-000000000001",
+              "cle": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+              "type_action": "relance_facture",
+              "objet_type": "facture",
+              "objet_id": "00000000-0000-4000-8000-000000000508",
+              "palier": 3,
+              "canal": "email",
+              "brouillon": {
+                "objet": "Exemple. Rappel : facture FAC-2026-008",
+                "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-008 (Exemple. Cuisine équipée), d'un montant de 291,00 € TTC, arrivée à échéance le 24 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo"
+              }
+            }
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "execution",
+            "agent": "lib-executer",
+            "objet_ref": "00000000-0000-4000-8000-000000000508",
+            "decision": "ecrire_carte prévu (simulation)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-executer@1",
+        "statut": "ok",
+        "cle_idempotence": "h:relance:4f2aae6cb091fc403b3ac1f27dad089f67a3541189f3974d",
+        "simulation": true,
+        "resultat": {
+          "ecrit": false,
+          "deja_fait": false,
+          "ref_id": null,
+          "prevu": "ecrire_carte",
+          "motif": "prevu"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "table": "opportunites",
+            "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+            "entetes": {
+              "Prefer": "resolution=ignore-duplicates,return=representation"
+            },
+            "corps": {
+              "organisation_id": "00000000-0000-4000-8000-000000000001",
+              "cle": "h:relance:4f2aae6cb091fc403b3ac1f27dad089f67a3541189f3974d",
+              "type_action": "relance_conversation",
+              "objet_type": "conversation",
+              "objet_id": "00000000-0000-4000-8000-000000000125",
+              "palier": 3,
+              "canal": "sms",
+              "brouillon": {
+                "objet": null,
+                "texte": "{{salutation}}, nous revenons vers vous au sujet de votre demande. Si vous avez une question, il vous suffit de répondre à ce message. Exemple. L’équipe Bâti-Démo\nRépondez STOP pour ne plus recevoir de message."
+              }
+            }
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "execution",
+            "agent": "lib-executer",
+            "objet_ref": "00000000-0000-4000-8000-000000000125",
+            "decision": "ecrire_carte prévu (simulation)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-executer@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:executer:1",
+        "simulation": true,
+        "resultat": {
+          "ecrit": false,
+          "deja_fait": true,
+          "ref_id": null,
+          "prevu": null,
+          "motif": "deja_fait"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "execution",
+            "agent": "lib-executer",
+            "objet_ref": "00000000-0000-4000-8000-000000000507",
+            "decision": "aucun effet : deja_fait",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-executer@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:executer:2",
+        "simulation": true,
+        "resultat": {
+          "ecrit": false,
+          "deja_fait": false,
+          "ref_id": null,
+          "prevu": null,
+          "motif": "niveau_3_non_permis"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "execution",
+            "agent": "lib-executer",
+            "objet_ref": "00000000-0000-4000-8000-000000000507",
+            "decision": "aucun effet : niveau_3_non_permis",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-executer@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:executer:3",
+        "simulation": true,
+        "resultat": {
+          "ecrit": false,
+          "deja_fait": true,
+          "ref_id": null,
+          "prevu": null,
+          "motif": "deja_fait"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "execution",
+            "agent": "lib-executer",
+            "objet_ref": "00000000-0000-4000-8000-000000000508",
+            "decision": "aucun effet : deja_fait",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-executer@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:executer:4",
+        "simulation": true,
+        "resultat": {
+          "ecrit": false,
+          "deja_fait": false,
+          "ref_id": null,
+          "prevu": null,
+          "motif": "interrupteur_coupe"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "execution",
+            "agent": "lib-executer",
+            "objet_ref": "00000000-0000-4000-8000-000000000507",
+            "decision": "aucun effet : interrupteur_coupe",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-executer@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:executer:5",
+        "simulation": true,
+        "resultat": {
+          "ecrit": false,
+          "deja_fait": false,
+          "ref_id": null,
+          "prevu": null,
+          "motif": "interrupteur_coupe_pendant_le_passage"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "execution",
+            "agent": "lib-executer",
+            "objet_ref": "00000000-0000-4000-8000-000000000507",
+            "decision": "aucun effet : interrupteur_coupe_pendant_le_passage",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  },
+  {
+    "workflow": "lib-executer",
+    "titre": "hors simulation",
+    "execution": "416",
+    "statut_n8n": "error",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-executer@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": false,
+        "cle_idempotence": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+        "trace": {
+          "execution_parent": "Exemple. essai : hors simulation",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "niveau_max": 2
+        },
+        "donnees": {
+          "verdict": "passe",
+          "cible": "carte",
+          "cle_idempotence": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+          "charge": {
+            "type_action": "relance_facture",
+            "objet_type": "facture",
+            "objet_id": "00000000-0000-4000-8000-000000000507",
+            "palier": 3,
+            "canal": "email",
+            "brouillon": {
+              "objet": "Exemple. Rappel",
+              "texte": "{{salutation}}\n\nExemple. Brouillon court."
+            }
+          },
+          "interrupteurs": {
+            "general": true,
+            "agent": true
+          },
+          "cles_existantes": []
+        }
+      }
+    ],
+    "erreur": "Hors simulation : effet réel non branché (mode A, tâche 035-005). Rien n'a été lu, écrit ni envoyé."
+  },
+  {
+    "workflow": "lib-rapport-hebdo",
+    "titre": "banc relance ; un indicateur de gain ; une base sans source",
+    "execution": "417",
+    "statut_n8n": "success",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-rapport-hebdo@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:banc:rapport-hebdo:1",
+        "trace": {
+          "execution_parent": "Exemple. banc relance",
+          "declencheur": "banc",
+          "tentative": 0
+        },
+        "config": {
+          "periode": "semaine",
+          "kpis": [
+            "actions_preparees",
+            "relances_preparees",
+            "fait_seul",
+            "en_attente",
+            "echecs",
+            "refus_porte"
+          ],
+          "bases_de_depart": {
+            "relances_preparees": {
+              "valeur": 2,
+              "source": "Exemple. fiche de découverte, dit par le gérant",
+              "date": "2026-10-01",
+              "confiance": "declare"
+            }
+          }
+        },
+        "donnees": {
+          "du": "2026-10-26",
+          "au": "2026-11-01",
+          "actions": [
+            {
+              "type_action": "relance_facture",
+              "etat": "fait_seul",
+              "le": "2026-10-27T09:00:00.000+01:00"
+            },
+            {
+              "type_action": "relance_facture",
+              "etat": "fait_seul",
+              "le": "2026-10-28T09:00:00.000+01:00"
+            },
+            {
+              "type_action": "reponse_prospect",
+              "etat": "fait_seul",
+              "le": "2026-10-29T10:00:00.000+01:00"
+            },
+            {
+              "type_action": "relance_devis",
+              "etat": "en_attente",
+              "le": "2026-10-29T11:00:00.000+01:00"
+            },
+            {
+              "type_action": "relance_devis",
+              "etat": "en_attente",
+              "le": "2026-10-30T09:00:00.000+01:00"
+            },
+            {
+              "type_action": "relance_conversation",
+              "etat": "en_attente",
+              "le": "2026-10-30T15:00:00.000+01:00"
+            },
+            {
+              "type_action": "envoyer_devis",
+              "etat": "en_attente",
+              "le": "2026-10-31T09:00:00.000+01:00"
+            },
+            {
+              "type_action": "relance_facture",
+              "etat": "echec",
+              "le": "2026-10-31T10:00:00.000+01:00"
+            },
+            {
+              "type_action": "relance_devis",
+              "etat": "refuse_porte",
+              "le": "2026-11-01T09:00:00.000+01:00"
+            },
+            {
+              "type_action": "relance_facture",
+              "etat": "fait_seul",
+              "le": "2026-11-02T09:00:00.000+01:00"
+            }
+          ]
+        }
+      },
+      {
+        "contrat": "lib-rapport-hebdo@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:rapport:1",
+        "trace": {
+          "execution_parent": "Exemple. essai : un indicateur de gain",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "periode": "semaine",
+          "kpis": [
+            "actions_preparees",
+            "gain_euros"
+          ],
+          "bases_de_depart": {}
+        },
+        "donnees": {
+          "du": "2026-10-26",
+          "au": "2026-11-01",
+          "actions": [
+            {
+              "type_action": "relance_facture",
+              "etat": "fait_seul",
+              "le": "2026-10-27T09:00:00.000+01:00"
+            }
+          ]
+        }
+      },
+      {
+        "contrat": "lib-rapport-hebdo@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:rapport:2",
+        "trace": {
+          "execution_parent": "Exemple. essai : une base sans source",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "periode": "semaine",
+          "kpis": [
+            "en_attente"
+          ],
+          "bases_de_depart": {
+            "en_attente": {
+              "valeur": 5,
+              "source": null,
+              "date": "2026-10-01",
+              "confiance": "declare"
+            }
+          }
+        },
+        "donnees": {
+          "du": "2026-10-26",
+          "au": "2026-11-01",
+          "actions": [
+            {
+              "type_action": "relance_devis",
+              "etat": "en_attente",
+              "le": "2026-10-29T11:00:00.000+01:00"
+            }
+          ]
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-rapport-hebdo@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rapport-hebdo:1",
+        "simulation": true,
+        "resultat": {
+          "periode": {
+            "du": "2026-10-26",
+            "au": "2026-11-01",
+            "type": "semaine"
+          },
+          "indicateurs": [
+            {
+              "id": "actions_preparees",
+              "libelle": "Actions préparées",
+              "valeur": 9,
+              "unite": "nombre",
+              "source": "journal des workflows, du 26 octobre 2026 au 1er novembre 2026",
+              "date": "2026-11-01",
+              "confiance": "mesure",
+              "base": null,
+              "base_source": null,
+              "base_date": null,
+              "base_confiance": null
+            },
+            {
+              "id": "relances_preparees",
+              "libelle": "Relances préparées",
+              "valeur": 7,
+              "unite": "nombre",
+              "source": "journal des workflows, du 26 octobre 2026 au 1er novembre 2026",
+              "date": "2026-11-01",
+              "confiance": "mesure",
+              "base": 2,
+              "base_source": "Exemple. fiche de découverte, dit par le gérant",
+              "base_date": "2026-10-01",
+              "base_confiance": "declare"
+            },
+            {
+              "id": "fait_seul",
+              "libelle": "Déjà traité seul",
+              "valeur": 3,
+              "unite": "nombre",
+              "source": "journal des workflows, du 26 octobre 2026 au 1er novembre 2026",
+              "date": "2026-11-01",
+              "confiance": "mesure",
+              "base": null,
+              "base_source": null,
+              "base_date": null,
+              "base_confiance": null
+            },
+            {
+              "id": "en_attente",
+              "libelle": "Sur votre bureau, solution prête",
+              "valeur": 4,
+              "unite": "nombre",
+              "source": "journal des workflows, du 26 octobre 2026 au 1er novembre 2026",
+              "date": "2026-11-01",
+              "confiance": "mesure",
+              "base": null,
+              "base_source": null,
+              "base_date": null,
+              "base_confiance": null
+            },
+            {
+              "id": "echecs",
+              "libelle": "À reprendre (échecs)",
+              "valeur": 1,
+              "unite": "nombre",
+              "source": "journal des workflows, du 26 octobre 2026 au 1er novembre 2026",
+              "date": "2026-11-01",
+              "confiance": "mesure",
+              "base": null,
+              "base_source": null,
+              "base_date": null,
+              "base_confiance": null
+            },
+            {
+              "id": "refus_porte",
+              "libelle": "Arrêtés par la porte de conformité",
+              "valeur": 1,
+              "unite": "nombre",
+              "source": "journal des workflows, du 26 octobre 2026 au 1er novembre 2026",
+              "date": "2026-11-01",
+              "confiance": "mesure",
+              "base": null,
+              "base_source": null,
+              "base_date": null,
+              "base_confiance": null
+            }
+          ],
+          "fait_seul": 3,
+          "en_attente": 4,
+          "echecs": 1,
+          "lignes": [
+            "Exemple. Rapport de la semaine du 26 octobre 2026 au 1er novembre 2026",
+            "Exemple. Déjà traité : 3 ; sur votre bureau, solution prête : 4 ; à reprendre : 1 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026)",
+            "Exemple. Actions préparées : 9 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; aucune base de départ : rien n’est comparé",
+            "Exemple. Relances préparées : 7 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; base de départ : 2 (déclarée par le client, non mesurée, Exemple. fiche de découverte, dit par le gérant, 1er octobre 2026)",
+            "Exemple. Déjà traité seul : 3 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; aucune base de départ : rien n’est comparé",
+            "Exemple. Sur votre bureau, solution prête : 4 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; aucune base de départ : rien n’est comparé",
+            "Exemple. À reprendre (échecs) : 1 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; aucune base de départ : rien n’est comparé",
+            "Exemple. Arrêtés par la porte de conformité : 1 (mesuré, journal des workflows, du 26 octobre 2026 au 1er novembre 2026) ; aucune base de départ : rien n’est comparé"
+          ]
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_rapport",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "00000000-0000-4000-8000-000000000001:rapport:2026-10-26:2026-11-01"
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "rapport",
+            "agent": "lib-rapport-hebdo",
+            "objet_ref": null,
+            "decision": "rapport prêt : 6 indicateur(s), chacun sourcé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-rapport-hebdo@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:rapport:1",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "rapport_refuse",
+            "agent": "lib-rapport-hebdo",
+            "objet_ref": null,
+            "decision": "rapport refusé : indicateur hors de la liste fermée (aucun chiffre de gain) : gain_euros",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "indicateur hors de la liste fermée (aucun chiffre de gain) : gain_euros"
+        ]
+      },
+      {
+        "contrat": "lib-rapport-hebdo@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:rapport:2",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "rapport_refuse",
+            "agent": "lib-rapport-hebdo",
+            "objet_ref": null,
+            "decision": "rapport refusé : chiffre sans source ou sans date : en_attente",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "chiffre sans source ou sans date : en_attente"
+        ]
+      }
+    ]
+  },
+  {
+    "workflow": "lib-banc-relance",
+    "titre": "banc : relance → rédaction → porte → exécution → téléphone ; gestes jamais automatiques ; rapport du lundi",
+    "execution": "418",
+    "statut_n8n": "success",
+    "noeud": "Bilan du banc",
+    "entrees": [
+      {
+        "timestamp": "2026-11-03T09:30:00.000+01:00"
+      }
+    ],
+    "epingle_redaction": [
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rediger-message:0",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "h:relance:5a9e4cd2a9f8c2bc6f19b16ed8c098e2700c0177328a170b",
+          "objet": "Exemple. Rappel : facture FAC-2026-007",
+          "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-007 (Exemple. Mise aux normes électrique), d'un montant de 334,00 € TTC, arrivée à échéance le 18 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+          "faits_cites": [
+            "numero",
+            "objet",
+            "montant",
+            "echeance"
+          ],
+          "champs_inconnus": [],
+          "canal": "email",
+          "mention": false,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "h:redaction:9e92d0e8c4a648153ed199e4e4a4e6d33db71f8f55acfffc"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon email, à relire",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rediger-message:1",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "h:relance:c40947e465f7a0ba0d981674eb01fc513ab4a5e42b9d4a0d",
+          "objet": "Exemple. Rappel : facture FAC-2026-008",
+          "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de la facture FAC-2026-008 (Exemple. Cuisine équipée), d'un montant de 291,00 € TTC, arrivée à échéance le 24 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+          "faits_cites": [
+            "numero",
+            "objet",
+            "montant",
+            "echeance"
+          ],
+          "champs_inconnus": [],
+          "canal": "email",
+          "mention": false,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "h:redaction:494d838bfcdcb1e6380aa04200bb98db34b45fbf9499db80"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon email, à relire",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rediger-message:2",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "h:relance:ffbbcf0fdd2af310b66101bb9dadb33bcab3542e8efe33c2",
+          "objet": "Exemple. Rappel : facture FAC-2026-009",
+          "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-2026-009 (Exemple. Isolation des combles), d'un montant de 455,80 € TTC, arrivée à échéance le 30 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+          "faits_cites": [
+            "numero",
+            "objet",
+            "montant",
+            "echeance"
+          ],
+          "champs_inconnus": [],
+          "canal": "email",
+          "mention": false,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "h:redaction:4b9049609534359e7d397d01861fd8ba768a1a023d822d66"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon email, à relire",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rediger-message:3",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "h:relance:0985f9653cecc3d626b9352fcbdd287027577fcc265a72ab",
+          "objet": "Exemple. Votre devis DEV-2026-012",
+          "texte": "{{salutation}}\n\nNous revenons une dernière fois vers vous au sujet de notre devis DEV-2026-012 (Exemple. Mise aux normes électrique), d'un montant de 117,80 € TTC. Si vous avez une question, il vous suffit de nous répondre ; nous restons à votre disposition.\n\nBien cordialement,\nExemple. L’équipe Bâti-Démo",
+          "faits_cites": [
+            "numero",
+            "objet",
+            "montant"
+          ],
+          "champs_inconnus": [],
+          "canal": "email",
+          "mention": false,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "h:redaction:7d63045814a2913098eb062d13b19971aa9e7ec608e67b2f"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon email, à relire",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-rediger-message@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:banc:rediger-message:4",
+        "simulation": true,
+        "resultat": {
+          "action_cle": "h:relance:4f2aae6cb091fc403b3ac1f27dad089f67a3541189f3974d",
+          "objet": null,
+          "texte": "{{salutation}}, nous revenons vers vous au sujet de votre demande. Si vous avez une question, il vous suffit de répondre à ce message. Exemple. L’équipe Bâti-Démo\nRépondez STOP pour ne plus recevoir de message.",
+          "faits_cites": [],
+          "champs_inconnus": [
+            "objet"
+          ],
+          "canal": "sms",
+          "mention": false,
+          "modele": "claude-haiku-5-5",
+          "epingle": true,
+          "jetons_entree": null,
+          "jetons_sortie": null,
+          "cle_idempotence": "h:redaction:97e05f2baf6fa520c75e7a49d96227297facf09c26bdcb61"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "redaction",
+            "agent": "lib-rediger-message",
+            "objet_ref": null,
+            "decision": "brouillon sms, à relire ; inconnu : objet",
+            "modele": "claude-haiku-5-5",
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ],
+    "sorties": [
+      {
+        "bilan": {
+          "lib-normaliser-telephone@1": {
+            "ok": 2
+          }
+        },
+        "porte": {},
+        "defauts": 0
+      },
+      {
+        "bilan": {
+          "lib-porte-conformite@1": {
+            "refuse": 22,
+            "ok": 1
+          }
+        },
+        "porte": {
+          "refuse:geste_jamais_auto": 11,
+          "refuse:geste_jamais_auto+suppression_de_donnees": 4,
+          "refuse:devis_engageant+geste_jamais_auto": 2,
+          "refuse:declaration_fiscale_ou_sociale+geste_jamais_auto": 2,
+          "refuse:appel_telephonique+geste_jamais_auto": 2,
+          "passe:pilote": 1,
+          "refuse:mention_manquante": 1
+        },
+        "defauts": 0
+      },
+      {
+        "bilan": {
+          "lib-rapport-hebdo@1": {
+            "ok": 1
+          }
+        },
+        "porte": {},
+        "defauts": 0
+      }
+    ]
+  }
+]

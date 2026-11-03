@@ -1,0 +1,12 @@
+✓ structure
+✓ copie figée
+✓ corpus (Decider contre la vraie décision)
+✓ comparaison à la route
+✓ essai n8n
+✓ délai
+✓ garde commune (n8n-specs-qa)
+  corpus : 585 couples (message × réglages × offre) : même décision et même mot d'escalade que la vraie decisionReponse
+  comparé : 99 décisions en 25 cas ; 50 réponses et 74 avis identiques à ceux de la route (aux écarts écrits près : E1, E2, E3, E4)
+  délai : la réponse attend de 31 à 90 s (moyenne 60.5 s) avant l'envoi ; chaque seconde de sept minutes tombe dans une seule fenêtre
+  mutants : 52/52 font rougir le juge
+✓ reponse-seule-n8n-qa : OK

@@ -1,0 +1,278 @@
+{
+  "id": "jGM56jxeLUVXZIiM",
+  "name": "lib-relancer",
+  "active": false,
+  "isArchived": false,
+  "versionId": "3647afa5-d950-48f8-b1ff-eb6a12c4414f",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 8,
+  "createdAt": "2026-11-03T00:24:01.386Z",
+  "updatedAt": "2026-11-03T00:30:48.487Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 60,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "availableInMCP": true,
+    "callerIds": "H33CKQ8sMB3VULfA"
+  },
+  "tags": [
+    {
+      "id": "7ScpctCdYFpyHAUs",
+      "name": "couche-decision"
+    },
+    {
+      "id": "rzslIYLJg0eKogBe",
+      "name": "lib"
+    }
+  ],
+  "parentFolderId": null,
+  "description": "lib-relancer (035-005) : palier atteint et non envoyé, registre de 3 jours copié et comparé au code ; INACTIF, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par un parent": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Décider la relance",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Décider la relance": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "5c2ccfa2-41e6-4371-bf06-6d512e754c6b",
+      "name": "Appelé par un parent",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "d0710190-50d1-40d8-98f6-dfc1db9a31e9",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de lib-relancer@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'lib-relancer@1';\nconst SCHEMA = {\"sans_contact\":true,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"paliers_jours\",\"jours_permis\",\"heures_permises\"],\"properties\":{\"paliers_jours\":{\"type\":\"array\",\"maxItems\":10,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":365}},\"jours_permis\":{\"type\":\"array\",\"maxItems\":7,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7}},\"heures_permises\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"debut\",\"fin\"],\"properties\":{\"debut\":{\"type\":\"string\",\"pattern\":\"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"},\"fin\":{\"type\":\"string\",\"pattern\":\"^([01]\\\\d|2[0-3]):[0-5]\\\\d$\"}}},\"sauf\":{\"enum\":[\"assistant\",\"crm\",\"impayes\",\"conversation\"]}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"objet_type\",\"objet_id\",\"depuis_le\",\"historique\",\"stop\",\"escalade\",\"maintenant\"],\"properties\":{\"objet_type\":{\"enum\":[\"devis\",\"facture\",\"conversation\"]},\"objet_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"depuis_le\":{\"type\":\"string\",\"format\":\"date-time\"},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"},\"historique\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"ok\"],\"properties\":{\"ok\":{\"type\":\"boolean\"},\"erreur\":{\"type\":\"string\",\"maxLength\":200},\"ignorees\":{\"type\":\"array\",\"maxItems\":10,\"items\":{\"type\":\"string\",\"maxLength\":40}},\"traces\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"chemin\",\"le\"],\"properties\":{\"chemin\":{\"enum\":[\"assistant\",\"crm\",\"impayes\",\"conversation\"]},\"le\":{\"type\":\"string\",\"maxLength\":40}}}}}},\"paliers_envoyes\":{\"type\":\"array\",\"maxItems\":10,\"items\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":10}},\"stop\":{\"type\":[\"boolean\",\"null\"]},\"escalade\":{\"type\":[\"boolean\",\"null\"]}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: lib-relancer@1"
+    },
+    {
+      "id": "43ee9aa6-8a59-4cd8-aad6-07b869d86826",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-conforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "607c9cf5-d353-4318-924e-a646617ef3a2",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "18e9a488-0c74-4ee0-8cec-9f4292d1f492",
+      "name": "Décider la relance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// lib-relancer (PR § 5.5 ; fiche « Relance », § 5.3 ; p5:190) : « palier atteint et non envoyé », le registre de 3 jours, le stop, le\n// litige ou l'escalade, les horaires et les jours permis. Aucun modèle : des règles. Rend la décision, n'écrit rien, n'envoie rien.\n// Le registre commun (lib/relancesRegistre.ts) est du code de l'app ; sa règle est COPIÉE ici, figée, et comparée au code par le juge :\n// mêmes constantes, et la même décision que relanceRecente() sur une batterie d'historiques. Mode A : l'historique des quatre chemins\n// (assistant, CRM, impayés, conversation) est ce que rendrait la lecture prévue (historiqueRelances, mêmes tables), épinglé à l'entrée.\n// Fail-closed : un historique non lu, un stop ou une escalade non lus (null) refusent la relance.\n// Un passage manqué fait partir le palier atteint le plus haut, UNE seule fois : les paliers dépassés ne partent jamais après lui.\nfunction sha256(texte) {\n  const o = [];\n  for (const car of String(texte)) {\n    const c = car.codePointAt(0);\n    if (c < 0x80) o.push(c);\n    else if (c < 0x800) o.push(0xc0 | (c >> 6), 0x80 | (c & 63));\n    else if (c < 0x10000) o.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));\n    else o.push(0xf0 | (c >> 18), 0x80 | ((c >> 12) & 63), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));\n  }\n  const K = [], H = [];\n  for (let n = 2; K.length < 64; n++) {\n    let premier = true;\n    for (let d = 2; d * d <= n; d++) if (n % d === 0) { premier = false; break; }\n    if (premier) { if (H.length < 8) H.push(((Math.sqrt(n) % 1) * 4294967296) | 0); K.push(((Math.cbrt(n) % 1) * 4294967296) | 0); }\n  }\n  const l = o.length * 8;\n  o.push(0x80);\n  while (o.length % 64 !== 56) o.push(0);\n  for (let i = 7; i >= 0; i--) o.push(i >= 4 ? 0 : (l >>> (i * 8)) & 255);\n  const r = (x, k) => (x >>> k) | (x << (32 - k));\n  for (let i = 0; i < o.length; i += 64) {\n    const w = [];\n    for (let t = 0; t < 64; t++) {\n      if (t < 16) w[t] = (o[i + 4 * t] << 24) | (o[i + 4 * t + 1] << 16) | (o[i + 4 * t + 2] << 8) | o[i + 4 * t + 3];\n      else w[t] = (w[t - 16] + (r(w[t - 15], 7) ^ r(w[t - 15], 18) ^ (w[t - 15] >>> 3)) + w[t - 7] + (r(w[t - 2], 17) ^ r(w[t - 2], 19) ^ (w[t - 2] >>> 10))) | 0;\n    }\n    let [a, b, c, d, e, f, g, h] = H;\n    for (let t = 0; t < 64; t++) {\n      const t1 = (h + (r(e, 6) ^ r(e, 11) ^ r(e, 25)) + ((e & f) ^ (~e & g)) + K[t] + w[t]) | 0;\n      const t2 = ((r(a, 2) ^ r(a, 13) ^ r(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;\n      h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;\n    }\n    const v = [a, b, c, d, e, f, g, h];\n    for (let k = 0; k < 8; k++) H[k] = (H[k] + v[k]) | 0;\n  }\n  return H.map((x) => (x >>> 0).toString(16).padStart(8, '0')).join('');\n}\nconst cleDe = (brute, type) => brute.length <= 80 ? brute : 'h:' + type.slice(0, 24) + ':' + sha256(brute).slice(0, 48);\n// ─── Copie figée du registre des relances (lib/relancesRegistre.ts), comparée au code par scripts/lib-relance-n8n-qa.mjs ───\nconst COPIE_REGISTRE = {\"RELANCE_DELAI_JOURS\":3,\"CHEMINS\":[\"assistant\",\"crm\",\"impayes\",\"conversation\"]};\nfunction relanceRecente(h, maintenant, opts) {\n  if (!h || h.ok !== true) return { refus: true, raison: 'illisible', erreur: h && typeof h.erreur === 'string' ? h.erreur : 'registre non lu' };\n  const delai = ((opts && opts.delaiJours) ?? COPIE_REGISTRE.RELANCE_DELAI_JOURS) * 86400000;\n  const t = maintenant.getTime();\n  const recentes = h.traces\n    .filter((x) => x.chemin !== (opts && opts.sauf))\n    .filter((x) => { const le = Date.parse(x.le); return !Number.isFinite(le) || t - le < delai; })\n    .sort((a, b) => b.le.localeCompare(a.le));\n  return recentes.length ? { refus: true, raison: 'recente', derniere: recentes[0] } : { refus: false };\n}\n// ─── fin de la copie figée ───\nconst FMT_PARIS = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });\nconst JOURS_ISO = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };\nfunction paris(date) {\n  const p = {};\n  for (const x of FMT_PARIS.formatToParts(date)) p[x.type] = x.value;\n  return { jour: JOURS_ISO[p.weekday], minutes: Number(p.hour) * 60 + Number(p.minute) };\n}\nconst enMinutes = (hhmm) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));\nfunction dansLesHoraires(date, jours, heures) {\n  const p = paris(date);\n  return jours.includes(p.jour) && p.minutes >= enMinutes(heures.debut) && p.minutes < enMinutes(heures.fin);\n}\nconst vues = new Set();\nreturn $input.all().map((item) => {\n  const j = item.json;\n  try {\n    const e = j.enveloppe, c = e.config, d = e.donnees, org = e.organisation_id;\n    const maintenant = new Date(Date.parse(d.maintenant));\n    const jours = Math.floor((maintenant.getTime() - Date.parse(d.depuis_le)) / 86400000);\n    let palier = 0;\n    c.paliers_jours.forEach((p, i) => { if (jours >= p) palier = i + 1; });\n    const envoyes = Array.isArray(d.paliers_envoyes) ? d.paliers_envoyes : [];\n    const plusHautEnvoye = envoyes.length ? Math.max(...envoyes) : 0;\n    const verdict = relanceRecente(d.historique, maintenant, { sauf: c.sauf });\n    const derniere = verdict.refus && verdict.raison === 'recente' ? { chemin: verdict.derniere.chemin, le: String(verdict.derniere.le).slice(0, 40) } : null;\n    const cle = palier ? cleDe(org + ':relance:' + d.objet_type + ':' + d.objet_id + ':' + palier, 'relance') : null;\n    let motif;\n    if (d.stop === true) motif = 'stop';\n    else if (d.escalade === true) motif = 'litige_ou_escalade';\n    else if (d.stop !== false || d.escalade !== false || (verdict.refus && verdict.raison === 'illisible')) motif = 'lecture_en_erreur';\n    else if (palier === 0) motif = 'aucun_palier_atteint';\n    else if (plusHautEnvoye >= palier || vues.has(cle)) motif = 'palier_deja_envoye';\n    else if (verdict.refus) motif = 'relance_recente_moins_3_jours';\n    else if (!dansLesHoraires(maintenant, c.jours_permis, c.heures_permises)) motif = 'hors_horaires';\n    else motif = 'palier_atteint';\n    const oui = motif === 'palier_atteint';\n    if (oui) vues.add(cle);\n    const resultat = { a_relancer: oui, palier: palier || null, motif: motif, objet_type: d.objet_type, objet_id: d.objet_id, jours_depuis: jours,\n      cle_idempotence: oui ? cle : null, derniere_relance: derniere };\n    return { json: { ...j, statut: oui ? 'ok' : 'rien_a_faire', resultat: resultat, effets_prevus: [],\n      journal: [{ evenement: 'relance', agent: 'lib-relancer', objet_ref: d.objet_id, decision: (oui ? 'à relancer, palier ' + palier : 'pas de relance : ' + motif) + ' (J+' + jours + ')', simulation: e.simulation }] } };\n  } catch (err) {\n    return { json: { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['relance : ' + String((err && err.message) || err).slice(0, 120)] } };\n  }\n});"
+      }
+    },
+    {
+      "id": "79ae9f91-b879-4190-9828-66bf31351f62",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de lib-relancer@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-relancer@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "5037f6ea-c4b9-43dd-a114-410d99a538cf",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        960,
+        120
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 035-005). Rien n'a été lu, écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (lecture du registre des relances) n'est pas branché. Il le sera au « go » de Benj, avec ses tables et ses identifiants, derrière cette même porte."
+    },
+    {
+      "id": "69b76c47-e52e-4045-8869-902fd1b28714",
+      "name": "Sticky Note 0c03d8fd",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## lib-relancer (035-005)\nPalier atteint et non envoyé, registre de 3 jours (copie figée de lib/relancesRegistre.ts, comparée au code), stop, litige ou escalade, horaires.\nCouche decision. Contrat lib-relancer@1 (enveloppe@1), gabarit « Contrat » de 035-003.\nINACTIF, en simulation (mode A) : rien n'est lu ni écrit en base, rien n'est envoyé ; tout part dans effets_prevus.\nJuge : scripts/lib-relance-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 400
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 035-005), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

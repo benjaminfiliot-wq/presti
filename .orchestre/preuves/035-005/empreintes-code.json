@@ -1,0 +1,43 @@
+{
+  "lib-banc-relance": {
+    "Cas : relances Bâti-Démo": "96eace92766a50e4fef8d12669567c510ed12e61456d1c6c79097a70dcab544f",
+    "Vers la rédaction": "41e7d038ea5eb86069112229771ccb79a46a70c4e6928a88ebba027c567a3133",
+    "Vers la porte": "c847f57323631bb065a3ce20935152e3f7d9843c60505d3e23a7703af729f420",
+    "Vers l'exécution": "a26b1afdd8671363b1cd5f4ef8e0cee12a603b0b164c67d90ccda70f43ba6270",
+    "Au moment d'envoyer": "aa9613bc897e8991540ec0b7145e07b8633f5665325ac9bbd671dd8250d875fb",
+    "Bilan du banc": "137ebc7df7600fcbb7b8e586153298373235e2792729faa13d48289d51b91c83",
+    "Cas : gestes jamais automatiques": "ba9857f18e540af776bc6fe820d26b36384d9fca8df2d1d3eb8859267ee24068",
+    "Cas : rapport du lundi": "2b65c3519a71f0dca2b0252163ed5db4aa3fa0a5b47369840da147dbe181be05"
+  },
+  "lib-executer": {
+    "Contrat d'entrée": "6727c293c444d3b09c29d093a698616e05eeaa52e0298f61d8ab3d7be2f3b03a",
+    "Prévoir l’effet": "ad9f69f04612f6a9a2caf50b81f70b7a78085dff2da99bca9bda76925cbcbc58",
+    "Contrat de sortie": "56ef1b38f78f1511f314c65dbb529fde35be1513b06aee986e0a30d2ccacf6bf"
+  },
+  "lib-normaliser-telephone": {
+    "Contrat d'entrée": "59d569c079a83eee716f403125adcba982964f543b69e3cfc7447f0b9edeb2ba",
+    "Normaliser le numéro": "0648574312782edeb32befa2915e77482f2e2514049b3e377107ecd42da013c5",
+    "Contrat de sortie": "ead9917826f207e33f91644eed7cd081b01d1b59c18448bcae6c9a151c2b5f60"
+  },
+  "lib-porte-conformite": {
+    "Contrat d'entrée": "c89fe77af0825bdfb5d3029947472eebcbe4b48e069ad57bd83eeb0dc37c66a7",
+    "Veto de conformité": "24e2553ecfb75a332b81b43bb8ab4f55566f1e16167d1b63e0269f105b4ad954",
+    "Contrat de sortie": "853701a4073f1c65f5f756b2a60d3962e8e5ad2aff8e2d3787b946955fd95f35"
+  },
+  "lib-rapport-hebdo": {
+    "Contrat d'entrée": "970cc0bae14267fee5fc931219e54ab2ad96388f9701ea240e869f80a054fd00",
+    "Calculer le rapport": "07603b7925e8f0764bda64c0374985086dd168b38fad09f54edfc804de97618a",
+    "Contrat de sortie": "c67697323f4f2bc8e605eb507728dd2892aa0c2121d8e7ae4791f824eac070ec"
+  },
+  "lib-rediger-message": {
+    "Contrat d'entrée": "5b70e12d8681961da5fe8070f9998c103b459d5606a05ad2277a717edb0b3d56",
+    "Préparer la demande au modèle": "2c958386e62e15b6cdcc574529f802c9a24f4c5af6876b0e180563fd45bc15cb",
+    "Revalider la sortie du modèle": "08d6cd5afc8ed90962fb18216ab0cedf99254ac60cf4e57294ec92211e1ee0d2",
+    "Contrat de sortie": "5d353cfbf9c2859e40d2a096310cf4136bca1baf4bb5ba6179a6634b0a1ae171"
+  },
+  "lib-relancer": {
+    "Contrat d'entrée": "b795da4334c44a15d055487959ef2e44297151e28f42172801d45ad9249db0db",
+    "Décider la relance": "faa332cb5807530a3b34cd5a95b9c87ae65ec7196f92a3c217c67f9eac74eeaa",
+    "Contrat de sortie": "4c8133a94782a66dae9ce7a630dec0758cde298793d4b4d790c6ceec11493130"
+  }
+}

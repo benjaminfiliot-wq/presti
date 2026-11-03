@@ -1,0 +1,14 @@
+{
+  "workflowId": "2VwYlKx60iX8z4pg",
+  "versionId": "81af2a98-b3d9-4ab1-bf1b-9265a5e8ba63",
+  "noeuds": {
+    "Chaque matin": "62ae6db5-0a61-41bf-81fb-95a4cf66f3e9", "Passage": "5576f281-fa16-4033-a236-38470197780a", "Lire relances dues": "3044befe-4a15-466a-8c7e-67428cbebf8d",
+    "Lire demandes": "f44374cd-e48a-41d7-a51b-8b87b74c235d", "Lire comptes": "bd06a8b6-0278-4471-91dc-9044bbcaab3e", "Lire reglages": "a3907e7b-bec0-48a6-a67c-ba3f7d812e5f",
+    "Lire suspensions": "cfc69d96-b9fd-482e-a7c7-b9e4dfe77f1f", "Lire messages entrants": "c2ce00e5-89b3-4db0-a996-d5e2634943ee", "Lire devis": "becc5bf1-93c4-4dfd-bdbc-0f4d68875537",
+    "Lire factures": "8e77c587-e213-4937-be8c-46e7b6db1da6", "Lire actions assistant": "d83144ec-3fa8-4d02-9db2-76db8833432d", "Lire rappels CRM": "edd2dd81-22b9-425a-a725-ea374a0da48a",
+    "Lire relances impayes": "c9cd3482-e1a6-4272-9400-9a9f653a75db", "Lire exclusions": "dd7caf0c-b08f-4314-85b8-f701de1b767a", "Decider": "35fdd5bd-094c-42a3-aa2b-c25085534dc6",
+    "Modele epingle": "5e11657a-1fe1-4f27-bd66-6c446cefab50", "Courriers a envoyer": "e02d485f-e9d4-480d-a7e2-7c03313c8552", "Garder les relances": "dded10aa-a8b5-4ede-90a1-8eba1fd42b98",
+    "Envoyer la relance": "1cb5fce6-4ca9-4c54-8400-6afc4f56cbb1", "Garder les avis": "fb72d48d-5aee-4fae-9639-f619539b7467", "Envoyer l avis": "e8d464b4-93b1-458a-9e2f-c22b9bddfd5a"
+  },
+  "webhooks": { "Envoyer la relance": "d47c1ff7-fa1e-470f-a0f7-2fcf7a464637", "Envoyer l avis": "441e6112-3dc1-4867-b1fc-5e4ff3ce3b9e" }
+}
