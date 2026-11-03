@@ -1,0 +1,14 @@
+# Instagram — fiche connecteur
+Source : Meta, « Content Publishing » Instagram Platform (developers.facebook.com/documentation/instagram-platform/content-publishing, mise à jour 30/06/2026, lue le 03/11/2026) ; nœud n8n : à vérifier (aucun type exact lu ; nœud HTTP si besoin)
+Ce que le système en fait : Instagram, ligne « Facebook Graph (Messenger, Instagram, Lead Ads) » de OUTILLAGE.md ; publication de carrousels et de posts sur le compte professionnel du client (fiche Facebook Graph : `facebook-graph.md`)
+Portées demandées (le minimum) : voie Instagram Login : `instagram_business_basic` (lecture) + `instagram_business_content_publish` (écriture, après la porte). Voie Facebook Login : `instagram_basic`, `pages_read_engagement` (lecture), `instagram_content_publish` (écriture) ; `ads_management` et `ads_read` seulement si Benj les demande pour les accès Business Manager. Niveau d'accès : Advanced Access (ou Standard Access selon la page)
+Ce qu'on lit : compte professionnel du client, état des conteneurs (`status_code`), limite de publication (`content_publishing_limit`)
+Ce qu'on écrit (après la porte) : conteneur (`POST /<IG_ID>/media`), publication (`POST /<IG_ID>/media_publish`) ; images JPEG seulement ; vidéo par envoi `rupload.facebook.com` (voie Facebook Login)
+Où vit l'autorisation : jeton d'accès chiffré côté Presti, jamais dans un fichier versionné ni dans n8n en clair ; voie O3 (a) ou (b), à trancher par Benj
+Comment le client la retire : à vérifier (retrait de l'application dans les paramètres Meta du compte ou de l'entreprise)
+Ce qui se passe quand elle expire : le système se tait, « Connexions » le dit, une alerte part ; ne pas réessayer en boucle
+Quotas de l'API : 100 publications par compte sur une période glissante de 24 h ; les carrousels comptent pour une publication ; vérifié par `GET /<IG_ID>/content_publishing_limit` ; statut d'un conteneur : interroger au plus une fois par minute, pendant 5 minutes au plus (page citée)
+Coût : gratuit pour l'API ; compte professionnel Instagram du client requis — à vérifier
+Entrée sans webhook (n8n n'est pas exposé) : lecture à intervalle de `status_code` et de `content_publishing_limit` par Presti et la base ; les notifications passent par un webhook Meta, décision de Benj (même point que Facebook Graph)
+Test hors ligne qui le prouvera : publication simulée d'un conteneur sans jeton réel ; contrôle que la limite de 100 par 24 h est appliquée avant l'appel (à écrire)
+Points à vérifier par Claude Code : voie retenue (Instagram Login ou Facebook Login) qui change les portées et l'hôte (`graph.instagram.com` ou `graph.facebook.com`) ; exigence PPA (accès de rôle à la Page) ; image `alt_text` (depuis 24/03/2025) ; retrait par le client ; type exact du nœud n8n ; conditions d'Advanced Access (vérification de l'application)

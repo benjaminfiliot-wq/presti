@@ -1,0 +1,15 @@
+# Twilio (SMS) — fiche connecteur
+Source : Twilio Help Center, « Understanding Twilio Rate Limits and Message Queues » (help.twilio.com/articles/115002943027, lue par extrait de recherche le 03/11/2026 ; page complète non ouverte) ; Twilio Docs, « Sending Messages » (twilio.com/docs/sms/send-messages, extrait) · nœud n8n : Twilio (type exact à vérifier dans docs.n8n.io/integrations)
+Ce que le système en fait : Twilio, ligne « Twilio 1 (SMS) » (OUTILLAGE.md § 0.4, ligne Messageries) : SMS de rappel et de relance quand l'API SMS est choisie (OUTILLAGE.md § 6 : rappels la veille, relance par le canal d'origine)
+Portées demandées (le minimum) : pas de portée OAuth : Twilio passe par une clé d'API ou l'identifiant du compte avec son jeton, fournis par le client. Écriture = l'envoi de SMS ; aucune lecture nécessaire hors statut d'envoi
+Ce qu'on lit : statut d'un message envoyé (livré, échoué) — à confirmer
+Ce qu'on écrit (après la porte) : envoi d'un SMS, seulement après la porte de Signature (type d'action activé) ou validation de l'artisan (Studio)
+Où vit l'autorisation : le jeton et la clé sont des secrets : jamais dans un fichier versionné, jamais saisis par un agent ; fournis par le client, chiffrés dans Supabase (voie O3 à trancher par Benj)
+Comment le client la retire : révoquer la clé d'API dans la console Twilio — à vérifier sur la page officielle
+Ce qui se passe quand elle expire : le système se tait, « Connexions » le dit, une alerte part
+Quotas de l'API (page lue, extrait) : débit d'envoi par expéditeur : 1 segment par seconde pour un numéro long code américain ou canadien ; 1 segment par seconde vers un pays hors US/Canada depuis un numéro long code ; 10 segments par seconde depuis un numéro US SMS, un ID alphanumérique vers l'international ; 3 par seconde pour un numéro gratuit US/Canada ; file d'attente de 4 heures de trafic au maximum par expéditeur (au-delà : erreur 30001). Au-delà du débit, les messages sont mis en file, pas perdus. Les requêtes REST sont acceptées au-delà, jusqu'à la limite de concurrence du compte (réponse 429, erreur 20429)
+Plafond quotidien : un compte nouveau, sans profil client d'entreprise approuvé, est plafonné à 20 000 messages par jour au total (page lue, extrait) — à vérifier sur le compte réel
+Coût : tarif par message et par pays, non lu — à vérifier sur la page des prix Twilio (datée)
+Entrée sans webhook (n8n n'est pas exposé) : l'envoi part depuis Presti ou n8n, rien à recevoir ; les statuts de livraison demandent un webhook de statut — à traiter par Presti et la base, pas par n8n
+Test hors ligne qui le prouvera : envoi vers un numéro d'essai du compte Twilio de test (jamais un vrai client) ; vérification qu'aucun SMS ne part en simulation (à écrire)
+Points à vérifier par Claude Code : l'enregistrement A2P 10DLC obligatoire pour les SMS aux États-Unis (non lu dans l'extrait, mais la page renvoie à un article dédié) ; la conformité par pays ; le coût réel ; la règle « stop » qui vaut opposition (ADR-005, `ops.opposition`) à reprendre côté envoi
