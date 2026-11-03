@@ -226,6 +226,7 @@ const SUITES = [
   { nom: 'Direction de l’artisan dans n8n (prompt 6, 036-007) — presti-dep-direction, alertes et récap du jour, compétences des sept départements (mutants)', cmd: 'node', args: ['scripts/direction-n8n-qa.mjs'], cout: 'gratuit' },
   { nom: 'Opérations de l’artisan dans n8n (prompt 6, 036-008) — créneaux lus dans l’agenda, rappel de la veille, gardien du stock, import contrôlé (mutants)', cmd: 'node', args: ['scripts/operations-n8n-qa.mjs'], cout: 'gratuit' },
   { nom: 'Connecteurs « Connecter / Retirer » (prompt 6, 036-009) — OAuth avec état et PKCE, jetons chiffrés, retrait, expiration, drapeau connexions baissé (mutants)', cmd: 'node', args: ['scripts/connexions-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Gabarits outillés de l’Accueil (prompt 6, 036-013) — Gmail, Outlook, IMAP, WhatsApp, Telegram, Facebook Graph, agents IA à outils de lecture, porte (mutants)', cmd: 'node', args: ['scripts/gabarits-accueil-qa.mjs'], cout: 'gratuit' },
   { nom: 'Garde des sessions lancées par Orca (défaut E de 031-012) — ni commit, ni push, ni déploiement, ni migration, ni build partagé ; la session principale jamais bloquée (mutant)', cmd: 'node', args: ['scripts/garde-agents-orca-qa.mjs'], cout: 'gratuit' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },

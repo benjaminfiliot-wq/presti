@@ -1,0 +1,30 @@
+{
+  "gabarit-artisan-accueil-boite": {
+    "Normaliser un e-mail": "b38ce0df15690f7dbbaab0fa5b45f6df7744742f0a54d3c3a0c953da7397de2b",
+    "Dédoublonner et classer": "daed690dd98118edc1aef6836edb50094825635e967155143f016f8ee13a18bd",
+    "Dépôt prévu": "806558fcccd68e9a072898be9ecc9b471da50c4f349daec0ac75570d1bfd2bd9",
+    "Ignoré (journal)": "ce43fe0dbe454889c3014391b9b53b114d84fbb9f893ee6baa6178c43c21a5ab"
+  },
+  "gabarit-artisan-accueil-envoi": {
+    "Contrôle avant envoi": "60c702c9df0699ea6c39be450a824429f41f653da7bbd4e57c4a95f4dae1857d",
+    "Envois prévus": "fe11b968ee2e9fb4a1e474f6f52aa4d0e9ade79402aab2e37bf3a404e4764a2b"
+  },
+  "gabarit-artisan-accueil-leads": {
+    "Leads enregistrés (simulation)": "ef6f25e6b68275c12899ea11008945115510c966a843bb58a42bf9fe9e3b058b",
+    "Normaliser les leads": "42aeea34302c0d772f1f8569636cabe02cb7c915f2d68f54492a37b75144b205",
+    "Dépôt prévu": "806558fcccd68e9a072898be9ecc9b471da50c4f349daec0ac75570d1bfd2bd9",
+    "Ignoré (journal)": "24d1f8d246235c1a0c328ad612386184c0e5eb6cfb4fab354d9ee71395803c41"
+  },
+  "gabarit-artisan-accueil-reponse": {
+    "Regrouper par conversation": "165e8b2826f658d4e43bcfeb1e6fb15d546c9c7df1302461f360edd97e5f9550",
+    "Réponse enregistrée (simulation)": "3ca604d9adb22bfa5c27eca9ee966e7590fa02cf97d17409e1598ada5975c2eb",
+    "Joindre la description de la photo": "d8d2d7d56c1d20586abfc119677b244ffd19da05c33e93d943cbb7d1050ed384",
+    "Revalider la qualification": "49c4cfbbf75af4b9d732e577b85a6b7a56d6ccae50f9ec25649682e0a0512906",
+    "Revalider la proposition": "0122c6f0f7352dd3dade08bd5918a309fa029ed9de348155ffd070d5590bbc3a",
+    "Préparer la demande au chef": "5d971884d338c05f1ae5ba899484fb92c90e8ec3af0cf072ab9179a92d582b09",
+    "Chef indisponible : rien ne part": "5809434ead9e596ea1fc6bb03db39c33255dff0bde2180f8be65fbef448429c0",
+    "Aiguiller les effets": "6bd9bb09b4b4c15db45c39fba1fe683279d52742820e33b92e245e46956e04fc",
+    "Effets prévus": "4b14c5bd4865653e68e24cc29918ba67a1bd22df1bb89b3cbe6cb47a4681f382",
+    "Voie sans écriture": "0ec107b586abe3857f8b38c538a84b38baf416918e587b9495d67e6ca8dfa57d"
+  }
+}

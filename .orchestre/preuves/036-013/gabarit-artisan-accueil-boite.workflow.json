@@ -1,0 +1,508 @@
+{
+  "id": "jHLRIQWCfc5Gvknm",
+  "name": "gabarit-artisan-accueil-boite",
+  "active": false,
+  "isArchived": false,
+  "versionId": "e9dda334-f1b8-48c8-96b1-d653149ce5e6",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 14,
+  "createdAt": "2026-11-03T13:00:13.255Z",
+  "updatedAt": "2026-11-03T13:00:13.255Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "connections": {
+    "Nouvel e-mail Gmail": {
+      "main": [
+        [
+          {
+            "node": "Normaliser un e-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normaliser un e-mail": {
+      "main": [
+        [
+          {
+            "node": "Compte de cette copie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compte de cette copie": {
+      "main": [
+        [
+          {
+            "node": "Lire les réglages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les réglages": {
+      "main": [
+        [
+          {
+            "node": "Dédoublonner et classer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dédoublonner et classer": {
+      "main": [
+        [
+          {
+            "node": "À déposer ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "À déposer ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ignoré (journal)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Dépôt prévu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Déposer dans la plateforme",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Déposer dans la plateforme": {
+      "main": [
+        [
+          {
+            "node": "Journaliser le dépôt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nouvel e-mail Outlook": {
+      "main": [
+        [
+          {
+            "node": "Normaliser un e-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nouvel e-mail IMAP": {
+      "main": [
+        [
+          {
+            "node": "Normaliser un e-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "00c006b2-2b84-4566-bda7-51299ceed4d1",
+      "name": "Nouvel e-mail Gmail",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "readStatus": "unread",
+          "q": "-category:promotions -category:social"
+        },
+        "options": {}
+      },
+      "notes": "Lit la boîte Gmail du client toutes les 5 minutes (non lus). Écrit : rien. Identifiant : celui du client, branché par lui sur sa copie."
+    },
+    {
+      "id": "01abd043-ef87-4d37-835e-1ab3bf56b43d",
+      "name": "Normaliser un e-mail",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Gabarit Accueil, boite : un courriel devient un message normalise, quel que soit le logiciel de messagerie du client.\nconst SOURCES = { 'Nouvel e-mail Gmail': 'gmail', 'Nouvel e-mail Outlook': 'outlook', 'Nouvel e-mail IMAP': 'imap' };\nconst source = SOURCES[$prevNode.name] || 'imap';\nconst premier = (...v) => v.find((x) => typeof x === 'string' && x.trim()) || '';\nconst sortie = [];\nfor (const it of $input.all()) {\n  const m = it.json || {};\n  const de = (m.from && m.from.value && m.from.value[0]) || (m.from && m.from.emailAddress) || {};\n  const brut = premier(de.address, m.from && m.from.address, typeof m.from === 'string' ? m.from : '');\n  const i = brut.indexOf('<');\n  const adresse = (i >= 0 ? brut.slice(i + 1, brut.indexOf('>')) : brut).trim().toLowerCase();\n  const corps = premier(m.text, m.textPlain, m.body && m.body.content, m.bodyPreview, m.snippet);\n  sortie.push({ json: {\n    source: source,\n    ref_externe: premier(m.messageId, m.internetMessageId, m.id),\n    id_boite: premier(m.id),\n    fil_externe: premier(m.threadId, m.conversationId),\n    de_adresse: adresse,\n    de_nom: premier(de.name).slice(0, 120),\n    sujet: premier(m.subject).slice(0, 300),\n    texte: corps.slice(0, 4000),\n    recu_le: premier(m.date, m.receivedDateTime) || new Date().toISOString(),\n    a_photo: !!(m.hasAttachments || (m.attachments && m.attachments.length)),\n  } });\n}\nreturn sortie;"
+      },
+      "notes": "Un courriel de Gmail, d'Outlook ou d'IMAP devient le même message normalisé. Ne lit rien d'autre, n'écrit rien."
+    },
+    {
+      "id": "39c07607-41a5-4e99-8943-f862adec05d2",
+      "name": "Compte de cette copie",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        192
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "organisation",
+              "name": "organisation_id",
+              "value": "A_RENSEIGNER_A_LA_COPIE",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "Une copie du gabarit sert un seul compte : l'identifiant du compte se pose ici, à la copie, jamais dans une adresse."
+    },
+    {
+      "id": "fdb65fad-0907-401b-8e7a-e9eb08a171b4",
+      "name": "Lire les réglages",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        192
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/v_accueil_reglages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "simulation,offre,interrupteur_general,interrupteur_departement"
+            },
+            {
+              "name": "organisation_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "Lit les réglages de ce compte (lecture, filtre du compte, colonnes nommées). Une ligne absente : rien ne se passe.",
+      "executeOnce": true
+    },
+    {
+      "id": "1b019a28-6a57-4a92-8e28-87fb2fd4a5ee",
+      "name": "Dédoublonner et classer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Gabarit Accueil, boite : un message n'entre qu'une fois ; un client n'a qu'une conversation (p6:280-285).\nconst cfg = ($input.first() && $input.first().json) || {};\nconst org = $('Compte de cette copie').first().json.organisation_id;\n// Fail-closed : tout ce qui n'est pas exactement faux reste en simulation ; un interrupteur coupe tout.\nconst simulation = cfg.simulation !== false;\nconst coupe = cfg.interrupteur_general === false || cfg.interrupteur_departement === false;\n// Copie figee des filtres de lib/releveCanal.ts (comparee au code par le juge).\nconst AUTOMATIQUE = /^(no-?reply|ne-?pas-?repondre|donotreply|mailer-daemon|postmaster|notifications?|newsletter|bounce|noreply)[@.-]/i;\nconst INDESIRABLE = /(facture[s]? ?orange|newsletter|se désinscrire|unsubscribe|linkedin|no-reply)/i;\nconst PLATEFORMES = ['habitatpresto.com', 'travaux.com', 'quotatis.fr', 'starofservice.fr', 'mesdepanneurs.fr'];\nconst vus = new Set();\nconst sortie = [];\nfor (const it of $('Compte de cette copie').all()) {\n  const m = it.json;\n  const cle = 'em:' + org + ':' + m.ref_externe;\n  const domaine = m.de_adresse.slice(m.de_adresse.indexOf('@') + 1);\n  const plateforme = PLATEFORMES.some((p) => domaine === p || domaine.endsWith('.' + p));\n  let motif = null;\n  if (coupe) motif = 'interrupteur_coupe';\n  else if (!m.de_adresse) motif = 'sans_expediteur';\n  else if (!m.ref_externe) motif = 'sans_identifiant';\n  else if (AUTOMATIQUE.test(m.de_adresse) && !plateforme) motif = 'automatique';\n  else if (m.texte.trim().length < 12) motif = 'trop_court';\n  else if (INDESIRABLE.test(m.sujet) && m.texte.length < 400 && !plateforme) motif = 'indesirable';\n  else if (vus.has(cle)) motif = 'doublon';\n  if (!motif) vus.add(cle);\n  sortie.push({ json: Object.assign({}, m, { organisation_id: org, simulation: simulation, cle: cle, conversation_cle: plateforme ? 'p:' + m.ref_externe : 'c:' + m.de_adresse, canal_origine: plateforme ? 'plateforme_devis' : m.source, repondre_au_client: !plateforme, voie: motif ? 'ignorer' : 'deposer', motif: motif }) });\n}\nreturn sortie;"
+      },
+      "notes": "Un message n'entre qu'une fois (clé du compte et identifiant du courriel). Un client n'a qu'une conversation. Courriel automatique, trop court ou indésirable : ignoré, avec son motif. Notification d'une plateforme de devis : déposée, sans réponse au client."
+    },
+    {
+      "id": "3afe3d54-c645-4bd4-958c-5dfa435b2041",
+      "name": "À déposer ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        192
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "voie",
+              "leftValue": "={{ $json.voie }}",
+              "rightValue": "deposer",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f3fbc75d-c126-4fd6-a843-fad1ed7ad120",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "sim",
+              "leftValue": "={{ $json.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien n'est écrit dans la plateforme. Faux : le dépôt réel."
+    },
+    {
+      "id": "4260d166-5f05-492e-ba90-9806599e7309",
+      "name": "Dépôt prévu",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Simulation : rien n'est ecrit dans la plateforme ; le depot prevu part au journal.\nconst prevus = $input.all().map((it) => ({ effet: 'deposer_message', organisation_id: it.json.organisation_id, cle: it.json.cle, conversation_cle: it.json.conversation_cle, canal_origine: it.json.canal_origine }));\nreturn [{ json: { simulation: true, effets_prevus: prevus, effets_faits: [] } }];"
+      },
+      "notes": "Simulation : le dépôt qui aurait lieu, listé et non fait."
+    },
+    {
+      "id": "1e111780-8a46-4e15-802c-81d5c901012e",
+      "name": "Déposer dans la plateforme",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1568,
+        192
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/rpc/deposer_message",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ organisation_id: $json.organisation_id, cle: $json.cle, conversation_cle: $json.conversation_cle, canal_origine: $json.canal_origine, ref_externe: $json.ref_externe, id_boite: $json.id_boite, fil_externe: $json.fil_externe, sujet: $json.sujet, texte: $json.texte, de_nom: $json.de_nom, de_adresse: $json.de_adresse, recu_le: $json.recu_le, a_photo: $json.a_photo, repondre_au_client: $json.repondre_au_client }) }}",
+        "options": {}
+      },
+      "notes": "Écrit chez le client : le message reçu est rangé dans la plateforme, dans la conversation du client, avec son canal d'origine (fonction de dépôt idempotente par clé). Rien ne part vers le client."
+    },
+    {
+      "id": "8246b458-da83-419b-9148-950b2736a768",
+      "name": "Journaliser le dépôt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1792,
+        192
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/journal_agents?on_conflict=organisation_id,cle",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "resolution=ignore-duplicates,return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ organisation_id: $('Dédoublonner et classer').item.json.organisation_id, cle: 'j:' + $('Dédoublonner et classer').item.json.cle, evenement: 'depot_message', agent: 'gabarit-artisan-accueil-boite', objet_ref: $('Dédoublonner et classer').item.json.cle, decision: 'message déposé dans la plateforme', simulation: false }) }}",
+        "options": {}
+      },
+      "notes": "Écrit chez le client : une ligne « fait : message déposé » au journal, sans le texte du message."
+    },
+    {
+      "id": "aec6fe40-2c46-4066-966d-a1aeed5e28d2",
+      "name": "Ignoré (journal)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        288
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Un courriel ecarte ne produit aucun effet : il ne reste que son motif.\nreturn [{ json: { ignores: $input.all().map((it) => ({ cle: it.json.cle, motif: it.json.motif })), effets_faits: [] } }];"
+      },
+      "notes": "Courriel écarté avec son motif ; rien n'est écrit."
+    },
+    {
+      "id": "06989199-9372-4c6b-9967-82b5ece40e3c",
+      "name": "Nouvel e-mail Outlook",
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        192
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "event": "messageReceived",
+        "output": "raw",
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "notes": "Lit la boîte Outlook ou Microsoft 365 du client toutes les 5 minutes (non lus). Écrit : rien."
+    },
+    {
+      "id": "6f5453c4-2924-4506-9914-1c78116bc871",
+      "name": "Nouvel e-mail IMAP",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        384
+      ],
+      "parameters": {
+        "mailbox": "INBOX",
+        "postProcessAction": "read",
+        "format": "simple",
+        "options": {}
+      },
+      "notes": "Lit une boîte IMAP quelconque du client (Orange, OVH, Free...). Écrit : rien. Le client donne son serveur et son mot de passe d'application."
+    },
+    {
+      "id": "f9651c69-f017-4a12-bc63-b3bef3b85ecb",
+      "name": "Sticky Note 969bc9c6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        96
+      ],
+      "parameters": {
+        "content": "## Accueil · la boîte mail\nTrois boîtes (Gmail, Outlook, IMAP) → un message normalisé → réglages du compte → déduplication → **porte simulation** → dépôt dans la plateforme.\nTout message arrive d'abord dans la plateforme. Aucun identifiant, aucun webhook : inactif, prêt à copier pour un client.",
+        "color": 4,
+        "width": 832,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T13:08:39.640Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-013), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

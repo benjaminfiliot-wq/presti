@@ -1,0 +1,11 @@
+{
+  "615": "gabarit-artisan-accueil-boite : 4 courriels Gmail fictifs — un client écrit deux fois (même Message-ID reçu deux fois = un doublon ignoré), une lettre automatique ignorée ; deux dépôts prévus dans UNE conversation, aucun fait",
+  "617": "gabarit-artisan-accueil-leads : un lead Facebook enregistré (simulation, Facebook non appelé), normalisé, un dépôt prévu",
+  "623": "gabarit-artisan-accueil-reponse, STUDIO : un courriel Gmail et un message WhatsApp avec photo ; sortie du chef épinglée = celle de 036-001 (essai 470, compte Studio, journal tronqué à 2 lignes) ; 2 cartes + 1 brouillon Gmail (le WhatsApp : carte seule), 0 file du pilote, 0 envoi",
+  "627": "gabarit-artisan-accueil-reponse, SIGNATURE avec le type reponse_prospect activé : un client écrit par Outlook puis par WhatsApp (même conversation) = UNE demande, canaux outlook+whatsapp ; sortie du chef épinglée = celle de 036-001 (essai 470, compte Signature, journal tronqué) ; 1 ligne du pilote (envoi par WhatsApp, fait plus tard par le gabarit envoi), 1 carte d'escalade (dégât des eaux), 0 brouillon, 0 envoi",
+  "628": "gabarit-artisan-accueil-reponse, SIGNATURE SANS le type activé : un courriel Outlook ; sortie du chef épinglée DÉRIVÉE de l'essai 470 (la ligne du pilote remplacée par une carte, motif « type », comme le fait lib-decider) ; 1 carte, 0 file du pilote, 0 brouillon, 0 envoi",
+  "629": "gabarit-artisan-accueil-reponse, SPAM : une demande piégée de liens ; sortie du chef épinglée = celle de 036-001 (essai 487, classe spam) ; ni carte, ni brouillon, ni envoi : le journal seulement",
+  "624": "gabarit-artisan-accueil-envoi, SIGNATURE avec le type activé : 5 réponses dues — Gmail, WhatsApp et SMTP prévues à l'envoi ; Outlook avec opposition = repasse en carte ; Telegram vieille de 5 minutes = attend les 10 minutes ; rien n'est parti",
+  "625": "gabarit-artisan-accueil-envoi, SIGNATURE SANS le type activé : la réponse due repasse en carte (motif « type »), aucun envoi",
+  "626": "gabarit-artisan-accueil-envoi, STUDIO : la réponse due repasse en carte (motif « offre »), Studio n'envoie jamais"
+}

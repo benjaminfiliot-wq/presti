@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-11-03T13:09:48Z
+# Digest — 2026-11-03T13:19:15Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 177 tâche(s) PASS, 319116 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
-**État** — file : 62 · en cours : 4 · faites : 449 · refusées : 17
+**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 178 tâche(s) PASS, 327310 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
+**État** — file : 63 · en cours : 3 · faites : 450 · refusées : 17
 
 ## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -19,11 +19,10 @@
 - 4 question(s) en attente : `028-008` — `node scripts/orchestre.mjs repondre 028-008 <n>`
 - 4 question(s) en attente : `028-014` — `node scripts/orchestre.mjs repondre 028-014 <n>`
 - 4 question(s) en attente : `reparation-C-juges-perimes` — `node scripts/orchestre.mjs repondre reparation-C-juges-perimes <n>`
-- sauvegarde vieille de 556 h — `node scripts/instantane-quotidien.mjs --pousser`
+- sauvegarde vieille de 557 h — `node scripts/instantane-quotidien.mjs --pousser`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 036-013 | feature | en-cours | claude-code | — | depuis 2026-11-03T12:49:04Z · Prompt 6, outillage, lot 1 : les gabarits OUTILLÉS du département Accueil et réponse des artisans (Studio, Signature), avec les vrais nœuds de leurs outils (Gmail, Outlook, IMAP et SMTP, WhatsApp, Telegram, Facebook et Instagram par l'API Graph, Facebook Lead Ads lu par l'API, e-mails des plateformes de devis), un agent IA par spécialiste (Claude, parseur structuré, outils de lecture), la porte « simulation » devant chaque effet — inactifs, sans identifiant, prêts à être copiés pour chaque client |
 | 036-014 | feature | en-cours | claude-code | — | depuis 2026-11-03T12:49:34Z · Prompt 6, outillage, lot 2 : les gabarits OUTILLÉS des départements Devis, Suivi et relances, Facturation et encaissement des artisans, avec les vrais nœuds de leurs outils (Gmail, Outlook, SMTP, WhatsApp, Telegram, Twilio, Google Drive et OneDrive, Google Sheets et Excel, Stripe en lecture, signature Yousign ou DocuSign par l'API), un agent IA par spécialiste (Claude, parseur, outils de lecture), montants par le code seul, porte « simulation » devant chaque effet — inactifs, sans identifiant |
 | 036-015 | feature | en-cours | claude-code | — | depuis 2026-11-03T12:50:02Z · Prompt 6, outillage, lot 3 : les gabarits OUTILLÉS des départements Après-chantier et réputation, Opérations (agenda, chantiers, stock) et Direction des artisans, avec les vrais nœuds de leurs outils (fiche Google Business Profile, Google Agenda et Outlook, Google Drive et OneDrive, Google Sheets et Excel, Gmail, Outlook, WhatsApp, Telegram, Twilio, Slack, Teams), un agent IA par spécialiste (Claude, parseur, outils de lecture), porte « simulation » devant chaque effet — inactifs, sans identifiant |
 | 036-016 | feature | en-cours | claude-code | — | depuis 2026-11-03T12:51:41Z · Prompt 6, outillage, lot 4 (prompt 2, Entreprise) : le catalogue de gabarits OUTILLÉS de l'Entreprise sur mesure, première moitié — Accueil et qualification, Leads et acquisition, Ventes et CRM, Marketing et réseaux — avec les vrais nœuds (Gmail, Outlook, IMAP, WhatsApp, Facebook Lead Ads et Instagram par l'API Graph, LinkedIn, TikTok par l'API, Typeform, Jotform, Tally, Calendly, Cal.com par l'API, Brevo, Mailchimp, ActiveCampaign, Lemlist, ManyChat par l'API, HubSpot, Pipedrive, Salesforce, Zoho CRM, Odoo, Airtable, Notion, monday, Yousign ou DocuSign par l'API, Slack et Teams avec validation d'équipe), agents IA (Claude, parseur, outils de lecture), porte « simulation » — inactifs, sans identifiant |
@@ -89,6 +88,8 @@
 | 036-010 | feature | file | claude-code | — | Prompt 6, lot 10 : les maquettes statiques des quatre écrans du § 1.3 — centre de commande (barre du jour, page du matin, « À valider » à feu vert par ligne et pour tout le lot, exceptions préparées), « Ce que vos assistants ont fait » (colonnes, « fait : … », coût IA), « Connexions », « Mes départements » (Studio verrouillé par l'offre) — en 390 et 1440 px, critiquées avant d'être rendues |
 | 036-011 | feature | file | claude-code | — | Prompt 6, lot 11 : les quatre écrans des maquettes validées par 036-010, en code, derrière le drapeau `systemeAgents` BAISSÉ (rien dans le DOM, routes en 404), lus depuis Supabase en lecture seule, avec le double chemin et « une question à la fois » ; verrou d'offre par peut() seulement |
 | 036-012 | feature | file | claude-code | — | Prompt 6, lot 12 : tous les juges n8n inscrits au lanceur, la suite transverse des tests obligatoires du § 1.7, le runbook (couper, rejouer, reprendre), le plan de migration des automatisations codées en cinq pas, la base de départ des KPIs (requêtes en lecture), et le dossier du mode ombre prêt pour un compte volontaire — rien de publié, rien d'appliqué |
+| 036-018 | feature | file | claude-code | — | Prompt 6, outillage, lot 5 (prompt 2, Entreprise) : le catalogue de gabarits OUTILLÉS de l'Entreprise sur mesure, seconde moitié — Opérations, Administratif, Finance, Après-vente et réputation, Direction et équipe — avec les vrais nœuds (Google Agenda et Outlook, ClickUp, monday, Notion, Google Drive et OneDrive, Docs, Sheets et Excel, Gmail et Outlook, Stripe, QuickBooks, Xero, Pennylane, Tiime, Sage et Qonto par l'API, fiche Google, Trustpilot et Chatwoot par l'API, Zendesk, Slack, Teams, Google Chat avec validation d'équipe), agents IA (Claude, parseur, outils de lecture), porte « simulation » — inactifs, sans identifiant |
+| 036-013 | feature | fait | claude-code | PASS | 2026-11-03T13:19:12Z · 21s · 8194 l. |
 | 036-009 | feature | fait | claude-code | PASS | 2026-11-03T13:09:47Z · 55s · 2618 l. |
 | 036-008 | feature | fait | claude-code | PASS | 2026-11-03T13:08:47Z · 203s · 11263 l. |
 | 036-004 | feature | fait | claude-code | PASS | 2026-11-03T12:24:31Z · 616s · 25853 l. |
@@ -122,6 +123,5 @@
 | 032-031 | feature | fait | claude-code | PASS | 2026-11-02T20:11:37Z · 7s · 2485 l. |
 | 032-030 | feature | fait | claude-code | PASS | 2026-11-02T20:11:28Z · 18s · 2899 l. |
 | 032-029 | audit | fait | claude-code | PASS | 2026-11-02T20:06:41Z · 0s · 13413 l. |
-| 032-026 | feature | fait | claude-code | PASS | 2026-11-02T20:06:38Z · 91s · 2785 l. |
 
-… 432 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 433 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

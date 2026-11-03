@@ -1,0 +1,3112 @@
+[
+  {
+    "workflow": "gabarit-artisan-accueil-boite",
+    "execution": 615,
+    "titre": "gabarit-artisan-accueil-boite : 4 courriels Gmail fictifs — un client écrit deux fois (même Message-ID reçu deux fois = un doublon ignoré), une lettre automatique ignorée ; deux dépôts prévus dans UNE conversation, aucun fait",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Nouvel e-mail Gmail",
+      "Lire les réglages"
+    ],
+    "entrees_epinglees": {
+      "Nouvel e-mail Gmail": [
+        {
+          "id": "gm-001",
+          "threadId": "th-001",
+          "messageId": "<m1@exemple.invalid>",
+          "from": {
+            "value": [
+              {
+                "address": "Marie.Exemple@exemple.invalid",
+                "name": "Exemple. Marie"
+              }
+            ]
+          },
+          "subject": "Exemple. Salle de bain",
+          "text": "Exemple. Bonjour, je voudrais refaire ma salle de bain complète, douche à l’italienne.",
+          "date": "2026-11-06T10:15:00.000+01:00"
+        },
+        {
+          "id": "gm-001b",
+          "threadId": "th-001",
+          "messageId": "<m1@exemple.invalid>",
+          "from": {
+            "value": [
+              {
+                "address": "marie.exemple@exemple.invalid",
+                "name": "Exemple. Marie"
+              }
+            ]
+          },
+          "subject": "Exemple. Salle de bain",
+          "text": "Exemple. Bonjour, je voudrais refaire ma salle de bain complète, douche à l’italienne.",
+          "date": "2026-11-06T10:15:00.000+01:00"
+        },
+        {
+          "id": "gm-002",
+          "threadId": "th-002",
+          "messageId": "<m2@exemple.invalid>",
+          "from": {
+            "value": [
+              {
+                "address": "noreply@exemple.invalid",
+                "name": "Exemple. Lettre"
+              }
+            ]
+          },
+          "subject": "Exemple. Newsletter",
+          "text": "Exemple. Découvrez nos offres, se désinscrire ici si vous ne souhaitez plus recevoir ce message.",
+          "date": "2026-11-06T10:20:00.000+01:00"
+        },
+        {
+          "id": "gm-003",
+          "threadId": "th-001",
+          "messageId": "<m3@exemple.invalid>",
+          "from": {
+            "value": [
+              {
+                "address": "marie.exemple@exemple.invalid",
+                "name": "Exemple. Marie"
+              }
+            ]
+          },
+          "subject": "Re: Exemple. Salle de bain",
+          "text": "Exemple. Je précise : la surface fait environ huit mètres carrés.",
+          "date": "2026-11-06T10:40:00.000+01:00"
+        }
+      ],
+      "Lire les réglages": [
+        {
+          "simulation": true,
+          "offre": "studio",
+          "interrupteur_general": true,
+          "interrupteur_departement": true
+        }
+      ]
+    },
+    "sorties": {
+      "Dédoublonner et classer": [
+        [
+          [
+            {
+              "source": "gmail",
+              "ref_externe": "<m1@exemple.invalid>",
+              "id_boite": "gm-001",
+              "fil_externe": "th-001",
+              "de_adresse": "marie.exemple@exemple.invalid",
+              "de_nom": "Exemple. Marie",
+              "sujet": "Exemple. Salle de bain",
+              "texte": "Exemple. Bonjour, je voudrais refaire ma salle de bain complète, douche à l’italienne.",
+              "recu_le": "2026-11-06T10:15:00.000+01:00",
+              "a_photo": false,
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m1@exemple.invalid>",
+              "conversation_cle": "c:marie.exemple@exemple.invalid",
+              "canal_origine": "gmail",
+              "repondre_au_client": true,
+              "voie": "deposer",
+              "motif": null
+            },
+            {
+              "source": "gmail",
+              "ref_externe": "<m1@exemple.invalid>",
+              "id_boite": "gm-001b",
+              "fil_externe": "th-001",
+              "de_adresse": "marie.exemple@exemple.invalid",
+              "de_nom": "Exemple. Marie",
+              "sujet": "Exemple. Salle de bain",
+              "texte": "Exemple. Bonjour, je voudrais refaire ma salle de bain complète, douche à l’italienne.",
+              "recu_le": "2026-11-06T10:15:00.000+01:00",
+              "a_photo": false,
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m1@exemple.invalid>",
+              "conversation_cle": "c:marie.exemple@exemple.invalid",
+              "canal_origine": "gmail",
+              "repondre_au_client": true,
+              "voie": "ignorer",
+              "motif": "doublon"
+            },
+            {
+              "source": "gmail",
+              "ref_externe": "<m2@exemple.invalid>",
+              "id_boite": "gm-002",
+              "fil_externe": "th-002",
+              "de_adresse": "noreply@exemple.invalid",
+              "de_nom": "Exemple. Lettre",
+              "sujet": "Exemple. Newsletter",
+              "texte": "Exemple. Découvrez nos offres, se désinscrire ici si vous ne souhaitez plus recevoir ce message.",
+              "recu_le": "2026-11-06T10:20:00.000+01:00",
+              "a_photo": false,
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m2@exemple.invalid>",
+              "conversation_cle": "c:noreply@exemple.invalid",
+              "canal_origine": "gmail",
+              "repondre_au_client": true,
+              "voie": "ignorer",
+              "motif": "automatique"
+            },
+            {
+              "source": "gmail",
+              "ref_externe": "<m3@exemple.invalid>",
+              "id_boite": "gm-003",
+              "fil_externe": "th-001",
+              "de_adresse": "marie.exemple@exemple.invalid",
+              "de_nom": "Exemple. Marie",
+              "sujet": "Re: Exemple. Salle de bain",
+              "texte": "Exemple. Je précise : la surface fait environ huit mètres carrés.",
+              "recu_le": "2026-11-06T10:40:00.000+01:00",
+              "a_photo": false,
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m3@exemple.invalid>",
+              "conversation_cle": "c:marie.exemple@exemple.invalid",
+              "canal_origine": "gmail",
+              "repondre_au_client": true,
+              "voie": "deposer",
+              "motif": null
+            }
+          ]
+        ]
+      ],
+      "Dépôt prévu": [
+        [
+          [
+            {
+              "simulation": true,
+              "effets_prevus": [
+                {
+                  "effet": "deposer_message",
+                  "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+                  "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m1@exemple.invalid>",
+                  "conversation_cle": "c:marie.exemple@exemple.invalid",
+                  "canal_origine": "gmail"
+                },
+                {
+                  "effet": "deposer_message",
+                  "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+                  "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m3@exemple.invalid>",
+                  "conversation_cle": "c:marie.exemple@exemple.invalid",
+                  "canal_origine": "gmail"
+                }
+              ],
+              "effets_faits": []
+            }
+          ]
+        ]
+      ],
+      "Ignoré (journal)": [
+        [
+          [
+            {
+              "ignores": [
+                {
+                  "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m1@exemple.invalid>",
+                  "motif": "doublon"
+                },
+                {
+                  "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m2@exemple.invalid>",
+                  "motif": "automatique"
+                }
+              ],
+              "effets_faits": []
+            }
+          ]
+        ]
+      ],
+      "À déposer ?": [
+        [
+          [
+            {
+              "source": "gmail",
+              "ref_externe": "<m1@exemple.invalid>",
+              "id_boite": "gm-001",
+              "fil_externe": "th-001",
+              "de_adresse": "marie.exemple@exemple.invalid",
+              "de_nom": "Exemple. Marie",
+              "sujet": "Exemple. Salle de bain",
+              "texte": "Exemple. Bonjour, je voudrais refaire ma salle de bain complète, douche à l’italienne.",
+              "recu_le": "2026-11-06T10:15:00.000+01:00",
+              "a_photo": false,
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m1@exemple.invalid>",
+              "conversation_cle": "c:marie.exemple@exemple.invalid",
+              "canal_origine": "gmail",
+              "repondre_au_client": true,
+              "voie": "deposer",
+              "motif": null
+            },
+            {
+              "source": "gmail",
+              "ref_externe": "<m3@exemple.invalid>",
+              "id_boite": "gm-003",
+              "fil_externe": "th-001",
+              "de_adresse": "marie.exemple@exemple.invalid",
+              "de_nom": "Exemple. Marie",
+              "sujet": "Re: Exemple. Salle de bain",
+              "texte": "Exemple. Je précise : la surface fait environ huit mètres carrés.",
+              "recu_le": "2026-11-06T10:40:00.000+01:00",
+              "a_photo": false,
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m3@exemple.invalid>",
+              "conversation_cle": "c:marie.exemple@exemple.invalid",
+              "canal_origine": "gmail",
+              "repondre_au_client": true,
+              "voie": "deposer",
+              "motif": null
+            }
+          ],
+          [
+            {
+              "source": "gmail",
+              "ref_externe": "<m1@exemple.invalid>",
+              "id_boite": "gm-001b",
+              "fil_externe": "th-001",
+              "de_adresse": "marie.exemple@exemple.invalid",
+              "de_nom": "Exemple. Marie",
+              "sujet": "Exemple. Salle de bain",
+              "texte": "Exemple. Bonjour, je voudrais refaire ma salle de bain complète, douche à l’italienne.",
+              "recu_le": "2026-11-06T10:15:00.000+01:00",
+              "a_photo": false,
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m1@exemple.invalid>",
+              "conversation_cle": "c:marie.exemple@exemple.invalid",
+              "canal_origine": "gmail",
+              "repondre_au_client": true,
+              "voie": "ignorer",
+              "motif": "doublon"
+            },
+            {
+              "source": "gmail",
+              "ref_externe": "<m2@exemple.invalid>",
+              "id_boite": "gm-002",
+              "fil_externe": "th-002",
+              "de_adresse": "noreply@exemple.invalid",
+              "de_nom": "Exemple. Lettre",
+              "sujet": "Exemple. Newsletter",
+              "texte": "Exemple. Découvrez nos offres, se désinscrire ici si vous ne souhaitez plus recevoir ce message.",
+              "recu_le": "2026-11-06T10:20:00.000+01:00",
+              "a_photo": false,
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "cle": "em:A_RENSEIGNER_A_LA_COPIE:<m2@exemple.invalid>",
+              "conversation_cle": "c:noreply@exemple.invalid",
+              "canal_origine": "gmail",
+              "repondre_au_client": true,
+              "voie": "ignorer",
+              "motif": "automatique"
+            }
+          ]
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-leads",
+    "execution": 617,
+    "titre": "gabarit-artisan-accueil-leads : un lead Facebook enregistré (simulation, Facebook non appelé), normalisé, un dépôt prévu",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Cadence : Facebook Lead Ads",
+      "Lire les réglages"
+    ],
+    "entrees_epinglees": {
+      "Cadence : Facebook Lead Ads": [
+        {
+          "timestamp": "2026-11-06T10:00:00.000+01:00"
+        }
+      ],
+      "Lire les réglages": [
+        {
+          "simulation": true,
+          "offre": "signature",
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "formulaire_leads_id": "form-exemple-01"
+        }
+      ]
+    },
+    "sorties": {
+      "Leads enregistrés (simulation)": [
+        [
+          [
+            {
+              "id": "lead-0001",
+              "created_time": "2026-11-06T09:30:00+0100",
+              "field_data": [
+                {
+                  "name": "full_name",
+                  "values": [
+                    "Exemple. Paul"
+                  ]
+                },
+                {
+                  "name": "email",
+                  "values": [
+                    "paul.exemple@exemple.invalid"
+                  ]
+                },
+                {
+                  "name": "phone_number",
+                  "values": [
+                    "+33600000000"
+                  ]
+                },
+                {
+                  "name": "message",
+                  "values": [
+                    "Exemple. Bonjour, je souhaite un devis pour une terrasse en bois."
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      ],
+      "Normaliser les leads": [
+        [
+          [
+            {
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "source": "facebook_lead",
+              "canal_origine": "facebook_lead",
+              "cle": "fl:A_RENSEIGNER_A_LA_COPIE:lead-0001",
+              "ref_externe": "lead-0001",
+              "id_boite": "",
+              "fil_externe": "",
+              "conversation_cle": "c:paul.exemple@exemple.invalid",
+              "de_adresse": "paul.exemple@exemple.invalid",
+              "de_nom": "Exemple. Paul",
+              "telephone": "+33600000000",
+              "sujet": "Demande reçue par Facebook Lead Ads",
+              "texte": "Exemple. Bonjour, je souhaite un devis pour une terrasse en bois.",
+              "recu_le": "2026-11-06T09:30:00+0100",
+              "a_photo": false,
+              "repondre_au_client": true,
+              "voie": "deposer",
+              "motif": null
+            }
+          ]
+        ]
+      ],
+      "Dépôt prévu": [
+        [
+          [
+            {
+              "simulation": true,
+              "effets_prevus": [
+                {
+                  "effet": "deposer_message",
+                  "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+                  "cle": "fl:A_RENSEIGNER_A_LA_COPIE:lead-0001",
+                  "conversation_cle": "c:paul.exemple@exemple.invalid",
+                  "canal_origine": "facebook_lead"
+                }
+              ],
+              "effets_faits": []
+            }
+          ]
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-reponse",
+    "execution": 623,
+    "titre": "gabarit-artisan-accueil-reponse, STUDIO : un courriel Gmail et un message WhatsApp avec photo ; sortie du chef épinglée = celle de 036-001 (essai 470, compte Studio, journal tronqué à 2 lignes) ; 2 cartes + 1 brouillon Gmail (le WhatsApp : carte seule), 0 file du pilote, 0 envoi",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Cadence : événements de la plateforme",
+      "Lire les réglages",
+      "Lire les événements non traités",
+      "Appeler presti-dep-accueil"
+    ],
+    "entrees_epinglees": {
+      "Cadence : événements de la plateforme": [
+        {
+          "timestamp": "2026-11-06T10:00:00.000+01:00"
+        }
+      ],
+      "Lire les réglages": [
+        {
+          "simulation": true,
+          "offre": "studio",
+          "mode_reponse": "assistee",
+          "capacites": [
+            "canaux.email",
+            "relances",
+            "factures.relances",
+            "assistant"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": false,
+            "types": {}
+          },
+          "parties_depuis_24h": 0,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "mots_escalade_artisan": [
+            "Exemple. mot sensible"
+          ],
+          "fournisseurs": [],
+          "horaires": {
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "heures_permises": {
+              "debut": "00:00",
+              "fin": "23:59"
+            }
+          },
+          "plafond_jour": 20,
+          "qualification": {
+            "grille": [
+              {
+                "critere": "urgence=urgent",
+                "poids": 40
+              },
+              {
+                "critere": "canal=email",
+                "poids": 15
+              }
+            ],
+            "seuils": {
+              "haute": 60,
+              "normale": 30
+            },
+            "delais_cibles_min": {
+              "haute": 15,
+              "normale": 60,
+              "a_revoir": 240
+            }
+          },
+          "marque_artisan": "Exemple. Plomberie Arnal-Démo",
+          "empreintes_connues": [],
+          "cles_existantes": []
+        }
+      ],
+      "Lire les événements non traités": [
+        {
+          "id": "ev-0001",
+          "type": "demande_recue",
+          "cle": "dm:0001",
+          "canal_origine": "gmail",
+          "conversation_cle": "c:marie.exemple@exemple.invalid",
+          "id_boite": "gm-001",
+          "fil_externe": "th-001",
+          "demande": {
+            "id": "00000000-0000-4000-8000-a00000000001",
+            "canal": "email",
+            "recu_le": "2026-11-06T10:15:00.000+01:00",
+            "message": "Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne. Mon numéro : 0600000000.",
+            "champs": {
+              "canal": "formulaire",
+              "type_chantier": "Salle de bain",
+              "delai_souhaite": "dans 3 mois"
+            },
+            "empreinte_contact": "ac5f807a71f6fae9fa01ecded21a084f6c147e029d098b9da6052b57d0bddcc3",
+            "client_existant": false,
+            "honeypot": false,
+            "photo": null,
+            "proposition": null,
+            "destinataire": {
+              "opposition": false,
+              "consentement_sms": null
+            }
+          },
+          "donnees": {}
+        },
+        {
+          "id": "ev-0002",
+          "type": "demande_recue",
+          "cle": "dm:0008",
+          "canal_origine": "whatsapp",
+          "conversation_cle": "tel:+33600000008",
+          "id_boite": "",
+          "fil_externe": "",
+          "demande": {
+            "id": "00000000-0000-4000-8000-a00000000008",
+            "canal": "page_p",
+            "recu_le": "2026-11-06T11:05:00.000+01:00",
+            "message": "Exemple. Le WC fuit un peu au pied, voici une photo.",
+            "champs": {
+              "canal": "whatsapp",
+              "type_chantier": "WC"
+            },
+            "empreinte_contact": "1a45e10c58f8bc4a8440a6f8ad88f7ada1d8fcf9a175a72ab4f9979addd66f30",
+            "client_existant": false,
+            "honeypot": false,
+            "photo": {
+              "ref": "photo-0008.jpg",
+              "type_mime": "image/jpeg"
+            },
+            "proposition": null,
+            "destinataire": {
+              "opposition": false,
+              "consentement_sms": null
+            }
+          },
+          "donnees": {
+            "photo_url": "https://exemple.invalid/photo-0008.jpg"
+          }
+        }
+      ],
+      "Appeler presti-dep-accueil": [
+        {
+          "contrat": "presti-dep-accueil@1",
+          "statut": "ok",
+          "cle_idempotence": "dep:accueil:0000000000a1:2026-11-07T2142",
+          "simulation": true,
+          "resultat": {
+            "demandes_recues": 2,
+            "classes": {
+              "peut_attendre": 2
+            },
+            "spam": [],
+            "escalades": [],
+            "questions": [],
+            "decisions": [
+              {
+                "demande_id": "00000000-0000-4000-8000-a00000000001",
+                "action": "carte",
+                "motif": "offre"
+              },
+              {
+                "demande_id": "00000000-0000-4000-8000-a00000000008",
+                "action": "carte",
+                "motif": "offre"
+              }
+            ],
+            "cartes": [
+              "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+              "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528"
+            ],
+            "pilote": [],
+            "brouillons_demandes": [],
+            "refus_porte": [],
+            "deja_faits": [],
+            "photos": []
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_note",
+              "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+              "lead_id": "00000000-0000-4000-8000-a00000000001",
+              "cle": "h:qualification:19f92bc86ca3203a6e1e7a8d302fc965f3097305d5282187",
+              "note": 21,
+              "priorite": "a_revoir",
+              "categorie": "Salle de bain",
+              "doublon": false
+            },
+            {
+              "effet": "ecrire_carte",
+              "table": "opportunites",
+              "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+                "cle": "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+                "type_action": "reponse_prospect",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-a00000000001",
+                "canal": "email",
+                "brouillon": {
+                  "objet": "Exemple. Votre demande",
+                  "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous."
+                }
+              }
+            },
+            {
+              "effet": "ecrire_note",
+              "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+              "lead_id": "00000000-0000-4000-8000-a00000000008",
+              "cle": "h:qualification:3bce57a73ab38be0359ceb5fa705da18a4b93042ed79efac",
+              "note": 21,
+              "priorite": "a_revoir",
+              "categorie": "WC",
+              "doublon": false
+            },
+            {
+              "effet": "ecrire_carte",
+              "table": "opportunites",
+              "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+                "cle": "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528",
+                "type_action": "reponse_prospect",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-a00000000008",
+                "canal": "email",
+                "brouillon": {
+                  "objet": "Exemple. Votre demande",
+                  "texte": "Exemple. Bonjour, merci pour votre message. Merci pour la photo, nous l’étudions. Bien à vous."
+                }
+              }
+            },
+            {
+              "effet": "inserer_journal",
+              "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+              "lignes": 2,
+              "cles": [
+                "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+                "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1"
+              ]
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+              "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+              "evenement": "tri",
+              "agent": "presti-dep-accueil",
+              "objet_ref": "00000000-0000-4000-8000-a00000000001",
+              "decision": "[simulation] aurait été fait : classe peut_attendre",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+              "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1",
+              "evenement": "decision",
+              "agent": "presti-dep-accueil",
+              "objet_ref": "00000000-0000-4000-8000-a00000000001",
+              "decision": "[simulation] aurait été fait : carte (offre)",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ]
+    },
+    "sorties": {
+      "Regrouper par conversation": [
+        [
+          [
+            {
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "config": {
+                "simulation": true,
+                "offre": "studio",
+                "mode_reponse": "assistee",
+                "capacites": [
+                  "canaux.email",
+                  "relances",
+                  "factures.relances",
+                  "assistant"
+                ],
+                "pilote": {
+                  "drapeau": true,
+                  "actif": false,
+                  "types": {}
+                },
+                "parties_depuis_24h": 0,
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "mots_escalade_artisan": [
+                  "Exemple. mot sensible"
+                ],
+                "fournisseurs": [],
+                "horaires": {
+                  "jours_permis": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "heures_permises": {
+                    "debut": "00:00",
+                    "fin": "23:59"
+                  }
+                },
+                "plafond_jour": 20,
+                "qualification": {
+                  "grille": [
+                    {
+                      "critere": "urgence=urgent",
+                      "poids": 40
+                    },
+                    {
+                      "critere": "canal=email",
+                      "poids": 15
+                    }
+                  ],
+                  "seuils": {
+                    "haute": 60,
+                    "normale": 30
+                  },
+                  "delais_cibles_min": {
+                    "haute": 15,
+                    "normale": 60,
+                    "a_revoir": 240
+                  }
+                },
+                "marque_artisan": "Exemple. Plomberie Arnal-Démo",
+                "empreintes_connues": [],
+                "cles_existantes": []
+              },
+              "conversation_cle": "c:marie.exemple@exemple.invalid",
+              "canal_origine": "gmail",
+              "canaux": [
+                "gmail"
+              ],
+              "evenement_ids": [
+                "ev-0001"
+              ],
+              "id_boite": "gm-001",
+              "fil_externe": "th-001",
+              "photo_url": "",
+              "demande": {
+                "id": "00000000-0000-4000-8000-a00000000001",
+                "canal": "email",
+                "recu_le": "2026-11-06T10:15:00.000+01:00",
+                "message": "Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne. Mon numéro : 0600000000.",
+                "champs": {
+                  "canal": "formulaire",
+                  "type_chantier": "Salle de bain",
+                  "delai_souhaite": "dans 3 mois"
+                },
+                "empreinte_contact": "ac5f807a71f6fae9fa01ecded21a084f6c147e029d098b9da6052b57d0bddcc3",
+                "client_existant": false,
+                "honeypot": false,
+                "photo": null,
+                "proposition": null,
+                "destinataire": {
+                  "opposition": false,
+                  "consentement_sms": null
+                }
+              },
+              "message_masque": "Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne. Mon numéro : [numéro]"
+            },
+            {
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "config": {
+                "simulation": true,
+                "offre": "studio",
+                "mode_reponse": "assistee",
+                "capacites": [
+                  "canaux.email",
+                  "relances",
+                  "factures.relances",
+                  "assistant"
+                ],
+                "pilote": {
+                  "drapeau": true,
+                  "actif": false,
+                  "types": {}
+                },
+                "parties_depuis_24h": 0,
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "mots_escalade_artisan": [
+                  "Exemple. mot sensible"
+                ],
+                "fournisseurs": [],
+                "horaires": {
+                  "jours_permis": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "heures_permises": {
+                    "debut": "00:00",
+                    "fin": "23:59"
+                  }
+                },
+                "plafond_jour": 20,
+                "qualification": {
+                  "grille": [
+                    {
+                      "critere": "urgence=urgent",
+                      "poids": 40
+                    },
+                    {
+                      "critere": "canal=email",
+                      "poids": 15
+                    }
+                  ],
+                  "seuils": {
+                    "haute": 60,
+                    "normale": 30
+                  },
+                  "delais_cibles_min": {
+                    "haute": 15,
+                    "normale": 60,
+                    "a_revoir": 240
+                  }
+                },
+                "marque_artisan": "Exemple. Plomberie Arnal-Démo",
+                "empreintes_connues": [],
+                "cles_existantes": []
+              },
+              "conversation_cle": "tel:+33600000008",
+              "canal_origine": "whatsapp",
+              "canaux": [
+                "whatsapp"
+              ],
+              "evenement_ids": [
+                "ev-0002"
+              ],
+              "id_boite": "",
+              "fil_externe": "",
+              "photo_url": "https://exemple.invalid/photo-0008.jpg",
+              "demande": {
+                "id": "00000000-0000-4000-8000-a00000000008",
+                "canal": "page_p",
+                "recu_le": "2026-11-06T11:05:00.000+01:00",
+                "message": "Exemple. Le WC fuit un peu au pied, voici une photo.",
+                "champs": {
+                  "canal": "whatsapp",
+                  "type_chantier": "WC"
+                },
+                "empreinte_contact": "1a45e10c58f8bc4a8440a6f8ad88f7ada1d8fcf9a175a72ab4f9979addd66f30",
+                "client_existant": false,
+                "honeypot": false,
+                "photo": {
+                  "ref": "photo-0008.jpg",
+                  "type_mime": "image/jpeg"
+                },
+                "proposition": null,
+                "destinataire": {
+                  "opposition": false,
+                  "consentement_sms": null
+                }
+              },
+              "message_masque": "Exemple. Le WC fuit un peu au pied, voici une photo."
+            }
+          ]
+        ]
+      ],
+      "Réponse enregistrée (simulation)": [
+        [
+          [
+            {
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "config": {
+                "simulation": true,
+                "offre": "studio",
+                "mode_reponse": "assistee",
+                "capacites": [
+                  "canaux.email",
+                  "relances",
+                  "factures.relances",
+                  "assistant"
+                ],
+                "pilote": {
+                  "drapeau": true,
+                  "actif": false,
+                  "types": {}
+                },
+                "parties_depuis_24h": 0,
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "mots_escalade_artisan": [
+                  "Exemple. mot sensible"
+                ],
+                "fournisseurs": [],
+                "horaires": {
+                  "jours_permis": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "heures_permises": {
+                    "debut": "00:00",
+                    "fin": "23:59"
+                  }
+                },
+                "plafond_jour": 20,
+                "qualification": {
+                  "grille": [
+                    {
+                      "critere": "urgence=urgent",
+                      "poids": 40
+                    },
+                    {
+                      "critere": "canal=email",
+                      "poids": 15
+                    }
+                  ],
+                  "seuils": {
+                    "haute": 60,
+                    "normale": 30
+                  },
+                  "delais_cibles_min": {
+                    "haute": 15,
+                    "normale": 60,
+                    "a_revoir": 240
+                  }
+                },
+                "marque_artisan": "Exemple. Plomberie Arnal-Démo",
+                "empreintes_connues": [],
+                "cles_existantes": []
+              },
+              "conversation_cle": "c:marie.exemple@exemple.invalid",
+              "canal_origine": "gmail",
+              "canaux": [
+                "gmail"
+              ],
+              "evenement_ids": [
+                "ev-0001"
+              ],
+              "id_boite": "gm-001",
+              "fil_externe": "th-001",
+              "photo_url": "",
+              "demande": {
+                "id": "00000000-0000-4000-8000-a00000000001",
+                "canal": "email",
+                "recu_le": "2026-11-06T10:15:00.000+01:00",
+                "message": "Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne. Mon numéro : 0600000000.",
+                "champs": {
+                  "canal": "formulaire",
+                  "type_chantier": "Salle de bain",
+                  "delai_souhaite": "dans 3 mois"
+                },
+                "empreinte_contact": "ac5f807a71f6fae9fa01ecded21a084f6c147e029d098b9da6052b57d0bddcc3",
+                "client_existant": false,
+                "honeypot": false,
+                "photo": null,
+                "proposition": null,
+                "destinataire": {
+                  "opposition": false,
+                  "consentement_sms": null
+                }
+              },
+              "message_masque": "Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne. Mon numéro : [numéro]",
+              "proposition_modele": {
+                "canal": "email",
+                "objet": "Exemple. Votre demande",
+                "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous.",
+                "outil": "valider_reponse_proposee"
+              },
+              "enregistrement": {
+                "source": "enregistrement",
+                "date": "2026-11-03",
+                "modele": "claude-haiku-5-5"
+              }
+            },
+            {
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "config": {
+                "simulation": true,
+                "offre": "studio",
+                "mode_reponse": "assistee",
+                "capacites": [
+                  "canaux.email",
+                  "relances",
+                  "factures.relances",
+                  "assistant"
+                ],
+                "pilote": {
+                  "drapeau": true,
+                  "actif": false,
+                  "types": {}
+                },
+                "parties_depuis_24h": 0,
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "mots_escalade_artisan": [
+                  "Exemple. mot sensible"
+                ],
+                "fournisseurs": [],
+                "horaires": {
+                  "jours_permis": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "heures_permises": {
+                    "debut": "00:00",
+                    "fin": "23:59"
+                  }
+                },
+                "plafond_jour": 20,
+                "qualification": {
+                  "grille": [
+                    {
+                      "critere": "urgence=urgent",
+                      "poids": 40
+                    },
+                    {
+                      "critere": "canal=email",
+                      "poids": 15
+                    }
+                  ],
+                  "seuils": {
+                    "haute": 60,
+                    "normale": 30
+                  },
+                  "delais_cibles_min": {
+                    "haute": 15,
+                    "normale": 60,
+                    "a_revoir": 240
+                  }
+                },
+                "marque_artisan": "Exemple. Plomberie Arnal-Démo",
+                "empreintes_connues": [],
+                "cles_existantes": []
+              },
+              "conversation_cle": "tel:+33600000008",
+              "canal_origine": "whatsapp",
+              "canaux": [
+                "whatsapp"
+              ],
+              "evenement_ids": [
+                "ev-0002"
+              ],
+              "id_boite": "",
+              "fil_externe": "",
+              "photo_url": "https://exemple.invalid/photo-0008.jpg",
+              "demande": {
+                "id": "00000000-0000-4000-8000-a00000000008",
+                "canal": "page_p",
+                "recu_le": "2026-11-06T11:05:00.000+01:00",
+                "message": "Exemple. Le WC fuit un peu au pied, voici une photo.",
+                "champs": {
+                  "canal": "whatsapp",
+                  "type_chantier": "WC"
+                },
+                "empreinte_contact": "1a45e10c58f8bc4a8440a6f8ad88f7ada1d8fcf9a175a72ab4f9979addd66f30",
+                "client_existant": false,
+                "honeypot": false,
+                "photo": {
+                  "ref": "photo-0008.jpg",
+                  "type_mime": "image/jpeg"
+                },
+                "proposition": null,
+                "destinataire": {
+                  "opposition": false,
+                  "consentement_sms": null
+                }
+              },
+              "message_masque": "Exemple. Le WC fuit un peu au pied, voici une photo.",
+              "proposition_modele": {
+                "canal": "email",
+                "objet": "Exemple. Votre demande",
+                "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous.",
+                "outil": "valider_reponse_proposee"
+              },
+              "enregistrement": {
+                "source": "enregistrement",
+                "date": "2026-11-03",
+                "modele": "claude-haiku-5-5"
+              }
+            }
+          ]
+        ]
+      ],
+      "Aiguiller les effets": [
+        [
+          [
+            {
+              "voie": "carte",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+                "cle": "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+                "type_action": "reponse_prospect",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-a00000000001",
+                "canal": "email",
+                "brouillon": {
+                  "objet": "Exemple. Votre demande",
+                  "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous."
+                }
+              }
+            },
+            {
+              "voie": "brouillon",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "canal_origine": "gmail",
+              "conversation_cle": "c:marie.exemple@exemple.invalid",
+              "fil_externe": "th-001",
+              "id_boite": "gm-001",
+              "objet": "Exemple. Votre demande",
+              "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous.",
+              "marque_artisan": "Exemple. Plomberie Arnal-Démo"
+            },
+            {
+              "voie": "carte",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+                "cle": "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528",
+                "type_action": "reponse_prospect",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-a00000000008",
+                "canal": "email",
+                "brouillon": {
+                  "objet": "Exemple. Votre demande",
+                  "texte": "Exemple. Bonjour, merci pour votre message. Merci pour la photo, nous l’étudions. Bien à vous."
+                }
+              }
+            },
+            {
+              "voie": "journal",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "lignes": [
+                {
+                  "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+                  "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+                  "evenement": "tri",
+                  "agent": "presti-dep-accueil",
+                  "objet_ref": "00000000-0000-4000-8000-a00000000001",
+                  "decision": "[simulation] aurait été fait : classe peut_attendre",
+                  "modele": null,
+                  "jetons_entree": null,
+                  "jetons_sortie": null,
+                  "cout_eur": null,
+                  "source_tarif": null,
+                  "simulation": true
+                },
+                {
+                  "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+                  "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1",
+                  "evenement": "decision",
+                  "agent": "presti-dep-accueil",
+                  "objet_ref": "00000000-0000-4000-8000-a00000000001",
+                  "decision": "[simulation] aurait été fait : carte (offre)",
+                  "modele": null,
+                  "jetons_entree": null,
+                  "jetons_sortie": null,
+                  "cout_eur": null,
+                  "source_tarif": null,
+                  "simulation": true
+                }
+              ]
+            }
+          ]
+        ]
+      ],
+      "Effets prévus": [
+        [
+          [
+            {
+              "simulation": true,
+              "effets_prevus": [
+                {
+                  "effet": "ecrire_carte",
+                  "cle": "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391"
+                },
+                {
+                  "effet": "brouillon_gmail",
+                  "conversation_cle": "c:marie.exemple@exemple.invalid"
+                },
+                {
+                  "effet": "ecrire_carte",
+                  "cle": "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528"
+                },
+                {
+                  "effet": "inserer_journal",
+                  "lignes": 2
+                }
+              ],
+              "effets_faits": []
+            }
+          ]
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-envoi",
+    "execution": 624,
+    "titre": "gabarit-artisan-accueil-envoi, SIGNATURE avec le type activé : 5 réponses dues — Gmail, WhatsApp et SMTP prévues à l'envoi ; Outlook avec opposition = repasse en carte ; Telegram vieille de 5 minutes = attend les 10 minutes ; rien n'est parti",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Cadence : envois dus du pilote",
+      "Lire les réglages",
+      "Lire les envois dus"
+    ],
+    "entrees_epinglees": {
+      "Cadence : envois dus du pilote": [
+        {
+          "timestamp": "2026-11-03T14:15:00.000+01:00"
+        }
+      ],
+      "Lire les réglages": [
+        {
+          "simulation": true,
+          "offre": "signature",
+          "mode_reponse": "auto",
+          "capacites": [
+            "canaux.email",
+            "relances",
+            "assistant",
+            "plateforme.ia.auto",
+            "relances.auto",
+            "crm",
+            "assistant.pilote"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true
+            }
+          },
+          "parties_depuis_24h": 0,
+          "plafond_jour": 20,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "marque_artisan": "Exemple. Menuiserie Berthier-Démo",
+          "maintenant": "2026-11-03T14:15:00.000+01:00"
+        }
+      ],
+      "Lire les envois dus": [
+        {
+          "id": "a1",
+          "type": "reponse_prospect",
+          "cle": "h:decision:a1",
+          "statut": "a_partir",
+          "canal_origine": "gmail",
+          "id_boite": "gm-001",
+          "fil_externe": "th-001",
+          "objet": "Exemple. Votre demande",
+          "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.",
+          "prete_le": "2026-11-03T14:00:00.000+01:00",
+          "opposition": false,
+          "adresse_artisan": "artisan@exemple.invalid",
+          "adresse_client": "marie@exemple.invalid",
+          "numero_client": "",
+          "identifiant_canal_client": "",
+          "identifiant_compte_graph": "",
+          "identifiant_numero_whatsapp": ""
+        },
+        {
+          "id": "a2",
+          "type": "reponse_prospect",
+          "cle": "h:decision:a2",
+          "statut": "a_partir",
+          "canal_origine": "whatsapp",
+          "id_boite": "",
+          "fil_externe": "",
+          "objet": "",
+          "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous. Bien à vous.",
+          "prete_le": "2026-11-03T13:50:00.000+01:00",
+          "opposition": false,
+          "adresse_artisan": "",
+          "adresse_client": "",
+          "numero_client": "+33600000002",
+          "identifiant_canal_client": "",
+          "identifiant_compte_graph": "",
+          "identifiant_numero_whatsapp": "100000000002"
+        },
+        {
+          "id": "a3",
+          "type": "reponse_prospect",
+          "cle": "h:decision:a3",
+          "statut": "a_partir",
+          "canal_origine": "outlook",
+          "id_boite": "ou-003",
+          "fil_externe": "",
+          "objet": "Exemple. Votre demande",
+          "texte": "Exemple. Bonjour, merci pour votre message. Bien à vous.",
+          "prete_le": "2026-11-03T13:50:00.000+01:00",
+          "opposition": true,
+          "adresse_artisan": "artisan@exemple.invalid",
+          "adresse_client": "paul@exemple.invalid",
+          "numero_client": "",
+          "identifiant_canal_client": "",
+          "identifiant_compte_graph": "",
+          "identifiant_numero_whatsapp": ""
+        },
+        {
+          "id": "a4",
+          "type": "reponse_prospect",
+          "cle": "h:decision:a4",
+          "statut": "a_partir",
+          "canal_origine": "telegram",
+          "id_boite": "",
+          "fil_externe": "",
+          "objet": "",
+          "texte": "Exemple. Bonjour, merci pour votre message. Bien à vous.",
+          "prete_le": "2026-11-03T14:10:00.000+01:00",
+          "opposition": false,
+          "adresse_artisan": "",
+          "adresse_client": "",
+          "numero_client": "",
+          "identifiant_canal_client": "900000004",
+          "identifiant_compte_graph": "",
+          "identifiant_numero_whatsapp": ""
+        },
+        {
+          "id": "a5",
+          "type": "reponse_prospect",
+          "cle": "h:decision:a5",
+          "statut": "a_partir",
+          "canal_origine": "imap",
+          "id_boite": "im-005",
+          "fil_externe": "",
+          "objet": "Exemple. Votre demande",
+          "texte": "Exemple. Bonjour, merci pour votre message. Bien à vous.",
+          "prete_le": "2026-11-03T13:40:00.000+01:00",
+          "opposition": false,
+          "adresse_artisan": "artisan@exemple.invalid",
+          "adresse_client": "lea@exemple.invalid",
+          "numero_client": "",
+          "identifiant_canal_client": "",
+          "identifiant_compte_graph": "",
+          "identifiant_numero_whatsapp": ""
+        }
+      ]
+    },
+    "sorties": {
+      "Contrôle avant envoi": [
+        [
+          [
+            {
+              "id": "a1",
+              "type": "reponse_prospect",
+              "cle": "h:decision:a1",
+              "statut": "a_partir",
+              "canal_origine": "gmail",
+              "id_boite": "gm-001",
+              "fil_externe": "th-001",
+              "objet": "Exemple. Votre demande",
+              "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.",
+              "prete_le": "2026-11-03T14:00:00.000+01:00",
+              "opposition": false,
+              "adresse_artisan": "artisan@exemple.invalid",
+              "adresse_client": "marie@exemple.invalid",
+              "numero_client": "",
+              "identifiant_canal_client": "",
+              "identifiant_compte_graph": "",
+              "identifiant_numero_whatsapp": "",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "decision": "envoyer",
+              "motif": null,
+              "marque_artisan": "Exemple. Menuiserie Berthier-Démo"
+            },
+            {
+              "id": "a2",
+              "type": "reponse_prospect",
+              "cle": "h:decision:a2",
+              "statut": "a_partir",
+              "canal_origine": "whatsapp",
+              "id_boite": "",
+              "fil_externe": "",
+              "objet": "",
+              "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous. Bien à vous.",
+              "prete_le": "2026-11-03T13:50:00.000+01:00",
+              "opposition": false,
+              "adresse_artisan": "",
+              "adresse_client": "",
+              "numero_client": "+33600000002",
+              "identifiant_canal_client": "",
+              "identifiant_compte_graph": "",
+              "identifiant_numero_whatsapp": "100000000002",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "decision": "envoyer",
+              "motif": null,
+              "marque_artisan": "Exemple. Menuiserie Berthier-Démo"
+            },
+            {
+              "id": "a3",
+              "type": "reponse_prospect",
+              "cle": "h:decision:a3",
+              "statut": "a_partir",
+              "canal_origine": "outlook",
+              "id_boite": "ou-003",
+              "fil_externe": "",
+              "objet": "Exemple. Votre demande",
+              "texte": "Exemple. Bonjour, merci pour votre message. Bien à vous.",
+              "prete_le": "2026-11-03T13:50:00.000+01:00",
+              "opposition": true,
+              "adresse_artisan": "artisan@exemple.invalid",
+              "adresse_client": "paul@exemple.invalid",
+              "numero_client": "",
+              "identifiant_canal_client": "",
+              "identifiant_compte_graph": "",
+              "identifiant_numero_whatsapp": "",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "decision": "repli",
+              "motif": "opposition",
+              "marque_artisan": "Exemple. Menuiserie Berthier-Démo"
+            },
+            {
+              "id": "a4",
+              "type": "reponse_prospect",
+              "cle": "h:decision:a4",
+              "statut": "a_partir",
+              "canal_origine": "telegram",
+              "id_boite": "",
+              "fil_externe": "",
+              "objet": "",
+              "texte": "Exemple. Bonjour, merci pour votre message. Bien à vous.",
+              "prete_le": "2026-11-03T14:10:00.000+01:00",
+              "opposition": false,
+              "adresse_artisan": "",
+              "adresse_client": "",
+              "numero_client": "",
+              "identifiant_canal_client": "900000004",
+              "identifiant_compte_graph": "",
+              "identifiant_numero_whatsapp": "",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "decision": "attendre",
+              "motif": "delai_10_minutes",
+              "marque_artisan": "Exemple. Menuiserie Berthier-Démo"
+            },
+            {
+              "id": "a5",
+              "type": "reponse_prospect",
+              "cle": "h:decision:a5",
+              "statut": "a_partir",
+              "canal_origine": "imap",
+              "id_boite": "im-005",
+              "fil_externe": "",
+              "objet": "Exemple. Votre demande",
+              "texte": "Exemple. Bonjour, merci pour votre message. Bien à vous.",
+              "prete_le": "2026-11-03T13:40:00.000+01:00",
+              "opposition": false,
+              "adresse_artisan": "artisan@exemple.invalid",
+              "adresse_client": "lea@exemple.invalid",
+              "numero_client": "",
+              "identifiant_canal_client": "",
+              "identifiant_compte_graph": "",
+              "identifiant_numero_whatsapp": "",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "decision": "envoyer",
+              "motif": null,
+              "marque_artisan": "Exemple. Menuiserie Berthier-Démo"
+            }
+          ]
+        ]
+      ],
+      "Envois prévus": [
+        [
+          [
+            {
+              "simulation": true,
+              "effets_prevus": [
+                {
+                  "effet": "envoyer_gmail",
+                  "action": "a1"
+                },
+                {
+                  "effet": "envoyer_whatsapp",
+                  "action": "a2"
+                },
+                {
+                  "effet": "repasser_en_carte",
+                  "action": "a3",
+                  "motif": "opposition"
+                },
+                {
+                  "effet": "attendre",
+                  "action": "a4",
+                  "motif": "delai_10_minutes"
+                },
+                {
+                  "effet": "envoyer_imap",
+                  "action": "a5"
+                }
+              ],
+              "effets_faits": []
+            }
+          ]
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-envoi",
+    "execution": 625,
+    "titre": "gabarit-artisan-accueil-envoi, SIGNATURE SANS le type activé : la réponse due repasse en carte (motif « type »), aucun envoi",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Cadence : envois dus du pilote",
+      "Lire les réglages",
+      "Lire les envois dus"
+    ],
+    "entrees_epinglees": {
+      "Cadence : envois dus du pilote": [
+        {
+          "timestamp": "2026-11-03T14:15:00.000+01:00"
+        }
+      ],
+      "Lire les réglages": [
+        {
+          "simulation": true,
+          "offre": "signature",
+          "mode_reponse": "auto",
+          "capacites": [
+            "canaux.email",
+            "relances",
+            "assistant",
+            "plateforme.ia.auto",
+            "relances.auto",
+            "crm",
+            "assistant.pilote"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {}
+          },
+          "parties_depuis_24h": 0,
+          "plafond_jour": 20,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "marque_artisan": "Exemple. Menuiserie Berthier-Démo",
+          "maintenant": "2026-11-03T14:15:00.000+01:00"
+        }
+      ],
+      "Lire les envois dus": [
+        {
+          "id": "b1",
+          "type": "reponse_prospect",
+          "cle": "h:decision:b1",
+          "statut": "a_partir",
+          "canal_origine": "gmail",
+          "id_boite": "gm-101",
+          "fil_externe": "th-101",
+          "objet": "Exemple. Votre demande",
+          "texte": "Exemple. Bonjour, merci pour votre message. Bien à vous.",
+          "prete_le": "2026-11-03T14:00:00.000+01:00",
+          "opposition": false,
+          "adresse_artisan": "artisan@exemple.invalid",
+          "adresse_client": "marie@exemple.invalid",
+          "numero_client": "",
+          "identifiant_canal_client": "",
+          "identifiant_compte_graph": "",
+          "identifiant_numero_whatsapp": ""
+        }
+      ]
+    },
+    "sorties": {
+      "Contrôle avant envoi": [
+        [
+          [
+            {
+              "id": "b1",
+              "type": "reponse_prospect",
+              "cle": "h:decision:b1",
+              "statut": "a_partir",
+              "canal_origine": "gmail",
+              "id_boite": "gm-101",
+              "fil_externe": "th-101",
+              "objet": "Exemple. Votre demande",
+              "texte": "Exemple. Bonjour, merci pour votre message. Bien à vous.",
+              "prete_le": "2026-11-03T14:00:00.000+01:00",
+              "opposition": false,
+              "adresse_artisan": "artisan@exemple.invalid",
+              "adresse_client": "marie@exemple.invalid",
+              "numero_client": "",
+              "identifiant_canal_client": "",
+              "identifiant_compte_graph": "",
+              "identifiant_numero_whatsapp": "",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "decision": "repli",
+              "motif": "type",
+              "marque_artisan": "Exemple. Menuiserie Berthier-Démo"
+            }
+          ]
+        ]
+      ],
+      "Envois prévus": [
+        [
+          [
+            {
+              "simulation": true,
+              "effets_prevus": [
+                {
+                  "effet": "repasser_en_carte",
+                  "action": "b1",
+                  "motif": "type"
+                }
+              ],
+              "effets_faits": []
+            }
+          ]
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-envoi",
+    "execution": 626,
+    "titre": "gabarit-artisan-accueil-envoi, STUDIO : la réponse due repasse en carte (motif « offre »), Studio n'envoie jamais",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Cadence : envois dus du pilote",
+      "Lire les réglages",
+      "Lire les envois dus"
+    ],
+    "entrees_epinglees": {
+      "Cadence : envois dus du pilote": [
+        {
+          "timestamp": "2026-11-03T14:15:00.000+01:00"
+        }
+      ],
+      "Lire les réglages": [
+        {
+          "simulation": true,
+          "offre": "studio",
+          "mode_reponse": "assistee",
+          "capacites": [
+            "canaux.email",
+            "relances",
+            "factures.relances",
+            "assistant"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": false,
+            "types": {}
+          },
+          "parties_depuis_24h": 0,
+          "plafond_jour": 20,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "marque_artisan": "Exemple. Plomberie Arnal-Démo",
+          "maintenant": "2026-11-03T14:15:00.000+01:00"
+        }
+      ],
+      "Lire les envois dus": [
+        {
+          "id": "c1",
+          "type": "reponse_prospect",
+          "cle": "h:decision:c1",
+          "statut": "a_partir",
+          "canal_origine": "gmail",
+          "id_boite": "gm-201",
+          "fil_externe": "th-201",
+          "objet": "Exemple. Votre demande",
+          "texte": "Exemple. Bonjour, merci pour votre message. Bien à vous.",
+          "prete_le": "2026-11-03T14:00:00.000+01:00",
+          "opposition": false,
+          "adresse_artisan": "artisan@exemple.invalid",
+          "adresse_client": "marie@exemple.invalid",
+          "numero_client": "",
+          "identifiant_canal_client": "",
+          "identifiant_compte_graph": "",
+          "identifiant_numero_whatsapp": ""
+        }
+      ]
+    },
+    "sorties": {
+      "Contrôle avant envoi": [
+        [
+          [
+            {
+              "id": "c1",
+              "type": "reponse_prospect",
+              "cle": "h:decision:c1",
+              "statut": "a_partir",
+              "canal_origine": "gmail",
+              "id_boite": "gm-201",
+              "fil_externe": "th-201",
+              "objet": "Exemple. Votre demande",
+              "texte": "Exemple. Bonjour, merci pour votre message. Bien à vous.",
+              "prete_le": "2026-11-03T14:00:00.000+01:00",
+              "opposition": false,
+              "adresse_artisan": "artisan@exemple.invalid",
+              "adresse_client": "marie@exemple.invalid",
+              "numero_client": "",
+              "identifiant_canal_client": "",
+              "identifiant_compte_graph": "",
+              "identifiant_numero_whatsapp": "",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "decision": "repli",
+              "motif": "offre",
+              "marque_artisan": "Exemple. Plomberie Arnal-Démo"
+            }
+          ]
+        ]
+      ],
+      "Envois prévus": [
+        [
+          [
+            {
+              "simulation": true,
+              "effets_prevus": [
+                {
+                  "effet": "repasser_en_carte",
+                  "action": "c1",
+                  "motif": "offre"
+                }
+              ],
+              "effets_faits": []
+            }
+          ]
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-reponse",
+    "execution": 627,
+    "titre": "gabarit-artisan-accueil-reponse, SIGNATURE avec le type reponse_prospect activé : un client écrit par Outlook puis par WhatsApp (même conversation) = UNE demande, canaux outlook+whatsapp ; sortie du chef épinglée = celle de 036-001 (essai 470, compte Signature, journal tronqué) ; 1 ligne du pilote (envoi par WhatsApp, fait plus tard par le gabarit envoi), 1 carte d'escalade (dégât des eaux), 0 brouillon, 0 envoi",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Cadence : événements de la plateforme",
+      "Lire les réglages",
+      "Lire les événements non traités",
+      "Appeler presti-dep-accueil"
+    ],
+    "entrees_epinglees": {
+      "Cadence : événements de la plateforme": [
+        {
+          "timestamp": "2026-11-06T21:42:00.000+01:00"
+        }
+      ],
+      "Lire les réglages": [
+        {
+          "simulation": true,
+          "offre": "signature",
+          "mode_reponse": "auto",
+          "capacites": [
+            "canaux.email",
+            "relances",
+            "factures.relances",
+            "assistant",
+            "plateforme.ia.auto",
+            "relances.auto",
+            "factures.relances.auto",
+            "crm",
+            "assistant.pilote"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true
+            }
+          },
+          "parties_depuis_24h": 3,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "mots_escalade_artisan": [
+            "Exemple. mot sensible"
+          ],
+          "fournisseurs": [],
+          "horaires": {
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "heures_permises": {
+              "debut": "00:00",
+              "fin": "23:59"
+            }
+          },
+          "plafond_jour": 20,
+          "qualification": {
+            "grille": [
+              {
+                "critere": "urgence=urgent",
+                "poids": 40
+              },
+              {
+                "critere": "canal=email",
+                "poids": 15
+              }
+            ],
+            "seuils": {
+              "haute": 60,
+              "normale": 30
+            },
+            "delais_cibles_min": {
+              "haute": 15,
+              "normale": 60,
+              "a_revoir": 240
+            }
+          },
+          "marque_artisan": "Exemple. Menuiserie Berthier-Démo",
+          "empreintes_connues": [],
+          "cles_existantes": []
+        }
+      ],
+      "Lire les événements non traités": [
+        {
+          "id": "ev-b000",
+          "type": "demande_recue",
+          "cle": "dm:b000",
+          "canal_origine": "outlook",
+          "conversation_cle": "c:lea.exemple@exemple.invalid",
+          "id_boite": "ou-000",
+          "fil_externe": "cv-000",
+          "demande": {
+            "id": "00000000-0000-4000-8000-b00000000000",
+            "canal": "email",
+            "recu_le": "2026-11-06T21:05:00.000+01:00",
+            "message": "Exemple. Bonjour, je souhaite un dressing sur mesure.",
+            "champs": {
+              "canal": "outlook"
+            },
+            "empreinte_contact": "ce657021e44a15de0f7f4ea33fbf2f851de8cfb2823b917a7001b45e5e78b8cb",
+            "client_existant": false,
+            "honeypot": false,
+            "photo": null,
+            "proposition": null,
+            "destinataire": {
+              "opposition": false,
+              "consentement_sms": null
+            }
+          },
+          "donnees": {}
+        },
+        {
+          "id": "ev-b001",
+          "type": "demande_recue",
+          "cle": "dm:b001",
+          "canal_origine": "whatsapp",
+          "conversation_cle": "c:lea.exemple@exemple.invalid",
+          "id_boite": "",
+          "fil_externe": "",
+          "demande": {
+            "id": "00000000-0000-4000-8000-b00000000001",
+            "canal": "page_p",
+            "recu_le": "2026-11-06T21:10:00.000+01:00",
+            "message": "Exemple. Bonjour, je souhaite un dressing sur mesure dans la chambre.",
+            "champs": {
+              "canal": "whatsapp",
+              "type_chantier": "Dressing",
+              "delai_souhaite": "dans 2 mois",
+              "recu_hors_horaires": true
+            },
+            "empreinte_contact": "ce657021e44a15de0f7f4ea33fbf2f851de8cfb2823b917a7001b45e5e78b8cb",
+            "client_existant": false,
+            "honeypot": false,
+            "photo": null,
+            "proposition": null,
+            "destinataire": {
+              "opposition": false,
+              "consentement_sms": null
+            }
+          },
+          "donnees": {}
+        },
+        {
+          "id": "ev-b003",
+          "type": "demande_recue",
+          "cle": "dm:b003",
+          "canal_origine": "telegram",
+          "conversation_cle": "tg:900000003",
+          "id_boite": "",
+          "fil_externe": "",
+          "demande": {
+            "id": "00000000-0000-4000-8000-b00000000003",
+            "canal": "telegram",
+            "recu_le": "2026-11-06T10:15:00.000+01:00",
+            "message": "Exemple. Mon parquet est gondolé après un dégât des eaux, l’assurance demande un devis.",
+            "champs": {
+              "canal": "telegram",
+              "type_chantier": "Parquet"
+            },
+            "empreinte_contact": "1a45e10c58f8bc4a8440a6f8ad88f7ada1d8fcf9a175a72ab4f9979addd66f30",
+            "client_existant": false,
+            "honeypot": false,
+            "photo": null,
+            "proposition": null,
+            "destinataire": {
+              "opposition": false,
+              "consentement_sms": null
+            }
+          },
+          "donnees": {}
+        }
+      ],
+      "Appeler presti-dep-accueil": [
+        {
+          "contrat": "presti-dep-accueil@1",
+          "statut": "ok",
+          "cle_idempotence": "dep:accueil:0000000000b2:2026-11-07T2142",
+          "simulation": true,
+          "resultat": {
+            "demandes_recues": 2,
+            "classes": {
+              "peut_attendre": 1,
+              "urgence": 1
+            },
+            "spam": [],
+            "escalades": [
+              {
+                "demande_id": "00000000-0000-4000-8000-b00000000003",
+                "mot": "dégât des eaux"
+              }
+            ],
+            "questions": [],
+            "decisions": [
+              {
+                "demande_id": "00000000-0000-4000-8000-b00000000001",
+                "action": "pilote",
+                "motif": "pilote"
+              },
+              {
+                "demande_id": "00000000-0000-4000-8000-b00000000003",
+                "action": "carte",
+                "motif": "escalade"
+              }
+            ],
+            "cartes": [
+              "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8"
+            ],
+            "pilote": [
+              "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c"
+            ],
+            "brouillons_demandes": [],
+            "refus_porte": [],
+            "deja_faits": [],
+            "photos": []
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_note",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "lead_id": "00000000-0000-4000-8000-b00000000001",
+              "cle": "h:qualification:4aebaaa97ea059e90006daa0f20d10e05ba945439efe1cb7",
+              "note": 21,
+              "priorite": "a_revoir",
+              "categorie": "Dressing",
+              "doublon": false
+            },
+            {
+              "effet": "mettre_en_file_pilote",
+              "table": "pilote_file",
+              "requete": "POST /rest/v1/pilote_file?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c",
+                "type_action": "reponse_prospect",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-b00000000001",
+                "canal": "email",
+                "brouillon": {
+                  "objet": "Exemple. Votre demande",
+                  "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Menuiserie Berthier-Démo."
+                }
+              }
+            },
+            {
+              "effet": "ecrire_note",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "lead_id": "00000000-0000-4000-8000-b00000000003",
+              "cle": "h:qualification:e4a4253adcf47ce1ee1b0b1a6d95610396cfd93e07205449",
+              "note": 21,
+              "priorite": "a_revoir",
+              "categorie": "Parquet",
+              "doublon": false
+            },
+            {
+              "effet": "ecrire_carte",
+              "table": "opportunites",
+              "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8",
+                "type_action": "demande_a_traiter",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-b00000000003"
+              }
+            },
+            {
+              "effet": "inserer_journal",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "lignes": 2,
+              "cles": [
+                "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:0",
+                "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:1"
+              ]
+            }
+          ],
+          "effets_faits": [],
+          "erreurs": [],
+          "journal": [
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:0",
+              "evenement": "tri",
+              "agent": "presti-dep-accueil",
+              "objet_ref": "00000000-0000-4000-8000-b00000000001",
+              "decision": "[simulation] aurait été fait : classe peut_attendre",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:1",
+              "evenement": "qualification",
+              "agent": "presti-dep-accueil",
+              "objet_ref": "00000000-0000-4000-8000-b00000000001",
+              "decision": "[simulation] aurait été fait : priorité a_revoir",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          ]
+        }
+      ]
+    },
+    "sorties": {
+      "Regrouper par conversation": [
+        [
+          [
+            {
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "config": {
+                "simulation": true,
+                "offre": "signature",
+                "mode_reponse": "auto",
+                "capacites": [
+                  "canaux.email",
+                  "relances",
+                  "factures.relances",
+                  "assistant",
+                  "plateforme.ia.auto",
+                  "relances.auto",
+                  "factures.relances.auto",
+                  "crm",
+                  "assistant.pilote"
+                ],
+                "pilote": {
+                  "drapeau": true,
+                  "actif": true,
+                  "types": {
+                    "reponse_prospect": true
+                  }
+                },
+                "parties_depuis_24h": 3,
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "mots_escalade_artisan": [
+                  "Exemple. mot sensible"
+                ],
+                "fournisseurs": [],
+                "horaires": {
+                  "jours_permis": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "heures_permises": {
+                    "debut": "00:00",
+                    "fin": "23:59"
+                  }
+                },
+                "plafond_jour": 20,
+                "qualification": {
+                  "grille": [
+                    {
+                      "critere": "urgence=urgent",
+                      "poids": 40
+                    },
+                    {
+                      "critere": "canal=email",
+                      "poids": 15
+                    }
+                  ],
+                  "seuils": {
+                    "haute": 60,
+                    "normale": 30
+                  },
+                  "delais_cibles_min": {
+                    "haute": 15,
+                    "normale": 60,
+                    "a_revoir": 240
+                  }
+                },
+                "marque_artisan": "Exemple. Menuiserie Berthier-Démo",
+                "empreintes_connues": [],
+                "cles_existantes": []
+              },
+              "conversation_cle": "c:lea.exemple@exemple.invalid",
+              "canal_origine": "whatsapp",
+              "canaux": [
+                "outlook",
+                "whatsapp"
+              ],
+              "evenement_ids": [
+                "ev-b000",
+                "ev-b001"
+              ],
+              "id_boite": "",
+              "fil_externe": "",
+              "photo_url": "",
+              "demande": {
+                "id": "00000000-0000-4000-8000-b00000000001",
+                "canal": "page_p",
+                "recu_le": "2026-11-06T21:10:00.000+01:00",
+                "message": "Exemple. Bonjour, je souhaite un dressing sur mesure dans la chambre.",
+                "champs": {
+                  "canal": "whatsapp",
+                  "type_chantier": "Dressing",
+                  "delai_souhaite": "dans 2 mois",
+                  "recu_hors_horaires": true
+                },
+                "empreinte_contact": "ce657021e44a15de0f7f4ea33fbf2f851de8cfb2823b917a7001b45e5e78b8cb",
+                "client_existant": false,
+                "honeypot": false,
+                "photo": null,
+                "proposition": null,
+                "destinataire": {
+                  "opposition": false,
+                  "consentement_sms": null
+                }
+              },
+              "message_masque": "Exemple. Bonjour, je souhaite un dressing sur mesure dans la chambre."
+            },
+            {
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "config": {
+                "simulation": true,
+                "offre": "signature",
+                "mode_reponse": "auto",
+                "capacites": [
+                  "canaux.email",
+                  "relances",
+                  "factures.relances",
+                  "assistant",
+                  "plateforme.ia.auto",
+                  "relances.auto",
+                  "factures.relances.auto",
+                  "crm",
+                  "assistant.pilote"
+                ],
+                "pilote": {
+                  "drapeau": true,
+                  "actif": true,
+                  "types": {
+                    "reponse_prospect": true
+                  }
+                },
+                "parties_depuis_24h": 3,
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "mots_escalade_artisan": [
+                  "Exemple. mot sensible"
+                ],
+                "fournisseurs": [],
+                "horaires": {
+                  "jours_permis": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "heures_permises": {
+                    "debut": "00:00",
+                    "fin": "23:59"
+                  }
+                },
+                "plafond_jour": 20,
+                "qualification": {
+                  "grille": [
+                    {
+                      "critere": "urgence=urgent",
+                      "poids": 40
+                    },
+                    {
+                      "critere": "canal=email",
+                      "poids": 15
+                    }
+                  ],
+                  "seuils": {
+                    "haute": 60,
+                    "normale": 30
+                  },
+                  "delais_cibles_min": {
+                    "haute": 15,
+                    "normale": 60,
+                    "a_revoir": 240
+                  }
+                },
+                "marque_artisan": "Exemple. Menuiserie Berthier-Démo",
+                "empreintes_connues": [],
+                "cles_existantes": []
+              },
+              "conversation_cle": "tg:900000003",
+              "canal_origine": "telegram",
+              "canaux": [
+                "telegram"
+              ],
+              "evenement_ids": [
+                "ev-b003"
+              ],
+              "id_boite": "",
+              "fil_externe": "",
+              "photo_url": "",
+              "demande": {
+                "id": "00000000-0000-4000-8000-b00000000003",
+                "canal": "telegram",
+                "recu_le": "2026-11-06T10:15:00.000+01:00",
+                "message": "Exemple. Mon parquet est gondolé après un dégât des eaux, l’assurance demande un devis.",
+                "champs": {
+                  "canal": "telegram",
+                  "type_chantier": "Parquet"
+                },
+                "empreinte_contact": "1a45e10c58f8bc4a8440a6f8ad88f7ada1d8fcf9a175a72ab4f9979addd66f30",
+                "client_existant": false,
+                "honeypot": false,
+                "photo": null,
+                "proposition": null,
+                "destinataire": {
+                  "opposition": false,
+                  "consentement_sms": null
+                }
+              },
+              "message_masque": "Exemple. Mon parquet est gondolé après un dégât des eaux, l’assurance demande un devis."
+            }
+          ]
+        ]
+      ],
+      "Aiguiller les effets": [
+        [
+          [
+            {
+              "voie": "pilote",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c",
+                "type_action": "reponse_prospect",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-b00000000001",
+                "canal": "email",
+                "brouillon": {
+                  "objet": "Exemple. Votre demande",
+                  "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Menuiserie Berthier-Démo."
+                }
+              },
+              "envoi_par": "whatsapp"
+            },
+            {
+              "voie": "carte",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8",
+                "type_action": "demande_a_traiter",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-b00000000003"
+              }
+            },
+            {
+              "voie": "journal",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "lignes": [
+                {
+                  "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                  "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:0",
+                  "evenement": "tri",
+                  "agent": "presti-dep-accueil",
+                  "objet_ref": "00000000-0000-4000-8000-b00000000001",
+                  "decision": "[simulation] aurait été fait : classe peut_attendre",
+                  "modele": null,
+                  "jetons_entree": null,
+                  "jetons_sortie": null,
+                  "cout_eur": null,
+                  "source_tarif": null,
+                  "simulation": true
+                },
+                {
+                  "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                  "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:1",
+                  "evenement": "qualification",
+                  "agent": "presti-dep-accueil",
+                  "objet_ref": "00000000-0000-4000-8000-b00000000001",
+                  "decision": "[simulation] aurait été fait : priorité a_revoir",
+                  "modele": null,
+                  "jetons_entree": null,
+                  "jetons_sortie": null,
+                  "cout_eur": null,
+                  "source_tarif": null,
+                  "simulation": true
+                }
+              ]
+            }
+          ]
+        ]
+      ],
+      "Effets prévus": [
+        [
+          [
+            {
+              "simulation": true,
+              "effets_prevus": [
+                {
+                  "effet": "mettre_en_file_pilote",
+                  "cle": "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c",
+                  "envoi_par": "whatsapp",
+                  "envoi_fait_par": "gabarit-artisan-accueil-envoi"
+                },
+                {
+                  "effet": "ecrire_carte",
+                  "cle": "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8"
+                },
+                {
+                  "effet": "inserer_journal",
+                  "lignes": 2
+                }
+              ],
+              "effets_faits": []
+            }
+          ]
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-reponse",
+    "execution": 628,
+    "titre": "gabarit-artisan-accueil-reponse, SIGNATURE SANS le type activé : un courriel Outlook ; sortie du chef épinglée DÉRIVÉE de l'essai 470 (la ligne du pilote remplacée par une carte, motif « type », comme le fait lib-decider) ; 1 carte, 0 file du pilote, 0 brouillon, 0 envoi",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Cadence : événements de la plateforme",
+      "Lire les réglages",
+      "Lire les événements non traités",
+      "Appeler presti-dep-accueil"
+    ],
+    "entrees_epinglees": {
+      "Cadence : événements de la plateforme": [
+        {
+          "timestamp": "2026-11-06T21:42:00.000+01:00"
+        }
+      ],
+      "Lire les réglages": [
+        {
+          "simulation": true,
+          "offre": "signature",
+          "mode_reponse": "auto",
+          "capacites": [
+            "canaux.email",
+            "relances",
+            "factures.relances",
+            "assistant",
+            "plateforme.ia.auto",
+            "relances.auto",
+            "factures.relances.auto",
+            "crm",
+            "assistant.pilote"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {}
+          },
+          "parties_depuis_24h": 3,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "mots_escalade_artisan": [
+            "Exemple. mot sensible"
+          ],
+          "fournisseurs": [],
+          "horaires": {
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "heures_permises": {
+              "debut": "00:00",
+              "fin": "23:59"
+            }
+          },
+          "plafond_jour": 20,
+          "qualification": {
+            "grille": [
+              {
+                "critere": "canal=email",
+                "poids": 15
+              }
+            ],
+            "seuils": {
+              "haute": 60,
+              "normale": 30
+            },
+            "delais_cibles_min": {
+              "haute": 15,
+              "normale": 60,
+              "a_revoir": 240
+            }
+          },
+          "marque_artisan": "Exemple. Menuiserie Berthier-Démo",
+          "empreintes_connues": [],
+          "cles_existantes": []
+        }
+      ],
+      "Lire les événements non traités": [
+        {
+          "id": "ev-b001",
+          "type": "demande_recue",
+          "cle": "dm:b001",
+          "canal_origine": "outlook",
+          "conversation_cle": "c:lea.exemple@exemple.invalid",
+          "id_boite": "ou-001",
+          "fil_externe": "cv-001",
+          "demande": {
+            "id": "00000000-0000-4000-8000-b00000000001",
+            "canal": "email",
+            "recu_le": "2026-11-06T21:10:00.000+01:00",
+            "message": "Exemple. Bonjour, je souhaite un dressing sur mesure dans la chambre.",
+            "champs": {
+              "canal": "outlook",
+              "type_chantier": "Dressing"
+            },
+            "empreinte_contact": "ce657021e44a15de0f7f4ea33fbf2f851de8cfb2823b917a7001b45e5e78b8cb",
+            "client_existant": false,
+            "honeypot": false,
+            "photo": null,
+            "proposition": null,
+            "destinataire": {
+              "opposition": false,
+              "consentement_sms": null
+            }
+          },
+          "donnees": {}
+        }
+      ],
+      "Appeler presti-dep-accueil": [
+        {
+          "contrat": "presti-dep-accueil@1",
+          "statut": "ok",
+          "cle_idempotence": "dep:accueil:0000000000b2:2026-11-07T2142",
+          "simulation": true,
+          "resultat": {
+            "demandes_recues": 1,
+            "classes": {
+              "peut_attendre": 1
+            },
+            "spam": [],
+            "escalades": [],
+            "questions": [],
+            "decisions": [
+              {
+                "demande_id": "00000000-0000-4000-8000-b00000000001",
+                "action": "carte",
+                "motif": "type"
+              }
+            ],
+            "cartes": [
+              "h:decision:7a0e1f2c3d4b5a69788796a5b4c3d2e1f0a9b8c7d6e5f4a3"
+            ],
+            "pilote": [],
+            "brouillons_demandes": [],
+            "refus_porte": [],
+            "deja_faits": [],
+            "photos": []
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "table": "opportunites",
+              "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:7a0e1f2c3d4b5a69788796a5b4c3d2e1f0a9b8c7d6e5f4a3",
+                "type_action": "reponse_prospect",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-b00000000001",
+                "canal": "email",
+                "brouillon": {
+                  "objet": "Exemple. Votre demande",
+                  "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous."
+                }
+              }
+            },
+            {
+              "effet": "inserer_journal",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "lignes": 1,
+              "cles": [
+                "j:derive:0"
+              ]
+            }
+          ],
+          "effets_faits": [],
+          "erreurs": [],
+          "journal": [
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:derive:0",
+              "evenement": "decision",
+              "agent": "presti-dep-accueil",
+              "objet_ref": "00000000-0000-4000-8000-b00000000001",
+              "decision": "[simulation] aurait été fait : carte (type)",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          ]
+        }
+      ]
+    },
+    "sorties": {
+      "Regrouper par conversation": [
+        [
+          [
+            {
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "config": {
+                "simulation": true,
+                "offre": "signature",
+                "mode_reponse": "auto",
+                "capacites": [
+                  "canaux.email",
+                  "relances",
+                  "factures.relances",
+                  "assistant",
+                  "plateforme.ia.auto",
+                  "relances.auto",
+                  "factures.relances.auto",
+                  "crm",
+                  "assistant.pilote"
+                ],
+                "pilote": {
+                  "drapeau": true,
+                  "actif": true,
+                  "types": {}
+                },
+                "parties_depuis_24h": 3,
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "mots_escalade_artisan": [
+                  "Exemple. mot sensible"
+                ],
+                "fournisseurs": [],
+                "horaires": {
+                  "jours_permis": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "heures_permises": {
+                    "debut": "00:00",
+                    "fin": "23:59"
+                  }
+                },
+                "plafond_jour": 20,
+                "qualification": {
+                  "grille": [
+                    {
+                      "critere": "canal=email",
+                      "poids": 15
+                    }
+                  ],
+                  "seuils": {
+                    "haute": 60,
+                    "normale": 30
+                  },
+                  "delais_cibles_min": {
+                    "haute": 15,
+                    "normale": 60,
+                    "a_revoir": 240
+                  }
+                },
+                "marque_artisan": "Exemple. Menuiserie Berthier-Démo",
+                "empreintes_connues": [],
+                "cles_existantes": []
+              },
+              "conversation_cle": "c:lea.exemple@exemple.invalid",
+              "canal_origine": "outlook",
+              "canaux": [
+                "outlook"
+              ],
+              "evenement_ids": [
+                "ev-b001"
+              ],
+              "id_boite": "ou-001",
+              "fil_externe": "cv-001",
+              "photo_url": "",
+              "demande": {
+                "id": "00000000-0000-4000-8000-b00000000001",
+                "canal": "email",
+                "recu_le": "2026-11-06T21:10:00.000+01:00",
+                "message": "Exemple. Bonjour, je souhaite un dressing sur mesure dans la chambre.",
+                "champs": {
+                  "canal": "outlook",
+                  "type_chantier": "Dressing"
+                },
+                "empreinte_contact": "ce657021e44a15de0f7f4ea33fbf2f851de8cfb2823b917a7001b45e5e78b8cb",
+                "client_existant": false,
+                "honeypot": false,
+                "photo": null,
+                "proposition": null,
+                "destinataire": {
+                  "opposition": false,
+                  "consentement_sms": null
+                }
+              },
+              "message_masque": "Exemple. Bonjour, je souhaite un dressing sur mesure dans la chambre."
+            }
+          ]
+        ]
+      ],
+      "Aiguiller les effets": [
+        [
+          [
+            {
+              "voie": "carte",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:7a0e1f2c3d4b5a69788796a5b4c3d2e1f0a9b8c7d6e5f4a3",
+                "type_action": "reponse_prospect",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-b00000000001",
+                "canal": "email",
+                "brouillon": {
+                  "objet": "Exemple. Votre demande",
+                  "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous."
+                }
+              }
+            },
+            {
+              "voie": "journal",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "lignes": [
+                {
+                  "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                  "cle": "j:derive:0",
+                  "evenement": "decision",
+                  "agent": "presti-dep-accueil",
+                  "objet_ref": "00000000-0000-4000-8000-b00000000001",
+                  "decision": "[simulation] aurait été fait : carte (type)",
+                  "modele": null,
+                  "jetons_entree": null,
+                  "jetons_sortie": null,
+                  "cout_eur": null,
+                  "source_tarif": null,
+                  "simulation": true
+                }
+              ]
+            }
+          ]
+        ]
+      ],
+      "Effets prévus": [
+        [
+          [
+            {
+              "simulation": true,
+              "effets_prevus": [
+                {
+                  "effet": "ecrire_carte",
+                  "cle": "h:decision:7a0e1f2c3d4b5a69788796a5b4c3d2e1f0a9b8c7d6e5f4a3"
+                },
+                {
+                  "effet": "inserer_journal",
+                  "lignes": 1
+                }
+              ],
+              "effets_faits": []
+            }
+          ]
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-reponse",
+    "execution": 629,
+    "titre": "gabarit-artisan-accueil-reponse, SPAM : une demande piégée de liens ; sortie du chef épinglée = celle de 036-001 (essai 487, classe spam) ; ni carte, ni brouillon, ni envoi : le journal seulement",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Cadence : événements de la plateforme",
+      "Lire les réglages",
+      "Lire les événements non traités",
+      "Appeler presti-dep-accueil"
+    ],
+    "entrees_epinglees": {
+      "Cadence : événements de la plateforme": [
+        {
+          "timestamp": "2026-11-06T21:42:00.000+01:00"
+        }
+      ],
+      "Lire les réglages": [
+        {
+          "simulation": true,
+          "offre": "studio",
+          "mode_reponse": "assistee",
+          "capacites": [
+            "canaux.email",
+            "relances",
+            "factures.relances",
+            "assistant"
+          ],
+          "pilote": {
+            "drapeau": true,
+            "actif": false,
+            "types": {}
+          },
+          "parties_depuis_24h": 0,
+          "interrupteur_general": true,
+          "interrupteur_departement": true,
+          "mots_escalade_artisan": [
+            "Exemple. mot sensible"
+          ],
+          "fournisseurs": [],
+          "horaires": {
+            "jours_permis": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "heures_permises": {
+              "debut": "00:00",
+              "fin": "23:59"
+            }
+          },
+          "plafond_jour": 20,
+          "qualification": {
+            "grille": [
+              {
+                "critere": "canal=email",
+                "poids": 15
+              }
+            ],
+            "seuils": {
+              "haute": 60,
+              "normale": 30
+            },
+            "delais_cibles_min": {
+              "haute": 15,
+              "normale": 60,
+              "a_revoir": 240
+            }
+          },
+          "marque_artisan": "Exemple. Plomberie Arnal-Démo",
+          "empreintes_connues": [],
+          "cles_existantes": []
+        }
+      ],
+      "Lire les événements non traités": [
+        {
+          "id": "ev-a004",
+          "type": "demande_recue",
+          "cle": "dm:a004",
+          "canal_origine": "gmail",
+          "conversation_cle": "c:promo.exemple@exemple.invalid",
+          "id_boite": "gm-004",
+          "fil_externe": "th-004",
+          "demande": {
+            "id": "00000000-0000-4000-8000-a00000000004",
+            "canal": "email",
+            "recu_le": "2026-11-06T10:15:00.000+01:00",
+            "message": "Exemple. Gagnez gros : http://exemple.invalid/a http://exemple.invalid/b http://exemple.invalid/c",
+            "champs": {
+              "canal": "gmail"
+            },
+            "empreinte_contact": "9b0e1f2c3d4b5a69788796a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5",
+            "client_existant": false,
+            "honeypot": false,
+            "photo": null,
+            "proposition": null,
+            "destinataire": {
+              "opposition": false,
+              "consentement_sms": null
+            }
+          },
+          "donnees": {}
+        }
+      ],
+      "Appeler presti-dep-accueil": [
+        {
+          "contrat": "presti-dep-accueil@1",
+          "statut": "ok",
+          "cle_idempotence": "dep:accueil:0000000000a1:2026-11-07T2142",
+          "simulation": true,
+          "resultat": {
+            "demandes_recues": 1,
+            "classes": {
+              "spam": 1
+            },
+            "spam": [
+              "00000000-0000-4000-8000-a00000000004"
+            ],
+            "escalades": [],
+            "questions": [],
+            "decisions": [],
+            "cartes": [],
+            "pilote": [],
+            "brouillons_demandes": [],
+            "refus_porte": [],
+            "deja_faits": [],
+            "photos": []
+          },
+          "effets_prevus": [
+            {
+              "effet": "inserer_journal",
+              "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+              "lignes": 1,
+              "cles": [
+                "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0"
+              ]
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+              "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+              "evenement": "tri",
+              "agent": "presti-dep-accueil",
+              "objet_ref": "00000000-0000-4000-8000-a00000000004",
+              "decision": "[simulation] aurait été fait : classe spam",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ]
+    },
+    "sorties": {
+      "Regrouper par conversation": [
+        [
+          [
+            {
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "config": {
+                "simulation": true,
+                "offre": "studio",
+                "mode_reponse": "assistee",
+                "capacites": [
+                  "canaux.email",
+                  "relances",
+                  "factures.relances",
+                  "assistant"
+                ],
+                "pilote": {
+                  "drapeau": true,
+                  "actif": false,
+                  "types": {}
+                },
+                "parties_depuis_24h": 0,
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "mots_escalade_artisan": [
+                  "Exemple. mot sensible"
+                ],
+                "fournisseurs": [],
+                "horaires": {
+                  "jours_permis": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "heures_permises": {
+                    "debut": "00:00",
+                    "fin": "23:59"
+                  }
+                },
+                "plafond_jour": 20,
+                "qualification": {
+                  "grille": [
+                    {
+                      "critere": "canal=email",
+                      "poids": 15
+                    }
+                  ],
+                  "seuils": {
+                    "haute": 60,
+                    "normale": 30
+                  },
+                  "delais_cibles_min": {
+                    "haute": 15,
+                    "normale": 60,
+                    "a_revoir": 240
+                  }
+                },
+                "marque_artisan": "Exemple. Plomberie Arnal-Démo",
+                "empreintes_connues": [],
+                "cles_existantes": []
+              },
+              "conversation_cle": "c:promo.exemple@exemple.invalid",
+              "canal_origine": "gmail",
+              "canaux": [
+                "gmail"
+              ],
+              "evenement_ids": [
+                "ev-a004"
+              ],
+              "id_boite": "gm-004",
+              "fil_externe": "th-004",
+              "photo_url": "",
+              "demande": {
+                "id": "00000000-0000-4000-8000-a00000000004",
+                "canal": "email",
+                "recu_le": "2026-11-06T10:15:00.000+01:00",
+                "message": "Exemple. Gagnez gros : http://exemple.invalid/a http://exemple.invalid/b http://exemple.invalid/c",
+                "champs": {
+                  "canal": "gmail"
+                },
+                "empreinte_contact": "9b0e1f2c3d4b5a69788796a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5",
+                "client_existant": false,
+                "honeypot": false,
+                "photo": null,
+                "proposition": null,
+                "destinataire": {
+                  "opposition": false,
+                  "consentement_sms": null
+                }
+              },
+              "message_masque": "Exemple. Gagnez gros : http://exemple.invalid/a http://exemple.invalid/b http://exemple.invalid/c"
+            }
+          ]
+        ]
+      ],
+      "Aiguiller les effets": [
+        [
+          [
+            {
+              "voie": "journal",
+              "organisation_id": "A_RENSEIGNER_A_LA_COPIE",
+              "simulation": true,
+              "lignes": [
+                {
+                  "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+                  "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+                  "evenement": "tri",
+                  "agent": "presti-dep-accueil",
+                  "objet_ref": "00000000-0000-4000-8000-a00000000004",
+                  "decision": "[simulation] aurait été fait : classe spam",
+                  "modele": null,
+                  "jetons_entree": null,
+                  "jetons_sortie": null,
+                  "cout_eur": null,
+                  "source_tarif": null,
+                  "simulation": true
+                }
+              ]
+            }
+          ]
+        ]
+      ],
+      "Effets prévus": [
+        [
+          [
+            {
+              "simulation": true,
+              "effets_prevus": [
+                {
+                  "effet": "inserer_journal",
+                  "lignes": 1
+                }
+              ],
+              "effets_faits": []
+            }
+          ]
+        ]
+      ]
+    }
+  }
+]
