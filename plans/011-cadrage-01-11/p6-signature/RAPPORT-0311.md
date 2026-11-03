@@ -88,7 +88,17 @@ Tout ce qui se construisait sans toi est construit et vérifié. Le reste suit `
    - (a) Presti crée l'identifiant n8n par l'API au moment du « Connecter ».
    - (b) La copie lit le jeton chiffré et appelle l'API par un nœud HTTP.
 2. **Exposer ou non un webhook n8n** : temps réel de WhatsApp, Telegram et Facebook Lead Ads. Sinon, ces canaux passent par Presti et la base.
-3. **Migrations**, dans l'ordre et jamais un autre : **0185, puis 0192, puis 0193** (`mise-en-service.md`, étapes 3 à 5).
+3. **Migrations : l'état réel en base, relu le 03/11 vers 17 h 15.**
+   - **Seule 0189** (le rôle `n8n_lecture`) est posée.
+   - Ne sont pas posées : 0183 (organisations), 0185 (automatisation), 0186 (SMS), 0187 (`factures.envoyee_le`), 0190 (demandes de démo),
+     0191 (suivi des envois), 0193 (système d'agents) et 0192. Pour 0184 et 0188, qui ne créent pas de table, l'état n'a pas été relu.
+   - **Ce qui bloque** : `scripts/appliquer-migration.mjs` lit le fichier sur le disque et pose tout dans une transaction. Il est refusé par la
+     base (`28P01`, mot de passe changé depuis le 14/09). Le connecteur Supabase oblige, lui, à recopier chaque migration dans l'appel : près
+     de 1 000 lignes pour 0185, 0192 et 0193, deux fois (essai à sec, puis pose).
+   - **Le geste qui débloque, à toi** : mettre l'adresse de connexion actuelle de la base dans `.env.local` (`DIRECT_URL`), par
+     `node scripts/ranger-env.mjs` (Supabase → Project Settings → Database). Je ne saisis jamais un mot de passe. Ensuite, chaque migration se
+     pose d'une commande.
+   - Ordre, et jamais un autre : **0185, puis 0192, puis 0193** (`mise-en-service.md`, étapes 3 à 5).
    - Avant tout, on relit l'état réel en base. Aucune hypothèse sur 0186, 0189 ou 0191 : elles sont peut-être déjà posées.
    - **0192** (accusé de réception par n8n) vient du lot 032-047, arrêté ce matin. Elle n'existe que sur Oracle et n'a pas été vérifiée. Or
      0193 l'exige comme prérequis : elle est à reprendre et à juger avant toute pose.
