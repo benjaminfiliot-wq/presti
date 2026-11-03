@@ -1,0 +1,66 @@
+{
+  "tache": "036-027",
+  "ecrit_le": "2026-11-03T16:56:00Z",
+  "ecrit_par": "claude-code (hôte d'agents d'Oracle, MCP n8n-oracle)",
+  "cause": {
+    "resume": "Le nœud « Claude Haiku 5.5 » (Anthropic Chat Model 1.6) ne réglait pas thinkingMode : la définition du nœud dit « leave the option unset to use the model default », et Claude Haiku 5.5 réfléchit par défaut (réflexion adaptative, effort medium, texte de réflexion masqué ; référence claude-api, tableau « Thinking & Effort »). Les jetons de réflexion comptent dans max_tokens : le modèle épuisait tout son plafond de sortie en réflexion masquée, puis rendait un texte vide.",
+    "preuve": "Exécution 784 (lib-rediger-message, sous le banc 775) : options envoyées max_tokens 700, invocation_kwargs {} (aucun paramètre thinking) ; tokenUsage completionTokens 700, promptTokens 2269 ; generations[0].text = \"\" ; outputParserFailReason « Model output wrapper is an empty object ». Exécution 790 (lib-lire-photo) : max_tokens 300, completionTokens 300, texte vide ; la demande ne contenait que « Décris la photo jointe à la demande (référence exemple-wc-01.jpg, image/jpeg). », sans aucune image (passthroughBinaryImages false). Exécution 802 : idem, 700 sur 700.",
+    "ecart_avec_la_consigne": "La consigne inversait les plafonds : en ligne, lib-rediger-message avait 700 et lib-lire-photo 300 (lu par get_workflow_details avant tout geste)."
+  },
+  "noeuds": {
+    "xfRUnkwOKSwQezVb": {
+      "nom": "lib-rediger-message",
+      "noeud": "Claude Haiku 5.5 (sans identifiant)",
+      "avant": { "versionId": "26fd7063-2c0d-4174-890e-9adb66f52480", "publie": false, "model": "claude-haiku-5-5", "options": { "maxTokensToSample": 700, "temperature": 0.2 }, "thinkingMode": "non réglé (défaut du modèle : réflexion adaptative)" },
+      "apres": { "versionId": "6150e8c1-82cc-4107-a9c8-7ba027dfcb45", "publie": true, "model": "claude-haiku-5-5", "options": { "maxTokensToSample": 2000, "thinkingMode": "disabled" }, "temperature": "retirée : Haiku 5.5 refuse un échantillonnage non par défaut, et le nœud ne l'envoyait déjà pas (options de 784 sans temperature)", "prompt_et_schema": "inchangés", "identifiant": "inchangé (Anthropic account, hZsu1Oq5gUfaa2jB)" },
+      "preuve": "Exécution 849 (sous le banc lib-banc-relance 847) : 2 brouillons statut ok, tous les faits recopiés exactement (« FAC-2026-007 », « 334,00 € TTC », « 18 octobre 2026 »), champs_inconnus vides ; puis 862 (via presti-dep-facturation, banc 856) et 876 (via presti-dep-suivi, banc 871) : statut ok, aucune erreur. Les sous-exécutions réussies ne sont pas conservées (saveDataSuccessExecution none) : les jetons consommés ne sont pas relevés ; la preuve est le texte rendu, relu dans le banc."
+    },
+    "UWjCdC5kv3CXt6jm": {
+      "nom": "lib-lire-photo",
+      "noeud": "Claude Haiku 5.5 (sans identifiant) et Décrire la photo (modèle épinglé)",
+      "avant": { "versionId": "ad5c15aa-9908-48bb-9075-db0a5d694681", "publie": true, "model": "claude-haiku-5-5", "options": { "maxTokensToSample": 300, "temperature": 0 }, "thinkingMode": "non réglé", "passthroughBinaryImages": false, "image": "jamais transmise : la demande ne portait que la référence" },
+      "apres": {
+        "versionId": "4e504c94-7f0b-4aea-a2a6-20d6911b9c57",
+        "publie": true,
+        "model": "claude-haiku-5-5",
+        "options": { "maxTokensToSample": 2000, "thinkingMode": "disabled" },
+        "passthroughBinaryImages": true,
+        "noeuds_ajoutes": [
+          "Télécharger la photo (lead-media) : HTTP Request 4.5, GET https://gorcdvmueakcncsmrouo.supabase.co/storage/v1/object/authenticated/lead-media/{demande_id}/{ref}, identifiant existant « Supabase account » (dTewDK98MLrNckNG, affecté, ni créé ni modifié), réponse en fichier, neverError",
+          "Contrôler l'image reçue : Code, signature réelle des octets (JPEG, PNG, WebP, GIF) ; sinon image_recue faux",
+          "Image reçue ? : If ; vrai vers le modèle, faux vers le refus",
+          "Sans image : rien n'est décrit : Code, statut « refuse », aucune description, modèle non appelé, une ligne de journal « photo_absente »"
+        ],
+        "revalidation": "appariement sur $('Image reçue ?').all(0) au lieu de « Préparer » (seules les demandes avec image vont au modèle) ; le reste du code, le prompt et le schéma sont inchangés",
+        "chemin_suppose": "lead-media/<demande_id>/<ref>, déduit de app/api/leads/route.ts:252 (`${lead.id}/${i}.${ext}`) ; à confirmer quand une vraie photo entrera dans la chaîne"
+      },
+      "preuve": "Essai à blanc 866 (test_workflow, téléchargement épinglé sur une réponse 404, aucun appel au modèle) : Contrôler → image_recue faux (« aucune image reçue ») → Sans image → Contrat de sortie statut « refuse », resultat null, « Décrire la photo » non exécuté. Banc 882 (presti-banc-cerveau, via presti-dep-accueil 883) : les 4 photos fictives (références exemple-*.jpg, aucune image derrière) rendent statut « refuse », description null ; les deux comptes de l'accueil passent de « erreur » (787) à « ok ». La lecture d'une VRAIE image n'est pas prouvée par un banc : aucun banc ne porte d'image."
+    }
+  },
+  "bancs": [
+    { "banc": "presti-banc-argent (LRO3Jng6Te4Xn7Pg), 1er passage", "execution": "838 (presti-dep-facturation 844)", "resultat": "non jugé : 844 en erreur « Workflow is not active and cannot be executed » ; un petit-enfant appelé par un chef tourne en mode intégré et exige la version publiée de lib-rediger-message (la fiche 9 ne vaut que pour l'enfant direct d'un banc manuel). Aucun appel au modèle." },
+    { "banc": "lib-banc-relance (H33CKQ8sMB3VULfA)", "execution": "847 (lib-rediger-message 849, lib-porte-conformite 850 et 853, lib-executer 851, lib-normaliser-telephone 852, lib-rapport-hebdo 854)", "resultat": "VERT relu nœud par nœud : 2 brouillons ok ; porte passe (carte) ×2 ; lib-executer ecrire_carte prévu ×2, effets_faits vides ; téléphone ok ×2 ; gestes 22 refus attendus et 1 passage pilote ; rapport ok, 6 indicateurs sourcés ; defauts 0. Pour la première fois, lib-porte-conformite, lib-executer et lib-normaliser-telephone tournent sur un brouillon réel. Ligne : « Nous nous permettons de revenir vers vous au sujet de la facture FAC-2026-007 relative à la mise aux normes électrique, d'un montant de 334,00 € TTC, dont l'échéance est fixée au 18 octobre 2026. »" },
+    { "banc": "presti-banc-argent (LRO3Jng6Te4Xn7Pg), 2e passage, après publication de lib-rediger-message", "execution": "856 (presti-dep-devis 857, presti-dep-facturation 862)", "resultat": "VERT : devis deux comptes ok (3 et 5 cartes, pilote 0) ; facturation deux comptes ok, erreurs 0 (4 cartes ; 4 cartes et 1 pilote), effets_faits vides, refus_porte vides. Ligne : « Nous nous permettons de revenir vers vous au sujet de la facture FAC-EX-0024, relative aux travaux de rénovation, d'un montant de 1 800,00 € TTC, dont l'échéance est fixée au 5 novembre 2026. » Observation : FAC-EX-0037 reçoit une décision « relance_impaye : pilote » sans ligne de porte ni d'action, et sans erreur (presti-dep-facturation, à vérifier)." },
+    { "banc": "presti-banc-suivi (95LajsFcVM4AALac)", "execution": "871 (presti-dep-suivi 872, lib-rediger-message 876)", "resultat": "VERT : Studio ok (2 préparées en carte, 3 annulées, 7 restent dues, 1 rien) ; Signature ok (2 parties seules en pilote, avec la mention d'IA ajoutée par le code) ; effets_faits vides ; le 3e cas « rejete » est l'objet du déclencheur, hors contrat, attendu (déjà noté par 036-025). Observation : les 3 relances de devis de chaque compte sont arrêtées par la porte (motifs refus_porte, lecture_en_erreur) : refus par défaut, sans effet. Ligne : « Nous revenons vers vous au sujet de nos derniers échanges. »" },
+    { "banc": "presti-banc-cerveau (x7QfmFAZNIxaoUS6)", "execution": "882 (presti-dep-accueil 883)", "resultat": "VERT : Studio ok (20 demandes, 16 cartes, 2 spam, 4 escalades) ; Signature ok (20 demandes, 4 cartes, 13 pilote) ; erreurs 0, effets_faits vides ; 4 photos « refuse », description null (aucune image derrière les références fictives : rien n'est inventé, le modèle n'est pas appelé)." }
+  ],
+  "chaine": {
+    "xfRUnkwOKSwQezVb": { "nom": "lib-rediger-message", "publie": true, "version": "6150e8c1-82cc-4107-a9c8-7ba027dfcb45", "publie_a": "2026-11-03T16:50Z (après le banc relance 847, avant les bancs argent et suivi)", "retour": "unpublish_workflow après ses parents (presti-cerveau, presti-dep-suivi, presti-dep-facturation) ; ou restore_workflow_version 26fd7063-2c0d-4174-890e-9adb66f52480 (l'ancien réglage, en panne)" },
+    "jo8eQMEwiB9wCbKN": { "nom": "presti-dep-suivi", "publie": true, "version": "8d7de560-412b-497f-ba1c-db34f3a99a23", "publie_a": "2026-11-03T16:53Z", "retour": "unpublish_workflow jo8eQMEwiB9wCbKN, après presti-cerveau" },
+    "bNAF6Xzx5On853kD": { "nom": "presti-dep-facturation", "publie": true, "version": "ab04ddd7-006b-48b4-93b7-0c64082245d0", "publie_a": "2026-11-03T16:53Z", "retour": "unpublish_workflow bNAF6Xzx5On853kD, après presti-cerveau" },
+    "596OC5mL2aMBq6SD": { "nom": "presti-cerveau", "publie": true, "version": "61d35d9f-b9c8-489f-981e-354d600db35f", "publie_a": "2026-11-03T16:53Z", "retour": "unpublish_workflow 596OC5mL2aMBq6SD en premier (parents d'abord)" },
+    "UWjCdC5kv3CXt6jm": { "nom": "lib-lire-photo", "publie": true, "version": "4e504c94-7f0b-4aea-a2a6-20d6911b9c57", "publie_a": "2026-11-03T16:52Z (remplace la version ad5c15aa, qui décrivait sans voir)", "retour": "unpublish_workflow UWjCdC5kv3CXt6jm après presti-dep-accueil ; ne pas republier ad5c15aa (fabrication)" },
+    "Ls0oFcQzzAk0rWcP": { "nom": "presti-dep-accueil", "publie": true, "version": "inchangée", "retour": "non touché par cette tâche" }
+  },
+  "erreurs_depuis_16h46": "search_workflow_executions (error, crashed, canceled, unknown) : la seule est 844, expliquée plus haut ; aucune après la publication de la chaîne.",
+  "porte_simulation": "jamais levée ; tous les bancs portent simulation: true ; effets_faits vides partout ; rien n'a été envoyé ni écrit en base.",
+  "appels_modele": "lib-rediger-message : 2 (849) + 4 (862) + 10 (876) demandes, par l'identifiant de Benj ; lib-lire-photo : 0 (aucune image reçue). Jetons non relevés (sous-exécutions réussies non conservées).",
+  "a_trancher": [
+    "Prouver la lecture d'une vraie image : déposer une image d'essai fictive (sans personne ni adresse) sous lead-media/<uuid fictif>/<ref> est une écriture dans le stockage de production, qui attend l'accord de Benj ; sinon, un banc qui épingle un binaire.",
+    "Registre des traitements, § 23 (docs/registre-traitements.md) : « Aucune photo n'est transmise ». Avant qu'une vraie photo de prospect parte à Anthropic par lib-lire-photo, le registre est à mettre à jour (le gabarit 036-013 prévoyait déjà « Lire la photo (Anthropic) »).",
+    "L'identifiant « Supabase account » doit porter la clé service_role pour lire le bucket privé lead-media : non vérifiable par un agent (secret).",
+    "Prompt de lib-rediger-message, règle 6 : « Tu signes avec « entreprise » » a été lu une fois littéralement (signature « Entreprise. L'équipe Bâti-Démo » dans le banc suivi) ; à préciser en « la valeur du champ entreprise, recopiée telle quelle ». Prompt non modifié ici (la panne n'était pas là).",
+    "presti-dep-facturation : FAC-EX-0037, décision pilote sans porte ni action ni erreur (banc 856).",
+    "presti-dep-accueil : une photo « refuse » est journalisée « photo_rejetee : sortie du modèle refusée », libellé faux (aucun modèle n'a été appelé)."
+  ]
+}

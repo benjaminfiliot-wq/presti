@@ -213,3 +213,101 @@ Quatre appels à `claude-haiku-5-5` par l'identifiant de Benj, tous en échec :
 - 820 : non relevé.
 
 Chaque banc a été lancé une fois, sans boucle.
+
+## 036-027 — le cerveau des deux lib-* réparé, bancs verts, chaîne republiée en simulation (03/11/2026, 16 h 46 à 16 h 56 UTC)
+
+Écrit par Claude Code sur l'hôte d'agents d'Oracle, avec le MCP `n8n-oracle`. Règles tenues :
+- la porte « simulation » n'a été levée nulle part, et rien n'a été envoyé ni écrit en base (`effets_faits` vides dans tous les bancs) ;
+- aucun identifiant n'a été créé ni modifié : « Supabase account » (`dTewDK98MLrNckNG`), déjà en place, est affecté au nouveau nœud de téléchargement ;
+- le modèle reste `claude-haiku-5-5` ;
+- aucun `gabarit-*`, `client-*`, `hermes-*` ni `reseau-neuronal-*` n'a été touché, ni `presti-detecteurs`, `presti-briefing-matin` ou `presti-boite`.
+
+Détail machine : `.orchestre/preuves/036-027/etat.json`.
+
+### La cause
+
+Le nœud « Claude Haiku 5.5 » (Anthropic Chat Model 1.6) ne réglait pas `thinkingMode`. La définition du nœud (`get_node_types`) dit : « leave the option
+unset to use the model default ». Or Claude Haiku 5.5 réfléchit par défaut (réflexion adaptative, effort `medium`, texte de réflexion masqué), et ces jetons
+comptent dans `max_tokens`. Le modèle épuisait donc son plafond en réflexion invisible, puis rendait un texte vide.
+
+Preuve :
+- exécution **784** : options envoyées `max_tokens: 700` et `invocation_kwargs: {}` (aucun paramètre de réflexion) ; `completionTokens` 700 pour 2 269 en entrée ;
+  `generations[0].text` vide ; « Model output wrapper is an empty object » ;
+- exécution **790** : même chose sur 300.
+
+Écart avec la consigne : les plafonds étaient inversés. En ligne, c'était **700** pour `lib-rediger-message` et **300** pour `lib-lire-photo`.
+
+`lib-lire-photo` avait en plus un défaut de fond. Sa demande ne portait que « Décris la photo jointe à la demande (référence exemple-wc-01.jpg, image/jpeg) » :
+aucune image (`passthroughBinaryImages: false`). Le modèle aurait décrit une photo qu'il ne voyait pas.
+
+### Réglage avant et après
+
+| Workflow | Avant | Après |
+|---|---|---|
+| `lib-rediger-message` (`xfRUnkwOKSwQezVb`) | version `26fd7063`, **dépublié** ; `maxTokensToSample` 700, `temperature` 0,2, `thinkingMode` non réglé | version `6150e8c1`, **publié** ; `maxTokensToSample` 2 000, `thinkingMode: disabled`, `temperature` retirée (Haiku 5.5 refuse un échantillonnage non par défaut, et le nœud ne l'envoyait déjà pas) ; prompt et schéma **inchangés** |
+| `lib-lire-photo` (`UWjCdC5kv3CXt6jm`) | version `ad5c15aa`, publiée ; 300 jetons, `temperature` 0, `thinkingMode` non réglé ; `passthroughBinaryImages: false`, aucune image | version `4e504c94`, publiée ; mêmes réglages du modèle que ci-dessus ; `passthroughBinaryImages: true`, et quatre nœuds ajoutés (ci-dessous) ; prompt et schéma **inchangés** |
+
+Les quatre nœuds ajoutés à `lib-lire-photo` :
+1. **« Télécharger la photo (lead-media) »** : la photo en binaire, depuis le bucket privé `lead-media/<demande_id>/<ref>`.
+   Le chemin vient de `app/api/leads/route.ts:252`. Lecture seule.
+2. **« Contrôler l'image reçue »** : la signature réelle des octets ; seuls JPEG, PNG, WebP et GIF passent. Le HEIC n'est pas lisible par le modèle.
+3. **« Image reçue ? »** : vrai, l'image part au modèle ; faux, branche suivante.
+4. **« Sans image : rien n'est décrit »** : statut `refuse`, aucune description, **modèle non appelé**.
+
+La revalidation s'apparie désormais sur la branche « image reçue ». **Jamais une description sans l'image.**
+
+### Bancs (une fois chacun, porte « simulation » à vrai)
+
+| Banc | Exécution | Résultat |
+|---|---|---|
+| `presti-banc-argent`, 1er passage | 838, chef 844 | **non jugé**. 844 rend « Workflow is not active » : un petit-enfant (chef → `lib-rediger-message`) tourne en mode intégré et exige la **version publiée**. La fiche 9 ne vaut que pour l'enfant direct d'un banc manuel. Aucun appel au modèle |
+| `lib-banc-relance` | 847 (rédaction 849) | **vert**, relu nœud par nœud : 2 brouillons `ok`, la porte passe (carte), `lib-executer` prévoit 2 cartes, téléphone `ok` ×2, 22 refus de gestes attendus, rapport `ok` ; `defauts` 0. Première fois que la porte, `lib-executer` et `lib-normaliser-telephone` tournent sur un vrai brouillon |
+| `presti-banc-argent`, 2e passage, après publication de `lib-rediger-message` | 856 (facturation 862) | **vert** : devis, deux comptes `ok` (3 et 5 cartes) ; facturation, deux comptes `ok`, 0 erreur (4 cartes ; 4 cartes et 1 pilote) |
+| `presti-banc-suivi` | 871 (suivi 872, rédaction 876) | **vert** : Studio `ok` (2 cartes préparées) ; Signature `ok` (2 parties seules, mention d'IA ajoutée par le code) ; le cas `rejete` est le cas hors contrat attendu |
+| `presti-banc-cerveau` | 882 (accueil 883) | **vert** : deux comptes `ok` (16 cartes ; 4 cartes et 13 pilote), 0 erreur ; les 4 photos fictives rendent `refuse`, description `null` |
+
+Pour comparer : en 787, l'accueil rendait deux comptes en `erreur`.
+
+Une ligne rédigée (banc relance, faits fictifs) : « Nous nous permettons de revenir vers vous au sujet de la facture FAC-2026-007 relative à la mise aux normes
+électrique, d'un montant de 334,00 € TTC, dont l'échéance est fixée au 18 octobre 2026. » Le texte est en français et les faits sont recopiés exactement.
+
+Un essai à blanc, l'exécution **866** (`test_workflow`, téléchargement épinglé sur un 404, aucun appel au modèle), a prouvé la branche sans image avant la
+publication.
+
+### Résultat : la chaîne republiée, enfants d'abord
+
+1. `lib-rediger-message`, publié à 16 h 50 (après le banc relance) ;
+2. `lib-lire-photo`, publié à 16 h 52 dans sa nouvelle version (avant le banc cerveau, qui l'appelle en mode intégré) ;
+3. `presti-dep-suivi`, `presti-dep-facturation`, puis `presti-cerveau`, à 16 h 53.
+
+`presti-dep-accueil` n'a pas été touché et reste publié. Depuis 16 h 46, une seule exécution est en erreur : la 844, expliquée plus haut.
+
+### Retour arrière
+
+Dépublier **parents d'abord** :
+1. `presti-cerveau` ;
+2. `presti-dep-suivi` et `presti-dep-facturation` ;
+3. `lib-rediger-message` ;
+4. `lib-lire-photo`, après `presti-dep-accueil`.
+
+L'ancien réglage de la rédaction est la version `26fd7063` (`restore_workflow_version`), mais elle est en panne. Ne jamais republier `ad5c15aa` de
+`lib-lire-photo` : elle décrit sans voir.
+
+### Ce qui reste, avec la condition qui le relancera
+
+- **La lecture d'une vraie image n'est pas prouvée** : aucun banc ne porte d'image. Deux voies :
+  - déposer une image d'essai fictive sous `lead-media/<uuid fictif>/<ref>`, une écriture dans le stockage de production qui attend l'accord de Benj ;
+  - ou bâtir un banc qui épingle un binaire.
+- **Le registre des traitements, § 23**, dit « aucune photo n'est transmise ». Il est à mettre à jour avant qu'une vraie photo de prospect parte à Anthropic.
+- **L'identifiant « Supabase account »** doit porter la clé `service_role` pour lire le bucket privé. Un agent ne peut pas le vérifier.
+- **Le chemin `lead-media/<demande_id>/<ref>`** est déduit du code ; à confirmer quand une vraie photo entrera dans la chaîne.
+- **Le prompt de rédaction, règle 6** (« Tu signes avec « entreprise » »), a été lu une fois au pied de la lettre : une signature « Entreprise. L'équipe Bâti-Démo »
+  dans le banc suivi. À préciser par une tâche de prompt.
+- **`presti-dep-facturation`** : FAC-EX-0037 reçoit une décision « pilote » sans porte, sans action et sans erreur (856). À vérifier.
+- **`presti-dep-suivi`** : les relances de devis sont arrêtées par la porte avec le motif `lecture_en_erreur`. Le système refuse par défaut, sans effet.
+- **`presti-dep-accueil`** : une photo `refuse` est journalisée « sortie du modèle refusée », un libellé faux puisque le modèle n'a pas été appelé.
+
+### Coût
+
+Les appels à `claude-haiku-5-5` passent par l'identifiant de Benj : 2 (849), 4 (862) et 10 (876) demandes de rédaction. Aucun appel pour les photos.
+Les jetons ne sont pas relevés : les sous-exécutions réussies ne sont pas conservées.
