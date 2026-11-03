@@ -258,7 +258,11 @@ const MUTANTS = [
   ['bouton qui envoie en Studio (route)', remplacer('route', "import { consommerLimite } from '@/lib/limites'\n", "import { consommerLimite } from '@/lib/limites'\nimport { sendEmail } from '@/lib/email'\n")],
   ['bouton qui exécute (valider = exécutée)', remplacer('cartes', "export const DECISIONS = { valider: 'en_cours', refuser: 'refusee' } as const", "export const DECISIONS = { valider: 'executee', refuser: 'refusee' } as const")],
   ['boîte visible avec le drapeau baissé (composant)', remplacer('boite', "  if (!actif('boiteAgents')) return null\n", '')],
-  ['drapeau boiteAgents retiré', remplacer('flags', /boiteAgents: (true|false),/.exec(T.flags)?.[0] ?? 'boiteAgents:', 'boiteAgentsRetire: false,')],
+  ['drapeau boiteAgents retiré', (T) => {
+    const m = /boiteAgents: (true|false),/.exec(T.flags)
+    if (!m) throw new Error('mutant sans prise sur flags : boiteAgents')
+    return { ...T, flags: T.flags.replace(m[0], 'boiteAgentsRetire: false,') }
+  }],
   ['route ouverte avec le drapeau baissé', remplacer('route', "  if (!actif('boiteAgents')) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })\n  const g = await gardeAssistant(req)\n  if ('reponse' in g) return g.reponse\n  const b =", "  const g = await gardeAssistant(req)\n  if ('reponse' in g) return g.reponse\n  const b =")],
   ['décision sur la carte d’un autre compte', remplacer('route', "    .update({ statut: DECISIONS[decision], maj_le: maintenant })\n    .eq('id', id)\n    .eq('artisan_id', g.uid)\n", "    .update({ statut: DECISIONS[decision], maj_le: maintenant })\n    .eq('id', id)\n")],
   ['migration sans exigence de source', remplacer('migration', 'departement is not null and motif is not null and sources is not null and cle is not null', 'departement is not null and motif is not null and cle is not null')],
