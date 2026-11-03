@@ -33,8 +33,13 @@ est `outillage/OUTILLAGE.md`.
 | 036-015 | **gabarits outillés du terrain** (Après-chantier, Opérations, Direction) : 3 gabarits, 138 nœuds (fiche Google Business Profile, Google Agenda avec disponibilités en lecture, Drive et OneDrive, Sheets et Excel, Outlook, Telegram, WhatsApp, Twilio, Slack, Teams, six agents IA) | n8n, inactifs |
 | 036-016 | **catalogue Entreprise, partie 1** : 4 gabarits, 328 nœuds (HubSpot, Pipedrive, Salesforce, Zoho, Odoo, Airtable, Notion, monday et leurs outils d'agent ; Brevo, Mailchimp, ActiveCampaign, Lemlist ; Facebook Lead Ads, Instagram et Facebook par Graph, LinkedIn, YouTube, X, Google Ads ; validation d'équipe Slack et Teams) | n8n, inactifs |
 
-**Les sept départements des artisans sont outillés** : 11 gabarits, environ 340 nœuds de vrais outils. L'Entreprise compte 4 gabarits de plus,
-en attendant la seconde moitié (036-018).
+| 036-018 | **catalogue Entreprise, partie 2** : 5 gabarits, 343 nœuds (opérations avec Agenda, ClickUp, monday, Notion ; administratif avec Drive, OneDrive, Docs, échéances ; finance avec Stripe, QuickBooks, Xero en lecture, Pennylane et Qonto par l'API ; après-vente avec fiche Google et Zendesk ; direction avec validation d'équipe Slack et Teams, Google Chat) | n8n, inactifs |
+
+**Au total : 20 gabarits outillés, environ 1 000 nœuds de vrais outils.**
+- Les sept départements des artisans : 11 gabarits.
+- Le catalogue Entreprise : 9 gabarits.
+
+Tous sont inactifs, sans identifiant, avec la porte de simulation, et chacun a son juge à mutants au lanceur.
 
 Le juge commun `scripts/n8n-specs-qa.mjs` tient maintenant les gabarits outillés : 110 mutants, dont 22 nouveaux. Chaque juge est inscrit au
 lanceur `scripts/tout-verifier.mjs`.
@@ -48,8 +53,13 @@ lanceur `scripts/tout-verifier.mjs`.
   - « Mes départements » ;
   - le **CRM « atelier »** : une question à la fois, une ligne « fait : … », import d'un export ; d'après la vidéo du 01/11 sur les CRM et
     le prompt 3, pas les TikToks.
-- 036-018 : catalogue Entreprise, partie 2 : opérations, administratif, finance (QuickBooks, Xero, Pennylane, Qonto), après-vente, direction et
-  validation d'équipe.
+- 036-012 : l'intégration :
+  - le script de déploiement d'une copie par client, **à blanc** (des exports `client-*` fabriqués sur le disque, jamais un identifiant ni un
+    appel à n8n) ;
+  - les tests transverses ;
+  - le runbook ;
+  - le plan de migration des automatisations codées ;
+  - l'ordre de mise en service pour toi.
 - 036-017 : Hermes écrit une fiche connecteur par outil (portées, quotas, coût, expiration), environ 40 au total.
 
 ## Ce qui reste pour la « définition de terminé » du prompt 1 (p6:416-422)
