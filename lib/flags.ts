@@ -326,7 +326,7 @@ export const FLAGS = {
    *  (palier, interrupteur, plafonds). Il lit les tables de la migration 0193 (departements_reglages, competences, couts_ia_jour,
    *  evenements_metier.traite_le). Baissé : rien dans le DOM, les routes répondent 404. On colle 0193, PUIS on lève (jamais l'inverse :
    *  levé sans les tables, le chemin refuse tout et l'artisan tombe sur un écran mort). Ordre de pose : 0185, 0192, puis 0193. */
-  systemeAgents: false,
+  systemeAgents: true,
   /** 03/11/2026 — prompt 6, prompt 1, lots 036-002 et 036-009. L'écran « Connexions » et les routes « Connecter » (OAuth sur Presti,
    *  jamais sur n8n) : la table `connexions` de 0193, deux secrets chiffrés au format v1 de lib/secretBox.ts, jamais lisibles par le
    *  navigateur. Baissé : route 404, rien à l'écran, aucun jeton stocké. On colle 0193, PUIS on lève, après le juge de 036-009 vert. */
@@ -335,7 +335,7 @@ export const FLAGS = {
    *  (app/api/assistant/agents) : les cartes que les départements préparent en palier « ombre » (assistant_actions, origine « agent »,
    *  migration 0194). Valider ou refuser ne fait que noter la décision : rien n'est envoyé par l'app, sur aucune offre. Baissé : rien
    *  dans le DOM, route 404. On colle 0194, PUIS on lève (sans ses colonnes, la route répond « indisponible »). */
-  boiteAgents: false,
+  boiteAgents: true,
 } as const
 
 export type Flag = keyof typeof FLAGS

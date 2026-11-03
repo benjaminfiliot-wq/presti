@@ -45,6 +45,9 @@ function Boite() {
   }
 
   const aValider = etat.phase === 'pret' ? etat.cartes.filter((c) => c.statut === 'a_valider') : []
+  // La boîte n'existe à l'écran que si des assistants ont préparé quelque chose pour ce compte : pas de cadre vide ni d'erreur chez un
+  // artisan dont aucun département n'est en marche (le drapeau boiteAgents est levé pour tous le 03/11).
+  if (etat.phase !== 'pret' || etat.cartes.length === 0) return null
   const traitees = etat.phase === 'pret' ? etat.cartes.filter((c) => c.statut !== 'a_valider').slice(0, 10) : []
 
   return (
@@ -54,9 +57,7 @@ function Boite() {
       </h3>
       <p className="bag-aide">Ce que vos assistants ont préparé. Rien ne part sans votre accord.</p>
       {avis ? <p className="bag-avis" role="status">{avis}</p> : null}
-      {etat.phase === 'chargement' ? <p className="muted" role="status">Chargement…</p> : null}
-      {etat.phase === 'erreur' ? <p className="bag-erreur" role="alert">{etat.message}</p> : null}
-      {etat.phase === 'pret' && aValider.length === 0 ? <p className="bag-vide">Aucune carte à valider pour le moment.</p> : null}
+      {/* Vide : rien à montrer (03/11, drapeau levé pour tous ; un compte sans département en marche ne voit pas de boîte vide). */}
       {aValider.length > 0 ? (
         <ul className="bag-liste">
           {aValider.map((c) => <Carte key={c.id} c={c} occupe={enCours === c.id} decider={decider} />)}

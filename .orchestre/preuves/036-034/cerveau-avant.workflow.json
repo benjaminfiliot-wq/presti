@@ -1,0 +1,1654 @@
+{
+  "id": "596OC5mL2aMBq6SD",
+  "name": "presti-cerveau",
+  "active": true,
+  "isArchived": false,
+  "versionId": "9b019809-fcc0-44a2-b951-441b95a7f678",
+  "activeVersionId": "9b019809-fcc0-44a2-b951-441b95a7f678",
+  "triggerCount": 1,
+  "nodeCount": 35,
+  "createdAt": "2026-11-03T10:26:54.442Z",
+  "updatedAt": "2026-11-03T17:35:15.854Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 300,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "036-001 + 036-030 : Cerveau multi-comptes. Lectures réelles filtrées artisan_id ; paliers simulation et ombre servis ; porte d'envoi fermée ; cartes de l'ombre dans assistant_actions ; marque traité.",
+  "scopes": [
+    "execution:delete",
+    "execution:list",
+    "execution:read",
+    "execution:reveal",
+    "workflow:create",
+    "workflow:delete",
+    "workflow:disableRedaction",
+    "workflow:enableRedaction",
+    "workflow:execute",
+    "workflow:execute-chat",
+    "workflow:export",
+    "workflow:import",
+    "workflow:list",
+    "workflow:move",
+    "workflow:publish",
+    "workflow:read",
+    "workflow:share",
+    "workflow:unpublish",
+    "workflow:unshare",
+    "workflow:update"
+  ],
+  "canExecute": true,
+  "connections": {
+    "Interrupteur général ouvert ?": {
+      "main": [
+        [
+          {
+            "node": "Lire les réglages des départements",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bilan du passage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aiguiller": {
+      "main": [
+        [
+          {
+            "node": "Router par département",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router par département": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-accueil",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler presti-dep-devis",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler presti-dep-suivi",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler presti-dep-facturation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler presti-dep-apres",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler presti-dep-operations",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler presti-dep-direction",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Journal : rejeté ou sauté",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-accueil": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-devis": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-suivi": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 2
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-facturation": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 3
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-apres": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 4
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-operations": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 5
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-direction": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 6
+          }
+        ],
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Journal : rejeté ou sauté": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Préparer le journal": {
+      "main": [
+        [
+          {
+            "node": "Aucun compte lu ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aucun compte lu ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le battement",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-journaliser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le battement": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-battement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-journaliser": {
+      "main": [
+        [
+          {
+            "node": "Préparer le battement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-battement": {
+      "main": [
+        [
+          {
+            "node": "Bilan du passage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Toutes les minutes": {
+      "main": [
+        [
+          {
+            "node": "Lire les interrupteurs généraux",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les interrupteurs généraux": {
+      "main": [
+        [
+          {
+            "node": "Interrupteur général",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interrupteur général": {
+      "main": [
+        [
+          {
+            "node": "Interrupteur général ouvert ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les réglages des départements": {
+      "main": [
+        [
+          {
+            "node": "Lire les comptes et leurs offres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les comptes et leurs offres": {
+      "main": [
+        [
+          {
+            "node": "Lire les modes de réponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les modes de réponse": {
+      "main": [
+        [
+          {
+            "node": "Composer les comptes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Composer les comptes": {
+      "main": [
+        [
+          {
+            "node": "Lire les événements non traités",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les événements non traités": {
+      "main": [
+        [
+          {
+            "node": "Lire les demandes des événements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les demandes des événements": {
+      "main": [
+        [
+          {
+            "node": "Composer les pages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Composer les pages": {
+      "main": [
+        [
+          {
+            "node": "Aiguiller",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Réunir les sorties": {
+      "main": [
+        [
+          {
+            "node": "Préparer les cartes de l’ombre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer les cartes de l’ombre": {
+      "main": [
+        [
+          {
+            "node": "Des cartes à écrire ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Des cartes à écrire ?": {
+      "main": [
+        [
+          {
+            "node": "Écrire les cartes (ombre)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer les marques",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Écrire les cartes (ombre)": {
+      "main": [
+        [
+          {
+            "node": "Préparer les marques",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer les marques": {
+      "main": [
+        [
+          {
+            "node": "Des marques à poser ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Des marques à poser ?": {
+      "main": [
+        [
+          {
+            "node": "Marquer les événements traités",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marquer les événements traités": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "f5e96321-ecd6-4d1f-b08c-4b56869976e7",
+      "name": "Toutes les minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1088
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ca3fa5d9-2639-4584-a295-78687b69a46c",
+      "name": "Interrupteur général ouvert ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        1088
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "interrupteurgnralouvert",
+              "leftValue": "={{ $json.interrupteur_general === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Faux (coupé, absent ou illisible) : le passage s'arrête, rien n'est appelé."
+    },
+    {
+      "id": "9720b909-3e61-49ac-819b-3e2ad05d0c2d",
+      "name": "Aiguiller",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        672
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Cerveau : AIGUILLER, sans rien calculer. Pour chaque page (une par compte), chaque événement :\n//   - doit appartenir au compte de sa page (artisan_id identique) : sinon rejet « autre_compte » (multi-tenant strict ; la lecture filtre déjà) ;\n//   - va au département de son type (table fermée) ; un type inconnu est rejeté au journal ; une demande sans sa demande lue aussi ;\n//   - n'est routé qu'une fois par passage (clé compte + clé de l'événement) : le doublon est rejeté.\n// Palier du département = le plus prudent de « tous » et du sien (0193:181-183). Servis : « simulation » et « ombre » (036-030 : l'ombre\n// prépare tout et n'envoie rien, la porte de simulation reste fermée ; ses cartes sont écrites plus loin). « réel » et « arrêt » : sautés.\n// Interrupteurs général ET du département ouverts exigés (fail-closed : absent = fermé). Une enveloppe par (compte, département).\nconst G = $('Interrupteur général').first().json;\nconst trace = { execution_parent: 'presti-cerveau:' + G.passage, declencheur: 'presti-cerveau', tentative: 0 };\nconst DEPS = [\"accueil\",\"devis\",\"suivi\",\"facturation\",\"apres\",\"operations\",\"direction\"];\nconst ROUTES = {\"demande_recue\":\"accueil\",\"devis_a_preparer\":\"devis\",\"relance_due\":\"suivi\",\"facture_a_emettre\":\"facturation\",\"impaye_echu\":\"facturation\",\"chantier_termine\":\"apres\",\"rendez_vous_a_poser\":\"operations\",\"page_du_matin\":\"direction\"};\nconst OFFRES = [\"studio\",\"signature\",\"essentiel\",\"essai\"];\nconst PRUDENCE = ['arret', 'simulation', 'ombre', 'reel'];\nconst SERVIS = ['simulation', 'ombre'];\nconst reglages = $('Lire les réglages des départements').all().map((x) => x.json).filter((r) => r && !r.error && typeof r.artisan_id === 'string');\nconst palierDe = (a, dep) => { const t = reglages.find((r) => r.artisan_id === a && r.departement === 'tous'); const d = reglages.find((r) => r.artisan_id === a && r.departement === dep);\n  const i = Math.min(PRUDENCE.indexOf(t ? t.palier : 'simulation'), PRUDENCE.indexOf(d ? d.palier : 'simulation')); return i < 0 ? 'arret' : PRUDENCE[i]; };\nconst comptes = $('Composer les comptes').all().map((x) => x.json);\nconst parCompte = {}; for (const c of comptes) if (c && typeof c.artisan_id === 'string') parCompte[c.artisan_id] = c;\nconst lots = {}, ordre = [], vus = new Set(), rejets = [], sautes = [], routes_ids = {};\nfor (const { json: p } of $input.all()) { const c = parCompte[p.artisan_id];\n  for (const ev of (Array.isArray(p.evenements) ? p.evenements : [])) {\n    const ref = ev && typeof ev.id === 'string' ? ev.id : null;\n    if (!c) { rejets.push({ artisan_id: p.artisan_id, id: ref, motif: 'compte_inconnu' }); continue; }\n    if (!ev || ev.artisan_id !== p.artisan_id) { rejets.push({ artisan_id: p.artisan_id, id: ref, motif: 'autre_compte' }); continue; }\n    if (typeof ev.cle !== 'string' || !ref) { rejets.push({ artisan_id: p.artisan_id, id: ref, motif: 'evenement_hors_forme' }); continue; }\n    const dep = ROUTES[ev.type]; if (!dep) { rejets.push({ artisan_id: p.artisan_id, id: ref, motif: 'type_sans_departement' }); continue; }\n    if (dep === 'accueil' && (!ev.demande || typeof ev.demande !== 'object')) { rejets.push({ artisan_id: p.artisan_id, id: ref, motif: 'demande_introuvable' }); continue; }\n    const cle = p.artisan_id + ':' + ev.cle; if (vus.has(cle)) { rejets.push({ artisan_id: p.artisan_id, id: ref, motif: 'doublon' }); continue; } vus.add(cle);\n    const k = p.artisan_id + '|' + dep; if (!lots[k]) { lots[k] = { c: c, dep: dep, evs: [] }; ordre.push(k); } lots[k].evs.push(ev); } }\nconst DONNEES = { accueil: (c, evs) => ({ demandes: evs.map((ev) => ev.demande), empreintes_connues: c.empreintes_connues, cles_existantes: c.cles_existantes, maintenant: G.maintenant }) };\nconst CONFIG = { accueil: (c) => Object.assign({}, c.accueil, { interrupteur_general: c.interrupteurs.general, interrupteur_departement: c.interrupteurs.departements.accueil }) };\nconst s = [];\nfor (const k of ordre) { const { c, dep, evs } = lots[k]; const ids = evs.map((ev) => ev.id);\n  const i = c.interrupteurs && typeof c.interrupteurs === 'object' ? c.interrupteurs : {};\n  const palier = palierDe(c.artisan_id, dep);\n  if (!SERVIS.includes(palier)) { sautes.push({ artisan_id: c.artisan_id, departement: dep, motif: palier === 'reel' ? 'palier_reel_non_branche' : 'palier_arret', ids: ids }); continue; }\n  if (i.general !== true || !i.departements || i.departements[dep] !== true || !OFFRES.includes(c.offre)) { sautes.push({ artisan_id: c.artisan_id, departement: dep, motif: 'interrupteur_coupe', ids: ids }); continue; }\n  routes_ids[k] = { artisan_id: c.artisan_id, departement: dep, palier: palier, ids: ids, objets: evs.map((ev) => ({ id: ev.id, type: ev.type, objet_id: ev.objet_id || null })) };\n  s.push({ json: { contrat: 'presti-dep-' + dep + '@1', organisation_id: c.artisan_id, simulation: true, cle_idempotence: 'dep:' + dep + ':' + c.artisan_id.slice(24) + ':' + G.passage, trace: trace,\n    config: CONFIG[dep] ? CONFIG[dep](c) : {}, donnees: DONNEES[dep] ? DONNEES[dep](c, evs) : { evenements: evs } } }); }\ns.push({ json: { contrat: 'aucun', rejets: rejets, sautes: sautes, routes_ids: routes_ids } });\nreturn s;"
+      }
+    },
+    {
+      "id": "b86dfd66-e645-497e-ae73-9d63ac66ca6a",
+      "name": "Router par département",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1344,
+        576
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputKey": "accueil",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "presti-dep-accueil@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "devis",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "presti-dep-devis@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "suivi",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "presti-dep-suivi@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "facturation",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "presti-dep-facturation@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "apres",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "presti-dep-apres@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "operations",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "presti-dep-operations@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "direction",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.contrat }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "presti-dep-direction@1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "secours"
+        }
+      },
+      "notes": "Switch sur le contrat de l'enveloppe (un département par sortie), avec une sortie de secours vers le journal (fiche triage)."
+    },
+    {
+      "id": "d83959ae-2635-4fb4-8737-c41b10e028bd",
+      "name": "Appeler presti-dep-accueil",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "Ls0oFcQzzAk0rWcP"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chef du département accueil. « Continue (using error output) » : un département en panne ne fait pas échouer le Cerveau.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "ae8eec25-e8ef-4071-a558-b709988c4c1e",
+      "name": "Réunir les sorties",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1792,
+        576
+      ],
+      "parameters": {
+        "mode": "append",
+        "numberInputs": 8
+      }
+    },
+    {
+      "id": "90125d64-77fb-4aad-b284-571bffceb591",
+      "name": "Appeler presti-dep-devis",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        192
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "dNikTYPKKsivUbd3"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chef du département devis. « Continue (using error output) » : un département en panne ne fait pas échouer le Cerveau.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "09b461c9-8546-4010-ad22-1c7c1c7f5186",
+      "name": "Appeler presti-dep-suivi",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        384
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "jo8eQMEwiB9wCbKN"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chef du département suivi. « Continue (using error output) » : un département en panne ne fait pas échouer le Cerveau.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "85a9b424-365b-49d4-9e48-10adc13b0135",
+      "name": "Appeler presti-dep-facturation",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        576
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "bNAF6Xzx5On853kD"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chef du département facturation. « Continue (using error output) » : un département en panne ne fait pas échouer le Cerveau.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "668a9092-74d8-4ff1-b0a6-42b7927d9818",
+      "name": "Appeler presti-dep-apres",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        768
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "L3GOS7euxi60jCZN"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chef du département apres. « Continue (using error output) » : un département en panne ne fait pas échouer le Cerveau.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "22dea11d-0f74-4ae0-8e77-e1db5b8ecf41",
+      "name": "Appeler presti-dep-operations",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        960
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "74bDhTw6cEBzPORZ"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chef du département operations. « Continue (using error output) » : un département en panne ne fait pas échouer le Cerveau.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "05e77fb7-b7a6-435b-92b4-5438fd212e06",
+      "name": "Appeler presti-dep-direction",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        1152
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "oHGOyqsZGoUooxa6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Chef du département direction. « Continue (using error output) » : un département en panne ne fait pas échouer le Cerveau.",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "e9c22e10-c047-4488-bc2c-066cecc0fc45",
+      "name": "Journal : rejeté ou sauté",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        1344
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Cerveau : la sortie de secours du routage. Rien n'est perdu en silence : rejet et saut partent au journal du passage.\nreturn $input.all().map((x) => ({ json: { contrat: 'aucun', rejets: x.json.rejets || [], sautes: x.json.sautes || [] } }));"
+      }
+    },
+    {
+      "id": "08ddeef8-9f4a-49cc-9e5c-e88b410c3605",
+      "name": "Bilan du passage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3136,
+        1088
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Cerveau : le bilan agrégé du passage, sans donnée personnelle : où il s'est arrêté, ce qui a été routé où, les statuts, les effets\n// prévus et faits (toujours zéro fait : la porte d'envoi reste fermée), les cartes de l'ombre écrites et les événements marqués.\nconst passe = (nom) => $(nom).isExecuted;\nconst sorties = (nom, b) => passe(nom) ? $(nom).all(b || 0).map((x) => x.json) : [];\nconst issue = (nom) => { if (!passe(nom)) return null; const sans = (x) => !x || typeof x.contrat !== 'string'; const a = sorties(nom, 0), b = sorties(nom, 1); return { ok: a.filter((x) => !sans(x)), ko: a.filter(sans).concat(b.filter(sans)) }; };\nconst G = sorties('Interrupteur général')[0] || {};\nif (!passe('Composer les comptes')) return [{ json: { arret: G.lecture === 'erreur' ? 'lecture_impossible' : 'interrupteur_general_coupe', routes: {}, statuts: {}, effets_prevus: 0, effets_faits: 0, cartes_ecrites: 0, marques: 0 } }];\nconst routes = {}, statuts = {};\nlet prevus = 0, faits = 0;\nfor (const x of sorties('Aiguiller')) if (x.contrat !== 'aucun') { const dep = x.contrat.split('@')[0].split('-')[2]; routes[dep] = (routes[dep] || 0) + (x.donnees.demandes || x.donnees.evenements || []).length; }\nfor (const dep of [\"accueil\",\"devis\",\"suivi\",\"facturation\",\"apres\",\"operations\",\"direction\"]) { const r = issue('Appeler presti-dep-' + dep); if (!r) continue;\n  statuts[dep] = r.ko.length ? 'echec' : r.ok.map((x) => x.statut).join(',');\n  for (const x of r.ok) { if (Array.isArray(x.effets_prevus)) prevus += x.effets_prevus.length; if (Array.isArray(x.effets_faits)) faits += x.effets_faits.length; } }\nfor (const nom of ['Appeler lib-journaliser', 'Appeler lib-battement']) for (const x of sorties(nom)) { if (x && Array.isArray(x.effets_prevus)) prevus += x.effets_prevus.length; if (x && Array.isArray(x.effets_faits)) faits += x.effets_faits.length; }\nconst secours = sorties('Journal : rejeté ou sauté')[0] || { rejets: [], sautes: [] };\nconst cartes = (sorties('Préparer les cartes de l’ombre')[0] || { lignes: [] }).lignes.length;\nconst ecriture = passe('Écrire les cartes (ombre)') ? (sorties('Écrire les cartes (ombre)').some((x) => x && x.error) ? 'erreur' : 'ok') : 'aucune';\nconst marques = sorties('Préparer les marques').filter((x) => x && x.p_artisan).reduce((n, x) => n + x.p_ids.length, 0);\nreturn [{ json: { arret: null, simulation: true, comptes: sorties('Composer les comptes').filter((c) => c && c.artisan_id).length, routes: routes, statuts: statuts, sautes: secours.sautes.map((x) => ({ departement: x.departement, motif: x.motif })), rejets: secours.rejets.map((x) => x.motif), effets_prevus: prevus, effets_faits: faits, cartes_ecrites: ecriture === 'ok' ? cartes : 0, ecriture_cartes: ecriture, marques: marques } }];"
+      }
+    },
+    {
+      "id": "a084034f-2458-4c72-bec2-43e1cd406c5e",
+      "name": "Préparer le journal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        672
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Cerveau : le journal du passage (lib-journaliser), UNE enveloppe par compte lu : chaque département appelé et son statut, chaque saut,\n// chaque rejet. Des identifiants et des statuts seulement : aucun nom, aucun contact, aucun texte de client.\nconst G = $('Interrupteur général').first().json;\nconst trace = { execution_parent: 'presti-cerveau:' + G.passage, declencheur: 'presti-cerveau', tentative: 0 };\nconst sorties = (nom, b) => { const n = $(nom); return n.isExecuted ? n.all(b || 0).map((x) => x.json) : []; };\nconst issue = (nom) => { const n = $(nom); if (!n.isExecuted) return null; const sans = (x) => !x || typeof x.contrat !== 'string'; const a = n.all(0).map((x) => x.json), b = n.all(1).map((x) => x.json); return { ok: a.filter((x) => !sans(x)), ko: a.filter(sans).concat(b.filter(sans)) }; };\nconst DEPS = [\"accueil\",\"devis\",\"suivi\",\"facturation\",\"apres\",\"operations\",\"direction\"];\nconst comptes = $('Composer les comptes').all().map((x) => x.json).filter((c) => c && typeof c.artisan_id === 'string');\nconst secours = sorties('Journal : rejeté ou sauté')[0] || { rejets: [], sautes: [] };\nconst s = [];\nfor (const c of comptes) { const L = [];\n  const ligne = (evenement, ref, decision) => L.push({ evenement: evenement, agent: 'presti-cerveau', objet_ref: ref, decision: String(decision).slice(0, 200), modele: null, jetons_entree: null, jetons_sortie: null, cout_eur: null, source_tarif: null, simulation: true });\n  for (const dep of DEPS) { const r = issue('Appeler presti-dep-' + dep); if (!r) continue;\n    const a = r.ok.filter((x) => x.cle_idempotence.includes(c.artisan_id.slice(24))); if (a.length) ligne('departement_appele', 'presti-dep-' + dep, 'statut ' + a.map((x) => x.statut).join(', '));\n    if (r.ko.length) ligne('departement_en_echec', 'presti-dep-' + dep, 'sortie d’erreur : le département n’a pas répondu'); }\n  for (const x of secours.sautes) if (x.artisan_id === c.artisan_id) ligne('departement_saute', 'presti-dep-' + x.departement, x.motif);\n  for (const x of secours.rejets) if (x.artisan_id === c.artisan_id) ligne('evenement_rejete', x.id, x.motif);\n  if (!L.length) ligne('passage_sans_evenement', null, 'rien à router pour ce compte');\n  s.push({ json: { contrat: 'lib-journaliser@1', organisation_id: c.artisan_id, simulation: true, cle_idempotence: 'jc:' + c.artisan_id.slice(24) + ':' + G.passage, trace: trace, config: {}, donnees: { entrees: L.slice(0, 200) } } }); }\nreturn s.length ? s : [{ json: { vide: true } }];"
+      }
+    },
+    {
+      "id": "fdf35c05-3a38-40b1-86d7-3cadfeb4762b",
+      "name": "Aucun compte lu ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2240,
+        672
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aucuncomptelu",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "bf932b05-853c-471f-af6b-2f02ec4d3b14",
+      "name": "Préparer le battement",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2688,
+        672
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Cerveau : le battement du passage (lib-battement), que le contrôle des 26 h surveille. L'heure vient de la lecture, jamais d'un calcul.\nconst G = $('Interrupteur général').first().json;\nconst trace = { execution_parent: 'presti-cerveau:' + G.passage, declencheur: 'presti-cerveau', tentative: 0 };\nreturn [{ json: { contrat: 'lib-battement@1', organisation_id: G.organisation_systeme, simulation: true, cle_idempotence: 'bat:cerveau:' + G.passage, trace: trace, config: {}, donnees: { workflow: 'presti-cerveau', passe_le: G.maintenant, operation: 'battre' } } }];"
+      }
+    },
+    {
+      "id": "193431d6-8cff-42a1-80da-afb32c74132a",
+      "name": "Appeler lib-journaliser",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2464,
+        1344
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "NQg0KDXIa5hhzAvq"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Journal du passage, une enveloppe par compte (035-003). Épinglé en simulation tant que presti-cerveau n'est pas dans ses callerIds.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "42312ee7-5cb3-49cb-ae6a-106f5207af0b",
+      "name": "Appeler lib-battement",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2912,
+        672
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "XwjyA6PFjzlI2vpd"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Battement du Cerveau (035-003). Épinglé en simulation.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "0380a5b6-fb65-4710-bd85-22810da88bb3",
+      "name": "Sticky Note c921e827",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        992
+      ],
+      "parameters": {
+        "content": "## presti-cerveau (036-001)\nLe sommet du système de chaque artisan (p6:69, A1), multi-comptes : il LIT (épinglé en simulation), il ROUTE vers les sept chefs presti-dep-*, il journalise. Aucun calcul métier, aucun montant, aucun modèle (p6:357-359).\nToutes les minutes : interrupteur général → comptes (offre, interrupteurs, palier) → événements non traités page par page (filtre artisan_id) → aiguillage (multi-tenant, doublons, palier, interrupteurs) → départements (sortie de secours) → journal → battement → bilan.\nContrat : plans/011-cadrage-01-11/p6-signature/contrats/cerveau.json. INACTIF, jamais publié, en simulation. Juge : scripts/cerveau-accueil-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 224
+      }
+    },
+    {
+      "id": "5793697a-abcb-4f6b-b99a-38069af1a8c8",
+      "name": "Lire les interrupteurs généraux",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        1088
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/departements_reglages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "artisan_id,departement,palier,en_marche"
+            },
+            {
+              "name": "departement",
+              "value": "eq.tous"
+            },
+            {
+              "name": "en_marche",
+              "value": "is.true"
+            },
+            {
+              "name": "palier",
+              "value": "in.(simulation,ombre)"
+            },
+            {
+              "name": "order",
+              "value": "artisan_id.asc"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "d26eedd4-ae3f-490f-a66e-8e7b72cacf7d",
+      "name": "Interrupteur général",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        1280
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Cerveau (036-030) : l'interrupteur général, lu dans departements_reglages (ligne « tous » de chaque compte, 0193:184). Ouvert si AU MOINS\n// un compte a son interrupteur général en marche, en palier simulation ou ombre. Lecture en erreur (table absente, réseau) = fermé.\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;\nconst lignes = $('Lire les interrupteurs généraux').all().map((x) => x.json);\nconst erreur = lignes.some((l) => l && l.error);\nconst ouverts = erreur ? [] : [...new Set(lignes.filter((l) => l && l.departement === 'tous' && l.en_marche === true && (l.palier === 'simulation' || l.palier === 'ombre') && UUID.test(String(l.artisan_id))).map((l) => l.artisan_id))].sort().slice(0, 200);\nconst t = Date.now();\nconst iso = new Date(Math.floor(t / 60000) * 60000).toISOString();\nreturn [{ json: { interrupteur_general: !erreur && ouverts.length > 0, organisation_systeme: '00000000-0000-4000-8000-000000000000', passage: iso.slice(0, 10) + 'T' + iso.slice(11, 13) + iso.slice(14, 16), maintenant: new Date(t).toISOString(), comptes: ouverts, lecture: erreur ? 'erreur' : 'ok' } }];"
+      }
+    },
+    {
+      "id": "be12a6ba-386b-4f32-86cb-2dc74267bf02",
+      "name": "Lire les réglages des départements",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        560,
+        672
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/departements_reglages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "artisan_id,departement,palier,en_marche,plafond_jour"
+            },
+            {
+              "name": "artisan_id",
+              "value": "={{ 'in.(' + ($('Interrupteur général').first().json.comptes.join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+            },
+            {
+              "name": "order",
+              "value": "artisan_id.asc,departement.asc"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "4047cadc-3501-4dd5-ab91-61791d391799",
+      "name": "Lire les comptes et leurs offres",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        560,
+        864
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,nom,plan,est_demo,suppression_demandee_le"
+            },
+            {
+              "name": "id",
+              "value": "={{ 'in.(' + ($('Interrupteur général').first().json.comptes.join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+            },
+            {
+              "name": "order",
+              "value": "id.asc"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "0b749ac6-1149-48e8-837f-379cccf37a5e",
+      "name": "Lire les modes de réponse",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        560,
+        1040
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/plateforme_config",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "artisan_id,mode_reponse"
+            },
+            {
+              "name": "artisan_id",
+              "value": "={{ 'in.(' + ($('Interrupteur général').first().json.comptes.join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "5cbea9f0-40e4-496e-9491-0710e37a4012",
+      "name": "Composer les comptes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        864
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Cerveau (036-030) : un compte par artisan ouvert, à la forme « compte » du contrat (plans/011-cadrage-01-11/p6-signature/contrats/cerveau.json),\n// composé depuis les vraies tables : departements_reglages (palier, interrupteurs, plafond), artisans (offre, nom), plateforme_config (mode).\n// Aucune valeur inventée pour un fait de client : les réglages absents prennent le défaut le plus prudent (département coupé, mode\n// « assistée », pilote inactif : tout devient carte). Compte en suppression, de démonstration ou d'offre inconnue : écarté.\nconst G = $('Interrupteur général').first().json;\nconst DEPS = [\"accueil\",\"devis\",\"suivi\",\"facturation\",\"apres\",\"operations\",\"direction\"];\nconst OFFRE = { studio: 'studio', signature: 'signature', business: 'signature', entreprise: 'signature', essentiel: 'essentiel', gratuit: 'essai', essai: 'essai' };\nconst CAPACITES = { studio: [\"canaux.email\",\"relances\",\"factures.relances\",\"assistant\"], essentiel: [\"canaux.email\",\"relances\",\"factures.relances\"], essai: [\"canaux.email\"],\n  signature: [\"canaux.email\",\"relances\",\"factures.relances\",\"assistant\",\"plateforme.ia.auto\",\"relances.auto\",\"factures.relances.auto\",\"crm\",\"assistant.pilote\"] };\nconst QUALIFICATION = {\"grille\":[{\"critere\":\"urgence=urgent\",\"poids\":40},{\"critere\":\"canal=formulaire\",\"poids\":25},{\"critere\":\"canal=site\",\"poids\":25},{\"critere\":\"canal=telephone\",\"poids\":15},{\"critere\":\"canal=email\",\"poids\":15}],\"seuils\":{\"haute\":60,\"normale\":30},\"delais_cibles_min\":{\"haute\":15,\"normale\":60,\"a_revoir\":240}};\nconst lire = (nom) => $(nom).all().map((x) => x.json).filter((x) => x && !x.error);\nconst reglages = lire('Lire les réglages des départements').filter((r) => typeof r.artisan_id === 'string');\nconst artisans = {}; for (const a of lire('Lire les comptes et leurs offres')) if (typeof a.id === 'string') artisans[a.id] = a;\nconst modes = {}; for (const m of lire('Lire les modes de réponse')) if (typeof m.artisan_id === 'string') modes[m.artisan_id] = m.mode_reponse;\nconst s = [];\nfor (const id of G.comptes) {\n  const a = artisans[id];\n  if (!a || a.suppression_demandee_le || a.est_demo === true) continue;\n  const offre = OFFRE[String(a.plan || '').toLowerCase()];\n  if (!offre) continue;\n  const r = (dep) => reglages.find((x) => x.artisan_id === id && x.departement === dep) || null;\n  const tous = r('tous');\n  const departements = {}; for (const d of DEPS) departements[d] = !!(r(d) && r(d).en_marche === true);\n  const acc = r('accueil');\n  const mode = ['manuelle', 'assistee', 'auto'].includes(modes[id]) ? modes[id] : 'assistee';\n  s.push({ json: { artisan_id: id, palier: tous ? tous.palier : 'simulation', offre: offre,\n    interrupteurs: { general: !!(tous && tous.en_marche === true), departements: departements },\n    accueil: { nom_artisan: (String(a.nom || '').replace(/[\\r\\n<>\"]/g, '').trim() || 'Votre artisan').slice(0, 70), offre: offre, mode_reponse: mode, capacites: CAPACITES[offre],\n      pilote: { drapeau: true, actif: false, types: {} }, parties_depuis_24h: 0, mots_escalade_artisan: [], fournisseurs: [],\n      horaires: { jours_permis: [1, 2, 3, 4, 5, 6, 7], heures_permises: { debut: '00:00', fin: '23:59' } },\n      plafond_jour: Math.max(0, Math.min(20, acc && Number.isInteger(acc.plafond_jour) ? acc.plafond_jour : 20)), qualification: QUALIFICATION },\n    empreintes_connues: [], cles_existantes: [] } });\n}\nreturn s.length ? s : [{ json: { vide: true } }];"
+      }
+    },
+    {
+      "id": "1ad1472d-35d8-40d7-a8e0-b8a874fef7ba",
+      "name": "Lire les événements non traités",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        480
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/n8n_evenements_a_traiter",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,artisan_id,type,objet_type,objet_id,cle,faits,survenu_le"
+            },
+            {
+              "name": "artisan_id",
+              "value": "={{ 'in.(' + ($('Composer les comptes').all().map(x => x.json.artisan_id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+            },
+            {
+              "name": "order",
+              "value": "survenu_le.asc,id.asc"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "6dda53e5-b6e2-4eca-bd17-c9b6fe75fd7d",
+      "name": "Lire les demandes des événements",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        288
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,artisan_id,canal,created_at,message,urgence,type_chantier,photos"
+            },
+            {
+              "name": "id",
+              "value": "={{ 'in.(' + ([...new Set($('Lire les événements non traités').all().map(x => x.json).filter(e => e && e.type === 'demande_recue' && e.objet_type === 'lead' && typeof e.objet_id === 'string').map(e => e.objet_id))].join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+            },
+            {
+              "name": "artisan_id",
+              "value": "={{ 'in.(' + ($('Composer les comptes').all().map(x => x.json.artisan_id).filter(Boolean).join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "8bb0165e-37be-46af-8b33-f4ab3970ea93",
+      "name": "Composer les pages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        672
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Cerveau (036-030) : une page par compte servi (forme « page » du contrat), ses événements lus dans n8n_evenements_a_traiter (0193:425),\n// dans l'ordre (survenu_le, id). Un événement « demande_recue » reçoit sa demande (leads, MÊME compte exigé) : le message, le canal, l'heure ;\n// jamais le contact. Champs hors format retirés (jamais recopiés tels quels).\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;\nconst comptes = $('Composer les comptes').all().map((x) => x.json).filter((c) => c && typeof c.artisan_id === 'string');\nconst evs = $('Lire les événements non traités').all().map((x) => x.json).filter((e) => e && !e.error && typeof e.id === 'string');\nconst leads = {}; for (const l of $('Lire les demandes des événements').all().map((x) => x.json)) if (l && !l.error && typeof l.id === 'string') leads[l.id] = l;\nconst CANAL = { telegram: 'telegram', email: 'email' };\nconst demandeDe = (e) => {\n  const l = e.objet_type === 'lead' ? leads[e.objet_id] : null;\n  if (!l || l.artisan_id !== e.artisan_id) return null;\n  const champs = {};\n  if (typeof l.canal === 'string' && /^[a-z_]{1,30}$/.test(l.canal)) champs.canal = l.canal;\n  if (l.urgence === 'urgent' || l.urgence === 'normal') champs.urgence = l.urgence;\n  if (typeof l.type_chantier === 'string' && /^[^/@:]{1,60}$/.test(l.type_chantier)) champs.type_chantier = l.type_chantier;\n  champs.photo_jointe = Array.isArray(l.photos) && l.photos.length > 0;\n  return { id: l.id, canal: CANAL[l.canal] || 'page_p', recu_le: new Date(l.created_at).toISOString(), message: typeof l.message === 'string' ? l.message.slice(0, 4000) : null,\n    champs: champs, empreinte_contact: null, client_existant: false, honeypot: false, photo: null, proposition: null, destinataire: { opposition: null, consentement_sms: null } };\n};\nconst s = [];\nfor (const c of comptes) {\n  const page = evs.filter((e) => e.artisan_id === c.artisan_id).slice(0, 50).map((e) => {\n    const ev = { id: e.id, artisan_id: e.artisan_id, type: e.type, cle: e.cle, objet_type: e.objet_type || null, objet_id: UUID.test(String(e.objet_id)) ? e.objet_id : null };\n    if (e.type === 'demande_recue') { const d = demandeDe(e); if (d) ev.demande = d; }\n    return ev;\n  });\n  s.push({ json: { artisan_id: c.artisan_id, page: 0, suivante: null, evenements: page } });\n}\nreturn s.length ? s : [{ json: { artisan_id: null, page: 0, suivante: null, evenements: [] } }];"
+      }
+    },
+    {
+      "id": "4ca1254b-5744-496f-94f5-bab234e39775",
+      "name": "Préparer les cartes de l’ombre",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1904,
+        352
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Cerveau (036-030) : les cartes de l'OMBRE. Pour chaque département servi en palier « ombre » qui a répondu, chaque effet prévu\n// « ecrire_carte » ou « mettre_en_file_pilote » (en ombre, le pilote aussi devient une carte : rien ne part seul) devient UNE ligne\n// assistant_actions (0157 + 0194) : à valider (en_attente, confirmation, échéance 7 jours), son département, son motif, la source de\n// chaque fait, sa clé (celle du chef : idempotent, « on conflict do nothing »). Même compte exigé partout (multi-tenant strict). En palier\n// « simulation », rien n'est écrit. Aucune carte sans clé, sans objet du compte ou sans source.\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;\nconst CLE = /^[A-Za-z0-9_:.-]{3,120}$/;\nconst DEPS = [\"accueil\",\"devis\",\"suivi\",\"facturation\",\"apres\",\"operations\",\"direction\"];\nconst TITRES = { reponse_prospect: 'Répondre à une nouvelle demande', relance_prospect: 'Relancer une demande sans réponse', devis_brouillon: 'Préparer un devis', relance_impaye: 'Relancer une facture impayée' };\nconst MOTIFS = { demande_recue: 'Une nouvelle demande est arrivée sur votre page', relance_due: 'Une demande attend une relance', devis_a_preparer: 'Un devis est à préparer', facture_a_emettre: 'Une facture est à émettre', impaye_echu: 'Une facture est échue sans paiement', chantier_termine: 'Un chantier est terminé', rendez_vous_a_poser: 'Un rendez-vous est à poser', page_du_matin: 'Le point du matin' };\nconst aig = $('Aiguiller').all().map((x) => x.json);\nconst routes = (aig.find((x) => x && x.contrat === 'aucun') || {}).routes_ids || {};\nconst issue = (nom) => { const n = $(nom); if (!n.isExecuted) return null; const sans = (x) => !x || typeof x.contrat !== 'string'; const a = n.all(0).map((x) => x.json), b = n.all(1).map((x) => x.json); return { ok: a.filter((x) => !sans(x)), ko: a.filter(sans).concat(b.filter(sans)) }; };\nconst expire = new Date(Date.now() + 7 * 86400000).toISOString();\nconst lignes = [], vues = new Set();\nfor (const dep of DEPS) { const r = issue('Appeler presti-dep-' + dep); if (!r) continue;\n  for (const x of r.ok) {\n    const lot = Object.values(routes).find((l) => l.departement === dep && typeof x.cle_idempotence === 'string' && x.cle_idempotence.startsWith('dep:' + dep + ':' + l.artisan_id.slice(24) + ':'));\n    if (!lot || lot.palier !== 'ombre') continue;\n    for (const e of (Array.isArray(x.effets_prevus) ? x.effets_prevus : [])) {\n      if (!e || (e.effet !== 'ecrire_carte' && e.effet !== 'mettre_en_file_pilote') || !e.corps || typeof e.corps !== 'object') continue;\n      const k = e.corps;\n      if (k.organisation_id !== lot.artisan_id || !CLE.test(String(k.cle)) || vues.has(lot.artisan_id + ':' + k.cle)) continue;\n      const objet = UUID.test(String(k.objet_id)) ? lot.objets.find((o) => o.objet_id === k.objet_id) : null;\n      if (!objet) continue;\n      vues.add(lot.artisan_id + ':' + k.cle);\n      const outil = /^[a-z_]{2,60}$/.test(String(k.type_action)) ? k.type_action : 'action_agent';\n      const brouillon = k.brouillon && typeof k.brouillon === 'object' ? { objet: typeof k.brouillon.objet === 'string' ? k.brouillon.objet.slice(0, 120) : null, texte: typeof k.brouillon.texte === 'string' ? k.brouillon.texte.slice(0, 1700) : null } : null;\n      const sources = [\n        { fait: 'evenement', source: 'evenements_metier:' + objet.id },\n        { fait: 'objet', source: (objet.type === 'demande_recue' ? 'leads:' : 'objet:') + k.objet_id },\n        { fait: 'palier', source: 'departements_reglages:' + lot.artisan_id + ':' + dep + ':ombre' },\n      ];\n      if (brouillon && brouillon.texte) sources.push({ fait: 'brouillon', source: 'presti-dep-' + dep + ':' + k.cle });\n      lignes.push({ artisan_id: lot.artisan_id, conversation_id: objet.id, tour: 1, outil: outil, mode: 'confirmation', statut: 'en_attente',\n        titre: (TITRES[outil] || 'Action préparée par le département ' + dep).slice(0, 200),\n        entrees: { type_action: outil, canal: typeof k.canal === 'string' ? k.canal : null, objet_id: k.objet_id, effet: e.effet },\n        apercu: { brouillon: brouillon, canal: typeof k.canal === 'string' ? k.canal : null, pilote_en_reel: e.effet === 'mettre_en_file_pilote' },\n        objet_type: objet.type === 'demande_recue' ? 'conversation' : null, objet_id: objet.type === 'demande_recue' ? k.objet_id : null,\n        expire_le: expire, origine: 'agent', departement: dep,\n        motif: ((MOTIFS[objet.type] || 'Un événement est à traiter') + ' ; préparé en mode ombre, rien n’est parti' + (e.effet === 'mettre_en_file_pilote' ? ' (au réel, le pilote l’enverrait après 10 minutes)' : '') + '.').slice(0, 300),\n        sources: sources, cle: k.cle });\n    } } }\nreturn [{ json: { lignes: lignes.slice(0, 200) } }];"
+      }
+    },
+    {
+      "id": "0651d2a5-759a-4e60-8af9-ffc627114afc",
+      "name": "Des cartes à écrire ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2016,
+        192
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "descartescrire",
+              "leftValue": "={{ Array.isArray($json.lignes) && $json.lignes.length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "dbd43d39-b903-4142-a580-01263d1a0689",
+      "name": "Écrire les cartes (ombre)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2128,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/assistant_actions?on_conflict=artisan_id,cle",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "resolution=ignore-duplicates,return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.lignes) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "id": "cc64e2a5-8121-4d50-8130-0e92079c7537",
+      "name": "Préparer les marques",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        352
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Cerveau (036-030) : la marque « traité » (evenements_marquer_traites, 0193 ; exécutable par service_role, 0194). Par compte : les\n// événements routés vers un département qui a RÉPONDU, et ceux rejetés ou sautés (journalisés : rien n'est perdu en silence ; la demande\n// elle-même reste dans l'app). Un département en échec n'est pas marqué : rejoué au passage suivant. 200 identifiants au plus par appel.\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;\nconst DEPS = [\"accueil\",\"devis\",\"suivi\",\"facturation\",\"apres\",\"operations\",\"direction\"];\nconst aucun = $('Aiguiller').all().map((x) => x.json).find((x) => x && x.contrat === 'aucun') || { rejets: [], sautes: [], routes_ids: {} };\nconst issue = (nom) => { const n = $(nom); if (!n.isExecuted) return null; const sans = (x) => !x || typeof x.contrat !== 'string'; const a = n.all(0).map((x) => x.json), b = n.all(1).map((x) => x.json); return { ok: a.filter((x) => !sans(x)), ko: a.filter(sans).concat(b.filter(sans)) }; };\nconst enEchec = new Set(); for (const dep of DEPS) { const r = issue('Appeler presti-dep-' + dep); if (r && r.ko.length) enEchec.add(dep); }\nconst parCompte = {};\nconst ajouter = (a, id) => { if (typeof a === 'string' && UUID.test(a) && typeof id === 'string' && UUID.test(id)) (parCompte[a] = parCompte[a] || new Set()).add(id); };\nfor (const l of Object.values(aucun.routes_ids || {})) if (!enEchec.has(l.departement)) for (const id of l.ids) ajouter(l.artisan_id, id);\nfor (const x of aucun.rejets || []) if (x.motif !== 'autre_compte' && x.motif !== 'compte_inconnu') ajouter(x.artisan_id, x.id);\nfor (const x of aucun.sautes || []) for (const id of (x.ids || [])) ajouter(x.artisan_id, id);\nconst s = Object.keys(parCompte).sort().map((a) => ({ json: { p_artisan: a, p_ids: [...parCompte[a]].slice(0, 200) } }));\nreturn s.length ? s : [{ json: { vide: true } }];"
+      }
+    },
+    {
+      "id": "4598e11a-4e90-48be-b564-b2fe69a2a605",
+      "name": "Des marques à poser ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2352,
+        192
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "desmarquesposer",
+              "leftValue": "={{ $json.vide !== true && typeof $json.p_artisan === \"string\" }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "40f2722b-1340-468a-b91c-8da6afb90e4e",
+      "name": "Marquer les événements traités",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2464,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/rpc/evenements_marquer_traites",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": false,
+        "headerParameters": {
+          "parameters": []
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_artisan: $json.p_artisan, p_ids: $json.p_ids }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dTewDK98MLrNckNG",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": {
+    "sameAsDraft": true
+  },
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  }
+}

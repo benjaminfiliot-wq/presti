@@ -1,4 +1,4 @@
-# Carte du code — presti (2026-11-03T18:56:56Z)
+# Carte du code — presti (2026-11-03T19:38:41Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -485,10 +485,10 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/ville.ts` (2) : NB_COMMUNES, villeDe
 - `lib/zip.ts` (2) : crc32, ZipFlux
 
-## Migrations — `supabase/migrations` (181)
-- dernières : 0191_suivi_artisan_envois.sql, 0192_accuse_reception_n8n.sql, 0193_systeme_agents.sql, 0194_cartes_agents.sql, 0195_deposer_message.sql
+## Migrations — `supabase/migrations` (182)
+- dernières : 0192_accuse_reception_n8n.sql, 0193_systeme_agents.sql, 0194_cartes_agents.sql, 0195_deposer_message.sql, 0196_cle_boite_vault.sql
 
 ## Scripts — `scripts/` (599 .mjs, dont 88 suites e2e)
 
-## Orchestre — file : 60 · en cours : 0 · faites : 472 · refusées : 17
+## Orchestre — file : 60 · en cours : 1 · faites : 473 · refusées : 17
 

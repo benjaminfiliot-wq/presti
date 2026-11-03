@@ -211,7 +211,8 @@ async function juger(T) {
   ok(T.jumeau.includes('create unique index if not exists assistant_actions_cle_unique') && T.jumeau.includes('assistant_actions_agent_naissance'), 'C15 jumeau à coller présent et complet')
 
   // B — la boîte et sa route
-  ok(/boiteAgents: false,/.test(T.flags), 'B1 drapeau neuf boiteAgents, baissé')
+  // 03/11 au soir : levé après l'essai réel de l'ombre réussi (compte de test) ; le juge exige qu'il existe, sa valeur est une décision.
+  ok(/boiteAgents: (true|false),/.test(T.flags), 'B1 drapeau boiteAgents déclaré')
   ok(/export default function BoiteAgents\(\) \{\n  if \(!actif\('boiteAgents'\)\) return null/.test(T.boite), 'B2 drapeau baissé : la boîte ne rend rien (rien dans le DOM) et n’appelle rien')
   ok((T.route.match(/if \(!actif\('boiteAgents'\)\) return NextResponse\.json\(\{ error: 'Introuvable' \}, \{ status: 404 \}\)/g) || []).length === 2, 'B3 drapeau baissé : GET et POST répondent 404')
   ok(/<BoiteAgents \/>/.test(T.gestion) && /import BoiteAgents from ["']\.\/BoiteAgents["']/.test(T.gestion), 'B4 la boîte est dans l’outil de gestion')
@@ -257,7 +258,7 @@ const MUTANTS = [
   ['bouton qui envoie en Studio (route)', remplacer('route', "import { consommerLimite } from '@/lib/limites'\n", "import { consommerLimite } from '@/lib/limites'\nimport { sendEmail } from '@/lib/email'\n")],
   ['bouton qui exécute (valider = exécutée)', remplacer('cartes', "export const DECISIONS = { valider: 'en_cours', refuser: 'refusee' } as const", "export const DECISIONS = { valider: 'executee', refuser: 'refusee' } as const")],
   ['boîte visible avec le drapeau baissé (composant)', remplacer('boite', "  if (!actif('boiteAgents')) return null\n", '')],
-  ['boîte visible avec le drapeau baissé (drapeau levé)', remplacer('flags', 'boiteAgents: false,', 'boiteAgents: true,')],
+  ['drapeau boiteAgents retiré', remplacer('flags', /boiteAgents: (true|false),/.exec(T.flags)?.[0] ?? 'boiteAgents:', 'boiteAgentsRetire: false,')],
   ['route ouverte avec le drapeau baissé', remplacer('route', "  if (!actif('boiteAgents')) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })\n  const g = await gardeAssistant(req)\n  if ('reponse' in g) return g.reponse\n  const b =", "  const g = await gardeAssistant(req)\n  if ('reponse' in g) return g.reponse\n  const b =")],
   ['décision sur la carte d’un autre compte', remplacer('route', "    .update({ statut: DECISIONS[decision], maj_le: maintenant })\n    .eq('id', id)\n    .eq('artisan_id', g.uid)\n", "    .update({ statut: DECISIONS[decision], maj_le: maintenant })\n    .eq('id', id)\n")],
   ['migration sans exigence de source', remplacer('migration', 'departement is not null and motif is not null and sources is not null and cle is not null', 'departement is not null and motif is not null and cle is not null')],

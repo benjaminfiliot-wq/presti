@@ -1,0 +1,13 @@
+{
+ "Toutes les minutes": [{"json": {"timestamp": "2026-11-03T19:30:00.000Z"}}],
+ "Lire les interrupteurs généraux": [{"json": {"artisan_id": "00000000-0000-4000-8000-0000000000c3", "departement": "tous", "palier": "ombre", "en_marche": true}}],
+ "Lire les réglages des départements": [
+   {"json": {"artisan_id": "00000000-0000-4000-8000-0000000000c3", "departement": "tous", "palier": "ombre", "en_marche": true, "plafond_jour": 20}},
+   {"json": {"artisan_id": "00000000-0000-4000-8000-0000000000c3", "departement": "accueil", "palier": "ombre", "en_marche": true, "plafond_jour": 20}}],
+ "Lire les comptes et leurs offres": [{"json": {"id": "00000000-0000-4000-8000-0000000000c3", "nom": "Exemple. Plomberie Ombre-Démo", "plan": "studio", "est_demo": false, "suppression_demandee_le": null}}],
+ "Lire les modes de réponse": [{"json": {"artisan_id": "00000000-0000-4000-8000-0000000000c3", "mode_reponse": "assistee"}}],
+ "Lire les événements non traités": [{"json": {"id": "00000000-0000-4000-8000-e00000000001", "artisan_id": "00000000-0000-4000-8000-0000000000c3", "type": "demande_recue", "objet_type": "lead", "objet_id": "00000000-0000-4000-8000-c00000000001", "cle": "demande_recue:00000000-0000-4000-8000-c00000000001", "faits": {"lead_id": "00000000-0000-4000-8000-c00000000001", "canal": "formulaire"}, "survenu_le": "2026-11-03T19:29:10.000Z"}}],
+ "Lire les demandes des événements": [{"json": {"id": "00000000-0000-4000-8000-c00000000001", "artisan_id": "00000000-0000-4000-8000-0000000000c3", "canal": "formulaire", "created_at": "2026-11-03T19:29:09.000Z", "message": "Exemple. Bonjour, je voudrais remplacer le mitigeur de la cuisine, quand vous pouvez.", "urgence": "normal", "type_chantier": "Plomberie", "photos": null}}],
+ "Écrire les cartes (ombre)": [{"json": {"epingle": "essai 036-034 : écriture épinglée, rien n'est écrit"}}],
+ "Marquer les événements traités": [{"json": {"epingle": "essai 036-034 : marque épinglée, rien n'est marqué"}}]
+}

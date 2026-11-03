@@ -1,0 +1,2143 @@
+[
+  {
+    "contrat": "presti-dep-accueil@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:accueil:0000000000a1:2026-11-07T2142",
+    "simulation": true,
+    "resultat": {
+      "demandes_recues": 20,
+      "classes": {
+        "peut_attendre": 13,
+        "urgence": 3,
+        "spam": 2,
+        "curieux": 1,
+        "client_existant": 1
+      },
+      "spam": [
+        "00000000-0000-4000-8000-a00000000004",
+        "00000000-0000-4000-8000-a00000000014"
+      ],
+      "escalades": [
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000002",
+          "mot": "eau partout"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000007",
+          "mot": "avocat"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000012",
+          "mot": "gaz"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000019",
+          "mot": "refui"
+        }
+      ],
+      "questions": [
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000001",
+          "question": "Quelle surface est concernée, environ ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000002",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000003",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000005",
+          "question": "Quel type de travaux souhaitez-vous faire ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000006",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000007",
+          "question": "Quel type de travaux souhaitez-vous faire ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000008",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000009",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000010",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000011",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000012",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000013",
+          "question": "Quelle surface est concernée, environ ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000015",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000016",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000017",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000018",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000019",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000020",
+          "question": "Pour quand souhaitez-vous les travaux ?"
+        }
+      ],
+      "decisions": [
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000001",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000002",
+          "action": "carte",
+          "motif": "escalade"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000003",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000005",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000006",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000007",
+          "action": "carte",
+          "motif": "escalade"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000008",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000009",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000010",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000011",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000012",
+          "action": "carte",
+          "motif": "escalade"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000013",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000015",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000016",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000017",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000018",
+          "action": "carte",
+          "motif": "offre"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000019",
+          "action": "carte",
+          "motif": "escalade"
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000020",
+          "action": "carte",
+          "motif": "offre"
+        }
+      ],
+      "cartes": [
+        "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+        "h:decision:f1f3589960cd868fa14ba8f89481364f0c818b8e58fd2df7",
+        "h:decision:d0a78210916e61789e6e0d5a55a5439853899281cd790384",
+        "h:decision:a09ea59f7b6e72e14626f295face5e10153aa9a7e8962ec8",
+        "h:decision:66853fb5f2e9d96c91b2b30db443f278d7a42e65e6c7c973",
+        "h:decision:877b97d60251efa836e05f912790d0718a406530daf1f829",
+        "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528",
+        "h:decision:e8b0da2ce0b8fe065bef8be56115ace3c60c72f7fcf64ec0",
+        "h:decision:45ce7005615d63ed049b7f290395a51721fd83828a078a04",
+        "h:decision:7d3ed33873b9c6b524c72c679a9b790a159e1150ebb74fd9",
+        "h:decision:61e84c16e89f5d227e951724e171e95a4be88ff58e72dffd",
+        "h:decision:34e5482cbc78f59eaf043a31dfc491c77d99489f9c5e7eb6",
+        "h:decision:e80ca22cf1c25d3be8a8cc5ddfcf6519819384bead2f2e58",
+        "h:decision:ff6093ad03e94068995b0dfb693a113a7efd2360a134ccee",
+        "h:decision:2b980f3ec4c4de26ed203879c02197ba71d71976a67604c2",
+        "h:decision:70cc2d6548be7c04d31b188cd69e6630a52c7763348a3008"
+      ],
+      "pilote": [],
+      "brouillons_demandes": [
+        "00000000-0000-4000-8000-a00000000011"
+      ],
+      "refus_porte": [
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000015",
+          "motifs": [
+            "lecture_en_erreur",
+            "prix_sans_source"
+          ],
+          "repli": null
+        }
+      ],
+      "deja_faits": [],
+      "photos": [
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000008",
+          "statut": "refuse",
+          "description": null
+        },
+        {
+          "demande_id": "00000000-0000-4000-8000-a00000000017",
+          "statut": "refuse",
+          "description": null
+        }
+      ],
+      "note_du_chef": {
+        "statut": "ok",
+        "avis": "rien_a_signaler",
+        "note": "Aucune action pilote : tout passe déjà par des cartes validées par l'artisan. La porte a bien refusé la demande 15 (lecture en erreur, prix sans source), ce qui confirme le dossier.",
+        "points_a_confirmer": [],
+        "points_ecartes": 0,
+        "specialistes_consultes": [
+          "Spécialiste : porte de conformité"
+        ],
+        "appels_specialistes": [
+          {
+            "outil": "Sp_cialiste_porte_de_conformit_",
+            "cle": "p:00000000-0000-4000-8000-a00000000015",
+            "statut_du_retour": "refuse",
+            "erreur_du_retour": null
+          }
+        ],
+        "pilotes_retenus": []
+      }
+    },
+    "effets_prevus": [
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000001",
+        "cle": "h:qualification:19f92bc86ca3203a6e1e7a8d302fc965f3097305d5282187",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Salle de bain",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000001",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000002",
+        "cle": "h:qualification:a76b8ab340a76cfb2b8f119eed8551fb1cbe26f26f0ba372",
+        "note": 54,
+        "priorite": "normale",
+        "categorie": "Chauffe-eau",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:f1f3589960cd868fa14ba8f89481364f0c818b8e58fd2df7",
+          "type_action": "demande_a_traiter",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000002"
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000003",
+        "cle": "h:qualification:a01b6e63218a91ae625911b9ae6f3b8c125a8d60dfcea8d2",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Cuisine",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:d0a78210916e61789e6e0d5a55a5439853899281cd790384",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000003",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Pouvez-vous nous dire quel modèle vous intéresse ? Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000005",
+        "cle": "h:qualification:d12e0220897f019682dce6b58989d90d9990e2c3bcc62d53",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "non renseignée",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:a09ea59f7b6e72e14626f295face5e10153aa9a7e8962ec8",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000005",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Nous pouvons passer voir votre installation pour vous répondre. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000006",
+        "cle": "h:qualification:4d37f29e4b35df84422cf0f4bb4806b021efa23e15773509",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Entretien",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:66853fb5f2e9d96c91b2b30db443f278d7a42e65e6c7c973",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000006",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Ravi de vous relire, nous reprenons votre dossier. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000007",
+        "cle": "h:qualification:31a92eb9d9ad2d7fba3624ce0c8e18a041fc8792f89d2910",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "non renseignée",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:877b97d60251efa836e05f912790d0718a406530daf1f829",
+          "type_action": "demande_a_traiter",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000007"
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000008",
+        "cle": "h:qualification:3bce57a73ab38be0359ceb5fa705da18a4b93042ed79efac",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "WC",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000008",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Merci pour la photo, nous l’étudions. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000009",
+        "cle": "h:qualification:9cf49653a9e678599d46f27f11bc14d7633a09c3b9be2217",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Salle de bain",
+        "doublon": true
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:e8b0da2ce0b8fe065bef8be56115ace3c60c72f7fcf64ec0",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000009",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000010",
+        "cle": "h:qualification:fc63fe03827245b6a905a88de122fcfff24b169962a050f1",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Chauffage",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:45ce7005615d63ed049b7f290395a51721fd83828a078a04",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000010",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Nous vous recontactons. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000011",
+        "cle": "h:qualification:c20f612cffe257c31632379e111f710eeb767eed2d2a582f",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Salle d’eau",
+        "doublon": false
+      },
+      {
+        "effet": "demander_brouillon",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "brouillon:00000000-0000-4000-8000-a00000000011",
+        "objet_type": "demande",
+        "objet_id": "00000000-0000-4000-8000-a00000000011",
+        "pour": "036-003"
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000012",
+        "cle": "h:qualification:d093a000725d3c405852b6994ada1a867d6eb279278a0543",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Chaudière",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:7d3ed33873b9c6b524c72c679a9b790a159e1150ebb74fd9",
+          "type_action": "demande_a_traiter",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000012"
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000013",
+        "cle": "h:qualification:75dc8185450ab30e41327d094d26078c08c72c254c91f47e",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Salle de bain",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:61e84c16e89f5d227e951724e171e95a4be88ff58e72dffd",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000013",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Nous pouvons en parler lors d’une visite. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000015",
+        "cle": "h:qualification:97db29280a7941ccb4daebd96c33eab332f21e8b681c6c7a",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Adoucisseur",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000016",
+        "cle": "h:qualification:890af3113956bc95c606c7f47c3f8acf447db379e67bc650",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Mitigeur",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:34e5482cbc78f59eaf043a31dfc491c77d99489f9c5e7eb6",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000016",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000017",
+        "cle": "h:qualification:8658432a262f6a6c2caea07e15cfc3cf5a15025293a108b6",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Cuisine",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:e80ca22cf1c25d3be8a8cc5ddfcf6519819384bead2f2e58",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000017",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Merci, nous étudions la photo. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000018",
+        "cle": "h:qualification:16496dbbdd45ae0d56b56a8fed47bc2ec1508636c47ffa67",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Plancher chauffant",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:ff6093ad03e94068995b0dfb693a113a7efd2360a134ccee",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000018",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000019",
+        "cle": "h:qualification:7acdc0f24779f3c359b5999ab3ca76864e847ac731e4ecd5",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Robinet",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:2b980f3ec4c4de26ed203879c02197ba71d71976a67604c2",
+          "type_action": "demande_a_traiter",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000019"
+        }
+      },
+      {
+        "effet": "ecrire_note",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lead_id": "00000000-0000-4000-8000-a00000000020",
+        "cle": "h:qualification:cdfbf450c1af4dfbb6d510eadcd353d6b2196f7adf08ee50",
+        "note": 21,
+        "priorite": "a_revoir",
+        "categorie": "Salle de bain",
+        "doublon": false
+      },
+      {
+        "effet": "ecrire_carte",
+        "table": "opportunites",
+        "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+        "entetes": {
+          "Prefer": "resolution=ignore-duplicates,return=representation"
+        },
+        "corps": {
+          "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+          "cle": "h:decision:70cc2d6548be7c04d31b188cd69e6630a52c7763348a3008",
+          "type_action": "reponse_prospect",
+          "objet_type": "demande",
+          "objet_id": "00000000-0000-4000-8000-a00000000020",
+          "canal": "email",
+          "brouillon": {
+            "objet": "Exemple. Votre demande",
+            "texte": "Exemple. Bonjour, merci pour votre message. Avec plaisir, parlons-en. Bien à vous."
+          }
+        }
+      },
+      {
+        "effet": "inserer_journal",
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "lignes": 91,
+        "cles": [
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:2",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:3",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:4",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:5",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:6",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:7",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:8",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:9",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:10",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:11",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:12",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:13",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:14",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:15",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:16",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:17",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:18",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:19",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:20",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:21",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:22",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:23",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:24",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:25",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:26",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:27",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:28",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:29",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:30",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:31",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:32",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:33",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:34",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:35",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:36",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:37",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:38",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:39",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:40",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:41",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:42",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:43",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:44",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:45",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:46",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:47",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:48",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:49",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:50",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:51",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:52",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:53",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:54",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:55",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:56",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:57",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:58",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:59",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:60",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:61",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:62",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:63",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:64",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:65",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:66",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:67",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:68",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:69",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:70",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:71",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:72",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:73",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:74",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:75",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:76",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:77",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:78",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:79",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:80",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:81",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:82",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:83",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:84",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:85",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:86",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:87",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:88",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:89",
+          "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:90"
+        ]
+      }
+    ],
+    "effets_faits": [],
+    "journal": [
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000001",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000001",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:2",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000001",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:3",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000001",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:4",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000001",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:5",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000002",
+        "decision": "[simulation] aurait été fait : classe urgence, escalade",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:6",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000002",
+        "decision": "[simulation] aurait été fait : priorité normale",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:7",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000002",
+        "decision": "[simulation] aurait été fait : carte (escalade)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:8",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000002",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:9",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000002",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:10",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000003",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:11",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000003",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:12",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000003",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:13",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000003",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:14",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000003",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:15",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000004",
+        "decision": "[simulation] aurait été fait : classe spam",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:16",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000005",
+        "decision": "[simulation] aurait été fait : classe curieux",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:17",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000005",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:18",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000005",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:19",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000005",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:20",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000005",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:21",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000006",
+        "decision": "[simulation] aurait été fait : classe client_existant",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:22",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000006",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:23",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000006",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:24",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000006",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:25",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000006",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:26",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000007",
+        "decision": "[simulation] aurait été fait : classe peut_attendre, escalade",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:27",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000007",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:28",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000007",
+        "decision": "[simulation] aurait été fait : carte (escalade)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:29",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000007",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:30",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000007",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:31",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000008",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:32",
+        "evenement": "photo_rejetee",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000008",
+        "decision": "[simulation] aurait été fait : sortie du modèle refusée",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:33",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000008",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:34",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000008",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:35",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000008",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:36",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000008",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:37",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000009",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:38",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000009",
+        "decision": "[simulation] aurait été fait : priorité a_revoir, doublon",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:39",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000009",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:40",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000009",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:41",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000009",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:42",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000010",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:43",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000010",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:44",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000010",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:45",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000010",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:46",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000010",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:47",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000011",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:48",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000011",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:49",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000011",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:50",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000012",
+        "decision": "[simulation] aurait été fait : classe urgence, escalade",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:51",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000012",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:52",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000012",
+        "decision": "[simulation] aurait été fait : carte (escalade)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:53",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000012",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:54",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000012",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:55",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000013",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:56",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000013",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:57",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000013",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:58",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000013",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:59",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000013",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:60",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000014",
+        "decision": "[simulation] aurait été fait : classe spam",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:61",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000015",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:62",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000015",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:63",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000015",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:64",
+        "evenement": "porte_refuse",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000015",
+        "decision": "[simulation] aurait été fait : refuse (lecture_en_erreur, prix_sans_source)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:65",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000016",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:66",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000016",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:67",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000016",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:68",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000016",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:69",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000016",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:70",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000017",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:71",
+        "evenement": "photo_rejetee",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000017",
+        "decision": "[simulation] aurait été fait : sortie du modèle refusée",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:72",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000017",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:73",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000017",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:74",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000017",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:75",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000017",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:76",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000018",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:77",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000018",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:78",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000018",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:79",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000018",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:80",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000018",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:81",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000019",
+        "decision": "[simulation] aurait été fait : classe urgence, escalade",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:82",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000019",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:83",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000019",
+        "decision": "[simulation] aurait été fait : carte (escalade)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:84",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000019",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:85",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000019",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:86",
+        "evenement": "tri",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000020",
+        "decision": "[simulation] aurait été fait : classe peut_attendre",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:87",
+        "evenement": "qualification",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000020",
+        "decision": "[simulation] aurait été fait : priorité a_revoir",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:88",
+        "evenement": "decision",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000020",
+        "decision": "[simulation] aurait été fait : carte (offre)",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:89",
+        "evenement": "porte_passe",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000020",
+        "decision": "[simulation] aurait été fait : passe",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:90",
+        "evenement": "action_prevue",
+        "agent": "presti-dep-accueil",
+        "objet_ref": "00000000-0000-4000-8000-a00000000020",
+        "decision": "[simulation] aurait été fait : prevu",
+        "modele": null,
+        "jetons_entree": null,
+        "jetons_sortie": null,
+        "cout_eur": null,
+        "source_tarif": null,
+        "simulation": true
+      },
+      {
+        "evenement": "note_du_chef",
+        "agent": "chef-accueil",
+        "objet_ref": null,
+        "decision": "rien_a_signaler ; pilotes retenus : 0",
+        "simulation": true
+      }
+    ],
+    "erreurs": []
+  }
+]
