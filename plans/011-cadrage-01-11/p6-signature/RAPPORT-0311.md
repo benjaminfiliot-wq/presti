@@ -28,8 +28,20 @@ est `outillage/OUTILLAGE.md`.
   2. retour sur `https://prestiapp.fr/api/connexions/google/retour` ;
   3. API Gmail, Agenda et Drive activées ;
   4. écran de consentement « Externe », publié « en production ».
-- **Clé `BOITE_CLE_N8N` et modules du conteneur n8n** : il faut root sur Oracle. Le PC n'a que le compte `usine`, sans sudo ni docker. À
-  relire d'abord : comment les exécuteurs de n8n 2.45.7 reçoivent une variable et des modules externes.
+- **Clé `BOITE_CLE_N8N` et modules du conteneur n8n : faits vers 19 h 30**, avec l'accord de Benj.
+  - Par le compte d'administration `ubuntu` (`presti-ops/usine/LISEZMOI.md:61`). Aucun réglage de compte, de sudo ni de pare-feu n'a été
+    touché.
+  - La clé a été générée par script et jamais affichée. Elle est posée dans Vercel (production et aperçu) et dans `/opt/n8n-complet/.env`,
+    après sauvegarde.
+  - Nouvelle image d'exécuteurs `presti/runners:2.45.7-mail` (imapflow, nodemailer, mailparser), avec `crypto`, `dns` et `net` autorisés.
+    L'override est sauvegardé.
+  - Vérifié : les trois modules se chargent ; la clé fait 44 signes dans n8n comme dans les exécuteurs ; n8n répond `{"status":"ok"}`.
+  - Encore à prouver par un banc : qu'un nœud Code lit bien `$env.BOITE_CLE_N8N`. n8n 2.x peut bloquer l'accès à l'environnement
+    (`N8N_BLOCK_ENV_ACCESS_IN_NODE`, non posé).
+  - Retour arrière : remettre `docker-compose.override.yml.avant-executeurs-mail-*` et `.env.avant-boite-*`, puis
+    `docker compose up -d runners n8n`.
+- **Réseau neuronal** : 932 notes reliées, 0 îlot. La copie d'Oracle a été remise à jour (1 222 fichiers, comme le PC). Les données
+  opérationnelles (demandes, devis, factures) restent dans Supabase, par règle ; les agents les lisent par `n8n_lecture`, pas par le vault.
 - **Ensuite, dans l'ordre** :
   1. 036-030 rapatrié, jugé, puis poussé ;
   2. le mode ombre sur un compte de test Studio, puis Signature ;
