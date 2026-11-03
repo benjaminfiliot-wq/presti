@@ -35,6 +35,8 @@ est `outillage/OUTILLAGE.md`.
 
 | 036-018 | **catalogue Entreprise, partie 2** : 5 gabarits, 343 nœuds (opérations avec Agenda, ClickUp, monday, Notion ; administratif avec Drive, OneDrive, Docs, échéances ; finance avec Stripe, QuickBooks, Xero en lecture, Pennylane et Qonto par l'API ; après-vente avec fiche Google et Zendesk ; direction avec validation d'équipe Slack et Teams, Google Chat) | n8n, inactifs |
 
+| 036-010 | **les maquettes de l'interface**, cinq écrans (juge à navigateur, 18 mutants) : centre de commande (barre du jour, « Votre matin, en une page », « Où vous perdez de l'argent », cartes « À valider » avec ligne « fait : … » et bouton manuel, « Tout valider », hors norme déjà préparé, panneau « une question à la fois ») ; « Ce que vos assistants ont fait » ; « Connexions » (tous les outils de la matrice) ; « Mes départements » (Studio et Signature) ; **CRM « atelier »** (onglets existants gardés, chiffres avec source et date, prochaine action, historique « fait : … », import d'un export en trois temps) | `plans/011-cadrage-01-11/p6-signature/maquettes/`, captures dans `.orchestre/preuves/036-010/captures/` |
+
 **Au total : 20 gabarits outillés, environ 1 000 nœuds de vrais outils.**
 - Les sept départements des artisans : 11 gabarits.
 - Le catalogue Entreprise : 9 gabarits.
@@ -46,13 +48,8 @@ lanceur `scripts/tout-verifier.mjs`.
 
 ## En cours au moment d'écrire (agents sur Oracle, Hermes sur l'API)
 
-- 036-010 (Opus) : les maquettes des écrans du prompt 1 :
-  - centre de commande ;
-  - « Ce que vos assistants ont fait » ;
-  - « Connexions », qui liste tous les outils de la matrice ;
-  - « Mes départements » ;
-  - le **CRM « atelier »** : une question à la fois, une ligne « fait : … », import d'un export ; d'après la vidéo du 01/11 sur les CRM et
-    le prompt 3, pas les TikToks.
+- 036-011 : les cinq écrans en code, sous `app/systeme/`, derrière le drapeau `systemeAgents` baissé (rien dans le DOM, routes en 404). La page
+  du CRM lit `lib/crm/` sans toucher `app/crm/` : on ne rase rien.
 - 036-012 : l'intégration :
   - le script de déploiement d'une copie par client, **à blanc** (des exports `client-*` fabriqués sur le disque, jamais un identifiant ni un
     appel à n8n) ;
@@ -64,12 +61,7 @@ lanceur `scripts/tout-verifier.mjs`.
 
 ## Ce qui reste pour la « définition de terminé » du prompt 1 (p6:416-422)
 
-- **Les écrans** (036-010 maquettes, 036-011 code) :
-  - centre de commande ;
-  - « Ce que vos assistants ont fait » ;
-  - « Connexions » ;
-  - « Mes départements » ;
-  - le CRM « atelier » avec « une question à la fois » et la ligne « fait : … » (vidéos du 01/11).
+- **Les écrans en code** (036-011, en cours), puis ta validation des maquettes avant de lever le drapeau.
 - **L'intégration** (036-012) :
   - déploiement d'une copie par client, d'abord à blanc ;
   - tests transverses ;
