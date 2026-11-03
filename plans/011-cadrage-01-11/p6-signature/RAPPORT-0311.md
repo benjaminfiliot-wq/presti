@@ -6,7 +6,17 @@ est `outillage/OUTILLAGE.md`.
 
 ## En bref
 
-- **En production** (`prestiapp.fr`) : rien de neuf depuis `5640cc75`, déployé et prêt.
+- **16 h 30 : les nouveaux prix sont en ligne** (`0750e69`, déployé et vérifié en direct).
+  - Studio est à 30 €, Signature à 60 € : l'accueil affiche 30 € et 60 €, `llms.txt` aussi, plus aucun 99 €.
+  - L'unique essai Signature est passé de 99 € à 60 €, avec ton accord. Il reste en essai jusqu'au 13/11, sans prélèvement.
+  - Les anciens montants restent reconnus pour les abonnements ouverts avant.
+  - Ce déploiement a emporté le travail du jour, inerte derrière ses drapeaux baissés.
+- **Lancés à 16 h 30** :
+  - 036-019, le vrai multi-agents : un chef qui délègue à ses spécialistes ;
+  - 036-020, tout dans l'outil de gestion : CRM 3D ou tableau de bord.
+- **Posés, à lancer** :
+  - 036-021, le branchement automatique des comptes (voie O3 a) ;
+  - 036-022, la mise en service : migrations, puis mode ombre sur un compte de test, puis activation.
 - **Hors production** :
   - tout le travail du jour est commité en local et sauvegardé sur la branche `nuit-0311`, jamais poussé sur `main` ;
   - dans n8n, tous les workflows sont **inactifs, en simulation, sans aucun identifiant**.
