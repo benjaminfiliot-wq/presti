@@ -19,7 +19,7 @@ export function planDepuisMontant(centimes: number | null | undefined): PlanId |
   if (typeof centimes !== 'number') return null
   const euros = centimes / 100
   const trouve = (Object.entries(PLANS) as [PlanId, (typeof PLANS)[PlanId]][])
-    .find(([id, p]) => p.prixMois > 0 && p.prixMois === euros && id !== 'business')
+    .find(([id, p]) => p.prixMois > 0 && (p.prixMois === euros || (p.anciensPrixMois ?? []).includes(euros)) && id !== 'business')
   return trouve?.[0] ?? null
 }
 

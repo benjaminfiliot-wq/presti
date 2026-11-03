@@ -57,6 +57,10 @@ type Plan = {
   capacites: Capacite[]
   /** Prix sur devis (offre Entreprise) : `prixMois` vaut 0 sans que l'offre soit gratuite ni un essai. */
   surDevis?: boolean
+  /** Montants mensuels d'avant un changement de prix, encore facturés aux abonnements ouverts à cet ancien prix : Stripe ne change
+   *  pas seul le prix d'un abonnement en cours. `planDepuisMontant` (lib/abonnementSync.ts) les reconnaît, sinon un abonné à l'ancien
+   *  prix ne serait plus rattaché à aucune offre. Jamais affichés ni vendus. */
+  anciensPrixMois?: number[]
 }
 
 // Les capacités s'empilent : chaque palier reprend le précédent et ajoute.
@@ -108,8 +112,10 @@ export const PLANS: Record<PlanId, Plan> = {
   gratuit: { label: 'Essai', accroche: 'Pour juger les devis chiffrés par l’IA, sans carte.', creditsMois: 3, prixMois: 0, tiers: ['standard'], siteMax: 1, capacites: BASE },
   // Hérité, plus vendu depuis le 25/10 (voir PlanId). Gardé pour qu'un compte resté sur cet identifiant ne tombe pas à 3 crédits.
   essentiel: { label: 'Essentiel', accroche: 'Ancienne offre, plus proposée.', creditsMois: 80, prixMois: 29, tiers: ['standard'], siteMax: 1, capacites: BASE },
-  studio: { label: 'Studio', accroche: 'Tout est automatisé et préparé pour vous : vous validez d’un clic, rien ne part sans vous.', creditsMois: 250, prixMois: 59, tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
-  signature: { label: 'Signature', accroche: 'Tout part automatiquement : réponses, relances, Pilote et règles, plus le CRM.', creditsMois: 600, prixMois: 99, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
+  // 03/11/2026, décision de Benj : Studio passe de 59 à 30 €, Signature de 99 à 60 € par mois. Le paiement prend ce prix
+  // (app/api/subscribe/route.ts, price_data) ; les abonnements ouverts avant restent reconnus par anciensPrixMois.
+  studio: { label: 'Studio', accroche: 'Tout est automatisé et préparé pour vous : vous validez d’un clic, rien ne part sans vous.', creditsMois: 250, prixMois: 30, anciensPrixMois: [59], tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
+  signature: { label: 'Signature', accroche: 'Tout part automatiquement : réponses, relances, Pilote et règles, plus le CRM.', creditsMois: 600, prixMois: 60, anciensPrixMois: [99], tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
   // Sur devis : prixMois 0 ne veut pas dire gratuit (surDevis) ; les crédits sont ceux de Signature tant que le contrat n'en fixe pas d'autres.
   entreprise: { label: 'Presti pour l’entreprise', accroche: 'Sur mesure : votre équipe, vos outils, vos automatisations. Sur démonstration et sur devis.', creditsMois: 600, prixMois: 0, surDevis: true, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: ENTREPRISE },
   // Fondateurs : plan interne, illimité (jamais décompté). Il reprend l'Entreprise, pour essayer l'écran d'équipe.

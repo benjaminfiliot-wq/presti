@@ -20,7 +20,7 @@ export const AFFIRMATIONS_APPROUVEES: readonly string[] = Object.freeze(['formul
 export const AFFIRMATIONS_PERMISES: readonly Affirmation[] = Object.freeze(([
   { id: 'prix_site', texte: '300 €, une fois, TVA non applicable', source: 'Plan 2026-09-24 §3.1 ; lib/plans.ts ; franchise en base, art. 293 B du CGI' },
   { id: 'delai_48h', texte: 'en ligne sous 48 h ouvrées après validation par Presti ; sur votre domaine dès que ses DNS sont posés', source: 'Plan 2026-09-24 §3.1 ; procédure de mise en ligne' },
-  { id: 'formules', texte: 'formules 59 et 99 € par mois', source: 'Plan 2026-09-24 §3.1 ; lib/plans.ts (deux offres depuis le 25/10)' },
+  { id: 'formules', texte: 'formules 30 et 60 € par mois', source: 'Plan 2026-09-24 §3.1 ; lib/plans.ts (deux offres depuis le 25/10)' },
   { id: 'reponse_prete', texte: "la réponse est prête en moins d'une minute : avec Studio, Presti la prépare et vous la validez d'un clic ; avec Signature, l'assistant peut répondre seul", source: 'Plan 2026-09-24 §3.1 ; lib/ai.ts' },
   { id: 'accuse_reception', texte: "un accusé de réception part par e-mail quand le client laisse son adresse", source: 'Plan 2026-09-24 §3.1 ; formulaire du site' },
   { id: 'domaine_a_votre_nom', texte: 'le domaine est à votre nom, et vous le réservez vous-même avec notre guide', source: 'Plan 2026-09-24 §3.1 (D9)' },

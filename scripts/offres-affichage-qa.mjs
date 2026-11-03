@@ -73,10 +73,13 @@ ok(/Presti pour l’entreprise/.test(P.messageVerrou('organisation.membres')), `
 // le 02/11 vers 5 h, AVANT l'ajout de l'Entreprise).
 const { createHash } = await import('node:crypto')
 const empreinte = async (x) => createHash('sha256').update(JSON.stringify(x)).digest('hex')
+// 03/11/2026 : Studio et Signature réinscrits après le changement de prix voulu par Benj (Studio 59 → 30 €, Signature 99 → 60 €,
+// anciens montants gardés dans anciensPrixMois pour les abonnements ouverts avant). Avant : studio 488dadcb…, signature 5a4c3086…,
+// offres 9db31c0e…
 const AVANT = {
-  studio: '488dadcb6e126ae7561e2dcd44e85df27ae66979060135a4e7e90c8720e77fcb',
-  signature: '5a4c3086b1a007f14e3e811ea3bee20dfbd66b61746ee1a5ce1ebe5d9ccc8283',
-  offres: '9db31c0e063d63dabcc10e2cdaa1b51770ebe8c149ed47d84f20b8d682025d76',
+  studio: '2c61a06c5f517ea54264c9f5a3195d8f74f06019228ffa8a3198a5bd1bb31d3c',
+  signature: '9f5f8aba4555d533e961fe2ee791ef07c63a54edab8ba5d33665ea16ede20fbc',
+  offres: '1dafc43284b40d89b32d7fcc9b295b17a3f63348a951f08beeedec7005d8d528',
   essai: 'bb4f9f97bf486334548cf26490f51b3ce71bf98e38bd3e3989fb8b1fa72be165',
   automatisation: 'c8e896fd40a88fd67cf92da84b4b1997507734e7b2453582a3f46c003eff3112',
   grille: '5687bafb906f1adfeea908b5770ccef09f4d4edfc96c57c83b081de664ddee1e',
@@ -128,7 +131,7 @@ for (const f of PAGES) {
   const s = fs.readFileSync(path.join(RACINE, f), 'utf8')
   ok(/<OffreDetail\b/.test(s), `${f} ne rend pas <OffreDetail /> (le détail complet de chaque offre)`)
   ok(!/pointsForts\([^)]*\)\s*\.slice/.test(s), `${f} coupe la liste des offres (.slice sur pointsForts)`)
-  ok(!/\b(29|59|99)\s?(€|euros)/.test(s.replace(/\/\/.*$/gm, '')), `${f} recopie un prix d'offre en dur (lib/plans.ts est la source)`)
+  ok(!/\b(29|30|59|60|99)\s?(€|euros)/.test(s.replace(/\/\/.*$/gm, '')), `${f} recopie un prix d'offre en dur (lib/plans.ts est la source)`)
   ok(!/PLANS\.essentiel|ESSAI_JOURS\.essentiel|'essentiel'/.test(s), `${f} propose encore l'offre Essentiel (plus vendue depuis le 25/10)`)
 }
 const comp = fs.readFileSync(path.join(RACINE, 'app/Comparatif.tsx'), 'utf8')
