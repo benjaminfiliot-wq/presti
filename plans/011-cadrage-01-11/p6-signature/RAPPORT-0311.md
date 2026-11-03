@@ -50,13 +50,12 @@ lanceur `scripts/tout-verifier.mjs`.
 
 - 036-011 : les cinq écrans en code, sous `app/systeme/`, derrière le drapeau `systemeAgents` baissé (rien dans le DOM, routes en 404). La page
   du CRM lit `lib/crm/` sans toucher `app/crm/` : on ne rase rien.
-- 036-012 : l'intégration :
-  - le script de déploiement d'une copie par client, **à blanc** (des exports `client-*` fabriqués sur le disque, jamais un identifiant ni un
-    appel à n8n) ;
-  - les tests transverses ;
-  - le runbook ;
-  - le plan de migration des automatisations codées ;
-  - l'ordre de mise en service pour toi.
+- **036-012 est vérifié** : l'intégration.
+  - Le déploiement d'une copie par client, **à blanc**, avec son juge.
+  - La suite transverse du § 1.7.
+  - `runbook.md`.
+  - `migration-automatisations.md`, `kpis-base.md` et `mode-ombre.md`.
+  - **`mise-en-service.md`, l'ordre exact de tes gestes** : 12 étapes, chacune avec sa preuve et son retour arrière.
 - 036-017 : Hermes écrit une fiche connecteur par outil (portées, quotas, coût, expiration), environ 40 au total.
 
 ## Ce qui reste pour la « définition de terminé » du prompt 1 (p6:416-422)
@@ -77,8 +76,11 @@ lanceur `scripts/tout-verifier.mjs`.
    - (a) Presti crée l'identifiant n8n par l'API au moment du « Connecter ».
    - (b) La copie lit le jeton chiffré et appelle l'API par un nœud HTTP.
 2. **Exposer ou non un webhook n8n** : temps réel de WhatsApp, Telegram et Facebook Lead Ads. Sinon, ces canaux passent par Presti et la base.
-3. **Migrations 0183 à 0191 et 0193** : écrites, non posées, au relevé du matin ; chacune attend ton « go » écrit. On colle, puis on lève le
-   drapeau.
+3. **Migrations**, dans l'ordre et jamais un autre : **0185, puis 0192, puis 0193** (`mise-en-service.md`, étapes 3 à 5).
+   - Avant tout, on relit l'état réel en base. Aucune hypothèse sur 0186, 0189 ou 0191 : elles sont peut-être déjà posées.
+   - **0192** (accusé de réception par n8n) vient du lot 032-047, arrêté ce matin. Elle n'existe que sur Oracle et n'a pas été vérifiée. Or
+     0193 l'exige comme prérequis : elle est à reprendre et à juger avant toute pose.
+   - Chaque migration attend ton « go » écrit. On colle, puis on lève le drapeau.
 4. **Google** :
    - la vérification de l'application OAuth pour Gmail, avec évaluation de sécurité annuelle (coût chiffré dans `premiere-reponse.md`,
      décision 2) ;
