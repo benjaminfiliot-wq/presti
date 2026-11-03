@@ -23,9 +23,11 @@ const limite = Date.now() + 12 * 60 * 1000
 console.log(`⏳ attente du déploiement de ${sha.slice(0, 7)}`)
 
 while (Date.now() < limite) {
-  const r = await fetch(`https://api.vercel.com/v6/deployments?projectId=${PROJET}&teamId=${EQUIPE}&limit=5`, { headers: { Authorization: `Bearer ${jeton}` } })
+  // La production seulement : le même commit poussé sur une branche de sauvegarde (nuit-0311) a son propre aperçu, souvent READY avant
+  // la production. Le 03/11, ce script l'a pris pour la production et a dit « en ligne » pendant que la production compilait encore.
+  const r = await fetch(`https://api.vercel.com/v6/deployments?projectId=${PROJET}&teamId=${EQUIPE}&target=production&limit=5`, { headers: { Authorization: `Bearer ${jeton}` } })
   const deps = (await r.json()).deployments ?? []
-  const d = deps.find((x) => x.meta?.githubCommitSha === sha)
+  const d = deps.find((x) => x.meta?.githubCommitSha === sha && x.target === 'production')
   if (!d) { process.stdout.write('.'); await new Promise((s) => setTimeout(s, 10000)); continue }
   process.stdout.write(` ${d.state}`)
   if (d.state === 'READY') { console.log(`\n✅ ${sha.slice(0, 7)} est en ligne`); process.exit(0) }
