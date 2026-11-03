@@ -1,0 +1,47 @@
+{
+  "_lisez_moi": "Empreintes SHA-256 (texte jsCode en UTF-8) des nœuds Code des gabarits gabarit-ent-* (R19 de scripts/n8n-specs-qa.mjs). Exemple. Gabarits inactifs, sans identifiant.",
+  "gabarit-ent-accueil": {
+    "Cartes en effets": "947903051db2cc56ce0117ce53bdd71638944e4f5f0663b3c4f29bc4c5ee79f6",
+    "Entrée d’exemple": "4dfdf8ca3aed7c75cb27f56659c7834b70bba2ec3d2f1017d0e6af86300050b6",
+    "Normaliser les entrées": "ff4577d28fd2d7d10b0b4e4f129511083a775bf39bd717836db59d72692bb0e1",
+    "Écarter les doublons": "b8e99ca42cab91f2a6847c5a80d27eed0dd2c6e920c4e3602fbbcc9cfd8efb5d",
+    "Effets prévus": "80ff5dfbf3380fc78bd0313c2c9c0f87b187e03ce5b3725f141ba5e7990588ee",
+    "Revalider le tri": "935560c603697da2c739aa06060b51a26e935edff91bc0180ca655d9fe063699",
+    "Revalider la qualification": "0aef573a55430e30475fae8ad4899ff4534dfdf8f5a7c866d0adb0b090360a5e",
+    "Décider les effets": "375e505793691fc28ddbed4892915bcf2070be45d633feb2622de24179a0687f",
+    "Garder les actions réservées": "85c39c4c5a2214fafd3ee663ffeaf673e9d18dd099bf0cd8585f7ea6a38ca2ff"
+  },
+  "gabarit-ent-leads": {
+    "Cartes en effets": "947903051db2cc56ce0117ce53bdd71638944e4f5f0663b3c4f29bc4c5ee79f6",
+    "Entrée d’exemple": "d7170da7b6847824f734f5a82ed4c49d5c4e37f20a3c0fff19cd5c87ed775ea3",
+    "Normaliser les leads": "8a7b51e0e2c36e7f62e2fcbfd7bd88bca56ba3748813f186f8dc1c752afda2c0",
+    "Écarter les doublons": "560189726310f309f24f3dcd867f931cbb07712646126e5e4b539e32738d320b",
+    "Effets prévus": "14ac67ebdb84d49b32394d04bee5a79046fc5c81fd3c49bf275f72f2c516300f",
+    "Revalider le rédacteur": "8b29caa9f495e8a40e34b57ac71f24e7c0a46d5be8425d51a24def3297c8ce1c",
+    "Décider les effets": "031e04cc932e5935bdde9879c73d83195089179c7cbd411f9260a29eeef93dca",
+    "Garder les actions réservées": "85c39c4c5a2214fafd3ee663ffeaf673e9d18dd099bf0cd8585f7ea6a38ca2ff",
+    "Contrôler les envois": "5d504f46dfd668fc47c9817862554fda93383f206b719e42d2d103e68362be7d"
+  },
+  "gabarit-ent-ventes": {
+    "Cartes en effets": "947903051db2cc56ce0117ce53bdd71638944e4f5f0663b3c4f29bc4c5ee79f6",
+    "Entrée d’exemple": "909837b9a4b775e186e578d434ecc654558d499e7232e4505333ddcf5956af74",
+    "Normaliser les opportunités": "73b7d03b31f357fb32f5207cf7ee08e89ec3befd99b333d92704425f979a10b5",
+    "Router les opportunités": "fa0ea45b185e68a48209480155b495bc885706fe6ca9e33aa962995a35dc550c",
+    "Effets prévus": "7f03118066851ad8cb4e720008746e580b5ccaa03b55aa05f33dc5bf08ce0271",
+    "Calculer les montants": "56c32a9b90d9359f329ed1d0f1f1709c2f44490aa0b950e621bce09daadfc2d5",
+    "Revalider le relanceur": "f69b9f4bad2c57cec645e265ad035b378add3f6de416cd423fac6c4291cea923",
+    "Décider les effets": "cb302324374b029e38bd4db58411865314acdd2e6621a0d8e7dc164cf3422b6c",
+    "Garder les actions réservées": "85c39c4c5a2214fafd3ee663ffeaf673e9d18dd099bf0cd8585f7ea6a38ca2ff",
+    "Contrôler les envois": "5d504f46dfd668fc47c9817862554fda93383f206b719e42d2d103e68362be7d"
+  },
+  "gabarit-ent-marketing": {
+    "Cartes en effets": "947903051db2cc56ce0117ce53bdd71638944e4f5f0663b3c4f29bc4c5ee79f6",
+    "Entrée d’exemple": "05c580a6c0ac3874738ec9b9c9699d8749511ffd84439f973ffc0881f5a37921",
+    "Normaliser les entrées": "38126319332016fd2d25a71eac2ff08910b90ccb14311bfdb30270b15a5b2ef1",
+    "Écarter ce qui est déjà traité": "c452efd21722a4c1d776c2d95e1868e1dadf29806b2493389ed6a8661cdbe120",
+    "Effets prévus": "bfcf27a1e5f17a0eaebb6c7656365270ea328090071200c0508f5dbbeeeb5f8c",
+    "Revalider le rédacteur": "c9365adbb42c33f874a24018ceffa4f414e9166d30fa82a74ce91fa781f19085",
+    "Décider les effets": "a25a43adfcfb74fde9d626f9a1ecde733723a468a0fda7fcef7f87649335f6a4",
+    "Garder les actions réservées": "85c39c4c5a2214fafd3ee663ffeaf673e9d18dd099bf0cd8585f7ea6a38ca2ff"
+  }
+}

@@ -1,0 +1,291 @@
+[
+  {
+    "workflow": "gabarit-ent-leads",
+    "nom": "un lead Facebook donne une fiche CRM et une conversation (simulation, puis réel : même plan)",
+    "epingles": "Exemple.",
+    "sortie": {
+      "simulation": [
+        "crm_fiche|fiche_crm|auto|facebook_lead_ads:exemple-lead-001:fiche_crm",
+        "deposer|deposer_conversation|auto|facebook_lead_ads:exemple-lead-001:deposer_conversation",
+        "sequence_brevo|inscrire_sequence|auto|facebook_lead_ads:exemple-lead-001:inscrire_sequence"
+      ],
+      "reel": [
+        "crm_fiche|fiche_crm|auto|facebook_lead_ads:exemple-lead-001:fiche_crm",
+        "deposer|deposer_conversation|auto|facebook_lead_ads:exemple-lead-001:deposer_conversation",
+        "sequence_brevo|inscrire_sequence|auto|facebook_lead_ads:exemple-lead-001:inscrire_sequence"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-leads",
+    "nom": "le même lead reçu par deux canaux ne donne qu’une fiche (dans le lot, puis d’un lot à l’autre)",
+    "epingles": "Exemple.",
+    "sortie": {
+      "lot": [
+        "crm_fiche|fiche_crm|auto|facebook_lead_ads:exemple-lead-001:fiche_crm",
+        "deposer|deposer_conversation|auto|calcom:exemple-reservation-1:deposer_conversation",
+        "deposer|deposer_conversation|auto|facebook_lead_ads:exemple-lead-001:deposer_conversation",
+        "sequence_brevo|inscrire_sequence|auto|calcom:exemple-reservation-1:inscrire_sequence",
+        "sequence_brevo|inscrire_sequence|auto|facebook_lead_ads:exemple-lead-001:inscrire_sequence"
+      ],
+      "suivant": [
+        "deposer|deposer_conversation|auto|facebook_lead_ads:exemple-lead-001:deposer_conversation",
+        "sequence_brevo|inscrire_sequence|auto|facebook_lead_ads:exemple-lead-001:inscrire_sequence"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-leads",
+    "nom": "un désinscrit : aucune séquence",
+    "epingles": "Exemple.",
+    "sortie": [
+      "exclu",
+      "sequence_brevo"
+    ],
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-leads",
+    "nom": "le quota d’envoi est lu avant chaque lot : le surplus part en file pour demain, rien n’est perdu",
+    "epingles": "Exemple.",
+    "sortie": [
+      "sequence_brevo",
+      "file_demain",
+      "file_demain"
+    ],
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-leads",
+    "nom": "le plafond du jour de l’annexe : au-delà, une carte ; une carte déjà faite ne compte pas comme un effet",
+    "epingles": "Exemple.",
+    "sortie": {
+      "verdicts": [
+        true,
+        true
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-leads",
+    "nom": "l’autonomie par défaut est la carte à valider ; un effet automatique attend la fenêtre d’annulation (10 min) avant de sortir",
+    "epingles": "Exemple.",
+    "sortie": {
+      "verdicts": [
+        {
+          "defaut": true,
+          "differe": true
+        },
+        {
+          "defaut": true,
+          "differe": true
+        }
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-leads",
+    "nom": "relecture croisée : deux plafonds distincts (séquences / relances), ManyChat sans désinscrit, rapport du jour, score à l’épreuve du prototype",
+    "epingles": "Exemple.",
+    "sortie": {
+      "seq": [
+        "sequence_brevo",
+        "sequence_brevo"
+      ],
+      "relances": [
+        "relance_gmail",
+        "file_demain"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-ventes",
+    "nom": "relecture croisée : tarif invalide = estimé, relance par rang (trois au plus, une par rang), rien ne repart au modèle si déjà réservé",
+    "epingles": "Exemple.",
+    "sortie": {
+      "rangs": "4:0:false,6:1:true,11:2:true,16:3:true,21:4:false,26:5:false"
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-marketing",
+    "nom": "relecture croisée : un brief ou un commentaire déjà réservé ne repart pas au modèle ; un rapport du jour reste",
+    "epingles": "Exemple.",
+    "sortie": {
+      "genres": "brief,commentaire,rapport"
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-marketing",
+    "nom": "relecture croisée : une anomalie devient une carte « à corriger » (jamais d’exception), un format non géré une carte, un litige en commentaire une carte ; la validation montre le texte",
+    "epingles": "Exemple.",
+    "sortie": {
+      "cartes": [
+        "Publication instagram (post_image) — ANOMALIE : instagram : prix écrit par le modèle : un prix vient des données du client : validation d’équipe",
+        "Publication instagram (carrousel) — format non géré par la voie automatique : validation d’équipe",
+        "Publication instagram (texte) — format non géré par la voie automatique — ANOMALIE : sortie du modèle absente ou hors ordre ; instagram : texte absent ou trop long : validation d’équipe",
+        "Réponse à un commentaire facebook"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-accueil",
+    "nom": "relecture croisée : l’événement de la plateforme est marqué lu (même écarté) ; le dépôt interne ne consomme pas le plafond ; un geste forcé en carte ne consomme pas le sien",
+    "epingles": "Exemple.",
+    "sortie": {
+      "plan": [
+        "carte|fiche_crm|carte|courriel:exemple-accueil-001:fiche_crm:carte",
+        "carte|fiche_crm|carte|courriel:litige-1:fiche_crm:carte",
+        "carte|fiche_crm|carte|courriel:litige-2:fiche_crm:carte",
+        "carte|reponse_prospect|carte|courriel:litige-1:reponse_prospect:carte",
+        "carte|reponse_prospect|carte|courriel:litige-2:reponse_prospect:carte",
+        "deposer|deposer_conversation|auto|courriel:exemple-accueil-001:deposer_conversation",
+        "deposer|deposer_conversation|auto|courriel:litige-1:deposer_conversation",
+        "deposer|deposer_conversation|auto|courriel:litige-2:deposer_conversation",
+        "marquer_evenement|marquer_evenement|auto|whatsapp:wa-1:marquer_evenement",
+        "prevenir_slack|prevenir_equipe|auto|lot:whatsapp:wa-1:prevenir_equipe",
+        "repondre_gmail|reponse_prospect|auto|courriel:exemple-accueil-001:reponse_prospect"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-leads",
+    "nom": "relecture croisée : une carte dont la charge porte une autre organisation est rejetée ; l’organisation de la charge est celle de la copie",
+    "epingles": "Exemple.",
+    "sortie": {
+      "sans": [
+        {
+          "json": {
+            "effet": "crm_fiche",
+            "type_action": "fiche_crm",
+            "organisation_id": "ORG_A",
+            "mode": "auto",
+            "cle_idempotence": "facebook:x:fiche_crm:approuvee",
+            "carte_cle": "facebook:x:fiche_crm:carte"
+          }
+        }
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-accueil",
+    "nom": "un message d’exemple : tri, qualification notée par le code, fiche CRM une fois, réponse ; le plan simulé = le plan réel ; jamais de prix ni « Presti »",
+    "epingles": "Exemple.",
+    "sortie": {
+      "reel": [
+        "crm_fiche|fiche_crm|auto|courriel:exemple-accueil-001:fiche_crm",
+        "deposer|deposer_conversation|auto|courriel:exemple-accueil-001:deposer_conversation",
+        "repondre_gmail|reponse_prospect|auto|courriel:exemple-accueil-001:reponse_prospect"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-marketing",
+    "nom": "un post Instagram donne une carte de validation : rien ne se publie tant que le format n’a pas ses 3 validations ou si la QA voit une anomalie",
+    "epingles": "Exemple.",
+    "sortie": {
+      "sansValidation": [
+        "carte|publier_facebook|carte|brief:exemple-brief-001:publier_facebook:carte",
+        "carte|publier_instagram|carte|brief:exemple-brief-001:publier_instagram:carte",
+        "carte|publier_linkedin|carte|brief:exemple-brief-001:publier_linkedin:carte",
+        "valider_slack|validation_equipe|auto|brief:exemple-brief-001:publier_facebook:carte:equipe",
+        "valider_slack|validation_equipe|auto|brief:exemple-brief-001:publier_instagram:carte:equipe",
+        "valider_slack|validation_equipe|auto|brief:exemple-brief-001:publier_linkedin:carte:equipe"
+      ],
+      "formatValide": [
+        "publier_facebook|publier_facebook|auto|brief:exemple-brief-001:publier_facebook",
+        "publier_instagram|publier_instagram|auto|brief:exemple-brief-001:publier_instagram",
+        "publier_linkedin|publier_linkedin|auto|brief:exemple-brief-001:publier_linkedin"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-ventes",
+    "nom": "un devis donne un montant tiré du code (et du tarif du client), jamais du modèle ; un prix estimé ne part pas seul",
+    "epingles": "Exemple.",
+    "sortie": {
+      "montants": [
+        {
+          "json": {
+            "cle_idempotence": "opp:exemple-opp-001",
+            "lignes": [
+              {
+                "ref_tarif": "exemple-intervention",
+                "quantite": 2,
+                "designation": "Exemple. Intervention",
+                "ht_centimes": 20000
+              },
+              {
+                "ref_tarif": "exemple-fourniture",
+                "quantite": 1,
+                "designation": "Exemple. Fourniture",
+                "ht_centimes": 5000
+              }
+            ],
+            "estime": false,
+            "total_ht_centimes": 25000,
+            "total_tva_centimes": 5000,
+            "total_ttc_centimes": 30000,
+            "introduction": "Exemple. Voici notre proposition."
+          }
+        }
+      ],
+      "plan": [
+        "carte|demande_signature|carte|opp:exemple-opp-001:demande_signature:carte",
+        "crm_proposition|proposition_crm|auto|opp:exemple-opp-001:proposition_crm",
+        "note_plateforme|note_interet|auto|opp:exemple-opp-002:note_interet",
+        "prevenir_slack|prevenir_equipe|auto|lot:opp:exemple-opp-001:prevenir_equipe",
+        "relance_gmail|relance_vente|auto|opp:exemple-opp-002:r1:relance_vente"
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  },
+  {
+    "workflow": "gabarit-ent-leads",
+    "nom": "une autre organisation : rien (lignes lues, cartes approuvées, configuration)",
+    "epingles": "Exemple.",
+    "sortie": {
+      "bonneCarte": [
+        {
+          "json": {
+            "effet": "crm_fiche",
+            "type_action": "fiche_crm",
+            "organisation_id": "ORG_A",
+            "crm": "hubspot",
+            "mode": "auto",
+            "cle_idempotence": "facebook:x:fiche_crm:approuvee",
+            "carte_cle": "facebook:x:fiche_crm:carte"
+          }
+        }
+      ]
+    },
+    "verdict": "vert",
+    "mode": "rejeu hors ligne des nœuds Code des exports (node:vm), épingles « Exemple. » ; test_workflow de n8n non joué par ce juge"
+  }
+]

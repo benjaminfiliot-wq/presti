@@ -229,6 +229,7 @@ const SUITES = [
   { nom: 'Gabarits outillés de l’Accueil (prompt 6, 036-013) — Gmail, Outlook, IMAP, WhatsApp, Telegram, Facebook Graph, agents IA à outils de lecture, porte (mutants)', cmd: 'node', args: ['scripts/gabarits-accueil-qa.mjs'], cout: 'gratuit' },
   { nom: 'Gabarits outillés de l’argent (prompt 6, 036-014) — Devis, Suivi, Facturation : Drive, Sheets, Stripe en lecture, envois derrière la porte, montants par le code (mutants)', cmd: 'node', args: ['scripts/gabarits-argent-qa.mjs'], cout: 'gratuit' },
   { nom: 'Gabarits outillés du terrain (prompt 6, 036-015) — Après-chantier, Opérations, Direction : fiche Google, Agenda, Drive, Slack, Teams, créneaux jamais inventés (mutants)', cmd: 'node', args: ['scripts/gabarits-terrain-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Gabarits outillés de l’Entreprise, partie 1 (prompt 6, 036-016) — accueil, leads, ventes et CRM, réseaux : un lead une fois, désinscrits respectés, publication validée (mutants)', cmd: 'node', args: ['scripts/gabarits-entreprise-qa.mjs'], cout: 'gratuit' },
   { nom: 'Garde des sessions lancées par Orca (défaut E de 031-012) — ni commit, ni push, ni déploiement, ni migration, ni build partagé ; la session principale jamais bloquée (mutant)', cmd: 'node', args: ['scripts/garde-agents-orca-qa.mjs'], cout: 'gratuit' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },

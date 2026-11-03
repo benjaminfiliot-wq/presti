@@ -1,0 +1,166 @@
+mention d'IA relue dans lib/mentionAssistant.ts : « Message rédigé et envoyé automatiquement par l’assistant »
+✓ structure des 4 gabarits (accueil 81 nœuds, leads 85 nœuds, ventes 93 nœuds, marketing 69 nœuds)
+✓ essai gabarit-ent-leads : un lead Facebook donne une fiche CRM et une conversation (simulation, puis réel : même plan)
+      → fiche HubSpot + dépôt dans la conversation ; score 70 calculé par le code (le 100 du modèle est ignoré) ; plan de simulation = plan réel
+✓ essai gabarit-ent-leads : le même lead reçu par deux canaux ne donne qu’une fiche (dans le lot, puis d’un lot à l’autre)
+      → deux canaux dans un lot : 1 fiche, 2 dépôts ; lead déjà connu d’un lot précédent : 0 fiche, 1 dépôt
+✓ essai gabarit-ent-leads : un désinscrit : aucune séquence
+      → le désinscrit est exclu (journalisé), l’autre passe
+✓ essai gabarit-ent-leads : le quota d’envoi est lu avant chaque lot : le surplus part en file pour demain, rien n’est perdu
+      → 1 reste sur 2 (1 déjà parti) : 1 part, 2 en file ; le plafond du compte (1 crédit) borne aussi
+✓ essai gabarit-ent-leads : le plafond du jour de l’annexe : au-delà, une carte ; une carte déjà faite ne compte pas comme un effet
+      → plafond 1 atteint par une fiche faite : la suivante devient une carte (simulation et réel) ; une carte faite ou une action seulement réservée ne compte pas
+✓ essai gabarit-ent-leads : l’autonomie par défaut est la carte à valider ; un effet automatique attend la fenêtre d’annulation (10 min) avant de sortir
+      → sans annexe : carte « À valider » (le dépôt reste interne) ; niveau 3 + 10 min : carte « annulable » exécutable dans 10 min (simulation et réel) ; la relève ne l’exécute qu’une fois la fenêtre écoulée
+✓ essai gabarit-ent-leads : relecture croisée : deux plafonds distincts (séquences / relances), ManyChat sans désinscrit, rapport du jour, score à l’épreuve du prototype
+      → cinq relances faites ne coupent pas les séquences ; les relances ont leur plafond (1 puis la file) ; ManyChat respecte la désinscription ; le rapport du jour a une clé datée ; urgence « constructor » ou « toString » vaut 0 point
+✓ essai gabarit-ent-ventes : relecture croisée : tarif invalide = estimé, relance par rang (trois au plus, une par rang), rien ne repart au modèle si déjà réservé
+      → rangs 0 à 5 : relance aux rangs 1 à 3 seulement ; un rang déjà réservé (ou en carte) ne repart pas ; une proposition déjà réservée non plus ; un prix nul, non entier ou une TVA hors des taux français rend la proposition estimée
+✓ essai gabarit-ent-marketing : relecture croisée : un brief ou un commentaire déjà réservé ne repart pas au modèle ; un rapport du jour reste
+      → rien de réservé : tout passe ; brief réservé : écarté ; brief et commentaire réservés : seul le rapport reste ; la réservation d’une autre organisation ne compte pas
+✓ essai gabarit-ent-marketing : relecture croisée : une anomalie devient une carte « à corriger » (jamais d’exception), un format non géré une carte, un litige en commentaire une carte ; la validation montre le texte
+      → des sorties défectueuses (prix, clé modifiée) deviennent des anomalies sans exception ; la carte « à corriger » a un texte vide et la relève ne la rejoue pas ; le carrousel part en carte (format non géré) ; un litige en commentaire reste une carte alors que le commentaire ordinaire part seul (niveau 3) ; la validation d’équipe montre le texte
+✓ essai gabarit-ent-accueil : relecture croisée : l’événement de la plateforme est marqué lu (même écarté) ; le dépôt interne ne consomme pas le plafond ; un geste forcé en carte ne consomme pas le sien
+      → la publicité WhatsApp est marquée lue sans être déposée ; 3 dépôts avec un plafond de 1 (interne, hors plafond) ; 2 litiges restent en carte et la réponse ordinaire part (plafond 1 intact)
+✓ essai gabarit-ent-leads : relecture croisée : une carte dont la charge porte une autre organisation est rejetée ; l’organisation de la charge est celle de la copie
+      → une charge d’une autre organisation est rejetée ; sans organisation dans la charge, c’est celle de la copie qui s’écrit
+✓ essai gabarit-ent-accueil : un message d’exemple : tri, qualification notée par le code, fiche CRM une fois, réponse ; le plan simulé = le plan réel ; jamais de prix ni « Presti »
+      → score 100 calculé par le code ; 1 fiche, 1 dépôt, 1 réponse ; plan simulé = plan réel ; un prix ou « Presti » dans la réponse du modèle est rejeté ; un message qui parle d’avocat ou de sinistre reste une carte, même au niveau 3
+✓ essai gabarit-ent-marketing : un post Instagram donne une carte de validation : rien ne se publie tant que le format n’a pas ses 3 validations ou si la QA voit une anomalie
+      → 0 validation : 3 cartes « À valider » + 3 demandes Slack, aucune publication ; 3 validations et QA propre : publication seule ; anomalie ou « Presti » dans un texte : retour en validation
+✓ essai gabarit-ent-ventes : un devis donne un montant tiré du code (et du tarif du client), jamais du modèle ; un prix estimé ne part pas seul
+      → 2×100 € + 1×50 € HT = 250 € HT, TVA 50 €, 300 € TTC calculés par le code en centimes (le « 1 » du modèle est ignoré) ; la demande de signature reste une carte, même au niveau 3 ; tarif inconnu : estimé, tout passe en carte ; simulation = 30000 aussi
+✓ essai gabarit-ent-leads : une autre organisation : rien (lignes lues, cartes approuvées, configuration)
+      → la conversation d’une autre organisation ne dédoublonne pas ; sa carte approuvée est ignorée ; un rôle hors de la liste (C6) est ignoré ; la bonne carte rejoue sous une clé « :approuvee » ; la configuration d’une autre organisation ne donne aucune fiche
+✓ validation humaine native (slackHitlTool) permise dans gabarit-ent-accueil par le juge commun : ✓ ../../../../tmp/gabarits-ent-PAHiDt/ent/gabarit-ent-accueil.workflow.json (gabarit-ent-accueil, famille lib) : R1 à R23 tenues
+✓ validation humaine native (slackHitlTool) refusée hors de gabarit-accueil par le juge commun : ✗ ../../../../tmp/gabarits-ent-6OowUf/hors/gabarit-accueil.workflow.json (gabarit-accueil, famille lib) : 1 manquement(s)
+  ✓ mutant « un lead en double (le même contact par deux canaux crée deux fiches) » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : le même lead reçu par deux canaux ne donne qu’une fiche (dans le lot, puis d’un lot à l’autre) → dans le lot : false ; d'un lot à l'autre : fals
+  ✓ mutant « un désinscrit relancé » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : un désinscrit : aucune séquence → effets sequence_brevo,sequence_brevo
+  ✓ mutant « un quota d’envoi ignoré » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : le quota d’envoi est lu avant chaque lot : le surplus part en file pour demain, rien n’est perdu → quota client sequence_brevo,sequence_brevo,se
+  ✓ mutant « une publication sans validation (le format n’a aucune validation) » (marketing) fait rougir le juge
+      → essai gabarit-ent-marketing : un post Instagram donne une carte de validation : rien ne se publie tant que le format n’a pas ses 3 validations ou si la QA voit une anomal
+  ✓ mutant « une publication sans validation (la QA voit une anomalie) » (marketing) fait rougir le juge
+      → essai gabarit-ent-marketing : un post Instagram donne une carte de validation : rien ne se publie tant que le format n’a pas ses 3 validations ou si la QA voit une anomal
+  ✓ mutant « une collecte LinkedIn (lecture de profils) » (leads) fait rougir le juge
+      → gabarit-ent-leads : S8 Lire les profils : LinkedIn ne sert qu'à publier (collecte de profils interdite par ses conditions)
+  ✓ mutant « une collecte LinkedIn (le nœud LinkedIn lit) » (marketing) fait rougir le juge
+      → gabarit-ent-marketing : S8 LinkedIn : publier : LinkedIn ne sert qu'à publier (collecte de profils interdite par ses conditions)
+  ✓ mutant « un montant du modèle » (ventes) fait rougir le juge
+      → essai gabarit-ent-ventes : un devis donne un montant tiré du code (et du tarif du client), jamais du modèle ; un prix estimé ne part pas seul → exact false estimé false c
+  ✓ mutant « un score donné par le modèle » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : un lead Facebook donne une fiche CRM et une conversation (simulation, puis réel : même plan) → plan simulé crm_fiche|fiche_crm|auto|facebook_lea
+  ✓ mutant « une organisation lue sans filtre (la requête) » (leads) fait rougir le juge
+      → gabarit-ent-leads : S7 Lire les désinscrits : requête sans filtre organisation (organisation_id=eq.…)
+  ✓ mutant « une organisation lue sans filtre (la ligne d’une autre organisation passe dans le code) » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : une autre organisation : rien (lignes lues, cartes approuvées, configuration) → inconnu false étrangère true rôle true bonne true file true conf
+  ✓ mutant « une organisation lue sans filtre (la configuration d’une autre organisation) » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : une autre organisation : rien (lignes lues, cartes approuvées, configuration) → inconnu true étrangère true rôle true bonne true file true confi
+  ✓ mutant « une écriture sans organisation » (accueil) fait rougir le juge
+      → gabarit-ent-accueil : S7 Déposer le message : écriture sans la clé organisation_id dans le corps
+  ✓ mutant « un identifiant branché » (accueil) fait rougir le juge
+      → gabarit-ent-accueil : S3 Répondre par Gmail : identifiant branché dans un gabarit (« y a pas besoin de connexion », Benj 03/11)
+  ✓ mutant « un identifiant de la base branché » (ventes) fait rougir le juge
+      → gabarit-ent-ventes : S3 Lire les tarifs : identifiant branché dans un gabarit (« y a pas besoin de connexion », Benj 03/11)
+  ✓ mutant « « Presti » dans un message du client (le texte envoyé) » (accueil) fait rougir le juge
+      → gabarit-ent-accueil : S9 Répondre par Gmail : « Presti » dans un message qui part chez un client (marque blanche)
+  ✓ mutant « « Presti » dans un message du client (la revalidation le laisse passer) » (accueil) fait rougir le juge
+      → essai gabarit-ent-accueil : un message d’exemple : tri, qualification notée par le code, fiche CRM une fois, réponse ; le plan simulé = le plan réel ; jamais de prix ni «
+  ✓ mutant « « Presti » dans un message du client (le message de la plateforme) » (leads) fait rougir le juge
+      → gabarit-ent-leads : S9 Brevo : envoyer le premier message : « Presti » dans un message qui part chez un client (marque blanche)
+  ✓ mutant « la mention de l’assistant ôtée d’un envoi » (ventes) fait rougir le juge
+      → gabarit-ent-ventes : S10 Répondre par Outlook : la mention de l'assistant n'est pas dans le texte envoyé
+  ✓ mutant « le nœud Facebook Graph retiré » (leads) fait rougir le juge
+      → gabarit-ent-leads : S2 outil absent : n8n-nodes-base.facebookGraphApi
+  ✓ mutant « le nœud Brevo retiré » (leads) fait rougir le juge
+      → gabarit-ent-leads : S2 outil absent : n8n-nodes-base.sendInBlue
+  ✓ mutant « un webhook ajouté » (accueil) fait rougir le juge
+      → gabarit-ent-accueil : S4 Entrée publique : déclencheur à webhook (n8n-nodes-base.webhook)
+  ✓ mutant « un déclencheur Facebook Lead Ads à webhook (à lire par l’API Graph) » (leads) fait rougir le juge
+      → gabarit-ent-leads : S4 Nouveau lead : déclencheur à webhook (n8n-nodes-base.facebookLeadAdsTrigger)
+  ✓ mutant « un outil d’agent sans note de lecture » (accueil) fait rougir le juge
+      → gabarit-ent-accueil : S6 Lire le fil Gmail : un outil d'agent doit déclarer « outil: lecture » et dire ce qu'il lit
+  ✓ mutant « un schéma du modèle qui porte un montant » (ventes) fait rougir le juge
+      → gabarit-ent-ventes : S6 Rédacteur de propositions : le schéma du modèle porte un montant ou un score : le code calcule
+  ✓ mutant « la porte de la relève retirée de la vérification (échec ouvert) » (marketing) fait rougir le juge
+      → gabarit-ent-marketing : S5 Porte simulation : la porte doit échouer fermée (simulation !== false)
+  ✓ mutant « la validation d’équipe retirée » (marketing) fait rougir le juge
+      → gabarit-ent-marketing : S11 la validation d’équipe (Slack et Teams, envoyer et attendre) est absente
+  ✓ mutant « une carte approuvée par un rôle qui n’est pas le sien (C6) » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : une autre organisation : rien (lignes lues, cartes approuvées, configuration) → inconnu true étrangère true rôle false bonne true file true conf
+  ✓ mutant « le plan réel qui s’écarte du plan simulé (un effet perdu) » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : un lead Facebook donne une fiche CRM et une conversation (simulation, puis réel : même plan) → plan simulé crm_fiche|fiche_crm|auto|facebook_lea
+  ✓ mutant « une action seulement réservée compte comme un envoi parti » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : le quota d’envoi est lu avant chaque lot : le surplus part en file pour demain, rien n’est perdu → quota client file_demain,file_demain,file_dem
+  ✓ mutant « une carte faite compte dans le plafond du jour » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : le plafond du jour de l’annexe : au-delà, une carte ; une carte déjà faite ne compte pas comme un effet → simulation true / réel false
+  ✓ mutant « le plafond du jour de l’annexe ignoré » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : le plafond du jour de l’annexe : au-delà, une carte ; une carte déjà faite ne compte pas comme un effet → simulation true / réel false
+  ✓ mutant « un rapport publicitaire perdu en route (marketing) » (marketing) fait rougir le juge
+      → essai gabarit-ent-marketing : un post Instagram donne une carte de validation : rien ne se publie tant que le format n’a pas ses 3 validations ou si la QA voit une anomal
+  ✓ mutant « l’autonomie par défaut devient « part seul » » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : l’autonomie par défaut est la carte à valider ; un effet automatique attend la fenêtre d’annulation (10 min) avant de sortir → simulation {"defa
+  ✓ mutant « la fenêtre d’annulation ignorée » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : l’autonomie par défaut est la carte à valider ; un effet automatique attend la fenêtre d’annulation (10 min) avant de sortir → simulation {"defa
+  ✓ mutant « la demande de signature part seule » (ventes) fait rougir le juge
+      → essai gabarit-ent-ventes : un devis donne un montant tiré du code (et du tarif du client), jamais du modèle ; un prix estimé ne part pas seul → exact true estimé true crm
+  ✓ mutant « une réponse automatique à un litige » (accueil) fait rougir le juge
+      → essai gabarit-ent-accueil : un message d’exemple : tri, qualification notée par le code, fiche CRM une fois, réponse ; le plan simulé = le plan réel ; jamais de prix ni «
+  ✓ mutant « la file du lendemain rejouée tout de suite » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : l’autonomie par défaut est la carte à valider ; un effet automatique attend la fenêtre d’annulation (10 min) avant de sortir → simulation {"defa
+  ✓ mutant « les relances consomment le quota des séquences » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : relecture croisée : deux plafonds distincts (séquences / relances), ManyChat sans désinscrit, rapport du jour, score à l’épreuve du prototype → 
+  ✓ mutant « ManyChat échappe à la désinscription » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : relecture croisée : deux plafonds distincts (séquences / relances), ManyChat sans désinscrit, rapport du jour, score à l’épreuve du prototype → 
+  ✓ mutant « un rapport publicitaire sans date dans sa clé » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : relecture croisée : deux plafonds distincts (séquences / relances), ManyChat sans désinscrit, rapport du jour, score à l’épreuve du prototype → 
+  ✓ mutant « le score d’un lead lit le prototype » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : relecture croisée : deux plafonds distincts (séquences / relances), ManyChat sans désinscrit, rapport du jour, score à l’épreuve du prototype → 
+  ✓ mutant « une relance par semaine, sans fin (plus de rang) » (ventes) fait rougir le juge
+      → essai gabarit-ent-ventes : relecture croisée : tarif invalide = estimé, relance par rang (trois au plus, une par rang), rien ne repart au modèle si déjà réservé → rangs 4
+  ✓ mutant « une proposition déjà réservée repart au modèle » (ventes) fait rougir le juge
+      → essai gabarit-ent-ventes : relecture croisée : tarif invalide = estimé, relance par rang (trois au plus, une par rang), rien ne repart au modèle si déjà réservé → rangs 4
+  ✓ mutant « un prix nul accepté dans le tarif » (ventes) fait rougir le juge
+      → essai gabarit-ent-ventes : relecture croisée : tarif invalide = estimé, relance par rang (trois au plus, une par rang), rien ne repart au modèle si déjà réservé → rangs 4
+  ✓ mutant « une TVA hors des taux français acceptée » (ventes) fait rougir le juge
+      → essai gabarit-ent-ventes : relecture croisée : tarif invalide = estimé, relance par rang (trois au plus, une par rang), rien ne repart au modèle si déjà réservé → rangs 4
+  ✓ mutant « un commentaire déjà réservé repart au modèle » (marketing) fait rougir le juge
+      → essai gabarit-ent-marketing : relecture croisée : un brief ou un commentaire déjà réservé ne repart pas au modèle ; un rapport du jour reste → genres brief,commentaire,ra
+  ✓ mutant « l’événement de la plateforme n’est plus marqué lu » (accueil) fait rougir le juge
+      → essai gabarit-ent-accueil : relecture croisée : l’événement de la plateforme est marqué lu (même écarté) ; le dépôt interne ne consomme pas le plafond ; un geste forcé en
+  ✓ mutant « le dépôt interne consomme le plafond » (accueil) fait rougir le juge
+      → essai gabarit-ent-accueil : relecture croisée : l’événement de la plateforme est marqué lu (même écarté) ; le dépôt interne ne consomme pas le plafond ; un geste forcé en
+  ✓ mutant « un geste forcé en carte consomme le plafond » (accueil) fait rougir le juge
+      → essai gabarit-ent-accueil : relecture croisée : l’événement de la plateforme est marqué lu (même écarté) ; le dépôt interne ne consomme pas le plafond ; un geste forcé en
+  ✓ mutant « une carte avec la charge d’une autre organisation » (leads) fait rougir le juge
+      → essai gabarit-ent-leads : relecture croisée : une carte dont la charge porte une autre organisation est rejetée ; l’organisation de la charge est celle de la copie → étra
+  ✓ mutant « le contact Brevo lu par getAll » (leads) fait rougir le juge
+      → gabarit-ent-leads : S14 Brevo : le contact doit être lu par « get » avec son adresse (getAll renvoie 50 autres contacts)
+  ✓ mutant « une erreur Brevo vaut « autorisé » » (leads) fait rougir le juge
+      → gabarit-ent-leads : S14 Brevo : une erreur (clé refusée, panne) ne doit pas valoir « contact autorisé » (échec fermé)
+  ✓ mutant « le message Brevo sans désinscription » (leads) fait rougir le juge
+      → gabarit-ent-leads : S14 Brevo : le message doit nommer son expéditeur et porter la désinscription (en-tête List-Unsubscribe et ligne STOP)
+  ✓ mutant « le courrier IMAP marqué lu en simulation » (accueil) fait rougir le juge
+      → gabarit-ent-accueil : S14 Boîte IMAP du client : marque le courrier comme lu même en simulation (postProcessAction: nothing attendu)
+  ✓ mutant « un événement lu par deux gabarits » (leads) fait rougir le juge
+      → gabarit-ent-leads : S14 Lire les événements des canaux : un événement de la plateforme n'est lu que par un seul gabarit (categorie eq.message)
+  ✓ mutant « les événements ne sont jamais marqués lus » (accueil) fait rougir le juge
+      → gabarit-ent-accueil : S14 les événements lus ne sont jamais marqués « traités »
+  ✓ mutant « une anomalie de texte lève une exception au lieu d’une carte » (marketing) fait rougir le juge
+      → essai gabarit-ent-marketing : relecture croisée : une anomalie devient une carte « à corriger » (jamais d’exception), un format non géré une carte, un litige en commentai
+  ✓ mutant « une carte « à corriger » est rejouée » (marketing) fait rougir le juge
+      → essai gabarit-ent-marketing : relecture croisée : une anomalie devient une carte « à corriger » (jamais d’exception), un format non géré une carte, un litige en commentai
+  ✓ mutant « un format non géré publié quand même » (marketing) fait rougir le juge
+      → essai gabarit-ent-marketing : relecture croisée : une anomalie devient une carte « à corriger » (jamais d’exception), un format non géré une carte, un litige en commentai
+  ✓ mutant « un litige en commentaire répondu seul » (marketing) fait rougir le juge
+      → essai gabarit-ent-marketing : relecture croisée : une anomalie devient une carte « à corriger » (jamais d’exception), un format non géré une carte, un litige en commentai
+  ✓ mutant « la validation d’équipe sans le texte à valider » (marketing) fait rougir le juge
+      → essai gabarit-ent-marketing : relecture croisée : une anomalie devient une carte « à corriger » (jamais d’exception), un format non géré une carte, un litige en commentai
+  ✓ mutant « l’approbation écrase une carte déjà refusée » (marketing) fait rougir le juge
+      → gabarit-ent-marketing : S11 Approuver la carte (Slack) : doit filtrer statut=a_valider (un clic tardif ne ressuscite pas une carte refusée)
+  ✓ mutant « les actions ne sont plus réservées avant l’effet » (accueil) fait rougir le juge
+      → gabarit-ent-accueil : S12 les actions ne sont pas réservées avant l’effet (idempotence)
+gabarits-entreprise-qa : 4 gabarits, 16 essais, 64 mutants
+OK

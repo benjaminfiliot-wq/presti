@@ -1,0 +1,231 @@
+✓ .orchestre/preuves/036-016/gabarit-ent-accueil.workflow.json (gabarit-ent-accueil, famille lib) : R1 à R23 tenues
+✓ .orchestre/preuves/036-016/gabarit-ent-leads.workflow.json (gabarit-ent-leads, famille lib) : R1 à R23 tenues
+✓ .orchestre/preuves/036-016/gabarit-ent-marketing.workflow.json (gabarit-ent-marketing, famille lib) : R1 à R23 tenues
+✓ .orchestre/preuves/036-016/gabarit-ent-ventes.workflow.json (gabarit-ent-ventes, famille lib) : R1 à R23 tenues
+✓ workflow d'envoi fictif (4 pieds, lecture au moment d'envoyer) : passe la garde
+  ✓ mutant « workflow actif » (presti-detecteurs) fait rougir la garde
+      → R1 le workflow doit être inactif (active: false)
+  ✓ mutant « version publiée » (presti-detecteurs) fait rougir la garde
+      → R1 le workflow ne doit avoir aucune version publiée (activeVersionId)
+  ✓ mutant « branche d’erreur ôtée (rang 26) : Error Trigger et workflow d’erreur » (presti-detecteurs) fait rougir la garde
+      → R3 aucune branche d'erreur (rang 26) : un Error Trigger relié à un nœud, ou settings.errorWorkflow
+  ✓ mutant « Error Trigger relié à rien, sans workflow d’erreur » (presti-detecteurs) fait rougir la garde
+      → R3 aucune branche d'erreur (rang 26) : un Error Trigger relié à un nœud, ou settings.errorWorkflow
+  ✓ mutant « workflow d’erreur en expression » (presti-detecteurs) fait rougir la garde
+      → R3 settings.errorWorkflow doit être un identifiant nu, jamais une expression (={{ $json.id }})
+  ✓ mutant « colonne `nom` lue » (presti-detecteurs) fait rougir la garde
+      → R7 Lire comptes : colonne interdite lue (nom)
+  ✓ mutant « select=*  » (presti-detecteurs) fait rougir la garde
+      → R7 Lire devis : select= avec *, jointure ou alias (*)
+  ✓ mutant « jointure dans select= » (presti-detecteurs) fait rougir la garde
+      → R7 Lire devis : select= avec *, jointure ou alias (id,artisan_id,statut,date_emission,validite_jours,acompte_pct,total_ttc,lead_id,)
+  ✓ mutant « select= retiré (toutes les colonnes) » (presti-detecteurs) fait rougir la garde
+      → R7 Lire factures : un seul select= attendu (aucune lecture de toutes les colonnes)
+  ✓ mutant « hôte tiers » (presti-detecteurs) fait rougir la garde
+      → R7 Lire tarifs : hôte non permis (exemple.invalid)
+  ✓ mutant « hôte calculé par une expression » (presti-detecteurs) fait rougir la garde
+      → R7 Lire tarifs : adresse calculée (expression) : l'hôte doit être écrit en dur
+  ✓ mutant « lecture devenue POST » (presti-detecteurs) fait rougir la garde
+      → R5 Lire chantiers : HTTP POST (lectures GET seulement)
+  ✓ mutant « corps de requête » (presti-detecteurs) fait rougir la garde
+      → R5 Lire chantiers : corps de requête interdit
+  ✓ mutant « Supabase qui écrit » (presti-detecteurs) fait rougir la garde
+      → R5 Lecture de connexion (regles_automatisation) : Supabase en update (get ou getAll seulement)
+  ✓ mutant « nœud Postgres ajouté » (presti-detecteurs) fait rougir la garde
+      → R5 Écrire : type de nœud hors liste blanche (n8n-nodes-base.postgres)
+  ✓ mutant « modèle ajouté (OpenAI) » (presti-detecteurs) fait rougir la garde
+      → R5 Rédiger : type de nœud hors liste blanche (@n8n/n8n-nodes-langchain.openAi)
+  ✓ mutant « identifiant sans nom » (presti-detecteurs) fait rougir la garde
+      → R6 Lire stock : identifiant supabaseApi non nommé ou hors forme { id, name } ({"id":"dTewDK98MLrNckNG"})
+  ✓ mutant « identifiant en expression » (presti-detecteurs) fait rougir la garde
+      → R6 Lire stock : identifiant supabaseApi non nommé ou hors forme { id, name } ({"id":"={{ $json.cle }}","name":"Supabase account"})
+  ✓ mutant « clé en clair dans un identifiant » (presti-detecteurs) fait rougir la garde
+      → R2 secret dans l'export (motif sb_secret_[A-Za-z0-9_-]{…)
+  ✓ mutant « clé de service collée dans un paramètre » (presti-detecteurs) fait rougir la garde
+      → R2 secret dans l'export (motif sb_secret_[A-Za-z0-9_-]{…)
+  ✓ mutant « nœud Slack sans pied déclaré » (presti-detecteurs) fait rougir la garde
+      → R4 Avertir : nœud d'envoi sans pied déclaré (notes : « pied: mention | PIED_AUTOMATIQUE | PIED_APRES | aucun »)
+  ✓ mutant « c4 : écriture POST derrière une porte « simulation » bien formée » (presti-detecteurs) fait rougir la garde
+      → R5 Lire chantiers : HTTP POST (lectures GET seulement)
+  ✓ mutant « c4 : nœud de sous-workflow ajouté (hors liste blanche du chantier 4) » (presti-detecteurs) fait rougir la garde
+      → R5 Appeler : type de nœud hors liste blanche (n8n-nodes-base.executeWorkflow)
+  ✓ mutant « mention ôtée d’un workflow visé (réponse seule) » (fictif) fait rougir la garde
+      → R4 Réponse seule : pied « mention » déclaré mais absent du texte envoyé
+  ✓ mutant « pied d’un envoi non déclaré » (fictif) fait rougir la garde
+      → R4 Réponse seule : nœud d'envoi sans pied déclaré (notes : « pied: mention | PIED_AUTOMATIQUE | PIED_APRES | aucun »)
+  ✓ mutant « pied inconnu déclaré » (fictif) fait rougir la garde
+      → R4 Réponse seule : nœud d'envoi sans pied déclaré (notes : « pied: mention | PIED_AUTOMATIQUE | PIED_APRES | aucun »)
+  ✓ mutant « rappel d’impayé sans PIED_AUTOMATIQUE » (fictif) fait rougir la garde
+      → R4 Rappel d impayé : pied « PIED_AUTOMATIQUE » déclaré mais absent du texte envoyé
+  ✓ mutant « rappel d’impayé qui porte la mention en plus » (fictif) fait rougir la garde
+      → R4 Rappel d impayé : porte le pied « mention », qui n'est pas le sien (PIED_AUTOMATIQUE)
+  ✓ mutant « après-chantier avec le pied des impayés » (fictif) fait rougir la garde
+      → R4 Proposer l entretien : porte le pied « PIED_AUTOMATIQUE », qui n'est pas le sien (PIED_APRES)
+  ✓ mutant « alerte de Presti qui porte la mention » (fictif) fait rougir la garde
+      → R4 Alerte à Benj : porte le pied « mention », qui n'est pas le sien (aucun)
+  ✓ mutant « « Presti » dans un envoi au nom d’un artisan » (fictif) fait rougir la garde
+      → R4 Réponse seule : « Presti » dans un envoi au nom d'un artisan (marque blanche)
+  ✓ mutant « lecture pour envoi sans la déclaration (client_email) » (fictif) fait rougir la garde
+      → R7 Lire destinataire : colonne interdite lue (client_email)
+  ✓ mutant « lecture pour envoi déclarée vers un nœud qui n’envoie pas » (fictif) fait rougir la garde
+      → R7 Lire destinataire : « lecture-pour-envoi » vers Préparer, qui n'est pas un nœud d'envoi alimenté par cette lecture
+  ✓ mutant « lecture pour envoi déclarée mais qui n’alimente pas l’envoi » (fictif) fait rougir la garde
+      → R7 Lire destinataire : « lecture-pour-envoi » vers Rappel d impayé, qui n'est pas un nœud d'envoi alimenté par cette lecture
+  ✓ mutant « branche d’erreur ôtée du workflow d’envoi » (fictif) fait rougir la garde
+      → R3 aucune branche d'erreur (rang 26) : un Error Trigger relié à un nœud, ou settings.errorWorkflow
+  ✓ mutant « R8 adresse e-mail écrite dans un nœud » (lib-exemple-executer) fait rougir la garde
+      → R8 adresse e-mail écrite dans l'export (…@exemple.invalid)
+  ✓ mutant « R8 chat_id Telegram écrit en dur » (lib-exemple-executer) fait rougir la garde
+      → R8 chat_id écrit en dur dans l'export
+  ✓ mutant « R9 branche d’erreur interne à la place du workflow d’erreur désigné » (lib-exemple-executer) fait rougir la garde
+      → R9 aucun workflow d'erreur désigné (settings.errorWorkflow = l'identifiant de lib-erreur-commune) : une branche interne ne suffit pas
+  ✓ mutant « R9 le workflow se désigne lui-même » (lib-exemple-executer) fait rougir la garde
+      → R9 le workflow se désigne lui-même comme workflow d'erreur
+  ✓ mutant « R10 fuseau New York » (lib-exemple-executer) fait rougir la garde
+      → R10 fuseau America/New_York : Europe/Paris attendu
+  ✓ mutant « R10 fuseau absent » (lib-exemple-executer) fait rougir la garde
+      → R10 fuseau absent (New York par défaut) : Europe/Paris attendu
+  ✓ mutant « R11 enfant appelable par tout workflow (any) » (lib-exemple-executer) fait rougir la garde
+      → R11 politique d'appel any : un enfant n'est appelé que par une liste (workflowsFromAList et callerIds)
+  ✓ mutant « R11 liste d’appelants vide » (lib-exemple-executer) fait rougir la garde
+      → R11 politique d'appel workflowsFromAList : un enfant n'est appelé que par une liste (workflowsFromAList et callerIds)
+  ✓ mutant « R12 délai maximal retiré » (lib-exemple-executer) fait rougir la garde
+      → R12 délai maximal d'exécution absent : un entier de 1 à 3600 s attendu
+  ✓ mutant « R12 délai maximal de 2 h » (lib-exemple-executer) fait rougir la garde
+      → R12 délai maximal d'exécution 7200 : un entier de 1 à 3600 s attendu
+  ✓ mutant « R14 lecture sans filtre organisation » (lib-exemple-executer) fait rougir la garde
+      → R14 Relire l'interrupteur : requête sans filtre organisation (un seul organisation_id=eq.… attendu)
+  ✓ mutant « R14 filtre organisation sans eq. » (lib-exemple-executer) fait rougir la garde
+      → R14 Relire l'interrupteur : requête sans filtre organisation (un seul organisation_id=eq.… attendu)
+  ✓ mutant « R14 écriture sans organisation_id » (lib-exemple-executer) fait rougir la garde
+      → R14 Écrire la carte : écriture sans organisation_id dans le corps
+  ✓ mutant « R14 nœud Supabase dans un lib-* » (lib-exemple-executer) fait rougir la garde
+      → R14 Lire en direct : nœud Supabase exclu d'un lib-* : le filtre organisation doit se lire dans la requête (HTTP Request)
+  ✓ mutant « R15 la porte « simulation » retirée (p5:318) » (lib-exemple-executer) fait rougir la garde
+      → R15 Écrire la carte : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « R15 l’écriture branchée sur la sortie « vrai » (simulation) » (lib-exemple-executer) fait rougir la garde
+      → R15 Écrire la carte : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « R15 porte inversée (condition « faux ») » (lib-exemple-executer) fait rougir la garde
+      → R15 Porte simulation : porte « simulation » mal formée (un If, une seule condition booléenne « vrai » sur simulation, typage strict)
+  ✓ mutant « R15 porte en typage souple » (lib-exemple-executer) fait rougir la garde
+      → R15 Porte simulation : porte « simulation » mal formée (un If, une seule condition booléenne « vrai » sur simulation, typage strict)
+  ✓ mutant « R15 porte sur un autre champ que simulation » (lib-exemple-executer) fait rougir la garde
+      → R15 Porte simulation : porte « simulation » mal formée (un If, une seule condition booléenne « vrai » sur simulation, typage strict)
+  ✓ mutant « R15 l’erreur de la porte mène à l’écriture » (lib-exemple-executer) fait rougir la garde
+      → R15 Écrire la carte : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « R15 un second déclencheur qui contourne la porte » (lib-exemple-executer) fait rougir la garde
+      → R15 Écrire la carte : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « R16 contrat d’entrée contourné » (lib-exemple-executer) fait rougir la garde
+      → R16 l'enfant doit commencer par un seul nœud Code « Contrat d'entrée »
+  ✓ mutant « R16 contrat d’entrée qui ne contrôle plus simulation » (lib-exemple-executer) fait rougir la garde
+      → R16 « Contrat d'entrée » ne contrôle pas la clé « simulation » de l'enveloppe@1
+  ✓ mutant « R16 contrat déclaré pour un autre gabarit » (lib-exemple-executer) fait rougir la garde
+      → R16 contrat d'entrée : notes « contrat: lib-exemple-executer@N » attendues (lib-relancer@1)
+  ✓ mutant « R16 deuxième fin de chemin hors du contrat de sortie » (lib-exemple-executer) fait rougir la garde
+      → R16 Écrire la carte : bout de chemin hors du « Contrat de sortie » (une seule sortie)
+  ✓ mutant « R16 contrat de sortie sans effets_faits » (lib-exemple-executer) fait rougir la garde
+      → R16 « Contrat de sortie » ne rend pas la clé « effets_faits »
+  ✓ mutant « R17 nœud Execute Command » (lib-exemple-executer) fait rougir la garde
+      → R17 Commande : nœud Execute Command (retiré en 3.0 ou exclu)
+  ✓ mutant « R17 nœud Function (retiré en 3.0) » (lib-exemple-executer) fait rougir la garde
+      → R17 Ancien code : nœud Function (retiré en 3.0 ou exclu)
+  ✓ mutant « R19 nœud Code modifié après revue (empreinte) » (lib-exemple-executer) fait rougir la garde
+      → R19 Effets prévus : empreinte changée (f93f4de5a505… au lieu de f7c877c9d899…)
+  ✓ mutant « R19 nœud Code inconnu du registre » (lib-exemple-executer) fait rougir la garde
+      → R19 Code neuf : empreinte inconnue (e307d434320f…) : à inscrire dans empreintes-code.json, à côté de l'export
+  ✓ mutant « R19 module chargé dans un nœud Code » (lib-exemple-executer) fait rougir la garde
+      → R19 Effets prévus : module, réseau ou environnement dans un nœud Code
+  ✓ mutant « R19 réseau sortant depuis un nœud Code » (lib-exemple-executer) fait rougir la garde
+      → R19 Effets prévus : module, réseau ou environnement dans un nœud Code
+  ✓ mutant « famille : le lib-* renommé hors famille retombe sous R5 (lecture seule) » (lib-exemple-executer) fait rougir la garde
+      → R5 Écrire la carte : HTTP POST (lectures GET seulement)
+  ✓ mutant « R13 succès sauvés sur un ent-* » (ent-exemple-relance) fait rougir la garde
+      → R13 succès sauvés (all) : saveDataSuccessExecution none attendu sur un ent-*
+  ✓ mutant « R13 réglage de sauvegarde des succès ôté » (ent-exemple-relance) fait rougir la garde
+      → R13 succès sauvés (défaut de l'instance) : saveDataSuccessExecution none attendu sur un ent-*
+  ✓ mutant « R13 progression sauvée sur un ent-* » (ent-exemple-relance) fait rougir la garde
+      → R13 progression des exécutions sauvée sur un ent-*
+  ✓ mutant « R15 l’envoi branché sans porte » (ent-exemple-relance) fait rougir la garde
+      → R15 Envoyer la relance : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « R17 AI Agent v1 (retiré en 3.0) » (ent-exemple-relance) fait rougir la garde
+      → R17 Rédiger la relance : AI Agent 1.9 (3.x attendu)
+  ✓ mutant « R18 passthroughBinaryImages laissé à vrai » (ent-exemple-relance) fait rougir la garde
+      → R18 Rédiger la relance : passthroughBinaryImages doit valoir faux (vrai par défaut)
+  ✓ mutant « R18 maxIterations non borné » (ent-exemple-relance) fait rougir la garde
+      → R18 Rédiger la relance : maxIterations borné de 1 à 10 attendu (absent)
+  ✓ mutant « R18 parseur débranché » (ent-exemple-relance) fait rougir la garde
+      → R18 Rédiger la relance : un seul Structured Output Parser branché attendu
+  ✓ mutant « R18 parseur en exemple JSON » (ent-exemple-relance) fait rougir la garde
+      → R18 Schéma du message : schéma fromJson : JSON Schema saisi (manual) attendu
+  ✓ mutant « R18 autoFix activé » (ent-exemple-relance) fait rougir la garde
+      → R18 Schéma du message : autoFix doit valoir faux (hors schéma = rejet)
+  ✓ mutant « R18 sortie du modèle sans revalidation en Code » (ent-exemple-relance) fait rougir la garde
+      → R18 Rédiger la relance : la sortie du modèle doit être revalidée par un nœud Code
+  ✓ mutant « R20 envoi du texte du modèle déclaré sans pied et sans mention » (ent-exemple-relance) fait rougir la garde
+      → R20 Envoyer la relance : envoi en aval d'un modèle sans « pied: mention »
+  ✓ mutant « R4 mention ôtée d’un envoi qui la déclare » (ent-exemple-relance) fait rougir la garde
+      → R4 Envoyer la relance : pied « mention » déclaré mais absent du texte envoyé
+  ✓ mutant « R11 parent appelable par tout workflow (any) » (ent-exemple-parent) fait rougir la garde
+      → R11 politique d'appel any : none ou une liste, jamais any
+  ✓ mutant « R11 politique d’appel absente » (ent-exemple-parent) fait rougir la garde
+      → R11 politique d'appel absente : none ou une liste, jamais any
+  ✓ mutant « R14 filtre organisation retiré du parent » (ent-exemple-parent) fait rougir la garde
+      → R14 Lire la configuration : requête sans filtre organisation (un seul organisation_id=eq.… attendu)
+  ✓ mutant « R17 sous-workflow en source parameter (JSON collé) » (ent-exemple-parent) fait rougir la garde
+      → R17 Appeler la relance : Execute Sub-workflow en source parameter (database attendue)
+  ✓ mutant « R17 sous-workflow désigné par une expression » (ent-exemple-parent) fait rougir la garde
+      → R17 Appeler la relance : sous-workflow désigné par un identifiant fixe, jamais une expression
+  ✓ mutant « R8 chat_id écrit en dur dans un nœud Telegram » (ent-exemple-parent) fait rougir la garde
+      → R8 Alerter Benj : chatId écrit en dur (une expression qui lit la configuration, jamais une valeur)
+  ✓ mutant « R13 succès sauvés sur le parent » (ent-exemple-parent) fait rougir la garde
+      → R13 succès sauvés (all) : saveDataSuccessExecution none attendu sur un ent-*
+  ✓ mutant « R15 l’agent IA atteint par la sortie « vrai » (simulation) » (gabarit-exemple-outils) fait rougir la garde
+      → R15 Rédacteur : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « R15 l’agent IA branché avant la porte » (gabarit-exemple-outils) fait rougir la garde
+      → R15 Rédacteur : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « R15 le brouillon Gmail posé avant la porte » (gabarit-exemple-outils) fait rougir la garde
+      → R15 Brouillon Gmail : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « R15 un rendez-vous posé dans l’Agenda sans porte » (gabarit-exemple-outils) fait rougir la garde
+      → R15 Poser le rendez-vous : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « R15 un outil sans opération (celle par défaut écrit) sans porte » (gabarit-exemple-outils) fait rougir la garde
+      → R15 Classeur : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « R21 identifiant Gmail branché dans le gabarit » (gabarit-exemple-outils) fait rougir la garde
+      → R21 Brouillon Gmail : identifiant branché dans un gabarit (gmailOAuth2) : seule la copie du client en reçoit, branché par lui
+  ✓ mutant « R21 identifiant du modèle branché dans le gabarit » (gabarit-exemple-outils) fait rougir la garde
+      → R21 Claude : identifiant branché dans un gabarit (anthropicApi) : seule la copie du client en reçoit, branché par lui
+  ✓ mutant « R21 identifiant sur un nœud HTTP qui ne vise pas Supabase » (gabarit-exemple-outils) fait rougir la garde
+      → R21 Lire Instagram : identifiant branché dans un gabarit (facebookGraphApi) : seule la copie du client en reçoit, branché par lui
+  ✓ mutant « R22 déclencheur Telegram (webhook) » (gabarit-exemple-outils) fait rougir la garde
+      → R22 Message Telegram : déclencheur à webhook (n8n-nodes-base.telegramTrigger) : n8n n'est pas exposé, l'entrée passe par Presti et la base
+  ✓ mutant « R22 webhook générique » (gabarit-exemple-outils) fait rougir la garde
+      → R22 Entrée publique : déclencheur à webhook (n8n-nodes-base.webhook) : n8n n'est pas exposé, l'entrée passe par Presti et la base
+  ✓ mutant « R22 Facebook Lead Ads en webhook (à lire par l’API Graph) » (gabarit-exemple-outils) fait rougir la garde
+      → R22 Nouveau lead : déclencheur à webhook (n8n-nodes-base.facebookLeadAdsTrigger) : n8n n'est pas exposé, l'entrée passe par Presti et la base
+  ✓ mutant « R23 outil d’agent qui envoie (Gmail send) » (gabarit-exemple-outils) fait rougir la garde
+      → R23 Lire le fil : outil d'agent qui écrit ou envoie (send) : l'écriture se fait après la porte, sur le chemin principal
+  ✓ mutant « R23 outil d’agent sans opération (envoi par défaut) » (gabarit-exemple-outils) fait rougir la garde
+      → R23 Lire le fil : outil d'agent qui écrit ou envoie (opération par défaut) : l'écriture se fait après la porte, sur le chemin principal
+  ✓ mutant « R23 outil Agenda qui pose un rendez-vous » (gabarit-exemple-outils) fait rougir la garde
+      → R23 Poser en outil : outil d'agent qui écrit ou envoie (create) : l'écriture se fait après la porte, sur le chemin principal
+  ✓ mutant « R23 validation humaine native hors Entreprise » (gabarit-exemple-outils) fait rougir la garde
+      → R23 Demander l’accord : validation humaine de n8n hors d'un gabarit Entreprise (la validation d'un artisan est une carte « À valider »)
+  ✓ mutant « R23 outil de code branché sur l’agent » (gabarit-exemple-outils) fait rougir la garde
+      → R23 Code libre : outil d'agent non admis (@n8n/n8n-nodes-langchain.toolCode)
+  ✓ mutant « R23 outil HTTP en POST » (gabarit-exemple-outils) fait rougir la garde
+      → R23 Appel libre : outil HTTP en POST (lecture GET seulement)
+  ✓ mutant « R23 sous-workflow en outil sans « outil: lecture » » (gabarit-exemple-outils) fait rougir la garde
+      → R23 Trier la demande : sous-workflow en outil sans « outil: lecture » déclaré
+  ✓ mutant « R20 brouillon en aval du modèle sans mention » (gabarit-exemple-outils) fait rougir la garde
+      → R20 Brouillon Gmail : envoi en aval d'un modèle sans « pied: mention »
+  ✓ mutant « R18 parseur structuré débranché de l’agent » (gabarit-exemple-outils) fait rougir la garde
+      → R18 Rédacteur : un seul Structured Output Parser branché attendu
+  ✓ mutant « R7 API hors de la liste des hôtes des gabarits » (gabarit-exemple-outils) fait rougir la garde
+      → R7 API inconnue : hôte non permis (api.exemple.invalid)
+  ✓ mutant « famille : le gabarit renommé presti-* perd ses outils (R5) » (gabarit-exemple-outils) fait rougir la garde
+      → R5 Nouvel e-mail : type de nœud hors liste blanche (n8n-nodes-base.gmailTrigger)
+n8n-specs-qa : 4 export(s), 110 mutants (23 sur presti-detecteurs, 12 sur fictif, 33 sur lib-exemple-executer, 13 sur ent-exemple-relance, 7 sur ent-exemple-parent, 22 sur gabarit-exemple-outils)
+OK
+(node:233815) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/usine/Documents/presti/lib/relancesImpayes.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/usine/Documents/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
