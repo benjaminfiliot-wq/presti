@@ -1,0 +1,357 @@
+{
+  "id": "A391vnnTMKmJGhgT",
+  "name": "lib-banc-metier",
+  "active": false,
+  "isArchived": false,
+  "versionId": "a60acae9-eaf0-4106-a6d9-e1a8ed0e79b6",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 11,
+  "createdAt": "2026-11-02T22:29:50.683Z",
+  "updatedAt": "2026-11-02T22:30:00.598Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [
+    {
+      "id": "c5ygtRhpSRski0N5",
+      "name": "couche-essai"
+    },
+    {
+      "id": "rzslIYLJg0eKogBe",
+      "name": "lib"
+    }
+  ],
+  "parentFolderId": null,
+  "description": "Tâche 035-004 : banc de la chaîne capture → qualification → décision sur « Exemple. Bâti-Démo » ; seul appelant permis des trois gabarits métier. Simulation partout. Inactif, jamais publié.",
+  "canExecute": true,
+  "connections": {
+    "Banc (jamais publié)": {
+      "main": [
+        [
+          {
+            "node": "Cas : Bâti-Démo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : gestes jamais automatiques",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : Bâti-Démo": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-capturer-lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-capturer-lead": {
+      "main": [
+        [
+          {
+            "node": "Vers la qualification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vers la qualification": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-qualifier-lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-qualifier-lead": {
+      "main": [
+        [
+          {
+            "node": "Vers la décision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vers la décision": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-decider",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-decider": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : gestes jamais automatiques": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-decider (gestes)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-decider (gestes)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "d45d5fd6-63a7-4f3f-b475-90134134f4f0",
+      "name": "Banc (jamais publié)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "72a1d357-6053-4650-9bc9-2f650dc5ff52",
+      "name": "Cas : Bâti-Démo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Bâti-Démo (035-006) : les demandes à traiter telles que les rendrait la lecture prévue (colonnes permises, empreinte du contact,\n// jamais le contact), plus …0102, déjà traitée, pour prouver la garde.\nconst env = (donnees, config, n) => ({ contrat: 'lib-capturer-lead@1', organisation_id: '00000000-0000-4000-8000-000000000001', simulation: true, cle_idempotence: 'exemple:banc:capturer-lead:' + (n || 0), trace: { execution_parent: 'Exemple. banc métier', declencheur: 'banc', tentative: 0 }, config: config, donnees: donnees });\nconst LIGNES = [{\"id\":\"00000000-0000-4000-8000-000000000101\",\"artisan_id\":\"00000000-0000-4000-8000-000000000001\",\"statut\":\"nouveau\",\"canal\":\"site\",\"origine\":null,\"urgence\":\"normal\",\"type_chantier\":\"Exemple. Salle de bain\",\"created_at\":\"2026-08-01T08:00:00.000Z\",\"contact_empreinte\":\"f5a89d7a1e72d89e05473efa464d0ec227634265cd8decf5b8cae0e3701c1a14\",\"etat_capture\":\"a_traiter\"},{\"id\":\"00000000-0000-4000-8000-000000000102\",\"artisan_id\":\"00000000-0000-4000-8000-000000000001\",\"statut\":\"repondu\",\"canal\":\"telephone\",\"origine\":null,\"urgence\":\"normal\",\"type_chantier\":\"Exemple. Toiture\",\"created_at\":\"2026-08-04T08:00:00.000Z\",\"contact_empreinte\":\"3291ec4abab10ae8c0bfc5a8c83c46cddcdbb4a8fdc7c3da74b98212eae5432d\",\"etat_capture\":\"traite\"},{\"id\":\"00000000-0000-4000-8000-000000000103\",\"artisan_id\":\"00000000-0000-4000-8000-000000000001\",\"statut\":\"devis\",\"canal\":\"email\",\"origine\":null,\"urgence\":\"normal\",\"type_chantier\":null,\"created_at\":\"2026-08-07T08:00:00.000Z\",\"contact_empreinte\":\"3291ec4abab10ae8c0bfc5a8c83c46cddcdbb4a8fdc7c3da74b98212eae5432d\",\"etat_capture\":\"a_traiter\"},{\"id\":\"00000000-0000-4000-8000-000000000106\",\"artisan_id\":\"00000000-0000-4000-8000-000000000001\",\"statut\":\"nouveau\",\"canal\":\"telephone\",\"origine\":null,\"urgence\":\"normal\",\"type_chantier\":\"Exemple. Toiture\",\"created_at\":\"2026-08-16T08:00:00.000Z\",\"contact_empreinte\":\"5c5a7272878b536f5d8ead0b7c865511982873bde0bd2c9d6601b1d65fc99c1e\",\"etat_capture\":\"a_traiter\"},{\"id\":\"00000000-0000-4000-8000-000000000111\",\"artisan_id\":\"00000000-0000-4000-8000-000000000001\",\"statut\":\"nouveau\",\"canal\":\"email\",\"origine\":null,\"urgence\":\"normal\",\"type_chantier\":\"Exemple. Dépannage électrique\",\"created_at\":\"2026-08-31T08:00:00.000Z\",\"contact_empreinte\":\"1c5fc2ca2b1e8b8f3e0b875193f461b6ba20410d9bda9401d4af0bbcda798b1e\",\"etat_capture\":\"a_traiter\"},{\"id\":\"00000000-0000-4000-8000-000000000116\",\"artisan_id\":\"00000000-0000-4000-8000-000000000001\",\"statut\":\"nouveau\",\"canal\":\"formulaire\",\"origine\":null,\"urgence\":\"normal\",\"type_chantier\":\"Exemple. Cuisine\",\"created_at\":\"2026-09-15T08:00:00.000Z\",\"contact_empreinte\":\"8c26d44322a6dd8d2fb68ef8153d2fa67c2617f757c41b17e4afcead8f6a9e91\",\"etat_capture\":\"a_traiter\"},{\"id\":\"00000000-0000-4000-8000-000000000121\",\"artisan_id\":\"00000000-0000-4000-8000-000000000001\",\"statut\":\"nouveau\",\"canal\":\"site\",\"origine\":null,\"urgence\":\"urgent\",\"type_chantier\":\"Exemple. Salle de bain\",\"created_at\":\"2026-09-30T08:00:00.000Z\",\"contact_empreinte\":\"2b46edd86d963102efa95c6944201c97a909aaed519dad3b93555a8415799334\",\"etat_capture\":\"a_traiter\"},{\"id\":\"00000000-0000-4000-8000-000000000126\",\"artisan_id\":\"00000000-0000-4000-8000-000000000001\",\"statut\":\"nouveau\",\"canal\":\"telephone\",\"origine\":null,\"urgence\":\"normal\",\"type_chantier\":\"Exemple. Toiture\",\"created_at\":\"2026-10-15T08:00:00.000Z\",\"contact_empreinte\":\"281c10d6c599910ee44bbc177a282cb7d7b482c751f08bc1e574bf3bc30e9b32\",\"etat_capture\":\"a_traiter\"},{\"id\":\"00000000-0000-4000-8000-000000000130\",\"artisan_id\":\"00000000-0000-4000-8000-000000000001\",\"statut\":\"perdu\",\"canal\":\"site\",\"origine\":null,\"urgence\":\"normal\",\"type_chantier\":null,\"created_at\":\"2026-10-27T08:00:00.000Z\",\"contact_empreinte\":null,\"etat_capture\":\"a_traiter\"}];\nreturn [{ json: env({ lignes: LIGNES }, { source: 'leads', lot_max: 200 }, 1) }];"
+      }
+    },
+    {
+      "id": "1865e9f9-3411-45ab-84cd-fef473836c6f",
+      "name": "Appeler lib-capturer-lead",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "yj7KzcEjf04iTAcm"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "7b2c7746-2935-4e51-8f46-fb2d5db0210d",
+      "name": "Vers la qualification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Banc : chaque événement capturé devient une demande de qualification. Grille « Exemple. » ; les empreintes déjà en base (celles du lot seulement) viennent du jeu fictif.\nconst env = (donnees, config, n) => ({ contrat: 'lib-qualifier-lead@1', organisation_id: '00000000-0000-4000-8000-000000000001', simulation: true, cle_idempotence: 'exemple:banc:qualifier-lead:' + (n || 0), trace: { execution_parent: 'Exemple. banc métier', declencheur: 'banc', tentative: 0 }, config: config, donnees: donnees });\nconst CONNUES = [{\"empreinte\":\"3291ec4abab10ae8c0bfc5a8c83c46cddcdbb4a8fdc7c3da74b98212eae5432d\",\"lead_id\":\"00000000-0000-4000-8000-000000000102\"}];\nconst GRILLE = [{\"critere\":\"urgence=urgent\",\"poids\":40},{\"critere\":\"canal=formulaire\",\"poids\":25},{\"critere\":\"canal=site\",\"poids\":25},{\"critere\":\"canal=telephone\",\"poids\":15},{\"critere\":\"canal=email\",\"poids\":15}];\nconst sortie = [];\nfor (const { json: s } of $input.all()) for (const ev of ((s.resultat || {}).evenements || [])) sortie.push({ json: env({ lead_id: ev.id, evenement_id: ev.id, empreinte_contact: ev.empreinte_contact, champs: ev.champs }, { grille: GRILLE, seuils: { haute: 60, normale: 30 }, delais_cibles_min: { haute: 15, normale: 60, a_revoir: 240 }, empreintes_connues: CONNUES }, sortie.length) });\nreturn sortie;"
+      }
+    },
+    {
+      "id": "adc55a1e-6e33-4ce1-a1d8-deaef2536ad8",
+      "name": "Appeler lib-qualifier-lead",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uvGWZR8fHnXURRV6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "ff37fcfa-b6ca-48c9-a79a-d3f175432ff6",
+      "name": "Vers la décision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Banc : chaque demande qualifiée devient une décision « répondre au prospect ». L'escalade est ce que relira le pilote au départ\n// (sujetEscalade, lib/pilote/regles.ts), marquée ici pour les cas limites du jeu (litige, escalade). Mode A : niveau 2 au plus, pilote pourtant\n// réglé « actif » : la décision reste une carte.\nconst env = (donnees, config, n) => ({ contrat: 'lib-decider@1', organisation_id: '00000000-0000-4000-8000-000000000001', simulation: true, cle_idempotence: 'exemple:banc:decider:' + (n || 0), trace: { execution_parent: 'Exemple. banc métier', declencheur: 'banc', tentative: 0 }, config: config, donnees: donnees });\nconst ESCALADE = [\"00000000-0000-4000-8000-000000000106\",\"00000000-0000-4000-8000-000000000120\",\"00000000-0000-4000-8000-000000000121\",\"00000000-0000-4000-8000-000000000122\"];\nconst sortie = [];\nfor (const { json: s } of $input.all()) { const r = s.resultat; if (!r) continue; sortie.push({ json: env({ objet_type: 'demande', objet_id: r.lead_id, constat: { outil: 'valider_reponse_proposee', etape: 'premiere-reponse', escalade: ESCALADE.includes(r.lead_id) } }, { autonomie: { niveau_max: 2, niveau_defaut: 2, niveaux: {} }, plan: 'entreprise', pilote: { drapeau: true, actif: true, types: { reponse_prospect: true } }, parties_depuis_24h: 0 }, sortie.length) }); }\nreturn sortie;"
+      }
+    },
+    {
+      "id": "785749d9-f65e-40fd-a1ed-adfc22f8b498",
+      "name": "Appeler lib-decider",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "hckqX1tQjIommtTH"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "99ad763e-891b-46e5-a59a-40cac9279bc1",
+      "name": "Bilan du banc",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Bilan agrégé, sans donnée : par contrat, le nombre de sorties par statut ; par décision, le nombre par action. Défaut : un effet fait en\n// simulation, un appel en erreur, ou un « pilote » sur un geste jamais automatique ou hors Signature et Entreprise.\nconst bilan = {}, actions = {};\nlet defauts = 0;\nfor (const { json: s } of $input.all()) {\n  const c = typeof s.contrat === 'string' ? s.contrat : 'appel en erreur';\n  bilan[c] = bilan[c] || {};\n  const st = typeof s.statut === 'string' ? s.statut : 'erreur';\n  bilan[c][st] = (bilan[c][st] || 0) + 1;\n  if (!s.contrat || st === 'erreur' || (s.simulation === true && Array.isArray(s.effets_faits) && s.effets_faits.length)) defauts++;\n  if (c === 'lib-decider@1' && s.resultat) { const k = s.resultat.action + ':' + s.resultat.motif; actions[k] = (actions[k] || 0) + 1; if (s.resultat.action === 'pilote' && /^(jamais_auto|geste_p5_226)$/.test(s.resultat.motif)) defauts++; }\n}\nreturn [{ json: { bilan: bilan, decisions: actions, defauts: defauts } }];"
+      }
+    },
+    {
+      "id": "b76d4819-4ad6-4875-9dc4-267d9ad4d5cd",
+      "name": "Cas : gestes jamais automatiques",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        120
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Chaque geste « jamais en automatique » (liste du code PLUS p5:226), réglé en automatique partout, niveau 3 permis, offre Entreprise :\n// chacun doit rester une carte (p5:315). Puis la même relance de devis sous Studio (jamais le niveau 3) et sous Signature (niveau 3).\nconst env = (donnees, config, n) => ({ contrat: 'lib-decider@1', organisation_id: '00000000-0000-4000-8000-000000000001', simulation: true, cle_idempotence: 'exemple:banc:decider:' + (n || 0), trace: { execution_parent: 'Exemple. banc métier', declencheur: 'banc', tentative: 0 }, config: config, donnees: donnees });\nconst GESTES = [\"marquer_facture_payee\",\"creer_facture\",\"creer_facture_libre\",\"rembourser\",\"payer\",\"creer_avoir\",\"supprimer_devis_brouillon\",\"supprimer_tarif\",\"supprimer_article\",\"augmenter_tarifs\",\"envoyer_devis\",\"envoi_devis\",\"modifier_prix_sans_source\",\"encaisser\",\"toucher_moyen_paiement\",\"declarer_urssaf\",\"declarer_impots\",\"supprimer_donnees\",\"passer_appel\",\"prendre_appel\",\"prendre_rendez_vous\"];\nconst TOUT = { autonomie: { niveau_max: 3, niveau_defaut: 2 }, pilote: { drapeau: true, actif: true, types: {\"reponse_prospect\":true,\"relance_devis\":true,\"relance_impaye\":true,\"envoi_devis\":true,\"envoi_facture\":true,\"assistant_client\":true} }, parties_depuis_24h: 0 };\nconst objet = (i) => '00000000-0000-4000-8000-' + String(300 + i).padStart(12, '0');\nconst sortie = GESTES.map((g, i) => ({ json: env({ objet_type: 'devis', objet_id: objet(i), constat: { outil: g, etape: 'geste', escalade: false } }, { ...TOUT, plan: 'entreprise' }, i) }));\nsortie.push({ json: env({ objet_type: 'devis', objet_id: objet(90), constat: { outil: 'relancer_devis', etape: 'palier-1', escalade: false, lignes: [{ prix_unitaire_ht_centimes: 4100, quantite: 2, source_prix: 'vos tarifs' }] } }, { ...TOUT, plan: 'studio' }, 90) });\nsortie.push({ json: env({ objet_type: 'devis', objet_id: objet(91), constat: { outil: 'relancer_devis', etape: 'palier-1', escalade: false, lignes: [{ prix_unitaire_ht_centimes: 4100, quantite: 2, source_prix: 'vos tarifs' }] } }, { ...TOUT, plan: 'signature' }, 91) });\nreturn sortie;"
+      }
+    },
+    {
+      "id": "679f4601-0793-4a6c-a071-11d83393e204",
+      "name": "Appeler lib-decider (gestes)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "hckqX1tQjIommtTH"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "830a3180-8946-4aaa-952d-8a64bac55ca3",
+      "name": "Sticky Note b0957ef7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -208
+      ],
+      "parameters": {
+        "content": "## lib-banc-metier (035-004)\nBanc de la chaîne capture → qualification → décision, sur « Exemple. Bâti-Démo » (035-006) : seul appelant permis de lib-capturer-lead, lib-qualifier-lead et lib-decider tant qu'aucun parent ent-* n'existe (035-007).\nINACTIF, jamais publié. Simulation partout. Ne lit ni n'écrit rien en base, n'envoie rien.",
+        "color": 4,
+        "width": 400,
+        "height": 352
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 035-004), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

@@ -1,0 +1,591 @@
+{
+  "workflow": {
+    "id": "VnU1onu9T4Z2asTu",
+    "name": "presti-accuse-reception",
+    "active": false,
+    "isArchived": false,
+    "activeVersionId": null,
+    "triggerCount": 0,
+    "nodeCount": 12,
+    "settings": {
+      "timezone": "Europe/Paris",
+      "executionTimeout": 120,
+      "saveDataSuccessExecution": "none",
+      "saveDataErrorExecution": "all",
+      "errorWorkflow": "AQeHiC58UgbMR4Kr",
+      "availableInMCP": true,
+      "executionOrder": "v1"
+    },
+    "tags": [],
+    "parentFolderId": null,
+    "description": "Chantier 4, lot L18 (tâche 032-040) : accusé de réception au prospect (au nom de l'artisan) et avis à l'artisan, refaits dans n8n depuis app/api/leads/route.ts — toutes les minutes, lectures GET seulement, envois DÉSACTIVÉS. Inactif jusqu'au « go » de Ben",
+    "connections": {
+      "Toutes les minutes": {
+        "main": [
+          [
+            {
+              "node": "Fenetre du passage",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fenetre du passage": {
+        "main": [
+          [
+            {
+              "node": "Lire demandes du jour",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire demandes du jour": {
+        "main": [
+          [
+            {
+              "node": "Lire destinataires",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire destinataires": {
+        "main": [
+          [
+            {
+              "node": "Lire comptes",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire comptes": {
+        "main": [
+          [
+            {
+              "node": "Lire doublons",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lire doublons": {
+        "main": [
+          [
+            {
+              "node": "Courriers a envoyer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Courriers a envoyer": {
+        "main": [
+          [
+            {
+              "node": "Garder les accuses",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Garder les avis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Garder les accuses": {
+        "main": [
+          [
+            {
+              "node": "Envoyer l accuse",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Garder les avis": {
+        "main": [
+          [
+            {
+              "node": "Envoyer l avis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "id": "fbb051a0-be5a-4876-bf30-8d8a3c24b811",
+        "name": "Toutes les minutes",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 * * * * *"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "c917efbe-a060-4776-abaa-0df4aaaeb8c8",
+        "name": "Fenetre du passage",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          0
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// presti-accuse-reception : la fenêtre du passage. Un passage par minute ; une demande n'est lue que 30 s après sa création (le temps\n// que le chemin codé écrive son motif), dans une fenêtre d'une minute alignée sur l'horloge : chaque demande tombe dans UNE fenêtre\n// et une seule (n8n n'écrit pas en base : l'unicité tient aux fenêtres, pas à un registre). Copie figée contrôlée par\n// scripts/accuse-reception-n8n-qa.mjs ; l'instant vient de Date.now() (le juge le fixe).\nconst PASSAGE_MS = 60000;\nconst DECALAGE_MS = 30000;\nconst DOUBLONS_MS = 86400000;\nconst maintenant = Date.now();\nconst passage = Math.floor(maintenant / PASSAGE_MS) * PASSAGE_MS;\nconst fin = passage - DECALAGE_MS;\nconst debut = fin - PASSAGE_MS;\nconst decalageParis = (t) => {\n  const p = {};\n  for (const x of new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(new Date(t))) p[x.type] = Number(x.value);\n  return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second) - Math.floor(t / 1000) * 1000;\n};\nconst jour = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(fin));\nconst [a, m, j] = jour.split('-').map(Number);\nconst minuit0 = Date.UTC(a, m - 1, j);\nconst minuit = minuit0 - decalageParis(minuit0 - 7200000);\nconst depuisJour = Math.min(minuit, debut);\nreturn [{ json: { jour, debut: new Date(debut).toISOString(), fin: new Date(fin).toISOString(), depuis_jour: new Date(depuisJour).toISOString(), depuis_doublons: new Date(fin - DOUBLONS_MS).toISOString(), passage: new Date(passage).toISOString(), simulation: true } }];\n"
+        }
+      },
+      {
+        "id": "e8851557-6c96-4dca-9cb6-e368d236dcb5",
+        "name": "Lire demandes du jour",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          448,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendQuery": true,
+          "specifyQuery": "keypair",
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,artisan_id,created_at,motif_reponse"
+              },
+              {
+                "name": "and",
+                "value": "={{ '(created_at.gte.' + $('Fenetre du passage').first().json.depuis_jour + ',created_at.lt.' + $('Fenetre du passage').first().json.fin + ')' }}"
+              },
+              {
+                "name": "motif_reponse",
+                "value": "in.(manuelle,escalade,horaire,humain,limite)"
+              },
+              {
+                "name": "order",
+                "value": "created_at.asc,id.asc"
+              },
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000,
+            "pagination": {
+              "pagination": {
+                "paginationMode": "updateAParameterInEachRequest",
+                "parameters": {
+                  "parameters": [
+                    {
+                      "type": "qs",
+                      "name": "offset",
+                      "value": "={{ $pageCount * 1000 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50
+              }
+            }
+          }
+        },
+        "executeOnce": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "dTewDK98MLrNckNG",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "id": "84a58a6d-de05-477e-a7bc-fb8d73e79c29",
+        "name": "Lire destinataires",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          672,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendQuery": true,
+          "specifyQuery": "keypair",
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,artisan_id,created_at,motif_reponse,nom_prospect,contact"
+              },
+              {
+                "name": "and",
+                "value": "={{ '(created_at.gte.' + $('Fenetre du passage').first().json.debut + ',created_at.lt.' + $('Fenetre du passage').first().json.fin + ')' }}"
+              },
+              {
+                "name": "motif_reponse",
+                "value": "in.(manuelle,escalade,horaire,humain,limite)"
+              },
+              {
+                "name": "order",
+                "value": "created_at.asc,id.asc"
+              },
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000,
+            "pagination": {
+              "pagination": {
+                "paginationMode": "updateAParameterInEachRequest",
+                "parameters": {
+                  "parameters": [
+                    {
+                      "type": "qs",
+                      "name": "offset",
+                      "value": "={{ $pageCount * 1000 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50
+              }
+            }
+          }
+        },
+        "notes": "lecture-pour-envoi: Envoyer l accuse\nLue au moment d'envoyer seulement : le nom et l'adresse du prospect, des demandes de la dernière minute dont le chemin codé a laissé l'accusé à n8n (motif du silence). Elle sert aussi l'avis à l'artisan (Envoyer l avis).",
+        "executeOnce": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "dTewDK98MLrNckNG",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "id": "7ec59767-b53f-4bd4-bc57-47aeb8f341e4",
+        "name": "Lire comptes",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          896,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendQuery": true,
+          "specifyQuery": "keypair",
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,nom,email,notifications"
+              },
+              {
+                "name": "id",
+                "value": "={{ 'in.(' + ([...new Set($('Lire destinataires').all().map(i => i.json.artisan_id).filter(Boolean))].join(',') || '00000000-0000-0000-0000-000000000000') + ')' }}"
+              },
+              {
+                "name": "order",
+                "value": "id"
+              },
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000,
+            "pagination": {
+              "pagination": {
+                "paginationMode": "updateAParameterInEachRequest",
+                "parameters": {
+                  "parameters": [
+                    {
+                      "type": "qs",
+                      "name": "offset",
+                      "value": "={{ $pageCount * 1000 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50
+              }
+            }
+          }
+        },
+        "notes": "lecture-pour-envoi: Envoyer l avis\nLue au moment d'envoyer seulement : le nom et l'adresse de l'artisan (marque blanche et Reply-To) et ses préférences de notification (nouvelle_demande). Elle sert aussi l'accusé (Envoyer l accuse).",
+        "executeOnce": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "dTewDK98MLrNckNG",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "id": "4f2c6c48-ea8c-4f99-a0fe-9b4df69f1ebf",
+        "name": "Lire doublons",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1120,
+          0
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendQuery": true,
+          "specifyQuery": "keypair",
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,contact,created_at"
+              },
+              {
+                "name": "and",
+                "value": "={{ '(created_at.gte.' + $('Fenetre du passage').first().json.depuis_doublons + ',created_at.lt.' + $('Fenetre du passage').first().json.fin + ')' }}"
+              },
+              {
+                "name": "or",
+                "value": "={{ '(' + ([...new Set($('Lire destinataires').all().map(i => String(i.json.contact || '').trim().toLowerCase()).filter(c => /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}$/.test(c)))].map(c => 'contact.ilike.' + c).join(',') || 'contact.eq.-') + ')' }}"
+              },
+              {
+                "name": "order",
+                "value": "created_at.asc,id.asc"
+              },
+              {
+                "name": "limit",
+                "value": "1000"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000,
+            "pagination": {
+              "pagination": {
+                "paginationMode": "updateAParameterInEachRequest",
+                "parameters": {
+                  "parameters": [
+                    {
+                      "type": "qs",
+                      "name": "offset",
+                      "value": "={{ $pageCount * 1000 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 1000 }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50
+              }
+            }
+          }
+        },
+        "notes": "lecture-pour-envoi: Envoyer l accuse\nLue au moment d'envoyer seulement : les demandes des dernières 24 h faites avec les mêmes adresses, pour tenir le plafond par destinataire de lib/email.ts:81 que n8n contourne en envoyant lui-même.",
+        "executeOnce": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "dTewDK98MLrNckNG",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "id": "535bd480-fe39-4be3-ba49-8d56a926323c",
+        "name": "Courriers a envoyer",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1344,
+          0
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "language": "javaScript",
+          "jsCode": "// presti-accuse-reception : ce que l'ancien chemin envoie dans la branche « l'assistant se tait » de app/api/leads/route.ts —\n// l'avis à l'artisan (:386) puis l'accusé de réception au prospect (:393-399, texte fixe, sans la mention d'IA : :402) — plus les\n// plafonds de lib/email.ts que ce chemin passait en envoyant (:81-87). Code pur : rien n'est envoyé ici, rien n'est écrit.\n// Copie figée contrôlée par scripts/accuse-reception-n8n-qa.mjs, cas par cas contre la vraie route.\nconst SILENCE = ['manuelle', 'escalade', 'horaire', 'humain', 'limite'];\nconst MAX_PAR_DESTINATAIRE = 3;\nconst MAX_PAR_JOUR = 30;\nconst MAX_AVIS_PAR_JOUR = 50;\nconst EXPEDITEUR = 'contact@prestiapp.fr';\nconst ENTREPRISE = 'contact@prestiapp.fr';\nconst EST_COURRIEL = /^[^\\s@]+@[^\\s@]+\\.[a-z]{2,}$/i;\nconst ADRESSE_SURE = /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}$/;\nconst fen = $('Fenetre du passage').first().json;\nconst lire = (nom) => $(nom).all().map((i) => i.json).filter((x) => x && typeof x === 'object' && typeof x.id === 'string');\nconst ordre = (a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);\nconst texte = (v) => (typeof v === 'string' ? v : '');\nconst sur = (v) => ADRESSE_SURE.test(texte(v).trim()) && !/\\.invalid$/i.test(texte(v).trim());\nconst nettoyer = (v) => texte(v).replace(/[\\r\\n<>\"]/g, '').trim().slice(0, 70) || 'Votre artisan';\nconst uneLigne = (v) => texte(v).replace(/[\\r\\n]+/g, ' ');\nconst actif = (prefs) => !prefs || typeof prefs !== 'object' || prefs.nouvelle_demande !== false;\nconst duJour = lire('Lire demandes du jour').filter((d) => SILENCE.includes(d.motif_reponse)).sort(ordre);\nconst rangJour = {};\nduJour.forEach((d, i) => { rangJour[d.id] = i + 1; });\nconst comptes = {};\nlire('Lire comptes').forEach((c) => { comptes[c.id] = c; });\nconst parAdresse = {};\nlire('Lire doublons').filter((d) => typeof d.contact === 'string').sort(ordre).forEach((d) => {\n  const k = d.contact.trim().toLowerCase();\n  (parAdresse[k] = parAdresse[k] || []).push(d.id);\n});\nconst sortie = [];\nconst ignore = (lead, raison) => sortie.push({ json: { courrier: 'ignore', lead_id: lead.id, raison, simulation: true } });\nfor (const lead of lire('Lire destinataires').sort(ordre)) {\n  if (!SILENCE.includes(lead.motif_reponse)) { ignore(lead, 'motif hors du silence'); continue; }\n  if (!(lead.created_at >= fen.debut && lead.created_at < fen.fin)) { ignore(lead, 'hors de la fenêtre'); continue; }\n  const contact = texte(lead.contact).trim();\n  if (!contact) { ignore(lead, 'sans coordonnées (différé)'); continue; }\n  const artisan = comptes[lead.artisan_id];\n  if (!artisan) { ignore(lead, 'compte introuvable'); continue; }\n  const nomProspect = texte(lead.nom_prospect);\n  const nomArtisan = texte(artisan.nom);\n  const sensible = lead.motif_reponse === 'escalade';\n  if (texte(artisan.email) && actif(artisan.notifications) && sur(artisan.email) && rangJour[lead.id] <= MAX_AVIS_PAR_JOUR) {\n    sortie.push({ json: {\n      courrier: 'avis', lead_id: lead.id, cle: 'avis:' + lead.id, simulation: true,\n      a: artisan.email.trim(), de: 'Presti <' + EXPEDITEUR + '>',\n      repondre_a: EST_COURRIEL.test(contact) && ADRESSE_SURE.test(contact) ? contact : ENTREPRISE,\n      sujet: uneLigne((sensible ? '⚠️ Demande sensible — ' : 'Nouveau contact — ') + (nomProspect || contact)),\n      texte: 'Nouveau contact via votre page Presti — à vous de répondre.\\n\\nNom : ' + (nomProspect || 'non précisé') + '\\nContact : ' + contact + '\\n\\nSa demande est dans votre espace (Messages) : répondez-lui depuis là.',\n    } });\n  } else ignore(lead, 'avis non dû (adresse absente, non sûre, notification coupée ou plafond du jour)');\n  if (EST_COURRIEL.test(contact)) {\n    const rang = (parAdresse[contact.toLowerCase()] || []).indexOf(lead.id) + 1;\n    if (!sur(contact)) ignore(lead, 'adresse du prospect non sûre');\n    else if (!(rang >= 1 && rang <= MAX_PAR_DESTINATAIRE)) ignore(lead, 'plafond par destinataire');\n    else if (!(rangJour[lead.id] <= MAX_PAR_JOUR)) ignore(lead, 'plafond du jour');\n    else {\n      const prenom = nomProspect.trim().split(/\\s+/)[0];\n      sortie.push({ json: {\n        courrier: 'accuse', lead_id: lead.id, cle: 'accuse:' + lead.id, simulation: true,\n        a: contact, de: nettoyer(nomArtisan.trim() || 'Votre artisan') + ' <' + EXPEDITEUR + '>',\n        repondre_a: texte(artisan.email).trim(),\n        sujet: uneLigne('Bien reçu — ' + (nomArtisan || 'votre demande')),\n        texte: 'Bonjour' + (prenom ? ' ' + prenom : '') + ',\\n\\nMerci pour votre demande. ' + (nomArtisan || 'Nous') + \" l'a bien reçue et revient vers vous très vite.\\n\\nÀ très bientôt.\",\n      } });\n    }\n  }\n}\nreturn sortie;\n"
+        }
+      },
+      {
+        "id": "35efc8be-ceaa-480d-bd24-50e84fba7268",
+        "name": "Garder les accuses",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1568,
+          0
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "leftValue": "={{ $json.courrier }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                },
+                "rightValue": "accuse"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "1d44480f-bcea-4f79-8bc6-e8a149aadf90",
+        "name": "Envoyer l accuse",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          1792,
+          0
+        ],
+        "parameters": {
+          "operation": "send",
+          "fromEmail": "={{ $json.de }}",
+          "toEmail": "={{ $json.a }}",
+          "subject": "={{ $json.sujet }}",
+          "emailFormat": "text",
+          "text": "={{ $json.texte }}",
+          "options": {
+            "appendAttribution": false,
+            "replyTo": "={{ $json.repondre_a }}"
+          }
+        },
+        "disabled": true,
+        "notes": "pied: aucun\nSIMULATION : nœud désactivé, sans identifiant SMTP (à poser par Benj). Texte fixe de app/api/leads/route.ts:402, au nom de l'artisan, Reply-To = son adresse, sans la mention d'IA.",
+        "webhookId": "db64a447-0795-497c-b4ac-18313d12e5ea"
+      },
+      {
+        "id": "49c847e5-b171-46e7-847e-7561b3b14195",
+        "name": "Garder les avis",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          2016,
+          0
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "leftValue": "={{ $json.courrier }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                },
+                "rightValue": "avis"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "0ae935fa-f79e-49cb-bb12-546cf8e76c73",
+        "name": "Envoyer l avis",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          2240,
+          0
+        ],
+        "parameters": {
+          "operation": "send",
+          "fromEmail": "={{ $json.de }}",
+          "toEmail": "={{ $json.a }}",
+          "subject": "={{ $json.sujet }}",
+          "emailFormat": "text",
+          "text": "={{ $json.texte }}",
+          "options": {
+            "appendAttribution": false,
+            "replyTo": "={{ $json.repondre_a }}"
+          }
+        },
+        "disabled": true,
+        "notes": "pied: aucun\nSIMULATION : nœud désactivé, sans identifiant SMTP (à poser par Benj). Avis de Presti à l'artisan (app/api/leads/route.ts:386), Reply-To = le prospect.",
+        "webhookId": "050a90e9-b47c-46f0-b6f4-25a5b03e67a5"
+      },
+      {
+        "id": "a0f9fb2a-4cf6-4fb6-80d9-cea86391ab99",
+        "name": "Sticky Note 6c7fcf6c",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          784,
+          192
+        ],
+        "parameters": {
+          "content": "## presti-accuse-reception — inactif, en simulation\nToutes les minutes : lit les demandes de la minute écoulée dont le chemin codé a laissé l'accusé à n8n, et prépare l'avis à l'artisan et l'accusé de réception au prospect (au nom de l'artisan). Les deux nœuds d'envoi sont DÉSACTIVÉS et sans identifiant : rien ne part. Brief : plans/011-cadrage-01-11/briefs/c4-n8n-accuse-reception.md",
+          "width": 760,
+          "height": 200
+        }
+      }
+    ],
+    "nodeGroups": [],
+    "activeVersion": null,
+    "meta": {
+      "aiBuilderAssisted": true,
+      "builderVariant": "mcp"
+    }
+  }
+}

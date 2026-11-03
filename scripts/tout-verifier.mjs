@@ -211,6 +211,9 @@ const SUITES = [
   { nom: 'Kit « Presti pour l’entreprise » du mode A (prompt 5, 035-002) — huit parties, « Exemple. » partout, aucun prix de l’offre, aucune phrase interdite (mutants)', cmd: 'node', args: ['scripts/kit-entreprise-qa.mjs'], cout: 'gratuit' },
   { nom: 'Socle lib-* de l’offre Entreprise dans n8n (prompt 5, 035-003) — inactif, contrats d’entrée et de sortie, une alerte par panne, rejeu sans doublon (mutants)', cmd: 'node', args: ['scripts/lib-socle-n8n-qa.mjs'], cout: 'gratuit' },
   { nom: 'Fiches de lecture des vidéos (prompt 5, 035-008) — format, horodatages dans la durée, chiffres marqués, aucune citation de plus de 15 mots (mutants)', cmd: 'node', args: ['scripts/fiches-videos-qa.mjs', '--mutants'], cout: 'gratuit' },
+  // 03/11 dans la nuit (prompt 5 et chantier 4, L18) : la chaîne de la capture à la décision, l'accusé de réception dans n8n.
+  { nom: 'Chaîne de la capture à la décision dans n8n (prompt 5, 035-004) — contact jamais lu, doublon sur empreinte, copie des listes du pilote égale au code (mutants)', cmd: 'node', args: ['scripts/lib-metier-n8n-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Accusé de réception et avis à l’artisan dans n8n (L18, 032-040) — même décision que app/api/leads, cas par cas, marque blanche (mutants)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/accuse-reception-n8n-qa.mjs'], cout: 'gratuit' },
   { nom: 'Garde des sessions lancées par Orca (défaut E de 031-012) — ni commit, ni push, ni déploiement, ni migration, ni build partagé ; la session principale jamais bloquée (mutant)', cmd: 'node', args: ['scripts/garde-agents-orca-qa.mjs'], cout: 'gratuit' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },

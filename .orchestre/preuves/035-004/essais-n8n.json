@@ -1,0 +1,1887 @@
+[
+  {
+    "workflow": "lib-capturer-lead",
+    "titre": "lot mêlé (+2 entrée(s))",
+    "execution": "388",
+    "statut_n8n": "success",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-capturer-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:capturer-lead:8",
+        "trace": {
+          "execution_parent": "Exemple. essai : lot mêlé",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "source": "leads",
+          "lot_max": 2
+        },
+        "donnees": {
+          "lignes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000501",
+              "artisan_id": "00000000-0000-4000-8000-000000000001",
+              "statut": "nouveau",
+              "canal": "site",
+              "origine": null,
+              "urgence": "normal",
+              "type_chantier": "Exemple. Cuisine",
+              "created_at": "2026-11-01T06:00:00.000Z",
+              "contact_empreinte": "0393f38c921ba3205ef27514c3152d1573c06730daaf12ca647b38e7f05bf82f",
+              "etat_capture": "a_traiter"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000502",
+              "artisan_id": "00000000-0000-4000-8000-000000000001",
+              "statut": "nouveau",
+              "canal": "site",
+              "origine": null,
+              "urgence": "normal",
+              "type_chantier": "Exemple. voir www.exemple.invalid/photos",
+              "created_at": "2026-11-02T07:00:00.000Z",
+              "contact_empreinte": "8e3169563e3a9d6f689c01d57a90c7912dc693fe49a85c87bcd897b4c36df596",
+              "etat_capture": "a_traiter"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000503",
+              "artisan_id": "00000000-0000-4000-8000-000000000001",
+              "statut": "nouveau",
+              "canal": "site",
+              "origine": null,
+              "urgence": "normal",
+              "type_chantier": "Exemple. Cuisine",
+              "created_at": "2026-11-03T08:00:00.000Z",
+              "contact_empreinte": "893abbbe87d449fb5c7edee6c762d9f712e188528622912bacfa9c96fba38871",
+              "etat_capture": "a_traiter"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000501",
+              "artisan_id": "00000000-0000-4000-8000-000000000001",
+              "statut": "nouveau",
+              "canal": "site",
+              "origine": null,
+              "urgence": "normal",
+              "type_chantier": "Exemple. Cuisine",
+              "created_at": "2026-11-01T06:00:00.000Z",
+              "contact_empreinte": "0393f38c921ba3205ef27514c3152d1573c06730daaf12ca647b38e7f05bf82f",
+              "etat_capture": "a_traiter"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000504",
+              "artisan_id": "00000000-0000-4000-8000-000000000001",
+              "statut": "nouveau",
+              "canal": "site",
+              "origine": null,
+              "urgence": "normal",
+              "type_chantier": "Exemple. Cuisine",
+              "created_at": "2026-11-01T00:00:00.000Z",
+              "contact_empreinte": null,
+              "etat_capture": "a_traiter"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000505",
+              "artisan_id": "00000000-0000-4000-8000-000000000002",
+              "statut": "nouveau",
+              "canal": "site",
+              "origine": null,
+              "urgence": "normal",
+              "type_chantier": "Exemple. Cuisine",
+              "created_at": "2026-11-02T01:00:00.000Z",
+              "contact_empreinte": "5c23dd4e8a2ae95b1876de6432fe480f389dd26d2c7fc404f1fe665d68811aeb",
+              "etat_capture": "a_traiter"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000506",
+              "artisan_id": "00000000-0000-4000-8000-000000000001",
+              "statut": "nouveau",
+              "canal": "site",
+              "origine": null,
+              "urgence": "normal",
+              "type_chantier": "Exemple. Cuisine",
+              "created_at": "2026-11-03T02:00:00.000Z",
+              "contact_empreinte": "59db8e200ce17f3d74acd631e9557bec194a35aff1834771dd0cb028b17e638f",
+              "etat_capture": "traite"
+            }
+          ]
+        }
+      },
+      {
+        "contrat": "lib-capturer-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:capturer-lead:15",
+        "trace": {
+          "execution_parent": "Exemple. essai : source demandes",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "source": "demandes",
+          "lot_max": 10
+        },
+        "donnees": {}
+      },
+      {
+        "contrat": "lib-capturer-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:capturer-lead:22",
+        "trace": {
+          "execution_parent": "Exemple. essai : colonne de contact lue",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "source": "leads",
+          "lot_max": 10
+        },
+        "donnees": {
+          "lignes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000507",
+              "artisan_id": "00000000-0000-4000-8000-000000000001",
+              "statut": "nouveau",
+              "canal": "site",
+              "origine": null,
+              "urgence": "normal",
+              "type_chantier": "Exemple. Cuisine",
+              "created_at": "2026-11-01T03:00:00.000Z",
+              "contact_empreinte": "56fdd82b75af5f710582d1d642a468b0941d846bfe59cf1516274d68e3cad035",
+              "etat_capture": "a_traiter",
+              "contact": "Exemple. client@exemple.invalid"
+            }
+          ]
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-capturer-lead@1",
+        "statut": "rejete",
+        "cle_idempotence": "exemple:essai:capturer-lead:22",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "contrat_rejete",
+            "agent": "lib-capturer-lead@1",
+            "objet_ref": null,
+            "decision": "entrée hors contrat : aucun effet",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "entrée.donnees.lignes[0].contact : champ hors contrat"
+        ]
+      },
+      {
+        "contrat": "lib-capturer-lead@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:capturer-lead:8",
+        "simulation": true,
+        "resultat": {
+          "evenements": [
+            {
+              "id": "00000000-0000-4000-8000-000000000501",
+              "type": "demande_recue",
+              "recu_le": "2026-11-01T06:00:00.000Z",
+              "champs": {
+                "canal": "site",
+                "urgence": "normal",
+                "type_chantier": "Exemple. Cuisine"
+              },
+              "empreinte_contact": "0393f38c921ba3205ef27514c3152d1573c06730daaf12ca647b38e7f05bf82f"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000502",
+              "type": "demande_recue",
+              "recu_le": "2026-11-02T07:00:00.000Z",
+              "champs": {
+                "canal": "site",
+                "urgence": "normal"
+              },
+              "empreinte_contact": "8e3169563e3a9d6f689c01d57a90c7912dc693fe49a85c87bcd897b4c36df596"
+            }
+          ],
+          "reclames": 2,
+          "ecartes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000504",
+              "motif": "sans_contact"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000501",
+              "motif": "doublon"
+            },
+            {
+              "id": null,
+              "motif": "autre_organisation"
+            },
+            {
+              "id": "00000000-0000-4000-8000-000000000506",
+              "motif": "deja_reclame"
+            }
+          ],
+          "restants": 1,
+          "urls_ignorees": 1
+        },
+        "effets_prevus": [
+          {
+            "effet": "lire_demandes",
+            "table": "leads",
+            "requete": "GET /rest/v1/leads?select=id,artisan_id,statut,canal,origine,urgence,type_chantier,created_at,contact_empreinte,etat_capture&artisan_id=eq.00000000-0000-4000-8000-000000000001&etat_capture=eq.a_traiter&contact_empreinte=not.is.null&order=created_at.asc,id.asc&limit=2"
+          },
+          {
+            "effet": "reclamer",
+            "table": "leads",
+            "ids": [
+              "00000000-0000-4000-8000-000000000501",
+              "00000000-0000-4000-8000-000000000502"
+            ],
+            "requete": "PATCH /rest/v1/leads?artisan_id=eq.00000000-0000-4000-8000-000000000001&etat_capture=eq.a_traiter&id=in.(00000000-0000-4000-8000-000000000501,00000000-0000-4000-8000-000000000502)",
+            "corps": {
+              "etat_capture": "en_cours"
+            }
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "capture",
+            "agent": "lib-capturer-lead",
+            "objet_ref": null,
+            "decision": "2 demande(s) à réclamer, 4 écartée(s), 1 pour le passage suivant",
+            "simulation": true
+          },
+          {
+            "evenement": "capture_ecartee",
+            "agent": "lib-capturer-lead",
+            "objet_ref": "00000000-0000-4000-8000-000000000504",
+            "decision": "écartée : sans_contact",
+            "simulation": true
+          },
+          {
+            "evenement": "capture_ecartee",
+            "agent": "lib-capturer-lead",
+            "objet_ref": "00000000-0000-4000-8000-000000000501",
+            "decision": "écartée : doublon",
+            "simulation": true
+          },
+          {
+            "evenement": "capture_ecartee",
+            "agent": "lib-capturer-lead",
+            "objet_ref": null,
+            "decision": "écartée : autre_organisation",
+            "simulation": true
+          },
+          {
+            "evenement": "capture_ecartee",
+            "agent": "lib-capturer-lead",
+            "objet_ref": "00000000-0000-4000-8000-000000000506",
+            "decision": "écartée : deja_reclame",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "1 champ(s) porteur(s) d’une adresse web ôté(s), jamais appelés"
+        ]
+      },
+      {
+        "contrat": "lib-capturer-lead@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:essai:capturer-lead:15",
+        "simulation": true,
+        "resultat": {
+          "evenements": [],
+          "reclames": 0,
+          "ecartes": [],
+          "restants": 0,
+          "urls_ignorees": 0
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "capture_refusee",
+            "agent": "lib-capturer-lead",
+            "objet_ref": null,
+            "decision": "source demandes refusée : aucune colonne d’organisation",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "source demandes : la table demandes_demo (0190) n’a pas de colonne d’organisation ; elle est lue par presti-demande-demo (L19), pas par ce gabarit"
+        ]
+      }
+    ]
+  },
+  {
+    "workflow": "lib-capturer-lead",
+    "titre": "hors simulation",
+    "execution": "389",
+    "statut_n8n": "error",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-capturer-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": false,
+        "cle_idempotence": "exemple:essai:capturer-lead:15",
+        "trace": {
+          "execution_parent": "Exemple. essai : hors simulation",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "source": "leads",
+          "lot_max": 10
+        },
+        "donnees": {
+          "lignes": [
+            {
+              "id": "00000000-0000-4000-8000-000000000508",
+              "artisan_id": "00000000-0000-4000-8000-000000000001",
+              "statut": "nouveau",
+              "canal": "site",
+              "origine": null,
+              "urgence": "normal",
+              "type_chantier": "Exemple. Cuisine",
+              "created_at": "2026-11-02T04:00:00.000Z",
+              "contact_empreinte": "a2b6d03d9c0d70e5cf6c3e4b29fa8a83f3dcb4b3e2a6f9f53c1d2e1f0a9b8c7d",
+              "etat_capture": "a_traiter"
+            }
+          ]
+        }
+      }
+    ],
+    "erreur": "Hors simulation : effet réel non branché (mode A, tâche 035-004). Rien n'a été lu, écrit ni envoyé."
+  },
+  {
+    "workflow": "lib-qualifier-lead",
+    "titre": "qualification 601 (+6 entrée(s))",
+    "execution": "392",
+    "statut_n8n": "success",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "trace": {
+          "execution_parent": "Exemple. essai : qualification 601",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "grille": [
+            {
+              "critere": "urgence=urgent",
+              "poids": 40
+            },
+            {
+              "critere": "canal=formulaire",
+              "poids": 30
+            },
+            {
+              "critere": "photo_jointe",
+              "poids": 20
+            },
+            {
+              "critere": "surface_m2>=20",
+              "poids": 10
+            }
+          ],
+          "seuils": {
+            "haute": 60,
+            "normale": 30
+          },
+          "delais_cibles_min": {
+            "haute": 15,
+            "normale": 60,
+            "a_revoir": 240
+          },
+          "empreintes_connues": [
+            {
+              "empreinte": "7fb257873ce6794c6cc7b43c6c95421821c8532a09792f6437811748eb506b8d",
+              "lead_id": "00000000-0000-4000-8000-000000000600"
+            }
+          ]
+        },
+        "donnees": {
+          "lead_id": "00000000-0000-4000-8000-000000000601",
+          "evenement_id": "00000000-0000-4000-8000-000000000651",
+          "empreinte_contact": "63a332a183e010ccf2bb9d1b5f4e2061679a614a3e3035c6952605e1eb2bd86f",
+          "champs": {
+            "urgence": "urgent",
+            "canal": "formulaire",
+            "photo_jointe": true,
+            "surface_m2": 35,
+            "type_chantier": "Exemple. Salle de bain"
+          }
+        }
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "trace": {
+          "execution_parent": "Exemple. essai : qualification 602",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "grille": [
+            {
+              "critere": "urgence=urgent",
+              "poids": 40
+            },
+            {
+              "critere": "canal=formulaire",
+              "poids": 30
+            },
+            {
+              "critere": "photo_jointe",
+              "poids": 20
+            },
+            {
+              "critere": "surface_m2>=20",
+              "poids": 10
+            }
+          ],
+          "seuils": {
+            "haute": 60,
+            "normale": 30
+          },
+          "delais_cibles_min": {
+            "haute": 15,
+            "normale": 60,
+            "a_revoir": 240
+          },
+          "empreintes_connues": [
+            {
+              "empreinte": "7fb257873ce6794c6cc7b43c6c95421821c8532a09792f6437811748eb506b8d",
+              "lead_id": "00000000-0000-4000-8000-000000000600"
+            }
+          ]
+        },
+        "donnees": {
+          "lead_id": "00000000-0000-4000-8000-000000000602",
+          "evenement_id": "00000000-0000-4000-8000-000000000652",
+          "empreinte_contact": "7fb257873ce6794c6cc7b43c6c95421821c8532a09792f6437811748eb506b8d",
+          "champs": {
+            "urgence": "urgent",
+            "canal": "formulaire",
+            "photo_jointe": true,
+            "surface_m2": 35
+          }
+        }
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "trace": {
+          "execution_parent": "Exemple. essai : qualification 603",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "grille": [
+            {
+              "critere": "urgence=urgent",
+              "poids": 40
+            },
+            {
+              "critere": "canal=formulaire",
+              "poids": 30
+            },
+            {
+              "critere": "photo_jointe",
+              "poids": 20
+            },
+            {
+              "critere": "surface_m2>=20",
+              "poids": 10
+            }
+          ],
+          "seuils": {
+            "haute": 60,
+            "normale": 30
+          },
+          "delais_cibles_min": {
+            "haute": 15,
+            "normale": 60,
+            "a_revoir": 240
+          },
+          "empreintes_connues": [
+            {
+              "empreinte": "7fb257873ce6794c6cc7b43c6c95421821c8532a09792f6437811748eb506b8d",
+              "lead_id": "00000000-0000-4000-8000-000000000600"
+            }
+          ]
+        },
+        "donnees": {
+          "lead_id": "00000000-0000-4000-8000-000000000603",
+          "evenement_id": "00000000-0000-4000-8000-000000000653",
+          "empreinte_contact": "e2bfceaf982d424725af6517788bf604581d9e64cd7514005f04e2b7eeb32998",
+          "champs": {
+            "urgence": "normal",
+            "canal": "site",
+            "photo_jointe": false,
+            "surface_m2": 10
+          }
+        }
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "trace": {
+          "execution_parent": "Exemple. essai : qualification 604",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "grille": [
+            {
+              "critere": "urgence=urgent",
+              "poids": 40
+            },
+            {
+              "critere": "canal=formulaire",
+              "poids": 30
+            },
+            {
+              "critere": "photo_jointe",
+              "poids": 20
+            },
+            {
+              "critere": "surface_m2>=20",
+              "poids": 10
+            }
+          ],
+          "seuils": {
+            "haute": 60,
+            "normale": 30
+          },
+          "delais_cibles_min": {
+            "haute": 15,
+            "normale": 60,
+            "a_revoir": 240
+          },
+          "empreintes_connues": [
+            {
+              "empreinte": "7fb257873ce6794c6cc7b43c6c95421821c8532a09792f6437811748eb506b8d",
+              "lead_id": "00000000-0000-4000-8000-000000000600"
+            }
+          ]
+        },
+        "donnees": {
+          "lead_id": "00000000-0000-4000-8000-000000000604",
+          "evenement_id": "00000000-0000-4000-8000-000000000654",
+          "empreinte_contact": "e2bfceaf982d424725af6517788bf604581d9e64cd7514005f04e2b7eeb32998",
+          "champs": {
+            "urgence": "urgent",
+            "canal": "formulaire",
+            "photo_jointe": true,
+            "surface_m2": 50
+          }
+        }
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "trace": {
+          "execution_parent": "Exemple. essai : qualification 605",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "grille": [
+            {
+              "critere": "urgence=urgent",
+              "poids": 40
+            },
+            {
+              "critere": "canal=formulaire",
+              "poids": 30
+            },
+            {
+              "critere": "photo_jointe",
+              "poids": 20
+            },
+            {
+              "critere": "surface_m2>=20",
+              "poids": 10
+            }
+          ],
+          "seuils": {
+            "haute": 60,
+            "normale": 30
+          },
+          "delais_cibles_min": {
+            "haute": 15,
+            "normale": 60,
+            "a_revoir": 240
+          },
+          "empreintes_connues": [
+            {
+              "empreinte": "7fb257873ce6794c6cc7b43c6c95421821c8532a09792f6437811748eb506b8d",
+              "lead_id": "00000000-0000-4000-8000-000000000600"
+            }
+          ]
+        },
+        "donnees": {
+          "lead_id": "00000000-0000-4000-8000-000000000605",
+          "evenement_id": "00000000-0000-4000-8000-000000000655",
+          "empreinte_contact": "23d86053c8f4a511c46f85a588b263dd833fd5b9a51f56ab1184698b4b5e5e0c",
+          "champs": {
+            "canal": "formulaire"
+          }
+        }
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "trace": {
+          "execution_parent": "Exemple. essai : qualification 606",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "grille": [
+            {
+              "critere": "urgence=urgent",
+              "poids": 40
+            },
+            {
+              "critere": "canal=formulaire",
+              "poids": 30
+            },
+            {
+              "critere": "photo_jointe",
+              "poids": 20
+            },
+            {
+              "critere": "surface_m2>=20",
+              "poids": 10
+            },
+            {
+              "critere": "age>=30",
+              "poids": 10
+            }
+          ],
+          "seuils": {
+            "haute": 60,
+            "normale": 30
+          },
+          "delais_cibles_min": {
+            "haute": 15,
+            "normale": 60,
+            "a_revoir": 240
+          },
+          "empreintes_connues": [
+            {
+              "empreinte": "7fb257873ce6794c6cc7b43c6c95421821c8532a09792f6437811748eb506b8d",
+              "lead_id": "00000000-0000-4000-8000-000000000600"
+            }
+          ]
+        },
+        "donnees": {
+          "lead_id": "00000000-0000-4000-8000-000000000606",
+          "evenement_id": "00000000-0000-4000-8000-000000000656",
+          "empreinte_contact": null,
+          "champs": {
+            "urgence": "urgent",
+            "canal": "site"
+          }
+        }
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "trace": {
+          "execution_parent": "Exemple. essai : qualification 607",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "grille": [
+            {
+              "critere": "urgence=urgent",
+              "poids": 0
+            }
+          ],
+          "seuils": {
+            "haute": 60,
+            "normale": 30
+          },
+          "delais_cibles_min": {
+            "haute": 15,
+            "normale": 60,
+            "a_revoir": 240
+          },
+          "empreintes_connues": [
+            {
+              "empreinte": "7fb257873ce6794c6cc7b43c6c95421821c8532a09792f6437811748eb506b8d",
+              "lead_id": "00000000-0000-4000-8000-000000000600"
+            }
+          ]
+        },
+        "donnees": {
+          "lead_id": "00000000-0000-4000-8000-000000000607",
+          "evenement_id": "00000000-0000-4000-8000-000000000657",
+          "empreinte_contact": "0a15e04d5fef33fe420e3e4c79e73135a75d900964d7693d05690f99b2820bf3",
+          "champs": {
+            "urgence": "urgent"
+          }
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "simulation": true,
+        "resultat": {
+          "note": 100,
+          "categorie": "Exemple. Salle de bain",
+          "priorite": "haute",
+          "delai_cible_min": 15,
+          "raison": "note 100/100 : urgence=urgent (40), canal=formulaire (30), photo_jointe (20), surface_m2>=20 (10)",
+          "doublon": false,
+          "doublon_de": null,
+          "lead_id": "00000000-0000-4000-8000-000000000601"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_note",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "lead_id": "00000000-0000-4000-8000-000000000601",
+            "cle": "h:qualification:bc11af9470f6cb0617fb86650ccedfe8df91a23f414b7e4d",
+            "note": 100,
+            "priorite": "haute",
+            "categorie": "Exemple. Salle de bain",
+            "doublon": false
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "qualification",
+            "agent": "lib-qualifier-lead",
+            "objet_ref": "00000000-0000-4000-8000-000000000601",
+            "decision": "priorité haute, note 100/100 : urgence=urgent (40), canal=formulaire (30), photo_jointe (20), surface_m2>=20 (10)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "simulation": true,
+        "resultat": {
+          "note": 100,
+          "categorie": "non renseignée",
+          "priorite": "a_revoir",
+          "delai_cible_min": 240,
+          "raison": "note 100/100 : urgence=urgent (40), canal=formulaire (30), photo_jointe (20), surface_m2>=20 (10) ; même contact qu’une demande déjà reçue",
+          "doublon": true,
+          "doublon_de": "00000000-0000-4000-8000-000000000600",
+          "lead_id": "00000000-0000-4000-8000-000000000602"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_note",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "lead_id": "00000000-0000-4000-8000-000000000602",
+            "cle": "h:qualification:199819c6399833cb46d25edefeac9782fee9d94fc7701927",
+            "note": 100,
+            "priorite": "a_revoir",
+            "categorie": "non renseignée",
+            "doublon": true
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "qualification",
+            "agent": "lib-qualifier-lead",
+            "objet_ref": "00000000-0000-4000-8000-000000000602",
+            "decision": "priorité a_revoir, note 100/100 : urgence=urgent (40), canal=formulaire (30), photo_jointe (20), surface_m2>=20 (10) ; même contact qu’une demande déjà reçue",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "simulation": true,
+        "resultat": {
+          "note": 0,
+          "categorie": "non renseignée",
+          "priorite": "a_revoir",
+          "delai_cible_min": 240,
+          "raison": "note 0/100",
+          "doublon": false,
+          "doublon_de": null,
+          "lead_id": "00000000-0000-4000-8000-000000000603"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_note",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "lead_id": "00000000-0000-4000-8000-000000000603",
+            "cle": "h:qualification:abf4cd4d794b82f37914b701e67c906e79c53842aaa9c645",
+            "note": 0,
+            "priorite": "a_revoir",
+            "categorie": "non renseignée",
+            "doublon": false
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "qualification",
+            "agent": "lib-qualifier-lead",
+            "objet_ref": "00000000-0000-4000-8000-000000000603",
+            "decision": "priorité a_revoir, note 0/100",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "simulation": true,
+        "resultat": {
+          "note": 100,
+          "categorie": "non renseignée",
+          "priorite": "a_revoir",
+          "delai_cible_min": 240,
+          "raison": "note 100/100 : urgence=urgent (40), canal=formulaire (30), photo_jointe (20), surface_m2>=20 (10) ; même contact qu’une demande déjà reçue",
+          "doublon": true,
+          "doublon_de": "00000000-0000-4000-8000-000000000603",
+          "lead_id": "00000000-0000-4000-8000-000000000604"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_note",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "lead_id": "00000000-0000-4000-8000-000000000604",
+            "cle": "h:qualification:bcfd709a25a7f6f2848b797979c92baebfc5efc7a7cbe4e3",
+            "note": 100,
+            "priorite": "a_revoir",
+            "categorie": "non renseignée",
+            "doublon": true
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "qualification",
+            "agent": "lib-qualifier-lead",
+            "objet_ref": "00000000-0000-4000-8000-000000000604",
+            "decision": "priorité a_revoir, note 100/100 : urgence=urgent (40), canal=formulaire (30), photo_jointe (20), surface_m2>=20 (10) ; même contact qu’une demande déjà reçue",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "simulation": true,
+        "resultat": {
+          "note": 30,
+          "categorie": "non renseignée",
+          "priorite": "a_revoir",
+          "delai_cible_min": 240,
+          "raison": "note 30/100 : canal=formulaire (30) ; inconnu : urgence, photo_jointe, surface_m2 ; grille trop incomplète pour trancher",
+          "doublon": false,
+          "doublon_de": null,
+          "lead_id": "00000000-0000-4000-8000-000000000605"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_note",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "lead_id": "00000000-0000-4000-8000-000000000605",
+            "cle": "h:qualification:3a967467e12b7603fdbdfeda125aceba9df746f54d91a9e7",
+            "note": 30,
+            "priorite": "a_revoir",
+            "categorie": "non renseignée",
+            "doublon": false
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "qualification",
+            "agent": "lib-qualifier-lead",
+            "objet_ref": "00000000-0000-4000-8000-000000000605",
+            "decision": "priorité a_revoir, note 30/100 : canal=formulaire (30) ; inconnu : urgence, photo_jointe, surface_m2 ; grille trop incomplète pour trancher",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "statut": "refuse",
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "grille_refusee",
+            "agent": "lib-qualifier-lead",
+            "objet_ref": "00000000-0000-4000-8000-000000000606",
+            "decision": "grille refusée : critère discriminant refusé : age",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "critère discriminant refusé : age"
+        ]
+      },
+      {
+        "contrat": "lib-qualifier-lead@1",
+        "statut": "erreur",
+        "cle_idempotence": "exemple:essai:qualifier-lead:17",
+        "simulation": true,
+        "resultat": null,
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "qualification_hors_schema",
+            "agent": "lib-qualifier-lead",
+            "objet_ref": "00000000-0000-4000-8000-000000000607",
+            "decision": "résultat hors schéma : rien écrit",
+            "simulation": true
+          }
+        ],
+        "erreurs": [
+          "résultat hors schéma (note) : aucune note ne change"
+        ]
+      }
+    ]
+  },
+  {
+    "workflow": "lib-decider",
+    "titre": "décision 701 (+9 entrée(s))",
+    "execution": "393",
+    "statut_n8n": "success",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 701",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 3,
+            "niveau_defaut": 2
+          },
+          "plan": "signature",
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true,
+              "relance_devis": true,
+              "relance_impaye": true,
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "assistant_client": true
+            }
+          },
+          "parties_depuis_24h": 19
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000701",
+          "constat": {
+            "outil": "relancer_devis",
+            "etape": "palier-1",
+            "escalade": false,
+            "lignes": [
+              {
+                "prix_unitaire_ht_centimes": 4100,
+                "quantite": 2,
+                "source_prix": "vos tarifs"
+              },
+              {
+                "prix_unitaire_ht_centimes": 12550,
+                "quantite": 1.5,
+                "source_prix": "vos tarifs"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 702",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 3,
+            "niveau_defaut": 2
+          },
+          "plan": "signature",
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true,
+              "relance_devis": true,
+              "relance_impaye": true,
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "assistant_client": true
+            }
+          },
+          "parties_depuis_24h": 19
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000702",
+          "constat": {
+            "outil": "relancer_devis",
+            "etape": "palier-1",
+            "escalade": false
+          }
+        }
+      },
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 701",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 3,
+            "niveau_defaut": 2
+          },
+          "plan": "signature",
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true,
+              "relance_devis": true,
+              "relance_impaye": true,
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "assistant_client": true
+            }
+          },
+          "parties_depuis_24h": 19
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000701",
+          "constat": {
+            "outil": "relancer_devis",
+            "etape": "palier-1",
+            "escalade": false,
+            "lignes": [
+              {
+                "prix_unitaire_ht_centimes": 4100,
+                "quantite": 2,
+                "source_prix": "vos tarifs"
+              },
+              {
+                "prix_unitaire_ht_centimes": 12550,
+                "quantite": 1.5,
+                "source_prix": "vos tarifs"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 703",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 3,
+            "niveau_defaut": 2
+          },
+          "plan": "signature",
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true,
+              "relance_devis": true,
+              "relance_impaye": true,
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "assistant_client": true
+            }
+          },
+          "parties_depuis_24h": 19
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000703",
+          "constat": {
+            "outil": "envoyer_devis",
+            "etape": "envoi",
+            "escalade": false,
+            "lignes": [
+              {
+                "prix_unitaire_ht_centimes": 4100,
+                "quantite": 2,
+                "source_prix": "vos tarifs"
+              },
+              {
+                "prix_unitaire_ht_centimes": 12550,
+                "quantite": 1.5,
+                "source_prix": "vos tarifs"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 704",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 3,
+            "niveau_defaut": 2
+          },
+          "plan": "signature",
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true,
+              "relance_devis": true,
+              "relance_impaye": true,
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "assistant_client": true
+            }
+          },
+          "parties_depuis_24h": 19
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000704",
+          "constat": {
+            "outil": "payer",
+            "escalade": false
+          }
+        }
+      },
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 705",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 3,
+            "niveau_defaut": 2
+          },
+          "plan": "signature",
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true,
+              "relance_devis": true,
+              "relance_impaye": true,
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "assistant_client": true
+            }
+          },
+          "parties_depuis_24h": 19
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000705",
+          "constat": {
+            "outil": "relancer_facture",
+            "etape": "palier-2",
+            "escalade": true,
+            "montant_centimes_base": 132000
+          }
+        }
+      },
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 706",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 3,
+            "niveau_defaut": 2
+          },
+          "plan": "studio",
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true,
+              "relance_devis": true,
+              "relance_impaye": true,
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "assistant_client": true
+            }
+          },
+          "parties_depuis_24h": 0
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000706",
+          "constat": {
+            "outil": "relancer_devis",
+            "etape": "palier-1",
+            "escalade": false
+          }
+        }
+      },
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 707",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 3,
+            "niveau_defaut": 2
+          },
+          "plan": "signature",
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true,
+              "relance_devis": true,
+              "relance_impaye": true,
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "assistant_client": true
+            }
+          },
+          "parties_depuis_24h": 0
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000707",
+          "constat": {
+            "outil": "creer_chantier",
+            "escalade": false
+          }
+        }
+      },
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 708",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 3
+          },
+          "plan": "signature"
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000708",
+          "constat": {
+            "outil": "relancer_devis",
+            "etape": "palier-1",
+            "escalade": false,
+            "lignes": [
+              {
+                "prix_unitaire_ht_centimes": null,
+                "quantite": 1
+              }
+            ]
+          }
+        }
+      },
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": true,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 709",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 2,
+            "niveaux": {
+              "relance_devis": 1
+            }
+          },
+          "plan": "signature",
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true,
+              "relance_devis": true,
+              "relance_impaye": true,
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "assistant_client": true
+            }
+          },
+          "parties_depuis_24h": 19
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000709",
+          "constat": {
+            "outil": "relancer_devis",
+            "etape": "palier-1",
+            "escalade": false
+          }
+        }
+      }
+    ],
+    "sorties": [
+      {
+        "contrat": "lib-decider@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:decider:12",
+        "simulation": true,
+        "resultat": {
+          "action": "pilote",
+          "type_action": "relance_devis",
+          "niveau": 3,
+          "motif": "pilote",
+          "cle_idempotence": "h:decision:c6c21affb27b3ae725131d048fef229d4b7e3b44c803c21a",
+          "montant_centimes": 27025,
+          "objet_id": "00000000-0000-4000-8000-000000000701"
+        },
+        "effets_prevus": [
+          {
+            "effet": "mettre_en_file_pilote",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "h:decision:c6c21affb27b3ae725131d048fef229d4b7e3b44c803c21a",
+            "objet_type": "devis",
+            "objet_id": "00000000-0000-4000-8000-000000000701",
+            "type": "relance_devis",
+            "outil": "relancer_devis",
+            "montant_centimes": 27025,
+            "annulable_min": 10
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "decision",
+            "agent": "lib-decider",
+            "objet_ref": "00000000-0000-4000-8000-000000000701",
+            "decision": "pilote (niveau 3) : part seul après 10 min pour annuler",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-decider@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:decider:12",
+        "simulation": true,
+        "resultat": {
+          "action": "carte",
+          "type_action": "relance_devis",
+          "niveau": 2,
+          "motif": "plafond",
+          "cle_idempotence": "h:decision:51f104ffb67f045c6b39bc4c72c9264910b4a3cd3f52df96",
+          "montant_centimes": null,
+          "objet_id": "00000000-0000-4000-8000-000000000702"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "h:decision:51f104ffb67f045c6b39bc4c72c9264910b4a3cd3f52df96",
+            "objet_type": "devis",
+            "objet_id": "00000000-0000-4000-8000-000000000702",
+            "type_action": "relance_devis",
+            "outil": "relancer_devis",
+            "montant_centimes": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "decision",
+            "agent": "lib-decider",
+            "objet_ref": "00000000-0000-4000-8000-000000000702",
+            "decision": "carte (niveau 2) : plafond de 20 envois automatiques par jour atteint",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-decider@1",
+        "statut": "rien_a_faire",
+        "cle_idempotence": "exemple:essai:decider:12",
+        "simulation": true,
+        "resultat": {
+          "action": "rien",
+          "type_action": "relance_devis",
+          "niveau": 1,
+          "motif": "deja_decide",
+          "cle_idempotence": "h:decision:c6c21affb27b3ae725131d048fef229d4b7e3b44c803c21a",
+          "montant_centimes": 27025,
+          "objet_id": "00000000-0000-4000-8000-000000000701"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "decision",
+            "agent": "lib-decider",
+            "objet_ref": "00000000-0000-4000-8000-000000000701",
+            "decision": "rien (niveau 1) : même objet, même étape : déjà décidé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-decider@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:decider:12",
+        "simulation": true,
+        "resultat": {
+          "action": "carte",
+          "type_action": "envoi_devis",
+          "niveau": 2,
+          "motif": "geste_p5_226",
+          "cle_idempotence": "h:decision:0606e9ae7dcd3a98f9b87ebd7569c30cba2fee1da8c33aab",
+          "montant_centimes": 27025,
+          "objet_id": "00000000-0000-4000-8000-000000000703"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "h:decision:0606e9ae7dcd3a98f9b87ebd7569c30cba2fee1da8c33aab",
+            "objet_type": "devis",
+            "objet_id": "00000000-0000-4000-8000-000000000703",
+            "type_action": "envoi_devis",
+            "outil": "envoyer_devis",
+            "montant_centimes": 27025
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "decision",
+            "agent": "lib-decider",
+            "objet_ref": "00000000-0000-4000-8000-000000000703",
+            "decision": "carte (niveau 2) : geste jamais automatique (p5:226)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-decider@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:decider:12",
+        "simulation": true,
+        "resultat": {
+          "action": "carte",
+          "type_action": "payer",
+          "niveau": 2,
+          "motif": "jamais_auto",
+          "cle_idempotence": "h:decision:baa704edb30f9fc36f96819c1df3192cfa3faa090a1b7950",
+          "montant_centimes": null,
+          "objet_id": "00000000-0000-4000-8000-000000000704"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "h:decision:baa704edb30f9fc36f96819c1df3192cfa3faa090a1b7950",
+            "objet_type": "devis",
+            "objet_id": "00000000-0000-4000-8000-000000000704",
+            "type_action": "payer",
+            "outil": "payer",
+            "montant_centimes": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "decision",
+            "agent": "lib-decider",
+            "objet_ref": "00000000-0000-4000-8000-000000000704",
+            "decision": "carte (niveau 2) : geste jamais automatique (liste du code)",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-decider@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:decider:12",
+        "simulation": true,
+        "resultat": {
+          "action": "carte",
+          "type_action": "relance_impaye",
+          "niveau": 2,
+          "motif": "escalade",
+          "cle_idempotence": "h:decision:c207ca0a8526fb04a8ccab230bc09c38a6cb8ae8a83d1f5a",
+          "montant_centimes": 132000,
+          "objet_id": "00000000-0000-4000-8000-000000000705"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "h:decision:c207ca0a8526fb04a8ccab230bc09c38a6cb8ae8a83d1f5a",
+            "objet_type": "devis",
+            "objet_id": "00000000-0000-4000-8000-000000000705",
+            "type_action": "relance_impaye",
+            "outil": "relancer_facture",
+            "montant_centimes": 132000
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "decision",
+            "agent": "lib-decider",
+            "objet_ref": "00000000-0000-4000-8000-000000000705",
+            "decision": "carte (niveau 2) : sujet d’escalade : à la main",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-decider@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:decider:12",
+        "simulation": true,
+        "resultat": {
+          "action": "carte",
+          "type_action": "relance_devis",
+          "niveau": 2,
+          "motif": "offre",
+          "cle_idempotence": "h:decision:de278e137e96d4a652b59b074645061345730f912ab4c3eb",
+          "montant_centimes": null,
+          "objet_id": "00000000-0000-4000-8000-000000000706"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "h:decision:de278e137e96d4a652b59b074645061345730f912ab4c3eb",
+            "objet_type": "devis",
+            "objet_id": "00000000-0000-4000-8000-000000000706",
+            "type_action": "relance_devis",
+            "outil": "relancer_devis",
+            "montant_centimes": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "decision",
+            "agent": "lib-decider",
+            "objet_ref": "00000000-0000-4000-8000-000000000706",
+            "decision": "carte (niveau 2) : offre sans pilote automatique",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-decider@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:decider:12",
+        "simulation": true,
+        "resultat": {
+          "action": "carte",
+          "type_action": "creer_chantier",
+          "niveau": 2,
+          "motif": "type_non_pilotable",
+          "cle_idempotence": "h:decision:668404cbc36ad7eb6d7c1f76a7b070437b0e15528f8c2b22",
+          "montant_centimes": null,
+          "objet_id": "00000000-0000-4000-8000-000000000707"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "h:decision:668404cbc36ad7eb6d7c1f76a7b070437b0e15528f8c2b22",
+            "objet_type": "devis",
+            "objet_id": "00000000-0000-4000-8000-000000000707",
+            "type_action": "creer_chantier",
+            "outil": "creer_chantier",
+            "montant_centimes": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "decision",
+            "agent": "lib-decider",
+            "objet_ref": "00000000-0000-4000-8000-000000000707",
+            "decision": "carte (niveau 2) : outil hors de la liste fermée du pilote",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-decider@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:decider:12",
+        "simulation": true,
+        "resultat": {
+          "action": "carte",
+          "type_action": "relance_devis",
+          "niveau": 2,
+          "motif": "drapeau",
+          "cle_idempotence": "h:decision:82f036d73dc06f0e1f9cb547a47c873b139921995e34aaf0",
+          "montant_centimes": null,
+          "objet_id": "00000000-0000-4000-8000-000000000708"
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "organisation_id": "00000000-0000-4000-8000-000000000001",
+            "cle": "h:decision:82f036d73dc06f0e1f9cb547a47c873b139921995e34aaf0",
+            "objet_type": "devis",
+            "objet_id": "00000000-0000-4000-8000-000000000708",
+            "type_action": "relance_devis",
+            "outil": "relancer_devis",
+            "montant_centimes": null
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "decision",
+            "agent": "lib-decider",
+            "objet_ref": "00000000-0000-4000-8000-000000000708",
+            "decision": "carte (niveau 2) : pilote fermé (drapeau) ou réglages non lus",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      },
+      {
+        "contrat": "lib-decider@1",
+        "statut": "ok",
+        "cle_idempotence": "exemple:essai:decider:12",
+        "simulation": true,
+        "resultat": {
+          "action": "rien",
+          "type_action": "relance_devis",
+          "niveau": 1,
+          "motif": "niveau_1_propose",
+          "cle_idempotence": "h:decision:186d624a0f43866c1694ed9aba41e6c77865bdab459953d5",
+          "montant_centimes": null,
+          "objet_id": "00000000-0000-4000-8000-000000000709"
+        },
+        "effets_prevus": [],
+        "effets_faits": [],
+        "journal": [
+          {
+            "evenement": "decision",
+            "agent": "lib-decider",
+            "objet_ref": "00000000-0000-4000-8000-000000000709",
+            "decision": "rien (niveau 1) : niveau 1 : proposé au journal, rien préparé",
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ]
+  },
+  {
+    "workflow": "lib-decider",
+    "titre": "décision 710",
+    "execution": "394",
+    "statut_n8n": "error",
+    "noeud": "Contrat de sortie",
+    "entrees": [
+      {
+        "contrat": "lib-decider@1",
+        "organisation_id": "00000000-0000-4000-8000-000000000001",
+        "simulation": false,
+        "cle_idempotence": "exemple:essai:decider:12",
+        "trace": {
+          "execution_parent": "Exemple. essai : décision 710",
+          "declencheur": "essai",
+          "tentative": 0
+        },
+        "config": {
+          "autonomie": {
+            "niveau_max": 3,
+            "niveau_defaut": 2
+          },
+          "plan": "signature",
+          "pilote": {
+            "drapeau": true,
+            "actif": true,
+            "types": {
+              "reponse_prospect": true,
+              "relance_devis": true,
+              "relance_impaye": true,
+              "envoi_devis": true,
+              "envoi_facture": true,
+              "assistant_client": true
+            }
+          },
+          "parties_depuis_24h": 19
+        },
+        "donnees": {
+          "objet_type": "devis",
+          "objet_id": "00000000-0000-4000-8000-000000000710",
+          "constat": {
+            "outil": "relancer_devis",
+            "escalade": false
+          }
+        }
+      }
+    ],
+    "erreur": "Hors simulation : effet réel non branché (mode A, tâche 035-004). Rien n'a été lu, écrit ni envoyé."
+  },
+  {
+    "workflow": "lib-banc-metier",
+    "titre": "banc : capture → qualification → décision sur Bâti-Démo, puis les gestes jamais automatiques",
+    "execution": "395",
+    "statut_n8n": "success",
+    "noeud": "Bilan du banc",
+    "entrees": [
+      {
+        "timestamp": "2026-11-02T23:40:00.000+01:00",
+        "Readable date": "Exemple. lundi 2 novembre 2026",
+        "Timezone": "Europe/Paris"
+      }
+    ],
+    "sorties": [
+      {
+        "bilan": {
+          "lib-decider@1": {
+            "ok": 7
+          }
+        },
+        "decisions": {
+          "carte:niveau_max": 5,
+          "carte:escalade": 2
+        },
+        "defauts": 0
+      },
+      {
+        "bilan": {
+          "lib-decider@1": {
+            "ok": 23
+          }
+        },
+        "decisions": {
+          "carte:jamais_auto": 10,
+          "carte:geste_p5_226": 11,
+          "carte:offre": 1,
+          "pilote:pilote": 1
+        },
+        "defauts": 0
+      }
+    ]
+  }
+]

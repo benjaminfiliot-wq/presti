@@ -1,0 +1,106 @@
+# Les sous-traitants ultérieurs d'un client « Presti pour l'entreprise »
+
+> **À faire relire par un juriste avant tout usage.** Pièce de travail de la tâche 035-011, écrite le 02/11/2026 par Claude Code (rôle : juriste
+> RGPD du dossier), corrigée le même jour après le premier audit de `presti-audit-conformite` (`rapport.md`). Rien n'y est validé : ni la
+> qualification des rôles, ni les garanties de transfert, ni le choix des fournisseurs.
+>
+> **Comment lire.** Presti est **sous-traitant** de l'entreprise cliente, qui est responsable du traitement (art. 28 du RGPD ; prompt 5,
+> `p5:260`). Les prestataires de Presti qui touchent une donnée de ce client sont ses **sous-traitants ultérieurs** (art. 28.2 et 28.4) :
+> ils exigent l'autorisation du client et un contrat qui leur impose les mêmes obligations. Cette liste est l'annexe 2 du modèle
+> `contrat-sous-traitance.md`.
+>
+> **Les sources.** Le relevé du **21/10/2026** des pages publiques des prestataires (`SaaS/Legal/DPA-prestataires-2026-10-21.md`, pages
+> imprimées en PDF dans `SaaS/Legal/DPA-archives-2026-10-21/`, empreintes dans son `INDEX.md`), le registre des traitements
+> (`docs/registre-traitements.md`, § 22 bis à 24), les textes publics (`lib/legalArtisan.ts:308-316`) et le code cité. **Aucune page n'a été
+> relue en ligne pour cette pièce** : cette session n'a pas de réseau sortant. Tout relevé a donc au moins onze jours ; chaque ligne dit sa
+> date, et le juriste (ou Benj) les relit à la signature.
+>
+> **Le vocabulaire des états.** « Relevé » : lu sur la page officielle à la date dite. « À archiver » : la pièce n'est pas dans le dossier de
+> Benj. « À vérifier » : aucune source dans le dépôt ni dans le vault. **Aucun accord n'est dit signé** : « accepté avec les conditions » n'est
+> pas « signé » (règle du registre, § 24).
+>
+> **Aucun montant, aucun prix** : ni celui de l'offre (c'est Benj qui le fixe, `p5:54`), ni ceux des fournisseurs.
+
+## 1. Les sous-traitants ultérieurs permanents
+
+Ils traitent les données d'un client Entreprise dès qu'il est en service. Les données sont **stockées** dans **Supabase** (source de vérité,
+région UE, isolées par RLS par organisation : exigence de `p5:95` et `p5:259`, dont la mise en place reste à prouver : voir
+`contrat-sous-traitance.md`, annexe 3). n8n les lit et les écrit sur Oracle : il ne garde **pas** les exécutions réussies, mais il garde
+les exécutions en échec (14 jours aujourd'hui, 7 jours proposés pour les systèmes d'un client : voir la ligne Oracle) et les identifiants que
+le client y a branchés (`kit/registre-donnees.md`, ligne « Accès accordés »). Elles sont **traitées** aussi aux États-Unis (Vercel,
+Anthropic, Resend) : la colonne « Où » le dit ligne par ligne.
+
+| Sous-traitant | Ce qu'il traite pour le client | Où | Garantie de transfert annoncée | Page publique qui le prouve | État au 02/11/2026 |
+|---|---|---|---|---|---|
+| **Supabase** (cocontractant : Supabase Pte. Ltd, Singapour, `DPA-prestataires-2026-10-21.md`, section Supabase) | La base de données et le stockage des fichiers : tout le contenu du client (membres, clients finaux, demandes, devis, factures, relances, journal des agents) | **Union européenne, Francfort** (`eu-central-1`, région du projet lue par l'API de gestion le 21/10 : `DPA-archives…/INDEX.md`, ligne d'en-tête). Le DPA (§ 6.1) range et traite principalement les données dans la région choisie, « sauf ce qui est nécessaire au service » ; l'annexe 1 décrit un **support « follow-the-sun »** : un accès depuis hors UE reste possible | Clauses contractuelles types (CCT) 2021/914, modules 2 et 3 ; avenants UK et suisse. Pas de mention du Data Privacy Framework (DPF) et Supabase est absente de la liste DPF | DPA : `https://supabase.com/legal/customer-resources/data-processing-addendum` (« Version 1 — August 1, 2026 ») ; liste des sous-traitants : `https://supabase.com/legal/customer-resources/subprocessor-list` (abonnement aux changements, préavis de 30 jours) | **Relevé le 21/10.** DPA intégré d'office aux conditions (Terms § 7(b)) ; PDF datés archivés dans le vault. **À vérifier** : la région dans le tableau de bord (capture à faire par Benj) |
+| **Vercel** | L'hébergement de l'application (interface du client, routes publiques) : les requêtes, donc les données du client qui y passent, y sont **traitées**. Il conserve des **journaux d'exécution et d'accès** (`docs/registre-traitements.md:365` : « Hébergement de l'application, journaux ») : leur contenu (adresses IP, URL, sorties éventuelles des routes) et leur durée selon l'offre ne sont **pas relevés : à vérifier** | **États-Unis** : `vercel.json` ne fixe aucune région de fonctions (relevé du 21/10) | CCT 2021/914 modules 1, 2 et 3 (annexe 3) ; avenants UK et suisse. **Vercel Inc. est active sur la liste DPF** (UE-USA, Suisse, UK) le 21/10 | DPA : `https://vercel.com/legal/dpa` (mis à jour le 17/03/2026, en vigueur le 31/03/2026) ; sous-traitants : `https://security.vercel.com` (avis par e-mail, 5 jours pour s'opposer) | **Relevé le 21/10, avec un blocage : le DPA ne vise que les offres Pro et Enterprise** (§ 1). Le dépôt dit « Hobby » (`docs/agents/horloge.md:3`, cité par le vault). **L'offre actuelle n'est pas vérifiée : tant qu'elle est Hobby, aucun DPA ne couvre Presti. Cette ligne ne peut pas être signée telle quelle** |
+| **Anthropic** | Le modèle d'IA du produit : les textes que l'agent lit pour rédiger (nom du client final, canal de contact, texte des messages ; pour l'assistant de gestion, devis, factures, conversations, chantiers : `lib/legalArtisan.ts:312`, registre § 23). Aucune photo **dans le produit actuel** (registre § 23, qui décrit `lib/ai.ts`) ; **pour les workflows d'un client Entreprise : à fixer** | **États-Unis** (Anthropic, PBC) ; cocontractant UE : **Anthropic Ireland, Limited** (Commercial Terms) | CCT 2021/914 modules 2 et 3 ; avenants UK et suisse. **Anthropic n'est pas certifiée DPF** (aucun résultat sur la liste officielle le 21/10) : la seule garantie est la CCT | DPA : `https://www.anthropic.com/legal/data-processing-addendum` (en vigueur le 24/02/2025) ; conditions : `https://www.anthropic.com/legal/commercial-terms` (17/06/2025) ; conservation : `https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data` ; sous-traitants : `https://www.anthropic.com/subprocessors` | **Relevé le 21/10.** DPA intégré par référence aux conditions. Non-entraînement : engagement **contractuel** (Commercial Terms § B). Conservation : effacement des entrées et sorties sous 30 jours **selon un article d'aide**, pas selon le DPA (le DPA ne fixe que 30 jours après la fin du contrat, § H.1) ; exceptions : 2 ans si le contenu est signalé, scores jusqu'à 7 ans. **À dire au client tel quel, sans l'arrondir** |
+| **Resend** | L'envoi des e-mails au nom du client (réponses, relances, devis) : adresse et nom du destinataire, contenu du message | **États-Unis** | CCT 2021/914 modules 1, 2 et 3 ; avenants UK et suisse. Resend se dit conforme au DPF (DPA § 11.1) ; active sur la liste DPF, mais « Re-certification under Review » le 21/10 | DPA : `https://resend.com/legal/dpa` (mis à jour le 31/12/2025) ; sous-traitants : `https://resend.com/legal/subprocessors` (préavis de 14 jours) | **Relevé le 21/10.** Les blocs de signature du DPA sont « for reference purposes only » ; la version exécutée est dans le tableau de bord Resend : **à récupérer et à archiver**. Statut DPF à revérifier |
+| **Oracle Cloud Infrastructure** | L'hébergement de n8n (Docker) et de ses exécuteurs : les données lues dans Supabase y passent le temps d'un workflow. Exécutions réussies : rien n'est gardé (`saveDataSuccessExecution: 'none'`) ; exécutions en échec : **14 jours** aujourd'hui (`docs/registre-traitements.md:350`), **7 jours (168 h)** proposés comme défaut pour les systèmes d'un client, à trancher par Benj (`premiere-reponse.md:892`, question 10) : les deux valeurs sont à dire telles quelles. **La sauvegarde prévue y tourne aussi** : le workflow `presti-sauvegarde` lance `sauvegarde.mjs` sur cet hôte, avec la clé de service de la base posée sur l'hôte ; il lit les tables **en clair**, chiffre l'archive, et la garde **14 jours** dans un dossier de l'hôte, purgée seulement après un passage réussi : **si les sauvegardes cessent, rien n'est purgé** (`briefs/c4-n8n-sauvegarde.md:25`, `:57-59` ; `chantier-4-assistant-plan.md:399-403`). Ce workflow n'est **pas publié** : il attend Benj. Le même serveur ne reçoit aucune donnée d'un modèle gratuit en ligne (`.claude/rules/securite.md`) | **Paris, région `eu-paris-1`** (relevé le 02/11/2026 par les métadonnées de l'instance : `docs/registre-traitements.md:349`) | **À vérifier** : aucun DPA d'Oracle n'est relevé ni archivé ; le registre écrit lui-même « accord de traitement des données à archiver » (`docs/registre-traitements.md:355`). Le support d'Oracle peut-il accéder depuis hors UE ? **À vérifier** | **À vérifier** : la page du DPA et la liste des sous-traitants d'Oracle ne sont pas relevées | **Non couvert par une pièce.** Aussi **à vérifier** : l'offre du compte (le vault note le doute entre l'offre gratuite et un compte hors de ses limites : `SaaS/10 Presti/04 Décisions/ADR-003…`, section « Contexte ») et si le DPA s'applique à cette offre |
+| **GitHub** (Actions, Microsoft) | La **sauvegarde prévue au dépôt** (en échec depuis le 25/10) et l'**audit de nuit**. Le job `sauvegarde.yml` s'exécute **sur un exécuteur hébergé par GitHub** qui reçoit tout le secret `PRESTI_ENV_LOCAL`, clé de service de la base comprise (`.github/workflows/sauvegarde.yml:36-39`), lit **en clair** toutes les tables et les comptes avant de chiffrer sur la même machine (`scripts/sauvegarde.mjs:21-33`), puis dépose l'archive chiffrée comme artefact de **30 jours** (`sauvegarde.yml:51-55`). `audit.yml` charge le même secret chaque nuit contre la production (`.github/workflows/audit.yml:37`). **GitHub traite donc les données en clair le temps du job et détient le secret qui ouvre toute la base** | **À vérifier** (aucune région choisie dans les fichiers) | **À vérifier** | **À vérifier** : le DPA de GitHub n'est pas relevé | **Non couvert par une pièce.** Constat du plan : la sauvegarde sur GitHub **échoue depuis le 25/10** (quota : `chantier-4-assistant-plan.md:392`) ; le dossier la remplace par le workflow sur Oracle (ligne ci-dessus). **Décision de Benj** : GitHub reçoit la clé de service par **quatre** workflows : trois portent le secret `PRESTI_ENV_LOCAL` (`sauvegarde.yml:38`, `audit.yml:37`, `android.yml:179`) et un autre, `generer-site.yml:46-47`, la pose par un secret distinct, `LIVRAISON_ENV`. Pour que GitHub sorte de la liste, il faudrait retirer **tous** ces secrets ; sinon il reste listé avec son DPA. Tant qu'un secret y est, la ligne reste dans la liste |
+
+## 2. Les sous-traitants ultérieurs conditionnels
+
+Ils n'entrent dans la liste d'un client que si **une donnée de ce client** passe par eux. Sinon ils n'y figurent pas, et la pièce le dit
+plutôt que de l'omettre.
+
+| Sous-traitant | Entre dans la liste quand… | N'y entre pas quand… | Où | État |
+|---|---|---|---|---|
+| **Le fournisseur de SMS** | Le client passe de l'étape 0 à l'envoi par une API : le fournisseur reçoit le numéro et le texte de chaque SMS. **Aucun fournisseur n'est retenu** : le plan compare Sweego, Twilio et Orange (`premiere-reponse.md:774`, Orange « à vérifier ») ; le code a un adaptateur Sweego **fermé**, « choix de Benj encore à confirmer », qui refuse d'émettre tant que Benj n'a pas donné son go (`lib/sms/fournisseurs/sweego.ts:1-7`) | À l'étape 0, où le SMS est **préparé** et ouvert par un lien `sms:` sur le téléphone du membre, qui l'envoie lui-même : aucun fournisseur de Presti ne voit rien (`premiere-reponse.md:774`) | **À vérifier**, selon le fournisseur retenu | **Ligne vide à compléter par Benj, après son choix** : nom, pays, DPA, liste des sous-traitants, garantie de transfert. Aucun SMS commercial sans consentement noté (`kit/registre-donnees.md`, ligne « Consentement ») ; ce fournisseur n'est pas à ajouter au contrat avant d'être nommé au client (art. 28.2) |
+| **Telegram** (Telegram FZ-LLC) | Le client relie **son propre bot** : le serveur de Presti tient le jeton du bot et reçoit les messages, Telegram les achemine (identifiant de conversation, prénom et nom affichés, texte, type de pièce jointe) (registre § 22 bis, `docs/registre-traitements.md:318-319` ; `lib/legalArtisan.ts:315`). Le produit le range lui-même parmi les sous-traitants de Presti (`lib/legalArtisan.ts:307`) | Pour les **alertes du fondateur** : elles ne portent aucune donnée de prospect ni de client (`lib/agents/telegram.ts:1-8`) | **Hors Union européenne** ; « sans clauses contractuelles types connues » (`lib/legalArtisan.ts:315`) | **Qualification retenue : sous-traitant ultérieur conditionnel**, dans le contrat comme ici (`contrat-sous-traitance.md`, article 7.4 et annexe 2). Le canal est choisi par le client, qui en est averti avant de le relier ; le juriste tranche. Aucun DPA relevé : **à vérifier** |
+| **Google (Firebase Cloud Messaging)** | Un membre active les **notifications push natives** : le service reçoit le jeton de l'appareil du membre (donnée personnelle) et une charge neutre : un titre, une ligne, une adresse Presti, jamais le contenu d'un message ni un nom (`lib/pushNatif.ts:3-10`). Le drapeau est levé (`lib/flags.ts:29`, `pushNatif: true`) ; p5:247 fait des notifications de l'app le canal interne de l'offre | Le push natif est inerte tant que le compte de service n'est pas posé (`lib/pushNatif.ts:3-6`) | **À vérifier** (région, DPA, garantie de transfert : non relevés) | **À relever par Benj** si le push natif reste actif pour les membres d'un client |
+| **Les services de Web Push des navigateurs** (Apple, Google, Mozilla, Microsoft selon le navigateur du membre) | Un membre active le push web : le point de terminaison, fixé par **son navigateur**, reçoit la charge neutre ci-dessus (`lib/push.ts:5-11`, `lib/flags.ts:26`, `pushWeb: true`) | — | Selon le navigateur du membre | **À trancher par le juriste** : fournisseur du navigateur du membre, ou sous-traitant ultérieur de Presti ? Listé ici par prudence |
+| **Meta (WhatsApp Cloud API, Messenger, Instagram)** | Le client relie un canal Meta : les messages de ses clients passent par l'application Meta de Presti (`app/api/canaux/meta/liaison/route.ts:43` ; `lib/canaux/meta.ts:1-5`) | Tant que les drapeaux sont baissés : `lib/flags.ts:69-70` (`canauxWhatsapp: false`) et `lib/flags.ts:72` (`canauxReseaux: false`) ; rien n'est vendu ni construit | **À vérifier** | **Hors offre aujourd'hui.** À instruire avant d'ouvrir le drapeau |
+| **Slack** | Un workflow de Presti publierait une donnée du client (nom, message, montant) dans un espace Slack **qui est à Presti** | Pour l'alerte d'erreur `#presti-auto` : elle ne porte que le nom du workflow, le nœud, le numéro et l'heure, « sans aucune donnée d'artisan ni de client » (`docs/registre-traitements.md:351`). Pour le **Slack du client** : c'est l'outil du client, branché avec ses propres identifiants (`p5:165`) ; Slack y est son prestataire à lui, pas celui de Presti | **À vérifier** (non relevé) | **Aujourd'hui : hors liste.** La règle du kit est plus stricte que le prompt 5 : aucune donnée du client dans une notification (le prompt 5 dit « jamais de donnée sensible en clair dans une notification », `p5:247`) ; sa source est ce kit |
+| **Discord** | Même condition que Slack : un workflow de Presti y publierait une donnée du client | Il n'est que cité par `p5:247` ; aucune intégration n'est lue dans le dossier | **À vérifier** | **Hors liste aujourd'hui** |
+
+## 3. Ce qui n'est pas un sous-traitant ultérieur du client, et pourquoi
+
+| Outil | Pourquoi il n'est pas dans la liste | Source |
+|---|---|---|
+| **n8n** (le logiciel, et n8n GmbH) | n8n s'auto-héberge sur Oracle (Docker, lié à `127.0.0.1:5678`) : c'est un logiciel que Presti exploite, pas un prestataire qui reçoit les données. **Réserve à vérifier** : la télémétrie, le contrôle de licence d'une instance auto-hébergée, et l'**enregistrement de l'instance par une clé gratuite** que le plan prévoit (`premiere-reponse.md:889`, question 7) peuvent contacter n8n GmbH. Les réglages de l'instance ne sont pas relevés ici ; si une donnée du client y passait, n8n GmbH entrerait dans la liste. Voir `question-licence-n8n.md`, question B | `.claude/rules/architecture-outils.md:69-71` ; registre § 23 bis |
+| **n8n cloud** (`presti.app.n8n.cloud`) | Il ne reçoit aucune donnée personnelle | `.claude/rules/architecture-outils.md:78-79` ; `p5:116` |
+| **Les modèles gratuits en ligne** (freellmapi et autres) | Jamais une donnée du client ni de ses clients : seul le modèle du produit, sous contrat et inscrit au registre, ou un modèle local sur Oracle, peut la lire | `.claude/rules/securite.md` ; `p5:96`, `p5:218` ; `kit/registre-donnees.md` |
+| **Brevo** | Le compte gratuit de Presti est **réservé à la prospection de Presti** et ne reçoit pas de donnée d'un client. Si un client Entreprise fait une newsletter, c'est « sur son compte, à son nom » : Brevo est alors **son** prestataire, pas celui de Presti (`p5:244-245`) | `.claude/rules/email-brevo.md` |
+| **Stripe** | Paiement des abonnements : Presti en est responsable de traitement, pour ses propres clients (registre § 24) ; un paiement n'est jamais encaissé par l'IA | registre § 24, ligne Stripe |
+| **La Base Adresse Nationale** | Service de l'État, appelé sans contrat de sous-traitance, qui ne reçoit que l'adresse d'un chantier | `lib/legalArtisan.ts:295-306` |
+| **Les outils du client** (agenda, boîte de messagerie, comptabilité, CRM qu'il garde) | Ils restent à lui, branchés par lui avec ses propres identifiants. Presti s'y connecte sur ses instructions (`p5:165`) ; leurs éditeurs sont ses prestataires, pas ceux de Presti | `p5:165`, `p5:244-253` |
+
+### Hermes Agent, Orca et Claude Code : des outils de construction qui peuvent lire des données
+
+Ce ne sont pas des prestataires du client, **mais ils ne sont pas sans accès** : l'écrire « sans accès » serait faux.
+
+- **Hermes** : son profil principal garde les deux MCP `n8n-oracle` (en **lecture seule**) et `cerveau` ; le dossier note lui-même que ce profil
+  garde « donc l'accès aux données de prospects » (`.claude/rules/architecture-outils.md:81-86`, `:91`). Par n8n-oracle il peut donc lire les
+  **exécutions en échec**, qui gardent leurs données 14 jours (`docs/registre-traitements.md:350`, `:352`).
+- **Claude Code** (la session principale) écrit les workflows par le MCP n8n et lit la base par le MCP Supabase (`.claude/rules/architecture-outils.md`,
+  `:104`). Les agents de construction sont aussi nommés à l'article 4 du contrat comme ayant accès.
+- **Sous quelles conditions d'Anthropic ils tournent** : la clé API « presti » de Hermes relève des conditions commerciales de l'API
+  (`.claude/rules/architecture-outils.md:82-84`) ; les conditions qui régissent **Claude Code** ne sont pas relevées : **à vérifier**.
+- **Deux sorties** : soit on écrit ces accès au contrat comme tels (article 4) et on les ajoute à l'annexe 2 sous leurs conditions réelles,
+  soit on pose la règle qu'**aucun agent de construction ne lit une exécution ni une ligne d'un système client**, et on la **prouve** (essai qui
+  rougit). Tant que la preuve manque, c'est la première sortie qui vaut.
+
+## 4. Ce que le client doit voir avant de signer
+
+1. La liste **nominative** ci-dessus, à jour, avec le pays et le garde-fou de chaque ligne (art. 28.2 : autorisation spécifique ou générale, avec
+   droit d'objection).
+2. Un **préavis** à chaque ajout ou remplacement d'un sous-traitant. **Il ne peut pas être plus long que ce que la chaîne donne à Presti** :
+   Vercel laisse 5 jours pour s'opposer, Resend annonce 14 jours, Supabase 30 (`DPA-prestataires-2026-10-21.md`, sections de chacun). Le préavis
+   promis au client est un blanc du contrat (article 7.3), à fixer en tenant compte de ces délais. L'autorisation générale couvrirait aussi les
+   sous-traitants que **chaque prestataire publie** dans sa propre liste (adresses de la colonne « Page publique ») : le juriste dit si le contrat
+   l'écrit.
+3. Les lignes « **à vérifier** » levées une par une avant la signature, ou retirées de l'offre : Oracle, GitHub, l'offre Vercel, le fournisseur de
+   SMS, Firebase, les accès de Hermes et de Claude Code. **Une ligne non sourcée ne se signe pas.**
+4. Les durées côté prestataires dites **telles quelles**, sans arrondi (Anthropic : 30 jours en règle, exceptions à 2 et 7 ans ; n8n : 14 jours
+   aujourd'hui pour les exécutions en échec, 7 jours proposés pour un système client).
+
+## 5. Ce que cette pièce ne fait pas
+
+<!-- jamais:debut -->
+- Jamais une garantie dite « signée » tant que la pièce n'est pas dans le dossier de Benj.
+- Jamais un prestataire ajouté à la liste sans qu'une page publique ou une pièce le prouve ; sinon « à vérifier ».
+- Jamais une donnée du client envoyée à un prestataire qui n'est pas dans cette liste.
+- Jamais un fournisseur de SMS écrit comme retenu avant que Benj l'ait choisi : les noms comparés sont des candidats.
+- Jamais un prix, un montant ou un pourcentage : ils ne servent pas la conformité.
+<!-- jamais:fin -->

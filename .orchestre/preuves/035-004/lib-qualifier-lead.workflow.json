@@ -1,0 +1,279 @@
+{
+  "id": "uvGWZR8fHnXURRV6",
+  "name": "lib-qualifier-lead",
+  "active": false,
+  "isArchived": false,
+  "versionId": "e5c08da4-592a-4d8a-86d5-8d7e01458615",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 8,
+  "createdAt": "2026-11-02T22:27:20.866Z",
+  "updatedAt": "2026-11-02T22:36:56.217Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 60,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "availableInMCP": true,
+    "callerIds": "A391vnnTMKmJGhgT"
+  },
+  "tags": [
+    {
+      "id": "m0ItSSMlCmjT8by7",
+      "name": "couche-qualification"
+    },
+    {
+      "id": "rzslIYLJg0eKogBe",
+      "name": "lib"
+    }
+  ],
+  "parentFolderId": null,
+  "description": "Tâche 035-004 : gabarit lib-qualifier-lead@1 (note selon la grille du client, priorité, délai cible ; doublon sur l'empreinte du contact, question 27 ; aucun modèle). Inactif, en simulation : la note part dans effets_prevus.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par un parent": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Noter selon la grille",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Noter selon la grille": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "aa70f9a4-0502-4e7d-8538-9c1c1565c5b3",
+      "name": "Appelé par un parent",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "f7cb0c8c-bb83-449a-a0fa-1d6f5ec53dc5",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de lib-qualifier-lead@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'lib-qualifier-lead@1';\nconst SCHEMA = {\"sans_contact\":true,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"grille\",\"seuils\",\"delais_cibles_min\"],\"properties\":{\"grille\":{\"type\":\"array\",\"maxItems\":30,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"critere\",\"poids\"],\"properties\":{\"critere\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":84},\"poids\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100}}}},\"seuils\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"haute\",\"normale\"],\"properties\":{\"haute\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100},\"normale\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100}}},\"delais_cibles_min\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"haute\",\"normale\",\"a_revoir\"],\"properties\":{\"haute\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10080},\"normale\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10080},\"a_revoir\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10080}}},\"empreintes_connues\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"empreinte\",\"lead_id\"],\"properties\":{\"empreinte\":{\"type\":\"string\",\"pattern\":\"^[0-9a-f]{64}$\"},\"lead_id\":{\"type\":\"string\",\"format\":\"uuid\"}}}}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"lead_id\",\"champs\"],\"properties\":{\"lead_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"evenement_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"empreinte_contact\":{\"type\":[\"string\",\"null\"],\"pattern\":\"^[0-9a-f]{64}$\"},\"champs\":{\"type\":\"object\",\"additionalProperties\":false,\"properties\":{\"canal\":{\"type\":\"string\",\"maxLength\":30,\"pattern\":\"^[a-z_]+$\"},\"origine\":{\"type\":\"string\",\"maxLength\":30,\"pattern\":\"^[a-z0-9_]+$\"},\"urgence\":{\"enum\":[\"urgent\",\"normal\"]},\"type_chantier\":{\"type\":\"string\",\"maxLength\":60,\"pattern\":\"^[^/@:]+$\"},\"taille\":{\"enum\":[\"1\",\"2 à 5\",\"6 à 20\",\"plus de 20\"]},\"activite\":{\"enum\":[\"Artisan\",\"Entreprise du bâtiment\",\"Architecte\",\"Autre\"]},\"budget_tranche\":{\"type\":\"string\",\"maxLength\":30,\"pattern\":\"^[^/@:]+$\"},\"delai_souhaite\":{\"type\":\"string\",\"maxLength\":30,\"pattern\":\"^[^/@:]+$\"},\"surface_m2\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000},\"photo_jointe\":{\"type\":\"boolean\"},\"dans_zone\":{\"type\":\"boolean\"},\"recu_hors_horaires\":{\"type\":\"boolean\"}}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: lib-qualifier-lead@1"
+    },
+    {
+      "id": "7dac7e96-1cd6-4414-9000-3820a5f1811b",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-conforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "62768ebd-2c32-4309-a709-b1bec5d0b394",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "8be3cfae-440b-42d5-8fbf-15b33386aa13",
+      "name": "Noter selon la grille",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// lib-qualifier-lead (PR § 5.5 et fiche « Qualification », § 5.3) : la note selon la GRILLE ÉCRITE AVEC LE CLIENT, la priorité, le délai\n// cible et le doublon. Aucun modèle (question 15) : une note d'intérêt se calcule par le code (fiches-videos-restructureai.md:181).\n// Le doublon se lit sur l'empreinte du contact calculée en base (question 27), jamais sur le contact : ni nom, ni adresse, ni téléphone.\n// Rien n'est deviné : un champ absent ne rapporte aucun point, et une grille dont plus de la moitié du poids manque met la demande « à revoir ».\n// Un critère discriminant, ou hors de la liste fermée des champs, fait refuser la grille entière. Le résultat est revalidé contre\n// le schéma « resultat » du contrat, version 1, avant tout effet : hors schéma, aucune note ne change. Mode A : la note part dans effets_prevus.\n// Mode A : les empreintes déjà en base viennent de config.empreintes_connues (lues par l'appelant, épinglées).\nfunction sha256(texte) {\n  const o = [];\n  for (const car of String(texte)) {\n    const c = car.codePointAt(0);\n    if (c < 0x80) o.push(c);\n    else if (c < 0x800) o.push(0xc0 | (c >> 6), 0x80 | (c & 63));\n    else if (c < 0x10000) o.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));\n    else o.push(0xf0 | (c >> 18), 0x80 | ((c >> 12) & 63), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));\n  }\n  const K = [], H = [];\n  for (let n = 2; K.length < 64; n++) {\n    let premier = true;\n    for (let d = 2; d * d <= n; d++) if (n % d === 0) { premier = false; break; }\n    if (premier) { if (H.length < 8) H.push(((Math.sqrt(n) % 1) * 4294967296) | 0); K.push(((Math.cbrt(n) % 1) * 4294967296) | 0); }\n  }\n  const l = o.length * 8;\n  o.push(0x80);\n  while (o.length % 64 !== 56) o.push(0);\n  for (let i = 7; i >= 0; i--) o.push(i >= 4 ? 0 : (l >>> (i * 8)) & 255);\n  const r = (x, k) => (x >>> k) | (x << (32 - k));\n  for (let i = 0; i < o.length; i += 64) {\n    const w = [];\n    for (let t = 0; t < 64; t++) {\n      if (t < 16) w[t] = (o[i + 4 * t] << 24) | (o[i + 4 * t + 1] << 16) | (o[i + 4 * t + 2] << 8) | o[i + 4 * t + 3];\n      else w[t] = (w[t - 16] + (r(w[t - 15], 7) ^ r(w[t - 15], 18) ^ (w[t - 15] >>> 3)) + w[t - 7] + (r(w[t - 2], 17) ^ r(w[t - 2], 19) ^ (w[t - 2] >>> 10))) | 0;\n    }\n    let [a, b, c, d, e, f, g, h] = H;\n    for (let t = 0; t < 64; t++) {\n      const t1 = (h + (r(e, 6) ^ r(e, 11) ^ r(e, 25)) + ((e & f) ^ (~e & g)) + K[t] + w[t]) | 0;\n      const t2 = ((r(a, 2) ^ r(a, 13) ^ r(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;\n      h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;\n    }\n    const v = [a, b, c, d, e, f, g, h];\n    for (let k = 0; k < 8; k++) H[k] = (H[k] + v[k]) | 0;\n  }\n  return H.map((x) => (x >>> 0).toString(16).padStart(8, '0')).join('');\n}\nconst cleDe = (brute, type) => brute.length <= 80 ? brute : 'h:' + type.slice(0, 24) + ':' + sha256(brute).slice(0, 48);\nconst CHAMPS_PERMIS = {\"canal\":\"texte\",\"origine\":\"texte\",\"urgence\":\"texte\",\"type_chantier\":\"texte\",\"taille\":\"texte\",\"activite\":\"texte\",\"budget_tranche\":\"texte\",\"delai_souhaite\":\"texte\",\"surface_m2\":\"nombre\",\"photo_jointe\":\"booleen\",\"dans_zone\":\"booleen\",\"recu_hors_horaires\":\"booleen\"};\nconst DISCRIMINANTS = [\"age\",\"sexe\",\"genre\",\"origine_ethnique\",\"ethnie\",\"nationalite\",\"religion\",\"handicap\",\"sante\",\"etat_de_sante\",\"orientation_sexuelle\",\"identite_de_genre\",\"situation_familiale\",\"situation_de_famille\",\"grossesse\",\"nom\",\"prenom\",\"patronyme\",\"apparence\",\"opinion_politique\",\"opinions\",\"syndicat\",\"activite_syndicale\",\"langue\",\"lieu_de_residence\",\"residence\",\"code_postal\",\"quartier\",\"adresse\",\"domiciliation_bancaire\",\"vulnerabilite_economique\",\"moeurs\",\"caracteristiques_genetiques\",\"perte_autonomie\"];\nconst CRITERE = /^([a-z][a-z0-9_]{0,39})(?:(=|>=|<=)(.{1,40}))?$/;\nconst PRIORITES = ['haute', 'normale', 'a_revoir'];\nfunction horsSchema(r) {\n  const e = [];\n  if (!Number.isInteger(r.note) || r.note < 0 || r.note > 100) e.push('note');\n  if (typeof r.categorie !== 'string' || !r.categorie || r.categorie.length > 60) e.push('categorie');\n  if (!PRIORITES.includes(r.priorite)) e.push('priorite');\n  if (!Number.isInteger(r.delai_cible_min) || r.delai_cible_min < 0) e.push('delai_cible_min');\n  if (typeof r.raison !== 'string' || r.raison.length > 200) e.push('raison');\n  if (typeof r.doublon !== 'boolean') e.push('doublon');\n  return e;\n}\nconst vues = new Map();\nreturn $input.all().map((item) => {\n  const j = item.json;\n  try {\n    const e = j.enveloppe, c = e.config, d = e.donnees, org = e.organisation_id;\n    const refus = [], criteres = [];\n    for (const g of c.grille) {\n      const m = CRITERE.exec(g.critere), champ = m ? m[1] : '';\n      if (DISCRIMINANTS.some((x) => champ === x || champ.startsWith(x + '_') || champ.endsWith('_' + x))) refus.push('critère discriminant refusé : ' + champ);\n      else if (!m || !Object.prototype.hasOwnProperty.call(CHAMPS_PERMIS, champ)) refus.push('critère hors de la liste des champs permis : ' + (champ || 'illisible'));\n      else criteres.push({ champ: champ, op: m[2] || '', val: m[3], poids: g.poids });\n    }\n    if (c.seuils.haute < c.seuils.normale) refus.push('seuils incohérents : haute sous normale');\n    if (refus.length) return { json: { ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: refus.slice(0, 20),\n      journal: [{ evenement: 'grille_refusee', agent: 'lib-qualifier-lead', objet_ref: d.lead_id, decision: 'grille refusée : ' + refus[0].slice(0, 160), simulation: e.simulation }] } };\n    let total = 0, gagne = 0, manque = 0;\n    const touches = [], absents = [];\n    for (const k of criteres) {\n      total += k.poids;\n      const v = d.champs[k.champ];\n      if (v === undefined || v === null || v === '') { manque += k.poids; absents.push(k.champ); continue; }\n      const ok = k.op === '' ? v === true : k.op === '=' ? String(v) === k.val : k.op === '>=' ? Number(v) >= Number(k.val) : Number(v) <= Number(k.val);\n      if (ok) { gagne += k.poids; touches.push(k.champ + (k.op ? k.op + k.val : '') + ' (' + k.poids + ')'); }\n    }\n    const note = Math.round((100 * gagne) / total);\n    let doublonDe = null;\n    if (typeof d.empreinte_contact === 'string') {\n      const connu = (Array.isArray(c.empreintes_connues) ? c.empreintes_connues : []).find((x) => x.empreinte === d.empreinte_contact && x.lead_id !== d.lead_id);\n      if (connu) doublonDe = connu.lead_id;\n      else {\n        const k = org + '|' + d.empreinte_contact, v = vues.get(k);\n        if (v && v !== d.lead_id) doublonDe = v; else vues.set(k, d.lead_id);\n      }\n    }\n    const incomplet = manque * 2 > total;\n    const priorite = doublonDe || incomplet ? 'a_revoir' : note >= c.seuils.haute ? 'haute' : note >= c.seuils.normale ? 'normale' : 'a_revoir';\n    const raison = ('note ' + note + '/100' + (touches.length ? ' : ' + touches.join(', ') : '') + (absents.length ? ' ; inconnu : ' + absents.join(', ') : '') +\n      (doublonDe ? ' ; même contact qu’une demande déjà reçue' : '') + (incomplet ? ' ; grille trop incomplète pour trancher' : '')).slice(0, 200);\n    const resultat = { note: note, categorie: String(d.champs.type_chantier || d.champs.activite || 'non renseignée').slice(0, 60), priorite: priorite,\n      delai_cible_min: c.delais_cibles_min[priorite], raison: raison, doublon: Boolean(doublonDe), doublon_de: doublonDe, lead_id: d.lead_id };\n    const fautes = horsSchema(resultat);\n    if (fautes.length) return { json: { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['résultat hors schéma (' + fautes.join(', ') + ') : aucune note ne change'],\n      journal: [{ evenement: 'qualification_hors_schema', agent: 'lib-qualifier-lead', objet_ref: d.lead_id, decision: 'résultat hors schéma : rien écrit', simulation: e.simulation }] } };\n    const cle = cleDe(org + ':qualification:' + d.lead_id + ':' + (d.evenement_id || d.lead_id), 'qualification');\n    return { json: { ...j, statut: 'ok', resultat: resultat,\n      effets_prevus: [{ effet: 'ecrire_note', organisation_id: org, lead_id: d.lead_id, cle: cle, note: note, priorite: priorite, categorie: resultat.categorie, doublon: resultat.doublon }],\n      journal: [{ evenement: 'qualification', agent: 'lib-qualifier-lead', objet_ref: d.lead_id, decision: ('priorité ' + priorite + ', ' + raison).slice(0, 200), simulation: e.simulation }] } };\n  } catch (err) {\n    return { json: { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['qualification : ' + String((err && err.message) || err).slice(0, 120)] } };\n  }\n});"
+      }
+    },
+    {
+      "id": "cad98c58-b590-4b54-b858-69528903e072",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de lib-qualifier-lead@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-qualifier-lead@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "13000a7b-a733-4026-a125-fcf89fd19cfb",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        960,
+        80
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 035-004). Rien n'a été lu, écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (lecture, réclamation, écriture de la note, de la carte ou de la file du pilote) n'est pas branché. Il le sera au « go » de Benj, avec ses colonnes et tables, derrière cette même porte."
+    },
+    {
+      "id": "adedb4fa-2796-4006-a99f-fbf5929c0a60",
+      "name": "Sticky Note 8c8e35b2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## lib-qualifier-lead (035-004)\nLa note selon la grille écrite avec le client, la priorité, le délai cible ; doublon sur l’empreinte du contact (question 27). Aucun modèle.\nGabarit partagé, couche qualification. Contrat lib-qualifier-lead@1 (enveloppe@1), gabarit « Contrat » de 035-003.\nINACTIF, en simulation (mode A) : rien n'est lu ni écrit en base, rien n'est envoyé ; tout part dans effets_prevus.\nJuge : scripts/lib-metier-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 400
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-02T22:37:01.664Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 035-004), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

@@ -1,0 +1,10 @@
+✓ structure
+✓ copie figée
+✓ comparaison à la route
+✓ essai n8n
+✓ délai
+✓ garde commune (n8n-specs-qa)
+  comparé : 94 demandes en 20 cas ; 73 avis et 52 accusés identiques à ceux de la route (aux écarts écrits près : E1, E2, E3, E4, E5)
+  délai : l'accusé attend de 31 à 90 s (moyenne 60.5 s) avant l'envoi ; chaque seconde de sept minutes tombe dans une seule fenêtre
+  mutants : 32/32 font rougir le juge
+✓ accuse-reception-n8n-qa : OK

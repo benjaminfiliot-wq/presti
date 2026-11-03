@@ -1,0 +1,24 @@
+{
+  "lib-banc-metier": {
+    "Cas : Bâti-Démo": "a0657bda62e52eb46712feac648211ec0ff9d64402e9899ab86a933f6b7ecca9",
+    "Vers la qualification": "2078e52e838b018cb41d37ae315e166b57ca8b1a199ed1ecac13dd773e62c373",
+    "Vers la décision": "79a47c111793ec618d2e53fa0b63485878d3c523175de18a5f725178879878a5",
+    "Bilan du banc": "bb5ed574d17cf7a48323706ef00a984f7f67badde85b6928f14c90aea5c94897",
+    "Cas : gestes jamais automatiques": "b1d531ec5d0ae4035e15aa549eea72e4852271063058f6b5261163f148cc4166"
+  },
+  "lib-capturer-lead": {
+    "Contrat d'entrée": "5807f1f8633427479e1380634a7677d4b2f75a8a1e3fcc40cca7bca7146c5633",
+    "Capturer sans lire le contact": "b5bab98ffc8add8b5caf25fba1442cf1f72b14a159cb01aee5f89d3803eed993",
+    "Contrat de sortie": "29bdda3d024ef36a6fb8c98946f2f79d8d208e5cd1d75aeb6d1938110350ba8d"
+  },
+  "lib-decider": {
+    "Contrat d'entrée": "56b34bdd043d142dabb9b0955d6e1d15c0dd01e99f20b26187c46438ef136789",
+    "Décider": "8aeb48fe2d1477ca945127ca6450dbe9970e2dd54036282e1dc0d6c38e8c5233",
+    "Contrat de sortie": "257b555f7cceafe148e271cc0b259bb728358dbf67867601bd160be471508e91"
+  },
+  "lib-qualifier-lead": {
+    "Contrat d'entrée": "b2e5c932d012b796ba0bc31d83833ab32b3dd48ecf391c67abb3f07bf518bf52",
+    "Noter selon la grille": "eab4942245659885d193702bcda0c29c82196c5c5a5c468b48af7ed86e4fbeb0",
+    "Contrat de sortie": "716ff8900ba04cbaf40e6eeef692b918ab92e846af732f66a34fcfc77ceb84bc"
+  }
+}

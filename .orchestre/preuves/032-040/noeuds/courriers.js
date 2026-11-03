@@ -1,0 +1,69 @@
+// presti-accuse-reception : ce que l'ancien chemin envoie dans la branche « l'assistant se tait » de app/api/leads/route.ts —
+// l'avis à l'artisan (:386) puis l'accusé de réception au prospect (:393-399, texte fixe, sans la mention d'IA : :402) — plus les
+// plafonds de lib/email.ts que ce chemin passait en envoyant (:81-87). Code pur : rien n'est envoyé ici, rien n'est écrit.
+// Copie figée contrôlée par scripts/accuse-reception-n8n-qa.mjs, cas par cas contre la vraie route.
+const SILENCE = ['manuelle', 'escalade', 'horaire', 'humain', 'limite'];
+const MAX_PAR_DESTINATAIRE = 3;
+const MAX_PAR_JOUR = 30;
+const MAX_AVIS_PAR_JOUR = 50;
+const EXPEDITEUR = 'contact@prestiapp.fr';
+const ENTREPRISE = 'contact@prestiapp.fr';
+const EST_COURRIEL = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+const ADRESSE_SURE = /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
+const fen = $('Fenetre du passage').first().json;
+const lire = (nom) => $(nom).all().map((i) => i.json).filter((x) => x && typeof x === 'object' && typeof x.id === 'string');
+const ordre = (a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+const texte = (v) => (typeof v === 'string' ? v : '');
+const sur = (v) => ADRESSE_SURE.test(texte(v).trim()) && !/\.invalid$/i.test(texte(v).trim());
+const nettoyer = (v) => texte(v).replace(/[\r\n<>"]/g, '').trim().slice(0, 70) || 'Votre artisan';
+const uneLigne = (v) => texte(v).replace(/[\r\n]+/g, ' ');
+const actif = (prefs) => !prefs || typeof prefs !== 'object' || prefs.nouvelle_demande !== false;
+const duJour = lire('Lire demandes du jour').filter((d) => SILENCE.includes(d.motif_reponse)).sort(ordre);
+const rangJour = {};
+duJour.forEach((d, i) => { rangJour[d.id] = i + 1; });
+const comptes = {};
+lire('Lire comptes').forEach((c) => { comptes[c.id] = c; });
+const parAdresse = {};
+lire('Lire doublons').filter((d) => typeof d.contact === 'string').sort(ordre).forEach((d) => {
+  const k = d.contact.trim().toLowerCase();
+  (parAdresse[k] = parAdresse[k] || []).push(d.id);
+});
+const sortie = [];
+const ignore = (lead, raison) => sortie.push({ json: { courrier: 'ignore', lead_id: lead.id, raison, simulation: true } });
+for (const lead of lire('Lire destinataires').sort(ordre)) {
+  if (!SILENCE.includes(lead.motif_reponse)) { ignore(lead, 'motif hors du silence'); continue; }
+  if (!(lead.created_at >= fen.debut && lead.created_at < fen.fin)) { ignore(lead, 'hors de la fenêtre'); continue; }
+  const contact = texte(lead.contact).trim();
+  if (!contact) { ignore(lead, 'sans coordonnées (différé)'); continue; }
+  const artisan = comptes[lead.artisan_id];
+  if (!artisan) { ignore(lead, 'compte introuvable'); continue; }
+  const nomProspect = texte(lead.nom_prospect);
+  const nomArtisan = texte(artisan.nom);
+  const sensible = lead.motif_reponse === 'escalade';
+  if (texte(artisan.email) && actif(artisan.notifications) && sur(artisan.email) && rangJour[lead.id] <= MAX_AVIS_PAR_JOUR) {
+    sortie.push({ json: {
+      courrier: 'avis', lead_id: lead.id, cle: 'avis:' + lead.id, simulation: true,
+      a: artisan.email.trim(), de: 'Presti <' + EXPEDITEUR + '>',
+      repondre_a: EST_COURRIEL.test(contact) && ADRESSE_SURE.test(contact) ? contact : ENTREPRISE,
+      sujet: uneLigne((sensible ? '⚠️ Demande sensible — ' : 'Nouveau contact — ') + (nomProspect || contact)),
+      texte: 'Nouveau contact via votre page Presti — à vous de répondre.\n\nNom : ' + (nomProspect || 'non précisé') + '\nContact : ' + contact + '\n\nSa demande est dans votre espace (Messages) : répondez-lui depuis là.',
+    } });
+  } else ignore(lead, 'avis non dû (adresse absente, non sûre, notification coupée ou plafond du jour)');
+  if (EST_COURRIEL.test(contact)) {
+    const rang = (parAdresse[contact.toLowerCase()] || []).indexOf(lead.id) + 1;
+    if (!sur(contact)) ignore(lead, 'adresse du prospect non sûre');
+    else if (!(rang >= 1 && rang <= MAX_PAR_DESTINATAIRE)) ignore(lead, 'plafond par destinataire');
+    else if (!(rangJour[lead.id] <= MAX_PAR_JOUR)) ignore(lead, 'plafond du jour');
+    else {
+      const prenom = nomProspect.trim().split(/\s+/)[0];
+      sortie.push({ json: {
+        courrier: 'accuse', lead_id: lead.id, cle: 'accuse:' + lead.id, simulation: true,
+        a: contact, de: nettoyer(nomArtisan.trim() || 'Votre artisan') + ' <' + EXPEDITEUR + '>',
+        repondre_a: texte(artisan.email).trim(),
+        sujet: uneLigne('Bien reçu — ' + (nomArtisan || 'votre demande')),
+        texte: 'Bonjour' + (prenom ? ' ' + prenom : '') + ',\n\nMerci pour votre demande. ' + (nomArtisan || 'Nous') + " l'a bien reçue et revient vers vous très vite.\n\nÀ très bientôt.",
+      } });
+    }
+  }
+}
+return sortie;
