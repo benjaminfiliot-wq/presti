@@ -6,6 +6,20 @@ est `outillage/OUTILLAGE.md`.
 
 ## En bref
 
+**Vers 21 h 30 : les agents sont en service (`4cf7892`, vérifié en direct)**
+- **Essai réel de l'ombre réussi**, sur un compte de test Studio fictif. La chaîne : demande, événement, Cerveau, chef Accueil, puis une
+  carte « à valider » en base (confirmation, motif, 4 sources). Rien n'est parti, et le compte a été supprimé (0 ligne restante).
+- **036-034** a trouvé pourquoi aucune carte ne s'écrivait. Une vraie demande arrive sans proposition chiffrée : le chef demandait donc un
+  brouillon, et l'ombre ne retenait que les cartes. C'est corrigé, ainsi qu'une perte silencieuse.
+- **036-032** : les sept chefs sont de vrais agents IA dans n8n, chacun avec deux spécialistes en outils.
+- **Clé de n8n, choix A de Benj** : 0196 est posée. La clé est dans le coffre Vault de Supabase, lisible par n8n seulement (44 signes,
+  fermée au navigateur). 036-035 fait lire les workflows à cette source et passe les chefs sur Haiku pour économiser la clé API.
+- **Drapeaux levés en production** : `connexions`, `systemeAgents` et `boiteAgents`. La boîte « À valider » ne s'affiche que s'il y a des
+  cartes.
+- **Pour un vrai artisan, rien ne change tant que ses départements ne sont pas « en marche »** : c'est un réglage compte par compte, posé par
+  Presti (acteur fondateur), d'abord en ombre. En ombre, « Valider » ne fait que noter : un artisan non prévenu croirait avoir répondu. Il
+  faut donc son accord.
+
 **Vers 20 h : où on en est vraiment (deux audits indépendants, 036-028 et 036-029)**
 - **Vrai** : la logique de décision est construite dans n8n et prouvée en simulation (exécution 882, 8 juges à mutants verts). Studio
   prépare, Signature envoie par le Pilote, les montants viennent du code, le schéma est strict, la marque blanche et la porte de simulation
