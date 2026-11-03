@@ -67,7 +67,7 @@ import { mentionAssistant } from '../lib/mentionAssistant.ts'
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DETECTEURS = '.orchestre/preuves/032-019/presti-detecteurs.workflow.json'
 const DOSSIER_FICTIFS = 'scripts/fixtures/n8n-specs-qa'
-const FICTIFS = ['lib-exemple-executer', 'ent-exemple-relance', 'ent-exemple-parent'].map((n) => `${DOSSIER_FICTIFS}/${n}.workflow.json`)
+const FICTIFS = ['lib-exemple-executer', 'ent-exemple-relance', 'ent-exemple-parent', 'gabarit-exemple-outils'].map((n) => `${DOSSIER_FICTIFS}/${n}.workflow.json`)
 const PAR_DEFAUT = [DETECTEURS, ...FICTIFS]
 
 // ─── Les listes de la garde ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -110,6 +110,35 @@ const RETIRES_3 = new Map([
 ])
 // Les hôtes qu'une lecture HTTP peut joindre : l'API REST du projet Supabase (architecture-outils.md, « Supabase »).
 const HOTES_PERMIS = new Set(['gorcdvmueakcncsmrouo.supabase.co'])
+// 03/11 (prompt 6, outillage, plans/011-cadrage-01-11/p6-signature/outillage/OUTILLAGE.md) : les GABARITS (`gabarit-*`, sans identifiant)
+// et leurs copies par client (`client-*`) portent les vrais nœuds des outils, comme les vidéos et les 2 669 workflows des dépôts. Liste
+// vérifiée au catalogue n8n le 03/11 (MCP search_nodes). Un nœud natif ne sert qu'un compte (identifiants dynamiques = licence Enterprise) :
+// d'où une copie par client. Les déclencheurs à webhook n'y sont pas : n8n d'Oracle n'est pas exposé (p6:225-227).
+const OUTILLE = /^(gabarit|client)-/
+const B = (t) => `n8n-nodes-base.${t}`, LC = (t) => `@n8n/n8n-nodes-langchain.${t}`
+const DECLENCHEURS_INTERVALLE = new Set(['gmailTrigger', 'microsoftOutlookTrigger', 'emailReadImap', 'googleCalendarTrigger', 'googleDriveTrigger',
+  'googleSheetsTrigger', 'microsoftOneDriveTrigger', 'notionTrigger', 'airtableTrigger'].map(B))
+const OUTILS_NATIFS = ['gmail', 'microsoftOutlook', 'emailSend', 'googleCalendar', 'googleDrive', 'googleDocs', 'googleSheets', 'googleChat', 'googleBusinessProfile',
+  'googleAds', 'microsoftOneDrive', 'microsoftExcel', 'microsoftTeams', 'whatsApp', 'telegram', 'twilio', 'slack', 'sendInBlue', 'mailchimp', 'activeCampaign',
+  'lemlist', 'facebookGraphApi', 'linkedIn', 'youTube', 'twitter', 'hubspot', 'pipedrive', 'salesforce', 'zohoCrm', 'odoo', 'airtable', 'notion', 'mondayCom',
+  'clickUp', 'stripe', 'quickbooks', 'xero', 'zendesk', 'shopify', 'wooCommerce']
+// Les mêmes en outil d'agent (« …Tool ») : branchés sur un agent, ils ne font que LIRE (R23).
+const OUTILS_AGENT = new Set([...OUTILS_NATIFS.map((t) => B(`${t}Tool`)), LC('toolWorkflow'), LC('toolHttpRequest'), LC('agentTool')])
+// Validation humaine native de n8n (« Request human approval for tools ») : réservée aux validations d'équipe Entreprise (p6:253).
+const OUTILS_VALIDATION = new Set(['gmail', 'microsoftOutlook', 'emailSend', 'slack', 'telegram', 'whatsApp', 'microsoftTeams', 'googleChat'].map((t) => B(`${t}HitlTool`)))
+// Les nœuds qui appellent le modèle : des effets (coût, données envoyées), derrière la porte comme un envoi.
+const APPELS_MODELE = new Set([AGENT, LC('chainLlm'), LC('anthropic'), LC('informationExtractor'), LC('textClassifier')])
+const TYPES_OUTILS = new Set([...DECLENCHEURS_INTERVALLE, ...OUTILS_NATIFS.map(B), ...OUTILS_AGENT, ...OUTILS_VALIDATION, ...APPELS_MODELE,
+  B('extractFromFile'), B('convertToFile')])
+// Les API sans nœud natif, appelées par un nœud HTTP d'un gabarit (OUTILLAGE.md § 3) : l'hôte est écrit en dur, jamais calculé.
+const HOTES_OUTILS = new Set(['graph.facebook.com', 'graph.instagram.com', 'open.tiktokapis.com', 'business-api.tiktok.com', 'api.yousign.app', 'api-sandbox.yousign.app',
+  'eu.docusign.net', 'demo.docusign.net', 'app.pennylane.com', 'thirdparty.qonto.com', 'api.manychat.com', 'api.tally.so', 'api.calendly.com', 'api.cal.com',
+  'api.typeform.com', 'eu-api.jotform.com', 'api.trustpilot.com', 'recherche-entreprises.api.gouv.fr', 'api.insee.fr', 'api.brevo.com'])
+// Une opération qui ne fait que lire. Sans opération écrite, n8n prend celle par défaut (Gmail : envoyer) : c'est donc un effet.
+const LECTURES = /^(get|getAll|getMany|search|list|lookup|download|read|availability|getAvailability|getFreeBusy|getProfile|getStatus)$/i
+const estLecture = (n) => typeof n.parameters?.operation === 'string' && LECTURES.test(n.parameters.operation)
+// Un nœud d'envoi qui ne fait que lire (Gmail en getAll) n'envoie rien, dans un gabarit : ni pied (R4) ni porte (R15) pour lui.
+const estEnvoi = (n, outille) => TYPES_ENVOI.has(n.type) && !(outille && estLecture(n))
 const INTERDIT = /nom|e-?mail|contact|adresse|message|contenu|texte/i
 // Motifs de scripts/garde-commit.mjs:16-26 (formats de clés), plus un jeton porteur et une clé privée.
 const SECRETS = [
@@ -137,15 +166,17 @@ function atteint(wf, de, vers) {
 // Les arêtes d'un nœud, avec leur genre (main, ai_languageModel…) et leur numéro de sortie (0 = « vrai » d'un If, 1 = « faux »).
 const aretes = (wf, nom) => Object.entries(wf.connections?.[nom] ?? {}).flatMap(([genre, liste]) =>
   (Array.isArray(liste) ? liste : []).flatMap((sortie, i) => (Array.isArray(sortie) ? sortie : []).filter(Boolean).map((l) => ({ vers: l.node, genre, sortie: i }))))
-const famille = (wf) => { const n = String(wf.name ?? ''); return /^ent-/.test(n) ? 'ent' : /^(lib|gabarit)-/.test(n) ? 'lib' : 'c4' }
+const famille = (wf) => { const n = String(wf.name ?? ''); return /^ent-/.test(n) ? 'ent' : /^(lib|gabarit|client)-/.test(n) ? 'lib' : 'c4' }
 const empreinte = (t) => createHash('sha256').update(String(t), 'utf8').digest('hex')
 function* clesProfondes(o, chemin = '') {
   if (!o || typeof o !== 'object') return
   for (const [k, v] of Object.entries(o)) { yield [k, v, `${chemin}${k}`]; if (v && typeof v === 'object') yield* clesProfondes(v, `${chemin}${k}.`) }
 }
 const methodeDe = (n) => String(n.parameters?.method ?? 'GET').toUpperCase()
-const estEffet = (n) => TYPES_ENVOI.has(n.type) || (n.type === 'n8n-nodes-base.httpRequest' && methodeDe(n) !== 'GET')
+const estEffet = (n, outille = false) => estEnvoi(n, outille) || (n.type === 'n8n-nodes-base.httpRequest' && methodeDe(n) !== 'GET')
   || (n.type === 'n8n-nodes-base.supabase' && !['get', 'getAll'].includes(n.parameters?.operation))
+  // Gabarit : appeler le modèle, et toute opération d'un outil qui n'est pas une lecture (écrire, publier, poser un rendez-vous, payer).
+  || (outille && (APPELS_MODELE.has(n.type) || (OUTILS_NATIFS.includes(n.type.replace(/^n8n-nodes-base\./, '')) && !estLecture(n))))
 
 // ─── La garde ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 function verifier(brut, registre = {}) {
@@ -155,6 +186,7 @@ function verifier(brut, registre = {}) {
   if (!wf || !Array.isArray(wf.nodes)) return ['export illisible : aucun tableau `nodes`']
   const fam = famille(wf)
   const neuf = fam !== 'c4'
+  const outille = OUTILLE.test(String(wf.name ?? ''))
   // R1
   if (wf.active !== false) ko('R1', 'le workflow doit être inactif (active: false)')
   if (wf.activeVersionId) ko('R1', 'le workflow ne doit avoir aucune version publiée (activeVersionId)')
@@ -172,7 +204,7 @@ function verifier(brut, registre = {}) {
   for (const n of wf.nodes) {
     // R5 : types (liste blanche de la famille)
     const orchestreP6 = !neuf && P6_ORCHESTRE.test(String(wf.name ?? ''))
-    if (!(neuf ? TYPES_PERMIS_NEUFS : TYPES_PERMIS).has(n.type) && !(orchestreP6 && TYPES_PERMIS_NEUFS.has(n.type))) ko('R5', `${n.name} : type de nœud hors liste blanche (${n.type})`)
+    if (!(neuf ? TYPES_PERMIS_NEUFS : TYPES_PERMIS).has(n.type) && !(orchestreP6 && TYPES_PERMIS_NEUFS.has(n.type)) && !(outille && TYPES_OUTILS.has(n.type))) ko('R5', `${n.name} : type de nœud hors liste blanche (${n.type})`)
     // R6 : identifiants
     for (const [genre, c] of Object.entries(n.credentials ?? {})) {
       const nom = c && typeof c === 'object' ? c.name : null
@@ -195,10 +227,10 @@ function verifier(brut, registre = {}) {
       let hote = null
       if (typeof p.url !== 'string' || p.url.includes('{{') || p.url.startsWith('=')) ko('R7', `${n.name} : adresse calculée (expression) : l'hôte doit être écrit en dur`)
       else { try { const u = new URL(p.url); hote = u.host; if (u.protocol !== 'https:') ko('R7', `${n.name} : https attendu`) } catch { ko('R7', `${n.name} : adresse illisible`) } }
-      if (hote && !HOTES_PERMIS.has(hote)) ko('R7', `${n.name} : hôte non permis (${hote})`)
+      if (hote && !HOTES_PERMIS.has(hote) && !(outille && HOTES_OUTILS.has(hote))) ko('R7', `${n.name} : hôte non permis (${hote})`)
       const params = p.queryParameters?.parameters ?? []
       const select = params.filter((q) => q?.name === 'select')
-      if (hote && select.length !== 1 && (!neuf || lecture)) ko('R7', `${n.name} : un seul select= attendu (aucune lecture de toutes les colonnes)`)
+      if (hote && HOTES_PERMIS.has(hote) && select.length !== 1 && (!neuf || lecture)) ko('R7', `${n.name} : un seul select= attendu (aucune lecture de toutes les colonnes)`)
       const exception = lecturePourEnvoi(n)
       if (exception && !(noms.has(exception) && TYPES_ENVOI.has(wf.nodes.find((x) => x.name === exception)?.type) && atteint(wf, n.name, exception))) ko('R7', `${n.name} : « lecture-pour-envoi » vers ${exception}, qui n'est pas un nœud d'envoi alimenté par cette lecture`)
       for (const s of select) {
@@ -217,7 +249,7 @@ function verifier(brut, registre = {}) {
       }
     }
     // R4 : pieds
-    if (TYPES_ENVOI.has(n.type)) {
+    if (estEnvoi(n, outille)) {
       const pied = piedDeclare(n)
       const t = texteDe(p)
       const porte = { mention: aMention(t), PIED_AUTOMATIQUE: t.includes(PIED_AUTOMATIQUE), PIED_APRES: t.includes(PIED_APRES) }
@@ -267,6 +299,7 @@ function reglesNeuves(wf, fam, tout, brancheInterne, registre, ko) {
     if (s.saveExecutionProgress === true) ko('R13', 'progression des exécutions sauvée sur un ent-*')
   }
   // R15 : la porte « simulation » avant tout effet
+  const outilleR15 = OUTILLE.test(String(wf.name ?? ''))
   const portes = new Set()
   for (const n of wf.nodes.filter((x) => /^\s*porte\s*:\s*simulation\s*$/m.test(String(x.notes ?? '')))) {
     const c = n.parameters?.conditions ?? {}
@@ -282,9 +315,9 @@ function reglesNeuves(wf, fam, tout, brancheInterne, registre, ko) {
   const sansPorte = new Set(), file = [...racines]
   while (file.length) {
     const x = file.shift(); if (sansPorte.has(x)) continue; sansPorte.add(x)
-    for (const a of aretes(wf, x)) if (!(portes.has(x) && a.genre === 'main' && a.sortie === 1)) file.push(a.vers)
+    for (const a of aretes(wf, x)) if (!(portes.has(x) && a.genre === 'main' && a.sortie === 1) && !(outilleR15 && a.genre !== 'main')) file.push(a.vers)
   }
-  for (const n of wf.nodes) if (estEffet(n) && sansPorte.has(n.name)) ko('R15', `${n.name} : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »`)
+  for (const n of wf.nodes) if (estEffet(n, outilleR15) && sansPorte.has(n.name)) ko('R15', `${n.name} : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »`)
   // R16 : contrats d'entrée et de sortie (enfants)
   if (enfant) {
     const declencheurs = wf.nodes.filter((n) => n.type === SOUS_TRIGGER)
@@ -348,7 +381,33 @@ function reglesNeuves(wf, fam, tout, brancheInterne, registre, ko) {
   }
   // R20 : mention d'IA sur un envoi en aval d'un modèle
   const modeles = wf.nodes.filter((n) => String(n.type).startsWith('@n8n/n8n-nodes-langchain.'))
-  for (const n of wf.nodes) if (TYPES_ENVOI.has(n.type) && modeles.some((m) => atteint(wf, m.name, n.name)) && piedDeclare(n) !== 'mention') ko('R20', `${n.name} : envoi en aval d'un modèle sans « pied: mention »`)
+  for (const n of wf.nodes) if (estEnvoi(n, outilleR15) && modeles.some((m) => atteint(wf, m.name, n.name)) && piedDeclare(n) !== 'mention') ko('R20', `${n.name} : envoi en aval d'un modèle sans « pied: mention »`)
+  if (outilleR15) reglesOutils(wf, ko)
+}
+
+// ─── Les règles des gabarits outillés et de leurs copies par client (R21 à R23, OUTILLAGE.md § 8) ─────────────────────────────
+function reglesOutils(wf, ko) {
+  const nom = String(wf.name ?? '')
+  const gabarit = /^gabarit-/.test(nom)
+  const entreprise = /^(gabarit|client)-ent-/.test(nom)
+  for (const n of wf.nodes) {
+    // R21 : un gabarit ne porte aucun identifiant de client ; seule l'API REST de Supabase (le compte de Presti, filtré par R14) en a un
+    const versSupabase = n.type === B('httpRequest') && typeof n.parameters?.url === 'string' && (() => { try { return HOTES_PERMIS.has(new URL(n.parameters.url).host) } catch { return false } })()
+    if (gabarit && Object.keys(n.credentials ?? {}).length && !versSupabase) ko('R21', `${n.name} : identifiant branché dans un gabarit (${Object.keys(n.credentials).join(', ')}) : seule la copie du client en reçoit, branché par lui`)
+    // R22 : aucun déclencheur à webhook : n8n d'Oracle n'est pas exposé (p6:225-227) ; les canaux à webhook arrivent par Presti et la base
+    if ((n.type === B('webhook') || n.type === B('formTrigger') || n.type === LC('chatTrigger') || /Trigger$/.test(n.type))
+      && !DECLENCHEURS_INTERVALLE.has(n.type) && ![B('scheduleTrigger'), B('errorTrigger'), B('executeWorkflowTrigger'), B('manualTrigger')].includes(n.type))
+      ko('R22', `${n.name} : déclencheur à webhook (${n.type}) : n8n n'est pas exposé, l'entrée passe par Presti et la base`)
+  }
+  // R23 : ce qui est branché sur un agent en outil ne fait que lire ; la validation humaine native est réservée à l'Entreprise
+  for (const n of wf.nodes) for (const a of aretes(wf, n.name)) {
+    if (a.genre !== 'ai_tool') continue
+    if (OUTILS_VALIDATION.has(n.type)) { if (!entreprise) ko('R23', `${n.name} : validation humaine de n8n hors d'un gabarit Entreprise (la validation d'un artisan est une carte « À valider »)`); continue }
+    if (!OUTILS_AGENT.has(n.type)) { ko('R23', `${n.name} : outil d'agent non admis (${n.type})`); continue }
+    if (n.type === LC('toolHttpRequest') && methodeDe(n) !== 'GET') ko('R23', `${n.name} : outil HTTP en ${methodeDe(n)} (lecture GET seulement)`)
+    if (n.type.endsWith('Tool') && n.type.startsWith('n8n-nodes-base.') && !estLecture(n)) ko('R23', `${n.name} : outil d'agent qui écrit ou envoie (${n.parameters?.operation ?? 'opération par défaut'}) : l'écriture se fait après la porte, sur le chemin principal`)
+    if (n.type === LC('toolWorkflow') && !/^\s*outil\s*:\s*lecture\s*$/m.test(String(n.notes ?? ''))) ko('R23', `${n.name} : sous-workflow en outil sans « outil: lecture » déclaré`)
+  }
 }
 
 // ─── Un workflow d'envoi FICTIF, pour éprouver R4 (aucun workflow d'envoi n'existe encore dans n8n) ─────────────────────────────
@@ -498,6 +557,33 @@ const MUTANTS_PARENT = [
   ['R13 succès sauvés sur le parent', muter((w) => { w.settings.saveDataSuccessExecution = 'all' }), /^R13 /],
 ]
 
+// Les mutants des gabarits outillés (03/11, prompt 6, OUTILLAGE.md § 8), sur l'export fictif gabarit-exemple-outils.
+const outilAgent = (w, nom, type, parameters, notes) => { w.nodes.push({ id: nom, name: nom, type, typeVersion: 1, position: [0, 0], parameters, ...(notes ? { notes } : {}) }); w.connections[nom] = { ai_tool: [[{ node: 'Rédacteur', type: 'ai_tool', index: 0 }]] } }
+const MUTANTS_GABARIT = [
+  ['R15 l’agent IA atteint par la sortie « vrai » (simulation)', muter((w) => { w.connections['Porte simulation'].main = [[lien('Effets prévus'), lien('Rédacteur')], []] }), /^R15 .*Rédacteur.*effet atteignable/],
+  ['R15 l’agent IA branché avant la porte', muter((w) => { w.connections['Relire la configuration'].main[0].push(lien('Rédacteur')) }), /^R15 .*Rédacteur.*effet atteignable/],
+  ['R15 le brouillon Gmail posé avant la porte', muter((w) => { w.connections['Préparer'].main[0].push(lien('Brouillon Gmail')) }), /^R15 .*Brouillon Gmail.*effet atteignable/],
+  ['R15 un rendez-vous posé dans l’Agenda sans porte', muter((w) => { w.nodes.push({ id: 'rv', name: 'Poser le rendez-vous', type: 'n8n-nodes-base.googleCalendar', typeVersion: 1.3, position: [0, 0], parameters: { resource: 'event', operation: 'create' } }); w.connections['Préparer'].main[0].push(lien('Poser le rendez-vous')) }), /^R15 .*Poser le rendez-vous.*effet atteignable/],
+  ['R15 un outil sans opération (celle par défaut écrit) sans porte', muter((w) => { w.nodes.push({ id: 'sh', name: 'Classeur', type: 'n8n-nodes-base.googleSheets', typeVersion: 4.7, position: [0, 0], parameters: {} }); w.connections['Préparer'].main[0].push(lien('Classeur')) }), /^R15 .*Classeur.*effet atteignable/],
+  ['R21 identifiant Gmail branché dans le gabarit', muter((w) => { noeud(w, 'Brouillon Gmail').credentials = { gmailOAuth2: { id: 'IdentifiantFictif09', name: 'Gmail du client' } } }), /^R21 .*Brouillon Gmail/],
+  ['R21 identifiant du modèle branché dans le gabarit', muter((w) => { noeud(w, 'Claude').credentials = { anthropicApi: { id: 'IdentifiantFictif08', name: 'Anthropic' } } }), /^R21 .*Claude/],
+  ['R21 identifiant sur un nœud HTTP qui ne vise pas Supabase', muter((w) => { w.nodes.push({ id: 'ig', name: 'Lire Instagram', type: 'n8n-nodes-base.httpRequest', typeVersion: 4.2, position: [0, 0], credentials: { facebookGraphApi: { id: 'IdentifiantFictif07', name: 'Meta du client' } }, parameters: { method: 'GET', url: 'https://graph.facebook.com/v21.0/me/conversations', options: {} } }); w.connections['Préparer'].main[0].push(lien('Lire Instagram')) }), /^R21 .*Lire Instagram/],
+  ['R22 déclencheur Telegram (webhook)', muter((w) => { w.nodes.push({ id: 'tt', name: 'Message Telegram', type: 'n8n-nodes-base.telegramTrigger', typeVersion: 1.2, position: [0, 0], parameters: { updates: ['message'] } }); w.connections['Message Telegram'] = { main: [[lien('Préparer')]] } }), /^R22 .*Message Telegram/],
+  ['R22 webhook générique', muter((w) => { w.nodes.push({ id: 'wh', name: 'Entrée publique', type: 'n8n-nodes-base.webhook', typeVersion: 2, position: [0, 0], parameters: { path: 'exemple' } }); w.connections['Entrée publique'] = { main: [[lien('Préparer')]] } }), /^R22 .*Entrée publique/],
+  ['R22 Facebook Lead Ads en webhook (à lire par l’API Graph)', muter((w) => { w.nodes.push({ id: 'fl', name: 'Nouveau lead', type: 'n8n-nodes-base.facebookLeadAdsTrigger', typeVersion: 1, position: [0, 0], parameters: {} }); w.connections['Nouveau lead'] = { main: [[lien('Préparer')]] } }), /^R22 .*Nouveau lead/],
+  ['R23 outil d’agent qui envoie (Gmail send)', muter((w) => { Object.assign(noeud(w, 'Lire le fil').parameters, { resource: 'message', operation: 'send' }) }), /^R23 .*Lire le fil.*écrit ou envoie/],
+  ['R23 outil d’agent sans opération (envoi par défaut)', muter((w) => { delete noeud(w, 'Lire le fil').parameters.operation }), /^R23 .*Lire le fil.*écrit ou envoie/],
+  ['R23 outil Agenda qui pose un rendez-vous', muter((w) => { outilAgent(w, 'Poser en outil', 'n8n-nodes-base.googleCalendarTool', { resource: 'event', operation: 'create' }) }), /^R23 .*Poser en outil.*écrit ou envoie/],
+  ['R23 validation humaine native hors Entreprise', muter((w) => { outilAgent(w, 'Demander l’accord', 'n8n-nodes-base.gmailHitlTool', { operation: 'sendAndWait' }) }), /^R23 .*validation humaine/],
+  ['R23 outil de code branché sur l’agent', muter((w) => { outilAgent(w, 'Code libre', '@n8n/n8n-nodes-langchain.toolCode', { jsCode: 'return 1' }) }), /^R23 .*non admis/],
+  ['R23 outil HTTP en POST', muter((w) => { outilAgent(w, 'Appel libre', '@n8n/n8n-nodes-langchain.toolHttpRequest', { method: 'POST', url: 'https://graph.facebook.com/v21.0/me/messages' }) }), /^R23 .*HTTP en POST/],
+  ['R23 sous-workflow en outil sans « outil: lecture »', muter((w) => { delete noeud(w, 'Trier la demande').notes }), /^R23 .*outil: lecture/],
+  ['R20 brouillon en aval du modèle sans mention', muter((w) => { const n = noeud(w, 'Brouillon Gmail'); n.notes = 'pied: aucun'; n.parameters.message = '={{ $json.reponse }}' }), /^R20 .*Brouillon Gmail/],
+  ['R18 parseur structuré débranché de l’agent', muter((w) => { delete w.connections['Schéma de la réponse'] }), /^R18 .*Structured Output Parser/],
+  ['R7 API hors de la liste des hôtes des gabarits', muter((w) => { w.nodes.push({ id: 'hx', name: 'API inconnue', type: 'n8n-nodes-base.httpRequest', typeVersion: 4.2, position: [0, 0], parameters: { method: 'GET', url: 'https://api.exemple.invalid/v1/x', options: {} } }); w.connections['Préparer'].main[0].push(lien('API inconnue')) }), /^R7 .*hôte non permis/],
+  ['famille : le gabarit renommé presti-* perd ses outils (R5)', muter((w) => { w.name = 'presti-exemple-outils' }), /^R5 .*Nouvel e-mail.*hors liste blanche/],
+]
+
 // ─── Lancement ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2).filter((a) => !a.startsWith('--'))
 function deplier(c) {
@@ -516,7 +602,7 @@ for (const [c, wf, reg] of exports) {
   const e = wf.illisible ? [`export illisible : ${wf.illisible}`] : verifier(wf, reg)
   const w = wf.workflow ?? wf
   const fam = w.nodes ? famille(w) : '?'
-  console.log(`${e.length ? '✗' : '✓'} ${path.relative(RACINE, c)} (${w.name ?? '?'}, famille ${fam}) : ${e.length ? e.length + ' manquement(s)' : fam === 'c4' ? 'R1 à R7 tenues' : 'R1 à R20 tenues'}`)
+  console.log(`${e.length ? '✗' : '✓'} ${path.relative(RACINE, c)} (${w.name ?? '?'}, famille ${fam}) : ${e.length ? e.length + ' manquement(s)' : fam === 'c4' ? 'R1 à R7 tenues' : 'R1 à R23 tenues'}`)
   for (const m of e) console.log(`    ✗ ${m}`)
   if (e.length) echecs++
 }
@@ -532,9 +618,11 @@ const fictif = (n) => { const c = path.resolve(RACINE, `${DOSSIER_FICTIFS}/${n}.
 const [lib, regLib] = fictif('lib-exemple-executer')
 const [relance, regRelance] = fictif('ent-exemple-relance')
 const [parent, regParent] = fictif('ent-exemple-parent')
+const [gabarit, regGabarit] = fictif('gabarit-exemple-outils')
 const LOTS = [
   ['presti-detecteurs', base, {}, MUTANTS_DETECTEURS], ['fictif', FICTIF, {}, MUTANTS_FICTIF],
   ['lib-exemple-executer', lib, regLib, MUTANTS_LIB], ['ent-exemple-relance', relance, regRelance, MUTANTS_RELANCE], ['ent-exemple-parent', parent, regParent, MUTANTS_PARENT],
+  ['gabarit-exemple-outils', gabarit, regGabarit, MUTANTS_GABARIT],
 ]
 let verts = 0, total = 0
 for (const [lot, wf, reg, liste] of LOTS) {

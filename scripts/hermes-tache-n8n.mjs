@@ -99,6 +99,9 @@ const BRIEFS = {
   'fiches-videos-restructureai': { brief: 'plans/011-cadrage-01-11/briefs/fiches-videos-restructureai.md', executant: 'hermes' },
   // 02/11 au soir : le jeu de données fictif de la démo Entreprise (prompt 5, tâche 035-006), Hermes sur l'hôte d'agents Oracle.
   'p5-jeu-donnees-batidemo': { brief: 'plans/011-cadrage-01-11/briefs/p5-jeu-donnees-batidemo.md', executant: 'hermes' },
+  // 03/11 vers 14 h (prompt 6, outillage, tâche 036-017 ; Benj : « utilise Hermes et Orca avec l'API pour aider et aller plus vite ») :
+  // une fiche connecteur par outil de OUTILLAGE.md, depuis la documentation officielle ; Claude Code tranche ensuite les portées et la voie O3
+  'p6-fiches-connecteurs': { brief: 'plans/011-cadrage-01-11/briefs/p6-fiches-connecteurs.md', executant: 'hermes' },
 }
 const TAILLE_MAX_BRIEF = 50_000
 const DOSSIER_BRIEFS = path.resolve(RACINE, 'plans', '011-cadrage-01-11', 'briefs')

@@ -1,0 +1,431 @@
+{
+  "name": "gabarit-exemple-outils",
+  "active": false,
+  "nodes": [
+    {
+      "id": "gt",
+      "name": "Nouvel e-mail",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      }
+    },
+    {
+      "id": "Préparer",
+      "name": "Préparer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Gabarit fictif : le compte vient de la copie du client, jamais d'une adresse.\nconst m = $input.first().json;\nreturn [{ json: { organisation_id: 'OrganisationFictive01', message_id: String(m.id ?? ''), sujet: String(m.subject ?? '').slice(0, 200) } }];"
+      }
+    },
+    {
+      "id": "rc",
+      "name": "Relire la configuration",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "IdentifiantFictif01",
+          "name": "Supabase account"
+        }
+      },
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/configuration_organisation",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "simulation,interrupteur"
+            },
+            {
+              "name": "organisation_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "ps",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel.",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "sim",
+              "leftValue": "={{ $('Relire la configuration').first().json.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "Effets p",
+      "name": "Effets prévus",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Branche « simulation » : rien n'est écrit ni envoyé, l'effet prévu part au journal.\nreturn [{ json: { effets_prevus: ['brouillon', 'carte'], effets_faits: [] } }];"
+      }
+    },
+    {
+      "id": "ag",
+      "name": "Rédacteur",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Préparer').first().json.sujet }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Exemple. Rédige une réponse courte, sans prix ni délai inventé.",
+          "maxIterations": 4,
+          "passthroughBinaryImages": false
+        }
+      }
+    },
+    {
+      "id": "lm",
+      "name": "Claude",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-haiku-5-5"
+        },
+        "options": {
+          "maxTokensToSample": 800,
+          "temperature": 0.2
+        }
+      }
+    },
+    {
+      "id": "sp",
+      "name": "Schéma de la réponse",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"reponse\"],\"properties\":{\"reponse\":{\"type\":\"string\",\"maxLength\":1200}}}",
+        "autoFix": false
+      }
+    },
+    {
+      "id": "lf",
+      "name": "Lire le fil",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "resource": "thread",
+        "operation": "get",
+        "threadId": "={{ $fromAI('fil', 'identifiant du fil', 'string') }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "tw",
+      "name": "Trier la demande",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "outil: lecture",
+      "parameters": {
+        "description": "Exemple. Classe la demande (urgence, peut attendre, curieux, spam, client existant).",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "LibTrierFictif01"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        }
+      }
+    },
+    {
+      "id": "Revalide",
+      "name": "Revalider la sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// La sortie du modèle repasse le schéma : hors schéma, rien ne part.\nconst r = $input.first().json.output ?? {};\nif (typeof r.reponse !== 'string' || !r.reponse.trim() || r.reponse.length > 1200) throw new Error('hors schéma');\nreturn [{ json: { reponse: r.reponse } }];"
+      }
+    },
+    {
+      "id": "bg",
+      "name": "Brouillon Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "pied: mention",
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ 'Re: ' + $('Préparer').first().json.sujet }}",
+        "message": "={{ $json.reponse }}\n\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Artisan.",
+        "options": {}
+      }
+    },
+    {
+      "id": "ec",
+      "name": "Écrire la carte",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "IdentifiantFictif01",
+          "name": "Supabase account"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/assistant_actions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "resolution=ignore-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ organisation_id: $('Préparer').first().json.organisation_id, type: 'brouillon_pret', cle: $('Préparer').first().json.message_id }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Nouvel e-mail": {
+      "main": [
+        [
+          {
+            "node": "Préparer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer": {
+      "main": [
+        [
+          {
+            "node": "Relire la configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Relire la configuration": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Effets prévus",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rédacteur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rédacteur": {
+      "main": [
+        [
+          {
+            "node": "Revalider la sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rédacteur",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schéma de la réponse": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Rédacteur",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le fil": {
+      "ai_tool": [
+        [
+          {
+            "node": "Rédacteur",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trier la demande": {
+      "ai_tool": [
+        [
+          {
+            "node": "Rédacteur",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revalider la sortie": {
+      "main": [
+        [
+          {
+            "node": "Brouillon Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brouillon Gmail": {
+      "main": [
+        [
+          {
+            "node": "Écrire la carte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "errorWorkflow": "ErreurCommuneFictif01",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "callerPolicy": "none"
+  }
+}

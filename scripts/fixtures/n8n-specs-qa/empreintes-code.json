@@ -14,5 +14,10 @@
   "ent-exemple-parent": {
     "Préparer l'enveloppe": "41388a54a2c5a4f623a317420f5e8c1dc3e715fa863d5b49b0c41b4a3ea5747b",
     "Bilan": "ff80c0c0a63a3131d5b0fa073a0c42161288497c67a706b544fb451201eb0e74"
+  },
+  "gabarit-exemple-outils": {
+    "Préparer": "0f13a6e0f386d4017a7e1f94b676f18e88df133b3ed45078451e28efe39968ba",
+    "Effets prévus": "5f7301fb7e46598dc7e58068647eaaa4354981c17b6ab04cba278769c23bee4d",
+    "Revalider la sortie": "a0cc5e628db4e74e4e817ec5452f280be9635ae872934e100f6d4bdd236859fc"
   }
 }
