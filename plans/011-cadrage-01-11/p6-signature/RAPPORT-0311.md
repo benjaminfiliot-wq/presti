@@ -6,6 +6,36 @@ est `outillage/OUTILLAGE.md`.
 
 ## En bref
 
+**Soir (mis à jour vers 19 h 15)**
+- **En ligne (`cb49d81`, vérifié en direct)** : l'offre Entreprise refaite (036-026). Elle comprend :
+  - la carte enrichie ;
+  - la page `/entreprise` (200, « Parler à l'équipe », outils nommés, aucun prix, aucun « démo ») ;
+  - le contact « Parlons de votre entreprise », avec quatre questions préremplies.
+- **n8n réparé (036-027)** : la rédaction et la lecture de photo écrivent de nouveau. Les bancs sont verts, la chaîne est republiée en
+  simulation.
+- **Audit indépendant du fonctionnement (036-029, `audit-0311-fonctionnement.md`)**.
+  - **Ce qui marche pour un artisan payant** : l'app actuelle. Elle couvre la réponse IA, les relances (cron Vercel), les devis et factures,
+    l'assistant et ses cartes, le Pilote et le CRM 3D.
+  - **Ce qui ne marche pas encore** : le système d'agents n8n n'est pas branché aux vraies données. Les lectures du Cerveau sont vides,
+    aucune carte n'est écrite, aucun écran ne les montre.
+  - **036-030**, lancé sur Oracle vers 18 h 50, branche les événements, les lectures, le palier « ombre », les cartes dans
+    `assistant_actions` et la boîte « À valider » de l'outil de gestion, derrière un drapeau baissé. L'audit de conformité 036-028 tourne
+    encore.
+- **Google** : pas besoin de vérification pour démarrer. Sans elle, Google admet jusqu'à 100 utilisateurs, avec un écran d'avertissement.
+  Mais **l'identifiant OAuth n'existe pas** : il n'y a ni `GOOGLE_OAUTH_CLIENT_ID` ni `GOOGLE_OAUTH_CLIENT_SECRET` dans Vercel. Il se crée
+  dans la console Google Cloud de Benj :
+  1. application Web ;
+  2. retour sur `https://prestiapp.fr/api/connexions/google/retour` ;
+  3. API Gmail, Agenda et Drive activées ;
+  4. écran de consentement « Externe », publié « en production ».
+- **Clé `BOITE_CLE_N8N` et modules du conteneur n8n** : il faut root sur Oracle. Le PC n'a que le compte `usine`, sans sudo ni docker. À
+  relire d'abord : comment les exécuteurs de n8n 2.45.7 reçoivent une variable et des modules externes.
+- **Ensuite, dans l'ordre** :
+  1. 036-030 rapatrié, jugé, puis poussé ;
+  2. le mode ombre sur un compte de test Studio, puis Signature ;
+  3. la bascule type par type : n8n prend un envoi, et l'ancien code de l'app pour cet envoi est coupé. Jamais les deux à la fois, sinon
+     les clients reçoivent deux messages.
+
 **Fin d'après-midi (mis à jour à 17 h 50)**
 - **En ligne à 17 h 30 (`556eab2`, vérifié en direct)** : la carte « Presti pour l'entreprise », sur devis, sous Studio et Signature, avec
   « Parler à l'équipe ». Tu l'as jugée trop pauvre : **036-026** la refait plus vendeuse et plus complète. Ce lot ajoute une page `/entreprise`
