@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clients et chantiers (CRM atelier) — maquette</title>
+<meta name="maquette" content="036-010 · écran 5 · CRM atelier · offre Studio">
+<link rel="stylesheet" href="maquettes.css">
+<style>
+  /* Le CRM existant (app/crm/, app/crm/atelier/) garde ses onglets et ses vues ; s'y ajoutent : les chiffres sourcés (C3),
+     la fiche avec sa prochaine action, le panneau à une question (B4) et l'import contrôlé d'un export (B10). */
+  .grille{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+  .onglets-crm{display:flex;gap:2px;border-bottom:1px solid var(--ligne);margin-bottom:22px;overflow-x:auto}
+  .onglets-crm a{padding:10px 12px;color:var(--encre-2);font-size:14px;border-bottom:2px solid transparent;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center}
+  .onglets-crm a:hover{text-decoration:none;color:var(--encre)}
+  .onglets-crm a[aria-current="page"]{color:var(--encre);border-bottom-color:var(--accent)}
+
+  .chiffres{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .chiffre{padding:14px 16px}
+  .chiffre h3{font:500 12.5px/1.2 var(--sans);color:var(--discret)}
+  .chiffre .gros{display:block;font:500 24px/1 var(--mono);letter-spacing:-.03em;margin-top:10px}
+
+  .atelier{margin:12px 0 0;padding:0;overflow:hidden}
+  .atelier svg{display:block;width:100%;height:auto}
+  .atelier figcaption{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--ligne);font-size:13.5px;color:var(--encre-2)}
+  .atelier figcaption .btn{margin-left:auto}
+
+  .fiche{margin-top:24px;padding:20px 22px}
+  .fiche-tete{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .fiche-tete h2{font:500 24px/1.15 var(--serif);letter-spacing:-.015em}
+  .fiche-tete p{color:var(--encre-2);font-size:14px;margin-top:4px}
+  .fiche-tete .etat{margin-left:auto}
+  .prochaine{margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 16px;border-radius:var(--r-sm);background:var(--corail-voile);border:1px solid rgba(217,119,87,.35)}
+  .prochaine .lib{font-size:12.5px;color:var(--accent-encre);font-weight:600}
+  .prochaine p{font-size:15px;font-weight:500;margin-top:3px}
+  .prochaine .rang{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .lies{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+  .lie{border:1px solid var(--ligne);border-radius:var(--r-sm);padding:12px 14px}
+  .lie h3{font:500 12.5px/1 var(--sans);color:var(--discret);margin-bottom:8px}
+  .lie p{font-size:14px}
+  .lie p+p{margin-top:4px;color:var(--encre-2);font-size:13.5px}
+  .historique{list-style:none;margin:18px 0 0;padding:0;border-top:1px solid var(--ligne)}
+  .historique li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;padding:12px 0;border-bottom:1px solid var(--ligne)}
+  .historique time{font:500 12.5px/1.4 var(--mono);color:var(--discret)}
+  .historique .quoi{font-size:14.5px}
+
+  .panneau{position:sticky;top:24px;padding:18px}
+  .panneau h2{font:500 19px/1.2 var(--serif)}
+  .panneau .intro{color:var(--encre-2);font-size:13.5px;margin-top:4px}
+  .repondu{margin-top:14px;padding-top:14px;border-top:1px solid var(--ligne)}
+  .repondu .q{font-size:13.5px;color:var(--encre-2)}
+  .repondu .r{font-size:14.5px;margin-top:4px}
+  .question{margin-top:14px;padding:14px;border-radius:var(--r-sm);background:var(--carte-2);border:1px solid var(--ligne-forte)}
+  .question .pas{font:500 12.5px/1.3 var(--sans);color:var(--discret)}
+  .question p{margin-top:8px;font-size:15px;font-weight:500}
+  .question .choix{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+  .suivante{margin-top:12px;font-size:13px;color:var(--discret)}
+
+  .import{margin-top:24px;padding:20px 22px}
+  .etapes{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .etapes li{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--ligne);border-radius:var(--r-sm);font-size:14px;color:var(--encre-2)}
+  .etapes li[aria-current="step"]{border-color:var(--ligne-forte);color:var(--encre);background:var(--carte-2)}
+  .etapes .rond{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:600 12px/1 var(--mono);background:var(--noir-4);color:var(--encre)}
+  .etapes .fini .rond{background:var(--ivoire);color:var(--noir-chaud)}
+  .apercu-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
+  .apercu-table th{text-align:left;font:500 12.5px/1.2 var(--sans);color:var(--discret);padding:8px 10px;border-bottom:1px solid var(--ligne-forte)}
+  .apercu-table td{padding:10px;border-bottom:1px solid var(--ligne);color:var(--encre-2)}
+  .apercu-table td:first-child{color:var(--encre)}
+  .apercu-table .nb{color:var(--encre)}
+  .bilan{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .import-fin{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+  .table-defile{overflow-x:auto}
+
+  @media (max-width:1180px){.grille{grid-template-columns:minmax(0,1fr)}.panneau{position:static}}
+  @media (max-width:860px){
+    .chiffres{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .lies{grid-template-columns:minmax(0,1fr)}
+    .prochaine{grid-template-columns:minmax(0,1fr)}
+    .prochaine .rang{justify-content:flex-start}
+    .historique li{grid-template-columns:minmax(0,1fr);gap:4px}
+    .etapes{grid-template-columns:minmax(0,1fr)}
+    .fiche,.import{padding:16px}
+    .fiche-tete .etat{margin-left:0}
+    .apercu-table{min-width:560px}
+    .atelier svg text{display:none}
+  }
+</style>
+</head>
+<body data-ecran="crm-atelier" data-offre="studio">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-accueil" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></symbol>
+  <symbol id="i-valider" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+  <symbol id="i-fait" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></symbol>
+  <symbol id="i-clients" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14.8c1.8.8 3 2.5 3.5 5.2"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-euro" viewBox="0 0 24 24"><path d="M17 6.5A6.5 6.5 0 007.5 12 6.5 6.5 0 0017 17.5M5 10h8M5 14h8"/></symbol>
+  <symbol id="i-stock" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5-9 5z"/><path d="M3 8v8l9 5 9-5V8"/></symbol>
+  <symbol id="i-dep" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-prise" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 01-12 0zM12 17v4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-envoi" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-cadenas" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+  <symbol id="i-horloge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+</svg>
+
+<header class="haut-mobile">
+  <button class="btn discret" type="button" aria-label="Ouvrir le menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
+  <span class="marque-mobile"><i aria-hidden="true"></i>Presti</span>
+</header>
+
+<div class="coque">
+  <nav class="barre" aria-label="Navigation principale">
+    <div class="marque"><i aria-hidden="true"></i>Presti</div>
+    <button class="nouvelle" type="button"><span class="rond"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></span>Nouvelle demande</button>
+    <ul class="nav">
+      <li><a href="centre-de-commande.html"><svg class="i" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</a></li>
+      <li><a href="centre-de-commande.html#a-valider"><svg class="i" aria-hidden="true"><use href="#i-valider"/></svg>À valider<span class="compte chaud">6</span></a></li>
+      <li><a href="ce-qui-a-ete-fait.html"><svg class="i" aria-hidden="true"><use href="#i-fait"/></svg>Ce qui a été fait</a></li>
+      <li><a href="crm-atelier.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-clients"/></svg>Clients et chantiers</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg>Conversations</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-doc"/></svg>Devis</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-euro"/></svg>Factures</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-stock"/></svg>Stock</a></li>
+    </ul>
+    <div class="nav-titre">Réglages</div>
+    <ul class="nav">
+      <li><a href="departements.html"><svg class="i" aria-hidden="true"><use href="#i-dep"/></svg>Mes départements</a></li>
+      <li><a href="connexions.html"><svg class="i" aria-hidden="true"><use href="#i-prise"/></svg>Connexions</a></li>
+    </ul>
+    <div class="barre-pied">
+      <span class="avatar" aria-hidden="true">AR</span>
+      <span>Exemple. Atelier Roux<small>Plomberie</small></span>
+      <span class="pastille-offre">Studio</span>
+    </div>
+  </nav>
+
+  <main class="travail">
+    <p class="bandeau-exemple">Maquette · données d'exemple, un plombier imaginaire</p>
+    <div class="tete">
+      <div>
+        <h1>Clients et chantiers</h1>
+        <p class="sous">Votre atelier, vos clients et vos chantiers, au même endroit qu'avant. Vos assistants tiennent tout à jour et vous posent leurs questions une par une.</p>
+      </div>
+      <div class="droite"><button class="btn" type="button">Importer un export</button><button class="btn plein" type="button">Nouveau client</button></div>
+    </div>
+
+    <nav class="onglets-crm" data-onglets-crm aria-label="Vues du CRM">
+      <a href="#" aria-current="page">Atelier</a><a href="#">Tableau de bord</a><a href="#">Suivi des devis</a><a href="#">Chantiers</a><a href="#">Clients</a><a href="#">Planning</a><a href="#">Équipe &amp; véhicules</a>
+    </nav>
+
+    <div class="grille">
+      <div>
+        <!-- Chiffres lus dans l'outil, avec source et date (C3) -->
+        <section class="chiffres entre" aria-label="Indicateurs">
+          <div class="carte chiffre" data-chiffre data-source="devis"><h3>Chiffre signé en 2026</h3><span class="gros">48 300 €</span><span class="source">lu dans <b>vos devis signés</b> le 03/11 à 7 h 30</span></div>
+          <div class="carte chiffre" data-chiffre data-source="devis"><h3>Devis sans réponse</h3><span class="gros">6 190 €</span><span class="source">lu dans <b>vos devis</b> le 03/11 à 7 h 30</span></div>
+          <div class="carte chiffre" data-chiffre data-source="fiches"><h3>Clients actifs</h3><span class="gros">38</span><span class="source">lu dans <b>vos fiches clients</b> le 03/11</span></div>
+          <div class="carte chiffre" data-chiffre data-source="declare"><h3>Délai de paiement</h3><span class="gros">19 j</span><span class="source"><b>déclaré</b> par vous le 28/10, pas encore mesuré</span></div>
+        </section>
+
+        <!-- La vue atelier existante (3D), inchangée -->
+        <figure class="carte atelier">
+          <svg viewBox="0 0 900 250" role="img" aria-label="Schéma de la vue atelier : l'atelier, le dépôt et trois chantiers en cours">
+            <rect width="900" height="250" fill="#1c1b1a"/>
+            <g stroke="rgba(250,249,245,.06)"><path d="M0 50h900M0 100h900M0 150h900M0 200h900M150 0v250M300 0v250M450 0v250M600 0v250M750 0v250"/></g>
+            <g fill="none" stroke="#c9c7be" stroke-width="1.5">
+              <path d="M90 170l90-45 90 45-90 45z"/><path d="M90 170v-50l90-45 90 45v50"/><path d="M180 75v50"/>
+            </g>
+            <text x="180" y="236" fill="#c9c7be" font-family="Hanken Grotesk, sans-serif" font-size="14" text-anchor="middle">Atelier et dépôt</text>
+            <g fill="none" stroke-width="1.5">
+              <path d="M430 150l50-25 50 25-50 25z M430 150v-30l50-25 50 25v30" stroke="#D97757"/>
+              <path d="M600 120l40-20 40 20-40 20z M600 120v-26l40-20 40 20v26" stroke="#E4B45A"/>
+              <path d="M740 175l45-22 45 22-45 22z M740 175v-28l45-22 45 22v28" stroke="#c9c7be"/>
+            </g>
+            <text x="480" y="200" fill="#faf9f5" font-family="Hanken Grotesk, sans-serif" font-size="13" text-anchor="middle">Exemple. Bernard · cuisine</text>
+            <text x="640" y="162" fill="#faf9f5" font-family="Hanken Grotesk, sans-serif" font-size="13" text-anchor="middle">Exemple. Nguyen · chauffe-eau</text>
+            <text x="785" y="222" fill="#faf9f5" font-family="Hanken Grotesk, sans-serif" font-size="13" text-anchor="middle">Exemple. Faure · entretien</text>
+            <path d="M270 160C340 150 380 150 430 150" stroke="rgba(250,249,245,.25)" stroke-dasharray="4 6" fill="none"/>
+          </svg>
+          <figcaption>La vue atelier en 3D reste la même : vos chantiers en cours, l'équipe, le stock. Ici, son schéma.<a class="btn petit" href="#">Ouvrir l'atelier</a></figcaption>
+        </figure>
+
+        <!-- Fiche client (prompt 3, écran 2) -->
+        <article class="carte fiche" aria-labelledby="fiche-nom">
+          <div class="fiche-tete">
+            <div><h2 id="fiche-nom">Exemple. Paul Bernard</h2><p>Cuisine complète · client depuis 2024 · préfère l'e-mail</p></div>
+            <span class="etat accent">Chantier en cours</span>
+          </div>
+          <div class="prochaine" data-action="prochaine-action" data-statut="a-valider">
+            <div><span class="lib">Prochaine action recommandée</span><p>Commander la crédence : il n'en reste aucune pour ce chantier.</p>
+              <p class="fait">fait : <b>besoin lu sur le devis D-0187</b> · stock lu : 0 · commande préparée chez votre fournisseur habituel, non envoyée</p></div>
+            <div class="rang"><button class="feu" type="button">Valider la commande</button><button class="btn petit" type="button" data-manuel>Commander moi-même</button></div>
+          </div>
+          <div class="lies">
+            <div class="lie"><h3>Devis lié</h3><p>D-0187 · signé le 31/10</p><p><span class="nb">4 960 €</span> TTC, 9 lignes de vos tarifs</p></div>
+            <div class="lie" data-journal="J-20469"><h3>Factures liées</h3><p>F-0141 · acompte de 30 %</p><p><span class="nb">1 488 €</span>, envoyée ce matin · <a href="#" data-journal-lien>journal</a></p></div>
+            <div class="lie"><h3>Documents et notes</h3><p>Plan de la cuisine, 6 photos</p><p>Note : accès par la cour.</p></div>
+          </div>
+          <ul class="historique" aria-label="Historique des échanges">
+            <li data-action="facture-acompte" data-statut="parti" data-journal="J-20469"><time>03/11 7:58</time><div><p class="quoi">Facture d'acompte F-0141 envoyée à Exemple. Paul Bernard</p><p class="fait">fait : <b>facture émise par vous le 31/10</b> · lien de paiement joint · <a href="#" data-journal-lien>journal J-20469</a></p></div></li>
+            <li data-action="note-commande" data-statut="fait" data-journal="J-20431"><time>02/11 18:04</time><div><p class="quoi">Vous avez répondu : « le plan de travail est commandé ».</p><p class="fait">fait : <b>chantier mis à jour</b> · plan de travail « réservé » dans le stock</p></div></li>
+            <li><time>31/10 11:20</time><div><p class="quoi">Devis D-0187 signé en ligne par le client.</p></div></li>
+          </ul>
+        </article>
+
+        <!-- Import d'un export (B10) : lire, aperçu, valider -->
+        <section class="carte import" data-import aria-labelledby="titre-import">
+          <div class="section-tete" style="margin-bottom:0"><h2 id="titre-import">Importer votre ancien fichier clients</h2><p>Rien n'est écrit avant votre validation.</p></div>
+          <ol class="etapes">
+            <li class="fini" data-etape="lire"><span class="rond">1</span>Lire · clients-2026.xlsx, 212 lignes</li>
+            <li aria-current="step" data-etape="apercu"><span class="rond">2</span>Vérifier l'aperçu</li>
+            <li data-etape="valider"><span class="rond">3</span>Valider l'import</li>
+          </ol>
+          <div class="table-defile">
+            <table class="apercu-table">
+              <thead><tr><th scope="col">Client</th><th scope="col">Ville</th><th scope="col">Dernier chantier</th><th scope="col">Montant</th><th scope="col">Ce qui sera fait</th></tr></thead>
+              <tbody>
+                <tr><td>Exemple. Inès Morel</td><td>Exempleville</td><td>Douche à l'italienne</td><td><span class="nb">2 480 €</span></td><td><span class="etat ok">nouvelle fiche</span></td></tr>
+                <tr><td>Exemple. Paul Bernard</td><td>Exempleville</td><td>Cuisine</td><td><span class="nb">4 960 €</span></td><td><span class="etat neutre">fusionné avec sa fiche</span></td></tr>
+                <tr><td>Exemple. Luc Faure</td><td>Exemple-sur-Mer</td><td>Chaudière</td><td><span class="nb">3 150 €</span></td><td><span class="etat attente">à vérifier : date illisible</span></td></tr>
+                <tr><td>Exemple. Luc Faure</td><td>Exemple-sur-Mer</td><td>Chaudière</td><td><span class="nb">3 150 €</span></td><td><span class="etat neutre">ignoré : doublon</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bilan"><span class="etat ok">186 nouvelles fiches</span><span class="etat neutre">21 fusionnées</span><span class="etat attente">2 à vérifier</span><span class="etat neutre">3 doublons ignorés</span></div>
+          <p class="source">Chaque chiffre importé portera « lu dans clients-2026.xlsx le 03/11 ». Une ligne à vérifier n'entre pas tant que vous ne l'avez pas corrigée.</p>
+          <div class="import-fin"><button class="feu" type="button">Valider l'import (207 fiches)</button><button class="btn petit" type="button">Corriger les 2 lignes</button><button class="btn petit discret" type="button">Annuler</button></div>
+        </section>
+      </div>
+
+      <!-- Une question à la fois (B4) -->
+      <aside class="carte panneau" data-panneau-questions aria-label="Les questions de votre assistant">
+        <h2>Une question à la fois</h2>
+        <p class="intro">Pour préparer le chantier Exemple. Paul Bernard, il manque encore deux réponses.</p>
+        <div class="repondu" data-reponse>
+          <p class="q">Le plan de travail est-il commandé ?</p>
+          <p class="r">Vous : oui, le plan de travail est commandé.</p>
+          <p class="fait">fait : <b>chantier mis à jour</b> · plan de travail « réservé » dans le stock</p>
+        </div>
+        <div class="question" data-question="ouverte">
+          <span class="pas">Question 2 sur 3</span>
+          <p>Le chantier démarre-t-il toujours le 12/11 ?</p>
+          <div class="choix"><button class="btn petit" type="button">Oui</button><button class="btn petit" type="button">Non, le déplacer</button><button class="btn petit discret" type="button">Je ne sais pas encore</button></div>
+        </div>
+        <p class="suivante">La question suivante (l'heure d'arrivée sur place) attend votre réponse.</p>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<nav class="bas-mobile" aria-label="Navigation mobile">
+  <a href="centre-de-commande.html"><svg class="i" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</a>
+  <a href="centre-de-commande.html#a-valider"><svg class="i" aria-hidden="true"><use href="#i-valider"/></svg>À valider<span class="compte">6</span></a>
+  <a href="crm-atelier.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-clients"/></svg>Clients</a>
+  <a href="ce-qui-a-ete-fait.html"><svg class="i" aria-hidden="true"><use href="#i-fait"/></svg>Fait</a>
+  <a href="departements.html"><svg class="i" aria-hidden="true"><use href="#i-dep"/></svg>Réglages</a>
+</nav>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accueil — maquette (centre de commande)</title>
+<meta name="maquette" content="036-010 · écran 1 · centre de commande · offre Studio">
+<link rel="stylesheet" href="maquettes.css">
+<style>
+  /* Centre de commande : une colonne de travail + le rail de l'assistant à droite (1440 px). */
+  .grille{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:28px;align-items:start}
+  .alerte{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:-8px 0 22px;font-size:14px;color:var(--encre-2)}
+  .salut{font:500 40px/1.1 var(--serif);letter-spacing:-.025em;margin-bottom:6px}
+  .salut-sous{color:var(--encre-2);margin-bottom:22px}
+
+  /* Barre du jour (B12) : « à valider » + trois priorités, un liseré par nature. */
+  .jour{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:10px}
+  .jour-compte{padding:14px 18px;display:flex;flex-direction:row;align-items:center;gap:12px}
+  .jour-compte .chiffre{font:500 44px/1 var(--mono);letter-spacing:-.04em}
+  .jour-compte .lib{color:var(--encre-2);font-size:13.5px}
+  .prio{padding:14px 16px 14px 18px;position:relative;display:flex;flex-direction:column;gap:6px}
+  .prio::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+  .prio.relancer::before{background:var(--ambre)}
+  .prio.retard::before{background:var(--rouge)}
+  .prio .nature{font-size:12px;color:var(--discret)}
+  .prio .quoi{font-weight:600;font-size:15px;line-height:1.35;color:var(--encre)}
+  .prio .quoi::after{content:" →";color:var(--discret)}
+  .prio .quoi::before{content:"";position:absolute;inset:0;border-radius:var(--r)}
+  .prio .quoi:hover{text-decoration:none}
+  .prio:has(.quoi:hover){border-color:var(--ligne-forte)}
+  .prio .detail{color:var(--encre-2);font-size:13.5px}
+  .prio .btn{align-self:flex-start;margin-top:4px}
+
+  /* Page du matin (A7) : l'argent d'abord, et elle se termine par les cartes. */
+  .matin{padding:22px 24px}
+  .matin-tete{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .matin h2{font:500 22px/1.2 var(--serif);letter-spacing:-.015em}
+  .matin-heure{color:var(--discret);font-size:13px}
+  .matin-grille{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:16px;border-top:1px solid var(--ligne)}
+  .bloc{padding:16px 18px 4px 0}
+  .bloc+.bloc{padding-left:18px;border-left:1px solid var(--ligne)}
+  .bloc h3{font:500 13px/1 var(--sans);color:var(--discret);letter-spacing:.01em;margin-bottom:10px}
+  .bloc .gros{font:500 26px/1 var(--mono);letter-spacing:-.03em}
+  .bloc p{color:var(--encre-2);font-size:14px;margin-top:8px}
+  .perte{margin-top:16px;padding:12px 14px;border-radius:var(--r-sm);background:var(--corail-voile);color:var(--encre);font-size:14px}
+  .perte b{color:var(--accent-encre)}
+  .matin-fin{margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--encre-2);font-size:14px}
+
+  /* « À valider » (A5, A19) : une ligne par sortie, un feu vert par ligne et pour tout le lot. */
+  .file{display:flex;flex-direction:column}
+  .ligne{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px 14px;padding:16px 18px;border-top:1px solid var(--ligne)}
+  .ligne:first-child{border-top:0}
+  .coche{width:20px;height:20px;margin-top:3px;accent-color:var(--ivoire)}
+  .ligne .type{font-size:12.5px;color:var(--discret);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .ligne .titre{font-weight:600;font-size:15.5px;margin-top:3px}
+  .ligne .montant{font-weight:600;color:var(--encre-2);margin-left:6px}
+  .actions{grid-column:2;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .actions .rang{display:flex;gap:6px;flex-wrap:wrap}
+  .lot-detail{margin-top:10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .lot-detail div{border:1px solid var(--ligne);border-radius:var(--r-sm);padding:9px 11px;font-size:13.5px;color:var(--encre-2)}
+  .lot-detail b{color:var(--encre);font-weight:600}
+  .barre-lot{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--ligne);color:var(--encre-2);font-size:13.5px;flex-wrap:wrap}
+  .barre-lot .feu{margin-left:auto}
+
+  /* Exceptions préparées (A6) : « sur votre bureau, solution prête ». */
+  .exceptions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .exception{padding:18px}
+  .exception .titre{font-weight:600;font-size:15.5px;margin-top:6px}
+  .exception p{color:var(--encre-2);font-size:14px;margin-top:6px}
+  .exception .rang{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .champ{display:flex;flex-direction:column;gap:5px;margin-top:10px}
+  .champ label{font-size:12.5px;color:var(--encre-2)}
+  .champ input{background:var(--noir-chaud);border:1px solid var(--ligne-forte);border-radius:var(--r-sm);color:var(--encre);font:500 15px/1 var(--mono);padding:10px 12px;width:160px}
+
+  /* Rail de l'assistant : une question à la fois (B4), la conversation, les récents. */
+  .rail{position:sticky;top:24px;display:flex;flex-direction:column;gap:12px}
+  .assistant{padding:18px}
+  .assistant h2{font:500 19px/1.2 var(--serif)}
+  .question{margin-top:14px;padding:14px;border-radius:var(--r-sm);background:var(--carte-2);border:1px solid var(--ligne-forte)}
+  .question .pas{font:500 12.5px/1.3 var(--sans);color:var(--discret)}
+  .question p{margin-top:8px;font-size:15px;font-weight:500}
+  .question .choix{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+  .echange{margin-top:14px;font-size:14px;color:var(--encre-2)}
+  .echange .vous{color:var(--encre)}
+  .saisie{margin-top:14px;display:flex;gap:8px;align-items:center;border:1px solid var(--ligne-forte);border-radius:var(--r);padding:8px 8px 8px 12px;background:var(--noir-chaud)}
+  .saisie span{color:var(--discret);font-size:14px;flex:1}
+  .saisie .btn{min-width:40px;padding:0}
+  .recents{padding:16px 18px}
+  .recents h3{font:500 13px/1 var(--sans);color:var(--discret);margin-bottom:8px}
+  .recents ul{list-style:none;margin:0;padding:0}
+  .recents li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--ligne);font-size:14px;color:var(--encre-2)}
+  .recents li:first-child{border-top:0}
+  .recents li .nb{color:var(--encre)}
+
+  @media (max-width:1180px){.grille{grid-template-columns:minmax(0,1fr)}.rail{position:static}}
+  @media (max-width:860px){
+    .alerte{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:-8px 0 22px;font-size:14px;color:var(--encre-2)}
+  .salut{font-size:30px}
+    .jour{grid-template-columns:minmax(0,1fr)}
+    .jour-compte{flex-direction:row;align-items:center}
+    .matin{padding:18px}
+    .matin-grille{grid-template-columns:minmax(0,1fr)}
+    .bloc+.bloc{padding-left:0;border-left:0;border-top:1px solid var(--ligne)}
+    .ligne{grid-template-columns:24px minmax(0,1fr);padding:14px}
+    .actions{grid-column:1/-1;align-items:stretch;flex-direction:column}
+    .actions .feu{justify-content:center}
+    .actions .rang{flex-wrap:wrap}
+    .lot-detail{grid-template-columns:minmax(0,1fr)}
+    .exceptions{grid-template-columns:minmax(0,1fr)}
+    .barre-lot .feu{margin-left:0;width:100%;justify-content:center}
+  }
+</style>
+</head>
+<body data-ecran="centre-de-commande" data-offre="studio">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-accueil" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></symbol>
+  <symbol id="i-valider" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+  <symbol id="i-fait" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></symbol>
+  <symbol id="i-clients" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14.8c1.8.8 3 2.5 3.5 5.2"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-euro" viewBox="0 0 24 24"><path d="M17 6.5A6.5 6.5 0 007.5 12 6.5 6.5 0 0017 17.5M5 10h8M5 14h8"/></symbol>
+  <symbol id="i-stock" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5-9 5z"/><path d="M3 8v8l9 5 9-5V8"/></symbol>
+  <symbol id="i-dep" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-prise" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 01-12 0zM12 17v4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-envoi" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-cadenas" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+  <symbol id="i-horloge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+</svg>
+
+<header class="haut-mobile">
+  <button class="btn discret" type="button" aria-label="Ouvrir le menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
+  <span class="marque-mobile"><i aria-hidden="true"></i>Presti</span>
+</header>
+
+<div class="coque">
+  <nav class="barre" aria-label="Navigation principale">
+    <div class="marque"><i aria-hidden="true"></i>Presti</div>
+    <button class="nouvelle" type="button"><span class="rond"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></span>Nouvelle demande</button>
+    <ul class="nav">
+      <li><a href="centre-de-commande.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</a></li>
+      <li><a href="centre-de-commande.html#a-valider"><svg class="i" aria-hidden="true"><use href="#i-valider"/></svg>À valider<span class="compte chaud">6</span></a></li>
+      <li><a href="ce-qui-a-ete-fait.html"><svg class="i" aria-hidden="true"><use href="#i-fait"/></svg>Ce qui a été fait</a></li>
+      <li><a href="crm-atelier.html"><svg class="i" aria-hidden="true"><use href="#i-clients"/></svg>Clients et chantiers</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg>Conversations</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-doc"/></svg>Devis</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-euro"/></svg>Factures</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-stock"/></svg>Stock</a></li>
+    </ul>
+    <div class="nav-titre">Réglages</div>
+    <ul class="nav">
+      <li><a href="departements.html"><svg class="i" aria-hidden="true"><use href="#i-dep"/></svg>Mes départements</a></li>
+      <li><a href="connexions.html"><svg class="i" aria-hidden="true"><use href="#i-prise"/></svg>Connexions</a></li>
+    </ul>
+    <div class="barre-pied">
+      <span class="avatar" aria-hidden="true">AR</span>
+      <span>Exemple. Atelier Roux<small>Plomberie</small></span>
+      <span class="pastille-offre">Studio</span>
+    </div>
+  </nav>
+
+  <main class="travail">
+    <p class="bandeau-exemple">Maquette · données d'exemple, rien n'est envoyé</p>
+    <p class="alerte" role="status"><span class="etat erreur">Google Drive à reconnecter</span>Le classement de vos documents est en pause. Rien n'est perdu.<a class="btn petit" href="connexions.html">Reconnecter</a></p>
+
+    <div class="grille">
+      <div>
+        <h1 class="salut">Bonjour. Voici votre mardi.</h1>
+        <p class="salut-sous">Vos assistants ont travaillé pendant la nuit. Six choses attendent votre feu vert, dont deux cas hors norme déjà préparés.</p>
+
+        <!-- Barre du jour (B12) -->
+        <section aria-label="La barre du jour" class="jour entre">
+          <div class="carte jour-compte">
+            <span class="chiffre mono">6</span>
+            <span class="lib">à valider<br>avant de partir</span>
+          </div>
+          <article class="carte prio" data-priorite="1">
+            <span class="nature">À répondre · urgent</span>
+            <a class="quoi" href="#ligne-roux">Fuite sous évier, Exemple. Claire Roux</a>
+            <span class="detail">Demande reçue à <span class="nb">7 h 52</span> sur votre page. Réponse prête.</span>
+          </article>
+          <article class="carte prio relancer" data-priorite="2">
+            <span class="nature">À relancer</span>
+            <a class="quoi" href="#ligne-lot">Devis salle d'eau, Exemple. Martin</a>
+            <span class="detail"><span class="nb">3 120 €</span> TTC, sans réponse depuis <span class="nb">6</span> jours.</span>
+          </article>
+          <article class="carte prio retard" data-priorite="3">
+            <span class="nature">En retard de paiement</span>
+            <a class="quoi" href="#ligne-dubois">Facture F-0139, Exemple. Dubois</a>
+            <span class="detail"><span class="nb">860 €</span>, échéance passée de <span class="nb">12</span> jours.</span>
+          </article>
+        </section>
+
+        <!-- Page du matin (A7) -->
+        <section class="section carte matin" aria-labelledby="titre-matin">
+          <div class="matin-tete">
+            <h2 id="titre-matin">Votre matin, en une page</h2>
+            <span class="matin-heure">calculée à <span class="nb">7 h 30</span> sur vos demandes, devis et factures</span>
+          </div>
+          <div class="matin-grille">
+            <div class="bloc">
+              <h3>Arrivé depuis hier soir</h3>
+              <span class="gros mono">3</span>
+              <p>2 demandes sur votre page, 1 e-mail d'un client existant. Les trois ont une réponse préparée.</p>
+            </div>
+            <div class="bloc">
+              <h3>Ce qui attend un oui</h3>
+              <span class="gros mono">8 670 €</span>
+              <p>de devis : un à envoyer (<span class="nb">2 480 €</span>), quatre à relancer en lot (<span class="nb">6 190 €</span>).</p>
+            </div>
+            <div class="bloc">
+              <h3>Encaissé cette semaine</h3>
+              <span class="gros mono">2 140 €</span>
+              <p>3 factures marquées payées. Reste à encaisser : <span class="nb">2 988 €</span> sur 3 factures.</p>
+            </div>
+          </div>
+          <p class="perte"><b>Où vous perdez de l'argent :</b> 4 devis (<span class="nb">6 190 €</span>) attendent une réponse depuis plus de 5 jours. Leur relance est prête dans le lot ci-dessous.</p>
+          <span class="source">Chiffres comptés par le logiciel sur vos données du <b>03/11 à 7 h 30</b>. Aucun montant n'est estimé par l'IA.</span>
+          <div class="matin-fin">La page s'arrête ici : la suite, c'est vous qui la validez.<a class="btn petit" href="#a-valider">Aller aux 6 cartes</a></div>
+        </section>
+
+        <!-- À valider (A5, A19) -->
+        <section class="section" id="a-valider" aria-labelledby="titre-valider">
+          <div class="section-tete">
+            <h2 id="titre-valider">À valider</h2>
+            <p>En Studio, rien ne part sans votre feu vert.</p>
+          </div>
+          <div class="carte">
+            <div class="barre-lot">
+              <label><input type="checkbox" class="coche" checked aria-label="Tout sélectionner"> 4 cartes sélectionnées · 7 messages au total</label>
+              <button class="feu lot" type="button" data-tout-valider>Tout valider (4)</button>
+            </div>
+            <div class="file entre">
+
+              <article class="ligne" id="ligne-roux" data-action="reponse-demande" data-statut="a-valider">
+                <input type="checkbox" class="coche" checked aria-label="Sélectionner la réponse à Exemple. Claire Roux">
+                <div>
+                  <span class="type">Réponse à une demande <span class="etat accent">urgent</span></span>
+                  <p class="titre">Exemple. Claire Roux · fuite sous évier</p>
+                  <div class="apercu" data-surface="client"><span class="de">Message préparé, signé Atelier Roux</span>Bonjour Madame Roux, merci pour votre message. Pour venir avec la bonne pièce, pouvez-vous m'envoyer une photo du dessous de l'évier ? Je vous propose un créneau dès réception.</div>
+                  <p class="fait">fait : <b>urgence repérée</b> (« fuite », « coule ») · brouillon écrit dans votre boîte · aucun créneau proposé sans votre agenda</p>
+                </div>
+                <div class="actions">
+                  <button class="feu" type="button">Valider et envoyer</button>
+                  <div class="rang"><button class="btn petit" type="button" data-manuel>Répondre moi-même</button><button class="btn petit discret" type="button">Modifier</button><button class="btn petit discret" type="button">Écarter</button></div>
+                </div>
+              </article>
+
+              <article class="ligne" data-action="envoi-devis" data-statut="a-valider">
+                <input type="checkbox" class="coche" checked aria-label="Sélectionner le devis Exemple. Girard">
+                <div>
+                  <span class="type">Envoi d'un devis</span>
+                  <p class="titre">Exemple. Laurent Girard · douche à l'italienne <span class="montant nb">2 480 € TTC</span></p>
+                  <p class="fait">fait : <b>6 lignes sur 6 reprises de vos tarifs</b> · TVA à 10 % vérifiée · PDF prêt, mentions légales complètes</p>
+                </div>
+                <div class="actions">
+                  <button class="feu" type="button">Valider et envoyer</button>
+                  <div class="rang"><button class="btn petit" type="button" data-manuel>Faire le devis moi-même</button><button class="btn petit discret" type="button">Ouvrir le devis</button><button class="btn petit discret" type="button">Écarter</button></div>
+                </div>
+              </article>
+
+              <article class="ligne" id="ligne-lot" data-action="lot-relances" data-statut="a-valider">
+                <input type="checkbox" class="coche" checked aria-label="Sélectionner le lot de relances">
+                <div>
+                  <span class="type">Lot préparé lundi · relances de devis</span>
+                  <p class="titre">4 devis sans réponse <span class="montant nb">6 190 €</span></p>
+                  <div class="lot-detail">
+                    <div><b>Reçoivent (4)</b><br>Exemple. Martin, Exemple. Rousseau, Exemple. Mercier, Exemple. Blanc</div>
+                    <div><b>Exclu (1)</b><br>Exemple. Petit : a demandé de ne plus être relancé le 28/10.</div>
+                  </div>
+                  <p class="fait">fait : <b>aucun de ces clients n'a été relancé dans les 3 derniers jours</b> (vérifié dans le registre des relances) · un message par client, à son prénom</p>
+                </div>
+                <div class="actions">
+                  <button class="feu" type="button">Valider le lot</button>
+                  <div class="rang"><button class="btn petit" type="button" data-manuel>Relancer un par un</button><button class="btn petit discret" type="button">Voir les 4 messages</button><button class="btn petit discret" type="button">Écarter</button></div>
+                </div>
+              </article>
+
+              <article class="ligne" id="ligne-dubois" data-action="relance-impaye" data-statut="a-valider">
+                <input type="checkbox" class="coche" checked aria-label="Sélectionner la relance Exemple. Dubois">
+                <div>
+                  <span class="type">Relance d'impayé · 2 sur 3</span>
+                  <p class="titre">Exemple. Dubois · facture F-0139 <span class="montant nb">860 €</span></p>
+                  <div class="apercu" data-surface="client"><span class="de">Message préparé, signé Atelier Roux</span>Bonjour, sauf erreur de ma part, la facture F-0139 du 08/10 reste à régler. Vous trouverez le lien de paiement ci-dessous. Si quelque chose bloque, dites-le-moi simplement.</div>
+                  <p class="fait">fait : <b>aucun paiement noté sur la facture</b> · première relance partie le 24/10 · ton cordial repris de vos messages</p>
+                </div>
+                <div class="actions">
+                  <button class="feu" type="button">Valider et envoyer</button>
+                  <div class="rang"><button class="btn petit" type="button" data-manuel>Appeler moi-même</button><button class="btn petit discret" type="button">Modifier</button><button class="btn petit discret" type="button">Indiquer pourquoi</button></div>
+                </div>
+              </article>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Exceptions préparées (A6) -->
+        <section class="section" aria-labelledby="titre-exceptions">
+          <div class="section-tete">
+            <h2 id="titre-exceptions">Hors norme, déjà préparé</h2>
+            <p>Deux cas sortent des règles. La solution est prête, il ne reste qu'à choisir.</p>
+          </div>
+          <div class="exceptions entre">
+            <article class="carte exception" data-action="exception-contestation" data-statut="a-valider">
+              <span class="etat erreur">contestation</span>
+              <p class="titre">Exemple. Garnier conteste la facture F-0142</p>
+              <p>Les relances sont arrêtées et le motif est rangé. Une réponse qui propose un appel est rédigée.</p>
+              <p class="fait">fait : <b>relances de F-0142 suspendues</b> · motif « contestation » rangé sur la facture · réponse rédigée, non envoyée</p>
+              <div class="rang"><button class="feu" type="button">Envoyer la réponse</button><button class="btn petit" type="button" data-manuel>Appeler moi-même</button></div>
+            </article>
+            <article class="carte exception" data-action="exception-prix" data-statut="a-valider">
+              <span class="etat attente">prix à fixer</span>
+              <p class="titre">Devis Exemple. Leroy : une ligne sans tarif</p>
+              <p>« Dépose de l'ancien ballon » n'est pas dans votre grille. Une estimation est proposée, marquée « estimé » ; le devis ne part qu'avec votre prix.</p>
+              <div class="champ"><label for="prix-leroy">Votre prix pour cette ligne (HT)</label><input id="prix-leroy" value="" placeholder="estimé : 180 €" inputmode="decimal"></div>
+              <p class="fait">fait : <b>6 lignes sur 7 reprises de vos tarifs</b> · la ligne manquante est marquée « estimé », jamais envoyée comme un prix sûr</p>
+              <div class="rang"><button class="feu" type="button">Fixer le prix et valider</button><button class="btn petit" type="button" data-manuel>Ouvrir le devis</button></div>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <!-- Rail de l'assistant -->
+      <aside class="rail" aria-label="Vos assistants">
+        <section class="carte assistant">
+          <h2>Vos assistants</h2>
+          <div class="question" data-question="ouverte">
+            <span class="pas">Question 2 sur 3 · la suivante attend votre réponse</span>
+            <p>Chantier Exemple. Bernard : le début est-il toujours prévu le 12/11 ?</p>
+            <div class="choix"><button class="btn petit" type="button">Oui</button><button class="btn petit" type="button">Non, le déplacer</button><button class="btn petit discret" type="button">Je ne sais pas encore</button></div>
+          </div>
+          <div class="echange" data-action="reponse-assistant" data-statut="fait" data-journal="J-20481">
+            <p><span class="vous">Vous, hier 18 h 04 :</span> oui, le plan de travail est commandé.</p>
+            <p class="fait">fait : <b>chantier Exemple. Bernard mis à jour</b> · plan de travail « réservé » dans le stock</p>
+          </div>
+          <div class="saisie"><span>Demandez : « Quelles factures sont impayées ? »</span><button class="btn plein" type="button" aria-label="Envoyer la demande"><svg class="i" aria-hidden="true"><use href="#i-envoi"/></svg></button></div>
+        </section>
+        <section class="carte recents" aria-label="Récents">
+          <h3>Chantiers en cours</h3>
+          <ul>
+            <li>Exemple. Bernard · cuisine<span class="nb">début le 12/11</span></li>
+            <li>Exemple. Nguyen · chauffe-eau<span class="nb">en cours</span></li>
+          </ul>
+          <h3 style="margin-top:14px">Derniers devis et factures</h3>
+          <ul>
+            <li>Devis D-0211 · Exemple. Leroy<span>prix à fixer</span></li>
+            <li>Facture F-0142 · Exemple. Garnier<span class="nb">640 €</span></li>
+            <li>Devis fournisseur · robinetterie<span class="nb">PDF</span></li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<nav class="bas-mobile" aria-label="Navigation mobile">
+  <a href="centre-de-commande.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</a>
+  <a href="centre-de-commande.html#a-valider"><svg class="i" aria-hidden="true"><use href="#i-valider"/></svg>À valider<span class="compte">6</span></a>
+  <a href="crm-atelier.html"><svg class="i" aria-hidden="true"><use href="#i-clients"/></svg>Clients</a>
+  <a href="ce-qui-a-ete-fait.html"><svg class="i" aria-hidden="true"><use href="#i-fait"/></svg>Fait</a>
+  <a href="departements.html"><svg class="i" aria-hidden="true"><use href="#i-dep"/></svg>Réglages</a>
+</nav>
+</body>
+</html>

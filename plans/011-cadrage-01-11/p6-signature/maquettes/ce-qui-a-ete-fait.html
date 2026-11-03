@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ce que vos assistants ont fait — maquette</title>
+<meta name="maquette" content="036-010 · écran 2 · ce que vos assistants ont fait · offre Signature">
+<link rel="stylesheet" href="maquettes.css">
+<style>
+  /* Un tableau à colonnes (B5) : repéré, préparé, à valider, parti. Chaque carte dit ce qui a été fait (B4). */
+  .resume{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:10px;margin-bottom:26px}
+  .resume .carte{padding:16px 18px}
+  .resume h2{font:500 13px/1 var(--sans);color:var(--discret);margin-bottom:10px}
+  .resume .gros{font:500 28px/1 var(--mono);letter-spacing:-.03em}
+  .resume .gros small{font:400 14px/1 var(--sans);color:var(--encre-2);letter-spacing:0;margin-left:6px}
+  .jauge{height:6px;border-radius:3px;background:var(--noir-4);margin-top:12px;overflow:hidden}
+  .jauge span{display:block;height:100%;background:var(--encre-2);border-radius:3px}
+  .resume p{color:var(--encre-2);font-size:13.5px;margin-top:8px}
+
+  .onglets{display:inline-flex;border:1px solid var(--ligne-forte);border-radius:var(--r-pill);padding:3px}
+  .onglets button{border:0;background:transparent;color:var(--encre-2);border-radius:var(--r-pill);padding:7px 13px;font:500 13.5px/1 var(--sans);cursor:pointer;min-height:34px}
+  .onglets button[aria-pressed="true"]{background:var(--noir-4);color:var(--encre)}
+
+  .tableau{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:start}
+  .colonne{background:rgba(250,249,245,.02);border:1px solid var(--ligne);border-radius:var(--r);padding:12px}
+  .colonne-tete{display:flex;align-items:center;gap:8px;padding:4px 4px 12px}
+  .colonne-tete h2{font:500 17px/1.2 var(--serif)}
+  .colonne-tete .compte{font:500 12px/1 var(--mono);background:var(--noir-4);border-radius:var(--r-pill);padding:4px 7px;color:var(--encre)}
+  .colonne-tete p{margin-left:auto;font-size:12px;color:var(--discret)}
+  .cartes{display:flex;flex-direction:column;gap:8px}
+  .tache{background:var(--carte);border:1px solid var(--ligne);border-radius:var(--r-sm);padding:12px 13px}
+  .tache .type{font-size:12px;color:var(--discret);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .tache .titre{font-weight:600;font-size:14.5px;line-height:1.35;margin-top:4px}
+  .tache .quand{font-size:12.5px;color:var(--encre-2);margin-top:4px}
+  .tache .rang{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .tache.delai{border-color:rgba(217,119,87,.55);background:linear-gradient(var(--corail-voile),var(--corail-voile)),var(--carte)}
+  .depart{display:flex;align-items:center;gap:12px;margin-top:10px;font-size:13px;color:var(--encre);white-space:nowrap}
+  .depart .regle{width:110px;flex:none}
+  .journal{font:500 12px/1 var(--mono);color:var(--encre-2)}
+  .en-delai{margin-bottom:18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:6px 18px;align-items:center}
+  .en-delai h2{font:500 19px/1.2 var(--serif)}
+  .en-delai p{color:var(--encre-2);font-size:13.5px}
+  .en-delai p{margin-top:4px}
+  .pied{margin-top:22px;color:var(--discret);font-size:13px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+
+  @media (max-width:1180px){.tableau{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:860px){
+    .en-delai{grid-template-columns:minmax(0,1fr)}
+    [data-colonne="a-valider"]{order:1}[data-colonne="parti"]{order:2}[data-colonne="prepare"]{order:3}[data-colonne="repere"]{order:4}
+    .resume{grid-template-columns:minmax(0,1fr)}
+    .tableau{grid-template-columns:minmax(0,1fr)}
+  }
+</style>
+</head>
+<body data-ecran="ce-qui-a-ete-fait" data-offre="signature">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-accueil" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></symbol>
+  <symbol id="i-valider" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+  <symbol id="i-fait" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></symbol>
+  <symbol id="i-clients" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14.8c1.8.8 3 2.5 3.5 5.2"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-euro" viewBox="0 0 24 24"><path d="M17 6.5A6.5 6.5 0 007.5 12 6.5 6.5 0 0017 17.5M5 10h8M5 14h8"/></symbol>
+  <symbol id="i-stock" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5-9 5z"/><path d="M3 8v8l9 5 9-5V8"/></symbol>
+  <symbol id="i-dep" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-prise" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 01-12 0zM12 17v4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-envoi" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-cadenas" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+  <symbol id="i-horloge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+</svg>
+
+<header class="haut-mobile">
+  <button class="btn discret" type="button" aria-label="Ouvrir le menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
+  <span class="marque-mobile"><i aria-hidden="true"></i>Presti</span>
+</header>
+
+<div class="coque">
+  <nav class="barre" aria-label="Navigation principale">
+    <div class="marque"><i aria-hidden="true"></i>Presti</div>
+    <button class="nouvelle" type="button"><span class="rond"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></span>Nouvelle demande</button>
+    <ul class="nav">
+      <li><a href="centre-de-commande.html"><svg class="i" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</a></li>
+      <li><a href="centre-de-commande.html#a-valider"><svg class="i" aria-hidden="true"><use href="#i-valider"/></svg>À valider<span class="compte chaud">2</span></a></li>
+      <li><a href="ce-qui-a-ete-fait.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-fait"/></svg>Ce qui a été fait</a></li>
+      <li><a href="crm-atelier.html"><svg class="i" aria-hidden="true"><use href="#i-clients"/></svg>Clients et chantiers</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg>Conversations</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-doc"/></svg>Devis</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-euro"/></svg>Factures</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-stock"/></svg>Stock</a></li>
+    </ul>
+    <div class="nav-titre">Réglages</div>
+    <ul class="nav">
+      <li><a href="departements.html"><svg class="i" aria-hidden="true"><use href="#i-dep"/></svg>Mes départements</a></li>
+      <li><a href="connexions.html"><svg class="i" aria-hidden="true"><use href="#i-prise"/></svg>Connexions</a></li>
+    </ul>
+    <div class="barre-pied">
+      <span class="avatar" aria-hidden="true">AR</span>
+      <span>Exemple. Atelier Roux<small>Plomberie</small></span>
+      <span class="pastille-offre">Signature</span>
+    </div>
+  </nav>
+
+  <main class="travail">
+    <p class="bandeau-exemple">Maquette · offre Signature · données d'exemple, rien n'est envoyé</p>
+    <div class="tete">
+      <div>
+        <h1>Ce que vos assistants ont fait</h1>
+        <p class="sous">Tout ce qui a été repéré, préparé et ce qui est parti aujourd'hui. Ce qui part seul attend 10 minutes : vous pouvez l'annuler jusque-là.</p>
+      </div>
+      <div class="droite">
+        <div class="onglets" role="group" aria-label="Période"><button type="button" aria-pressed="true">Aujourd'hui</button><button type="button" aria-pressed="false">Hier</button><button type="button" aria-pressed="false">7 jours</button></div>
+        <button class="btn" type="button">Tout mettre en pause</button>
+      </div>
+    </div>
+
+    <section class="resume" aria-label="Le jour en trois chiffres">
+      <div class="carte" data-cout-ia>
+        <h2>Coût de l'IA aujourd'hui</h2>
+        <span class="gros">0,38 €<small>sur un plafond de 2,00 € par jour</small></span>
+        <div class="jauge" role="img" aria-label="19 % du plafond du jour"><span style="width:19%"></span></div>
+        <p>23 textes rédigés ou lus par vos assistants · <span class="nb">6,90 €</span> depuis le 1<sup>er</sup> novembre. Au plafond, tout s'arrête et vous êtes prévenu.</p>
+        <span class="source">Compté à chaque appel, sur votre compte seulement.</span>
+      </div>
+      <div class="carte">
+        <h2>Envois seuls aujourd'hui</h2>
+        <span class="gros" data-plafond>4<small>sur 20 au plus par jour</small></span>
+        <div class="jauge" role="img" aria-label="4 envois sur 20"><span style="width:20%"></span></div>
+        <p>3 partis, 1 en délai. Seuls les types réglés sur « part seul » dans Mes départements.</p>
+      </div>
+      <div class="carte">
+        <h2>Vous attendent</h2>
+        <span class="gros">2<small>hors norme, préparés</small></span>
+        <p>Un rendez-vous et une relance d'impayé : ils ne partent jamais sans vous.</p>
+      </div>
+    </section>
+
+    <section class="en-delai" aria-label="Part dans quelques minutes"><div><h2>Part dans quelques minutes</h2><p>Encore annulable. Passé le délai, il rejoint « Parti ».</p></div>
+      <article class="tache delai bande" data-action="reponse-demande" data-statut="en-delai" data-journal="J-20502">
+        <span class="type">Réponse à une demande · part seul</span>
+        <p class="titre">Exemple. Claire Roux · fuite sous évier</p>
+        <div class="depart"><span class="regle" style="--reste:.7" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>part dans <b class="nb">7 min</b></span></div>
+        <p class="fait">fait : <b>urgence repérée</b> · photo demandée · relue : aucun prix, aucun créneau promis</p>
+        <div class="rang"><button class="btn petit corail" type="button">Annuler l'envoi</button><button class="btn petit" type="button">Modifier avant départ</button></div>
+      </article>
+    </section>
+
+    <div class="tableau">
+      <section class="colonne" data-colonne="repere" aria-labelledby="c-repere">
+        <div class="colonne-tete"><h2 id="c-repere">Repéré</h2><span class="compte">3</span><p>lu et rangé</p></div>
+        <div class="cartes entre">
+          <article class="tache" data-action="demande-reperee" data-statut="repere">
+            <span class="type">Nouvelle demande · votre page</span>
+            <p class="titre">Exemple. Hugo Lambert · chauffe-eau bruyant</p>
+            <p class="quand"><span class="nb">9 h 41</span></p>
+            <p class="fait">fait : <b>rangée « peut attendre »</b> · photo jointe lue : ballon de 200 litres · questions manquantes notées (accès, étage)</p>
+            <div class="rang"><button class="btn petit" type="button" data-manuel>Traiter moi-même</button></div>
+          </article>
+          <article class="tache" data-action="email-client" data-statut="repere">
+            <span class="type">E-mail · client existant</span>
+            <p class="titre">Exemple. Nguyen demande la date de passage</p>
+            <p class="quand"><span class="nb">9 h 02</span></p>
+            <p class="fait">fait : <b>rangé dans sa conversation</b> · agenda lu : deux créneaux libres jeudi</p>
+            <div class="rang"><button class="btn petit" type="button" data-manuel>Répondre moi-même</button></div>
+          </article>
+          <article class="tache" data-action="stock-bas" data-statut="repere">
+            <span class="type">Stock sous le seuil</span>
+            <p class="titre">Raccords PER 16 mm : 4 restants</p>
+            <p class="quand">seuil réglé à <span class="nb">10</span></p>
+            <p class="fait">fait : <b>besoin calculé sur vos 2 chantiers de la semaine</b> · commande préparée chez votre fournisseur habituel</p>
+            <div class="rang"><button class="btn petit" type="button" data-manuel>Commander moi-même</button></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="colonne" data-colonne="prepare" aria-labelledby="c-prepare">
+        <div class="colonne-tete"><h2 id="c-prepare">Préparé</h2><span class="compte">2</span><p>en cours</p></div>
+        <div class="cartes entre">
+          <article class="tache" data-action="devis-prepare" data-statut="prepare">
+            <span class="type">Devis</span>
+            <p class="titre">Exemple. Hugo Lambert · remplacement du chauffe-eau</p>
+            <p class="quand"><span class="nb">1 760 €</span> TTC · <span class="nb">5</span> lignes</p>
+            <p class="fait">fait : <b>5 lignes sur 5 reprises de vos tarifs</b> · TVA et mentions vérifiées · partira seul si la réponse du client confirme l'accès</p>
+            <div class="rang"><button class="btn petit" type="button">Ouvrir</button><button class="btn petit discret" type="button" data-manuel>Faire le devis moi-même</button></div>
+          </article>
+          <article class="tache" data-action="entretien-prepare" data-statut="prepare">
+            <span class="type">Rappel d'entretien</span>
+            <p class="titre">Exemple. Faure · chaudière posée il y a 11 mois</p>
+            <p class="quand">proposé pour la semaine du <span class="nb">24/11</span></p>
+            <p class="fait">fait : <b>date tirée du chantier terminé le 02/12/2025</b> · message prêt, envoi avec votre accord</p>
+            <div class="rang"><button class="btn petit discret" type="button" data-manuel>Prévenir moi-même</button></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="colonne" data-colonne="a-valider" aria-labelledby="c-valider">
+        <div class="colonne-tete"><h2 id="c-valider">À valider</h2><span class="compte">2</span><p>toujours à vous</p></div>
+        <div class="cartes entre">
+          <article class="tache" data-action="rendez-vous" data-statut="a-valider">
+            <span class="type">Rendez-vous · jamais posé seul</span>
+            <p class="titre">Exemple. Nguyen · jeudi 5/11 à 10 h</p>
+            <p class="fait">fait : <b>créneau lu libre dans votre agenda</b> · rien n'est posé tant que vous n'avez pas validé</p>
+            <div class="rang"><button class="feu" type="button">Poser le rendez-vous</button><button class="btn petit discret" type="button" data-manuel>Choisir un autre créneau</button></div>
+          </article>
+          <article class="tache" data-action="relance-impaye" data-statut="a-valider">
+            <span class="type">Relance d'impayé · 2 sur 3</span>
+            <p class="titre">Exemple. Dubois · F-0139 · <span class="nb">860 €</span></p>
+            <p class="fait">fait : <b>aucun paiement noté</b> · vous n'avez pas réglé les impayés sur « part seul »</p>
+            <div class="rang"><button class="feu" type="button">Valider et envoyer</button><button class="btn petit discret" type="button" data-manuel>Appeler moi-même</button></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="colonne" data-colonne="parti" aria-labelledby="c-parti">
+        <div class="colonne-tete"><h2 id="c-parti">Parti</h2><span class="compte">3</span><p>avec son journal</p></div>
+        <div class="cartes entre">
+          <article class="tache" data-action="relance-devis" data-statut="parti" data-journal="J-20477">
+            <span class="type">Relance de devis · e-mail</span>
+            <p class="titre">Exemple. Martin · salle d'eau · <span class="nb">3 120 €</span></p>
+            <p class="quand">partie à <span class="nb">8 h 14</span></p>
+            <p class="fait">fait : <b>registre vérifié</b> : aucune relance depuis 6 jours · deuxième relance sur trois</p>
+            <div class="rang"><button class="btn petit" type="button">Voir le message</button><a class="btn petit discret" href="#" data-journal-lien>Voir le détail</a></div>
+          </article>
+          <article class="tache" data-action="envoi-facture" data-statut="parti" data-journal="J-20469">
+            <span class="type">Facture déjà émise</span>
+            <p class="titre">F-0141, acompte, envoyée à Exemple. Bernard · <span class="nb">1 488 €</span></p>
+            <p class="quand">partie à <span class="nb">7 h 58</span></p>
+            <p class="fait">fait : <b>facture émise par vous le 31/10</b> · envoyée avec le lien de paiement</p>
+            <div class="rang"><button class="btn petit" type="button">Voir le message</button><a class="btn petit discret" href="#" data-journal-lien>Voir le détail</a></div>
+          </article>
+          <article class="tache" data-action="reponse-client" data-statut="parti" data-journal="J-20455">
+            <span class="type">Réponse à un client</span>
+            <p class="titre">Exemple. Petit · question sur l'acompte</p>
+            <p class="quand">partie à <span class="nb">7 h 31</span></p>
+            <p class="fait">fait : <b>montant repris du devis signé</b>, aucun chiffre ajouté</p>
+            <div class="rang"><button class="btn petit" type="button">Voir le message</button><a class="btn petit discret" href="#" data-journal-lien>Voir le détail</a></div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <p class="pied"><a href="#">Ouvrir le journal complet</a><span>Chaque ligne du journal dit qui a agi, quand, et ce qui a été écrit.</span></p>
+  </main>
+</div>
+
+<nav class="bas-mobile" aria-label="Navigation mobile">
+  <a href="centre-de-commande.html"><svg class="i" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</a>
+  <a href="centre-de-commande.html#a-valider"><svg class="i" aria-hidden="true"><use href="#i-valider"/></svg>À valider<span class="compte">2</span></a>
+  <a href="crm-atelier.html"><svg class="i" aria-hidden="true"><use href="#i-clients"/></svg>Clients</a>
+  <a href="ce-qui-a-ete-fait.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-fait"/></svg>Fait</a>
+  <a href="departements.html"><svg class="i" aria-hidden="true"><use href="#i-dep"/></svg>Réglages</a>
+</nav>
+</body>
+</html>

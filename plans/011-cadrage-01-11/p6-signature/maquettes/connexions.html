@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexions — maquette</title>
+<meta name="maquette" content="036-010 · écran 3 · connexions · matrice OUTILLAGE.md § 5">
+<link rel="stylesheet" href="maquettes.css">
+<style>
+  /* Une liste calme façon réglages de l'appli Claude : un outil par ligne, son état, sa preuve de lecture, un geste. */
+  .page{max-width:980px}
+  .etat-general{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .promesse{color:var(--encre-2);font-size:14px;margin-top:10px;max-width:72ch}
+  .groupe{margin-top:30px}
+  .groupe h2{font:500 20px/1.2 var(--serif);letter-spacing:-.01em;margin-bottom:10px}
+  .liste{list-style:none;margin:0;padding:0}
+  .outil{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 18px;border-top:1px solid var(--ligne)}
+  .outil:first-child{border-top:0}
+  .logo{width:40px;height:40px;border-radius:9px;display:grid;place-items:center;background:var(--noir-4);font:600 14px/1 var(--sans);color:var(--encre)}
+  .outil .nom{font-weight:600;font-size:15px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .outil .role{color:var(--encre-2);font-size:13.5px;margin-top:3px}
+  .meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;font-size:12.5px;color:var(--discret)}
+  .meta .verifie{color:var(--encre-2)}
+  .geste{display:flex;gap:8px;align-items:center;justify-content:flex-end}
+  .outil[data-etat="a-reconnecter"]{background:rgba(240,119,106,.05)}
+  .confirmer{grid-column:2/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--ligne-forte);border-radius:var(--r-sm);background:var(--carte-2);font-size:14px}
+  .confirmer p{flex:1;min-width:240px}
+  .note{grid-column:2/-1;font-size:13px;color:var(--encre-2);border-left:2px solid var(--ligne-forte);padding:2px 0 2px 10px}
+  @media (max-width:860px){
+    .outil{grid-template-columns:36px minmax(0,1fr);padding:14px}
+    .logo{width:36px;height:36px}
+    .geste{grid-column:1/-1;justify-content:stretch}
+    .geste .btn{flex:1}
+    .confirmer,.note{grid-column:1/-1}
+  }
+</style>
+</head>
+<body data-ecran="connexions" data-offre="studio">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-accueil" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></symbol>
+  <symbol id="i-valider" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+  <symbol id="i-fait" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></symbol>
+  <symbol id="i-clients" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14.8c1.8.8 3 2.5 3.5 5.2"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-euro" viewBox="0 0 24 24"><path d="M17 6.5A6.5 6.5 0 007.5 12 6.5 6.5 0 0017 17.5M5 10h8M5 14h8"/></symbol>
+  <symbol id="i-stock" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5-9 5z"/><path d="M3 8v8l9 5 9-5V8"/></symbol>
+  <symbol id="i-dep" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-prise" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 01-12 0zM12 17v4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-envoi" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-cadenas" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+  <symbol id="i-horloge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+</svg>
+
+<header class="haut-mobile">
+  <button class="btn discret" type="button" aria-label="Ouvrir le menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
+  <span class="marque-mobile"><i aria-hidden="true"></i>Presti</span>
+</header>
+
+<div class="coque">
+  <nav class="barre" aria-label="Navigation principale">
+    <div class="marque"><i aria-hidden="true"></i>Presti</div>
+    <button class="nouvelle" type="button"><span class="rond"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></span>Nouvelle demande</button>
+    <ul class="nav">
+      <li><a href="centre-de-commande.html"><svg class="i" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</a></li>
+      <li><a href="centre-de-commande.html#a-valider"><svg class="i" aria-hidden="true"><use href="#i-valider"/></svg>À valider<span class="compte chaud">6</span></a></li>
+      <li><a href="ce-qui-a-ete-fait.html"><svg class="i" aria-hidden="true"><use href="#i-fait"/></svg>Ce qui a été fait</a></li>
+      <li><a href="crm-atelier.html"><svg class="i" aria-hidden="true"><use href="#i-clients"/></svg>Clients et chantiers</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg>Conversations</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-doc"/></svg>Devis</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-euro"/></svg>Factures</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-stock"/></svg>Stock</a></li>
+    </ul>
+    <div class="nav-titre">Réglages</div>
+    <ul class="nav">
+      <li><a href="departements.html"><svg class="i" aria-hidden="true"><use href="#i-dep"/></svg>Mes départements</a></li>
+      <li><a href="connexions.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-prise"/></svg>Connexions</a></li>
+    </ul>
+    <div class="barre-pied">
+      <span class="avatar" aria-hidden="true">AR</span>
+      <span>Exemple. Atelier Roux<small>Plomberie</small></span>
+      <span class="pastille-offre">Studio</span>
+    </div>
+  </nav>
+
+  <main class="travail">
+    <div class="page">
+      <p class="bandeau-exemple">Maquette · données d'exemple, rien n'est connecté</p>
+      <div class="tete">
+        <div>
+          <h1>Connexions</h1>
+          <p class="sous">Les outils que vous utilisez déjà. Vos assistants y lisent et y préparent le travail ; chaque message arrive dans votre conversation client.</p>
+        </div>
+      </div>
+      <div class="etat-general"><span class="etat ok">3 connectés et vérifiés</span><span class="etat erreur">1 à reconnecter</span><span class="etat neutre">15 disponibles</span></div>
+      <p class="promesse">Une connexion n'est dite « vérifiée » qu'après une vraie lecture réussie. Vos autorisations sont chiffrées ; « Retirer » coupe l'accès tout de suite et efface l'autorisation.</p>
+
+      <section class="groupe" aria-labelledby="g-mail">
+        <h2 id="g-mail">Boîte mail</h2>
+        <ul class="liste carte entre">
+          <li class="outil" data-outil="gmail" data-etat="branche">
+            <span class="logo" aria-hidden="true">G</span>
+            <div><p class="nom">Gmail <span class="etat ok" data-etat-libelle>Connecté</span></p>
+              <p class="role">Lit vos nouveaux e-mails toutes les 5 minutes et écrit les réponses dans vos brouillons.</p>
+              <p class="meta"><span class="synchro">Dernière synchronisation il y a <span class="nb">3 min</span></span><span class="verifie">Vérifié le 03/11 à 7 h 02 · lecture réussie</span></p></div>
+            <div class="geste"><button class="btn petit" type="button">Retirer</button></div>
+          </li>
+          <li class="outil" data-outil="outlook" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">O</span>
+            <div><p class="nom">Outlook <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Boîte Outlook ou Microsoft 365 : lecture des e-mails, réponses en brouillon.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+          <li class="outil" data-outil="imap-smtp" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">@</span>
+            <div><p class="nom">Autre boîte (IMAP et SMTP) <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Orange, Free, SFR, OVH… avec un mot de passe d'application que vous créez chez votre fournisseur.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="groupe" aria-labelledby="g-agenda">
+        <h2 id="g-agenda">Agenda</h2>
+        <ul class="liste carte entre">
+          <li class="outil" data-outil="google-agenda" data-etat="branche">
+            <span class="logo" aria-hidden="true">GA</span>
+            <div><p class="nom">Google Agenda <span class="etat ok" data-etat-libelle>Connecté</span></p>
+              <p class="role">Lit vos créneaux libres pour en proposer. Aucun rendez-vous n'est posé sans vous.</p>
+              <p class="meta"><span class="synchro">Dernière synchronisation il y a <span class="nb">11 min</span></span><span class="verifie">Vérifié le 03/11 à 7 h 03 · lecture réussie</span></p></div>
+            <div class="geste"><button class="btn petit" type="button" aria-expanded="true">Retirer</button></div>
+            <div class="confirmer" role="group" aria-label="Confirmer le retrait de Google Agenda">
+              <p>Retirer Google Agenda ? Vos créneaux ne seront plus lus. Rien n'est effacé de votre agenda.</p>
+              <button class="btn petit corail" type="button">Retirer l'accès</button><button class="btn petit discret" type="button">Garder</button>
+            </div>
+          </li>
+          <li class="outil" data-outil="outlook-agenda" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">OA</span>
+            <div><p class="nom">Outlook Agenda <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Créneaux libres lus dans votre agenda Microsoft.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="groupe" aria-labelledby="g-docs">
+        <h2 id="g-docs">Documents et tableurs</h2>
+        <ul class="liste carte entre">
+          <li class="outil" data-outil="google-drive" data-etat="a-reconnecter">
+            <span class="logo" aria-hidden="true">D</span>
+            <div><p class="nom">Google Drive <span class="etat erreur" data-etat-libelle>À reconnecter</span></p>
+              <p class="role">Range vos devis, factures et photos de chantier dans vos dossiers.</p>
+              <p class="meta"><span>Autorisation expirée le 01/11 · dernière lecture réussie le 01/11 à 22 h 10</span></p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Reconnecter</button><button class="btn petit discret" type="button">Retirer</button></div>
+            <p class="note">Le classement des documents est en pause. Rien n'est perdu : il reprendra dès la reconnexion.</p>
+          </li>
+          <li class="outil" data-outil="onedrive" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">OD</span>
+            <div><p class="nom">OneDrive <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Même rangement, dans vos dossiers Microsoft.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+          <li class="outil" data-outil="google-sheets" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">S</span>
+            <div><p class="nom">Google Sheets <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Vos tarifs ou un export, lus pour chiffrer sur vos prix.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+          <li class="outil" data-outil="excel" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">X</span>
+            <div><p class="nom">Excel <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Les mêmes tableaux, dans OneDrive.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="groupe" aria-labelledby="g-avis">
+        <h2 id="g-avis">Avis</h2>
+        <ul class="liste carte entre">
+          <li class="outil" data-outil="fiche-google" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">F</span>
+            <div><p class="nom">Fiche Google <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Lire vos avis et y préparer une réponse. Un avis négatif vous revient toujours.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+            <p class="note">Google ouvre cet accès sur demande. En attendant, collez un avis dans la conversation : la réponse est préparée.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="groupe" aria-labelledby="g-messages">
+        <h2 id="g-messages">Messageries</h2>
+        <ul class="liste carte entre">
+          <li class="outil" data-outil="whatsapp" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">W</span>
+            <div><p class="nom">WhatsApp Business <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Les messages de vos clients arrivent dans leur conversation.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+          <li class="outil" data-outil="telegram" data-etat="branche">
+            <span class="logo" aria-hidden="true">T</span>
+            <div><p class="nom">Telegram <span class="etat ok" data-etat-libelle>Connecté</span></p>
+              <p class="role">Messages de vos clients, et vos alertes sur votre téléphone.</p>
+              <p class="meta"><span class="synchro">Dernière synchronisation il y a <span class="nb">1 min</span></span><span class="verifie">Vérifié le 02/11 à 18 h 40 · message de test reçu</span></p></div>
+            <div class="geste"><button class="btn petit" type="button">Retirer</button></div>
+          </li>
+          <li class="outil" data-outil="sms" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">SMS</span>
+            <div><p class="nom">SMS <span class="etat neutre" data-etat-libelle>Depuis votre téléphone</span></p><p class="role">Aujourd'hui, le SMS s'ouvre prêt à partir sur votre téléphone, d'un geste. L'envoi automatique ouvrira après accord sur son tarif.</p></div>
+            <div class="geste"><button class="btn petit" type="button" aria-disabled="true">Connecter l'envoi automatique</button></div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="groupe" aria-labelledby="g-reseaux">
+        <h2 id="g-reseaux">Réseaux</h2>
+        <ul class="liste carte entre">
+          <li class="outil" data-outil="facebook" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">FB</span>
+            <div><p class="nom">Facebook <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Messenger et les formulaires de vos publicités : chaque contact devient une demande.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+          <li class="outil" data-outil="instagram" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">IG</span>
+            <div><p class="nom">Instagram <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Les messages privés de votre compte professionnel.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+          <li class="outil" data-outil="linkedin" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">in</span>
+            <div><p class="nom">LinkedIn <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Les messages de votre page. Aucun contact n'est collecté.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="groupe" aria-labelledby="g-paiement">
+        <h2 id="g-paiement">Paiements</h2>
+        <ul class="liste carte entre">
+          <li class="outil" data-outil="stripe" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">St</span>
+            <div><p class="nom">Stripe <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Lit les paiements reçus, pour arrêter une relance dès que le client a payé. Ne débite rien.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="groupe" aria-labelledby="g-equipe">
+        <h2 id="g-equipe">Équipe</h2>
+        <ul class="liste carte entre">
+          <li class="outil" data-outil="slack" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">Sl</span>
+            <div><p class="nom">Slack <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">Reçoit la page du matin et les alertes dans un canal de votre choix.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+          <li class="outil" data-outil="teams" data-etat="non-branche">
+            <span class="logo" aria-hidden="true">Te</span>
+            <div><p class="nom">Teams <span class="etat neutre" data-etat-libelle>Non branché</span></p><p class="role">La même chose dans Microsoft Teams.</p></div>
+            <div class="geste"><button class="btn petit plein" type="button">Connecter</button></div>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </main>
+</div>
+
+<nav class="bas-mobile" aria-label="Navigation mobile">
+  <a href="centre-de-commande.html"><svg class="i" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</a>
+  <a href="centre-de-commande.html#a-valider"><svg class="i" aria-hidden="true"><use href="#i-valider"/></svg>À valider<span class="compte">6</span></a>
+  <a href="crm-atelier.html"><svg class="i" aria-hidden="true"><use href="#i-clients"/></svg>Clients</a>
+  <a href="ce-qui-a-ete-fait.html"><svg class="i" aria-hidden="true"><use href="#i-fait"/></svg>Fait</a>
+  <a href="departements.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-dep"/></svg>Réglages</a>
+</nav>
+</body>
+</html>

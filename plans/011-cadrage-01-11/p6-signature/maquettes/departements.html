@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mes départements — maquette</title>
+<meta name="maquette" content="036-010 · écran 4 · mes départements · vues Signature et Studio">
+<link rel="stylesheet" href="maquettes.css">
+<style>
+  /* Une page de réglages : par type de travail, « à valider » ou « part seul ». La vue Studio est la même page, verrouillée par l'offre. */
+  .page{max-width:1040px}
+  .offres{display:inline-flex;border:1px solid var(--ligne-forte);border-radius:var(--r-pill);padding:3px;margin-bottom:18px}
+  .offres a{color:var(--encre-2);border-radius:var(--r-pill);padding:9px 16px;font:500 14px/1 var(--sans);min-height:38px;display:inline-flex;align-items:center}
+  .offres a:hover{text-decoration:none;color:var(--encre)}
+  .offres .o-signature{background:var(--noir-4);color:var(--encre)}
+  body:has(#studio:target) .offres .o-signature{background:transparent;color:var(--encre-2)}
+  body:has(#studio:target) .offres .o-studio{background:var(--noir-4);color:var(--encre)}
+  .p-stu{display:none}
+  body:has(#studio:target) .p-stu{display:inline}
+  body:has(#studio:target) .p-sig{display:none}
+  #studio{display:none}
+  #studio:target{display:block}
+  body:has(#studio:target) #signature{display:none}
+  .vue{display:flex;flex-direction:column;gap:12px}
+  #studio:target{display:flex}
+
+  .reglages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .reglage{display:flex;gap:14px;align-items:center;justify-content:space-between;padding:16px 18px}
+  .reglage+.reglage{border-left:1px solid var(--ligne)}
+  .studio-bandeau{grid-template-columns:minmax(0,1fr);background:var(--corail-voile);border-color:rgba(217,119,87,.4)}
+  .nom{font-weight:600;font-size:14.5px}
+  .detail{color:var(--encre-2);font-size:13.5px;margin-top:3px}
+  .chiffre-reglage{white-space:nowrap;color:var(--encre-2);font-size:14px;margin-left:auto}
+  .chiffre-reglage b{color:var(--encre);font-size:18px;font-weight:500}
+
+  .departement{padding:4px 0}
+  .dep-tete{display:flex;gap:16px;align-items:center;padding:14px 18px 12px}
+  .dep-tete h2{font:500 20px/1.2 var(--serif);letter-spacing:-.01em}
+  .dep-tete p{color:var(--encre-2);font-size:13.5px;margin-top:3px}
+  .dep-tete .interrupteur{margin-left:auto}
+  .types{list-style:none;margin:0;padding:0}
+  .type{display:grid;grid-template-columns:minmax(0,1fr) 196px 200px;gap:16px;align-items:center;padding:12px 18px;border-top:1px solid var(--ligne)}
+  .type-mode{display:flex;justify-content:flex-start}
+  .type-info{display:flex;align-items:center;gap:12px}
+  .plafond{font-size:12.5px;color:var(--encre-2);white-space:nowrap}
+  .verrou{display:inline-flex;gap:6px;align-items:center;font-size:12.5px;color:var(--encre-2);white-space:nowrap}
+  .verrou .i{width:14px;height:14px}
+
+  .seg{display:inline-flex;border:1px solid var(--ligne-forte);border-radius:var(--r-sm);padding:2px;background:var(--noir-chaud)}
+  .seg button{border:0;background:transparent;color:var(--encre-2);border-radius:5px;padding:0 12px;min-height:34px;font:500 13.5px/1 var(--sans);cursor:pointer;transition:background-color 150ms var(--ease-out)}
+  .seg button[aria-pressed="true"]{background:var(--noir-4);color:var(--encre);font-weight:600;box-shadow:inset 0 0 0 1px rgba(250,249,245,.22)}
+  .seg button[data-mode="part-seul"][aria-pressed="true"]{background:var(--ivoire);color:var(--noir-chaud)}
+  .seg button[disabled]{cursor:not-allowed}
+  .seg button[disabled][aria-pressed="false"]{color:var(--encre-2);opacity:.6}
+
+  .interrupteur{flex:none;width:44px;height:26px;border-radius:13px;border:0;background:var(--noir-4);box-shadow:inset 0 0 0 1px rgba(250,249,245,.4);position:relative;cursor:pointer;transition:background-color 160ms var(--ease-out)}
+  .interrupteur::before{content:"";position:absolute;inset:-9px -2px}
+  .interrupteur::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--ivoire);transition:transform 160ms var(--ease-out)}
+  .interrupteur[aria-checked="true"]{background:var(--ivoire)}
+  .interrupteur[aria-checked="true"]::after{transform:translateX(18px);background:var(--noir-chaud)}
+
+  @media (max-width:860px){
+    .reglages{grid-template-columns:minmax(0,1fr)}
+    .reglage+.reglage{border-left:0;border-top:1px solid var(--ligne)}
+    .type{grid-template-columns:minmax(0,1fr);gap:10px;padding:12px 14px}
+    .type-info:empty{display:none}
+    .dep-tete{padding:14px}
+    .reglage .btn{white-space:normal;height:auto;padding:8px 11px;text-align:center}
+  }
+</style>
+</head>
+<body data-ecran="departements" data-offre="signature">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-accueil" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></symbol>
+  <symbol id="i-valider" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+  <symbol id="i-fait" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></symbol>
+  <symbol id="i-clients" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14.8c1.8.8 3 2.5 3.5 5.2"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-euro" viewBox="0 0 24 24"><path d="M17 6.5A6.5 6.5 0 007.5 12 6.5 6.5 0 0017 17.5M5 10h8M5 14h8"/></symbol>
+  <symbol id="i-stock" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5-9 5z"/><path d="M3 8v8l9 5 9-5V8"/></symbol>
+  <symbol id="i-dep" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-prise" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 01-12 0zM12 17v4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-envoi" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-cadenas" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+  <symbol id="i-horloge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+</svg>
+
+<header class="haut-mobile">
+  <button class="btn discret" type="button" aria-label="Ouvrir le menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
+  <span class="marque-mobile"><i aria-hidden="true"></i>Presti</span>
+</header>
+
+<div class="coque">
+  <nav class="barre" aria-label="Navigation principale">
+    <div class="marque"><i aria-hidden="true"></i>Presti</div>
+    <button class="nouvelle" type="button"><span class="rond"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></span>Nouvelle demande</button>
+    <ul class="nav">
+      <li><a href="centre-de-commande.html"><svg class="i" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</a></li>
+      <li><a href="centre-de-commande.html#a-valider"><svg class="i" aria-hidden="true"><use href="#i-valider"/></svg>À valider<span class="compte chaud"><span class="p-sig">2</span><span class="p-stu">6</span></span></a></li>
+      <li><a href="ce-qui-a-ete-fait.html"><svg class="i" aria-hidden="true"><use href="#i-fait"/></svg>Ce qui a été fait</a></li>
+      <li><a href="crm-atelier.html"><svg class="i" aria-hidden="true"><use href="#i-clients"/></svg>Clients et chantiers</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg>Conversations</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-doc"/></svg>Devis</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-euro"/></svg>Factures</a></li>
+      <li><a href="#"><svg class="i" aria-hidden="true"><use href="#i-stock"/></svg>Stock</a></li>
+    </ul>
+    <div class="nav-titre">Réglages</div>
+    <ul class="nav">
+      <li><a href="departements.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-dep"/></svg>Mes départements</a></li>
+      <li><a href="connexions.html"><svg class="i" aria-hidden="true"><use href="#i-prise"/></svg>Connexions</a></li>
+    </ul>
+    <div class="barre-pied">
+      <span class="avatar" aria-hidden="true">AR</span>
+      <span>Exemple. Atelier Roux<small>Plomberie</small></span>
+      <span class="pastille-offre"><span class="p-sig">Signature</span><span class="p-stu">Studio</span></span>
+    </div>
+  </nav>
+
+  <main class="travail">
+    <div class="page">
+      <p class="bandeau-exemple">Maquette · données d'exemple, aucun réglage n'est enregistré</p>
+      <div class="tete">
+        <div>
+          <h1>Mes départements</h1>
+          <p class="sous">Pour chaque type de travail, choisissez : vous validez, ou il part seul. Ce qui part seul attend 10 minutes et reste dans « Ce que vos assistants ont fait ».</p>
+        </div>
+      </div>
+      <nav class="offres" aria-label="Voir la page selon l'offre"><a class="o-signature" href="#signature">Signature</a><a class="o-studio" href="#studio">Studio</a></nav>
+<section class="vue" id="signature" data-offre-vue="signature" aria-label="Vue Signature">
+<div class="carte reglages">
+  <div class="reglage"><div><p class="nom">Envois seuls</p><p class="detail">Coupez ici et tout repasse en « à valider », tout de suite.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur-general><span class="sr">Envois seuls</span></button></div>
+  <div class="reglage"><div><p class="nom">Plafond du jour</p><p class="detail">Au-delà, ce qui reste attend demain ou votre clic. Aujourd'hui : <span class="nb">4</span> envois.</p></div><span class="chiffre-reglage" data-plafond><b class="mono">20</b> par jour</span><button class="btn petit" type="button">Modifier</button></div>
+  <div class="reglage"><div><p class="nom">Délai pour annuler</p><p class="detail">Tout ce qui part seul attend avant de partir.</p></div><span class="chiffre-reglage"><b class="mono">10</b> minutes</span></div>
+</div>
+<article class="carte departement" data-departement="accueil">
+  <header class="dep-tete"><div><h2>Accueil et réponse</h2><p>Lit vos demandes et vos e-mails, prépare la réponse en moins d'une minute.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Accueil et réponse en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="reponse-demande"><div class="type-texte"><p class="nom">Réponse à une nouvelle demande</p><p class="detail">Une demande sensible (litige, prix ferme, client mécontent) vous revient toujours.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour reponse-demande"><button type="button" data-mode="a-valider" aria-pressed="false">À valider</button><button type="button" data-mode="part-seul" aria-pressed="true">Part seul</button></div></div><div class="type-info"><span class="plafond"><span class="nb">1 sur 8</span> aujourd'hui</span></div></li>
+    <li class="type" data-type="reponse-client"><div class="type-texte"><p class="nom">Réponse à un client existant</p><p class="detail">Questions de suivi, date de passage, documents.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour reponse-client"><button type="button" data-mode="a-valider" aria-pressed="false">À valider</button><button type="button" data-mode="part-seul" aria-pressed="true">Part seul</button></div></div><div class="type-info"><span class="plafond"><span class="nb">1 sur 8</span> aujourd'hui</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="devis">
+  <header class="dep-tete"><div><h2>Devis</h2><p>Chiffre sur vos tarifs ; une ligne sans tarif est marquée « estimé » et attend votre prix.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Devis en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="envoi-devis"><div class="type-texte"><p class="nom">Envoi d'un devis</p><p class="detail">Part seul seulement si tous ses prix viennent de vos tarifs.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour envoi-devis"><button type="button" data-mode="a-valider" aria-pressed="false">À valider</button><button type="button" data-mode="part-seul" aria-pressed="true">Part seul</button></div></div><div class="type-info"><span class="plafond"><span class="nb">0 sur 5</span> aujourd'hui</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="suivi">
+  <header class="dep-tete"><div><h2>Suivi et relances</h2><p>Relance à J+2, J+5 et J+10, jamais deux fois en trois jours.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Suivi et relances en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="relance-conversation"><div class="type-texte"><p class="nom">Relance d'une conversation</p><p class="detail">Quand un client ne répond plus.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour relance-conversation"><button type="button" data-mode="a-valider" aria-pressed="false">À valider</button><button type="button" data-mode="part-seul" aria-pressed="true">Part seul</button></div></div><div class="type-info"><span class="plafond"><span class="nb">0 sur 8</span> aujourd'hui</span></div></li>
+    <li class="type" data-type="relance-devis"><div class="type-texte"><p class="nom">Relance d'un devis</p><p class="detail">Rien si le client a écrit, appelé ou signé entre-temps.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour relance-devis"><button type="button" data-mode="a-valider" aria-pressed="false">À valider</button><button type="button" data-mode="part-seul" aria-pressed="true">Part seul</button></div></div><div class="type-info"><span class="plafond"><span class="nb">1 sur 8</span> aujourd'hui</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="facturation">
+  <header class="dep-tete"><div><h2>Facturation et encaissement</h2><p>Prépare la facture quand le chantier est fini ; relance jusqu'au paiement ou au motif.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Facturation et encaissement en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="envoi-facture"><div class="type-texte"><p class="nom">Envoi d'une facture déjà émise</p><p class="detail">La facture que vous avez émise, avec son lien de paiement.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour envoi-facture"><button type="button" data-mode="a-valider" aria-pressed="false">À valider</button><button type="button" data-mode="part-seul" aria-pressed="true">Part seul</button></div></div><div class="type-info"><span class="plafond"><span class="nb">1 sur 5</span> aujourd'hui</span></div></li>
+    <li class="type" data-type="relance-impaye"><div class="type-texte"><p class="nom">Relance d'impayé</p><p class="detail">S'arrête au paiement, ou au motif que vous rangez (contestation, échéancier).</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour relance-impaye"><button type="button" data-mode="a-valider" aria-pressed="true">À valider</button><button type="button" data-mode="part-seul" aria-pressed="false">Part seul</button></div></div><div class="type-info"></div></li>
+    <li class="type" data-type="emettre-facture"><div class="type-texte"><p class="nom">Émettre une facture, marquer payée</p><p class="detail">C'est de l'argent : toujours votre clic.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour emettre-facture"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="jamais"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Toujours à vous</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="apres">
+  <header class="dep-tete"><div><h2>Après-chantier et avis</h2><p>Demande l'avis par un canal que le client a accepté ; prépare les réponses.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Après-chantier et avis en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="demande-avis"><div class="type-texte"><p class="nom">Demande d'avis après chantier</p><p class="detail">Pas encore ouvert à l'envoi seul.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour demande-avis"><button type="button" data-mode="a-valider" aria-pressed="true">À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="non-ouvert"><svg class="i" aria-hidden="true"><use href="#i-horloge"/></svg>Bientôt, après essais</span></div></li>
+    <li class="type" data-type="rappel-entretien"><div class="type-texte"><p class="nom">Rappel d'entretien</p><p class="detail">Pas encore ouvert à l'envoi seul.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour rappel-entretien"><button type="button" data-mode="a-valider" aria-pressed="true">À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="non-ouvert"><svg class="i" aria-hidden="true"><use href="#i-horloge"/></svg>Bientôt, après essais</span></div></li>
+    <li class="type" data-type="avis-negatif"><div class="type-texte"><p class="nom">Réponse à un avis négatif</p><p class="detail">Vous revient toujours, quelle que soit l'offre.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour avis-negatif"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="jamais"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Toujours à vous</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="operations">
+  <header class="dep-tete"><div><h2>Agenda, chantiers et stock</h2><p>Lit vos créneaux libres et votre stock ; prépare rendez-vous et commandes.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Agenda, chantiers et stock en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="rendez-vous"><div class="type-texte"><p class="nom">Rendez-vous sur un créneau libre</p><p class="detail">Le créneau est lu dans votre agenda ; il ne se pose qu'après votre clic.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour rendez-vous"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="jamais"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Toujours à vous</span></div></li>
+    <li class="type" data-type="rappel-veille"><div class="type-texte"><p class="nom">Rappel la veille du rendez-vous</p><p class="detail">Pas encore ouvert à l'envoi seul.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour rappel-veille"><button type="button" data-mode="a-valider" aria-pressed="true">À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="non-ouvert"><svg class="i" aria-hidden="true"><use href="#i-horloge"/></svg>Bientôt, après essais</span></div></li>
+    <li class="type" data-type="commande-fournisseur"><div class="type-texte"><p class="nom">Commande fournisseur</p><p class="detail">C'est une dépense : toujours votre clic.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour commande-fournisseur"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="jamais"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Toujours à vous</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="direction">
+  <header class="dep-tete"><div><h2>Votre direction</h2><p>Pour vous seul : rien n'y part chez un client.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Votre direction en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-tache-interne="page-matin"><div class="type-texte"><p class="nom">Page du matin</p><p class="detail">Chaque jour à 7 h 30, pour vous seul.</p></div><div class="type-mode"></div><div class="type-info"><span class="verrou" data-verrou="interne">Pour vous seul</span></div></li>
+    <li class="type" data-tache-interne="rapport-lundi"><div class="type-texte"><p class="nom">Rapport du lundi</p><p class="detail">Ce qui a rapporté la semaine passée, en euros.</p></div><div class="type-mode"></div><div class="type-info"><span class="verrou" data-verrou="interne">Pour vous seul</span></div></li>
+  </ul>
+</article>
+</section>
+<section class="vue" id="studio" data-offre-vue="studio" aria-label="Vue Studio">
+<div class="carte reglages studio-bandeau">
+  <div class="reglage"><div><p class="nom">En Studio, rien ne part sans votre clic</p><p class="detail">Vos assistants préparent tout, comme en Signature. Chaque envoi attend votre feu vert dans « À valider ».</p></div><a class="btn petit" href="#signature">Voir ce que Signature envoie seul</a></div>
+</div>
+<article class="carte departement" data-departement="accueil">
+  <header class="dep-tete"><div><h2>Accueil et réponse</h2><p>Lit vos demandes et vos e-mails, prépare la réponse en moins d'une minute.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Accueil et réponse en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="reponse-demande"><div class="type-texte"><p class="nom">Réponse à une nouvelle demande</p><p class="detail">Une demande sensible (litige, prix ferme, client mécontent) vous revient toujours.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour reponse-demande"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="offre" data-capacite="plateforme.ia.auto"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Part seul : inclus dans Signature</span></div></li>
+    <li class="type" data-type="reponse-client"><div class="type-texte"><p class="nom">Réponse à un client existant</p><p class="detail">Questions de suivi, date de passage, documents.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour reponse-client"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="offre" data-capacite="assistant.pilote"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Part seul : inclus dans Signature</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="devis">
+  <header class="dep-tete"><div><h2>Devis</h2><p>Chiffre sur vos tarifs ; une ligne sans tarif est marquée « estimé » et attend votre prix.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Devis en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="envoi-devis"><div class="type-texte"><p class="nom">Envoi d'un devis</p><p class="detail">Part seul seulement si tous ses prix viennent de vos tarifs.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour envoi-devis"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="offre" data-capacite="assistant.pilote"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Part seul : inclus dans Signature</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="suivi">
+  <header class="dep-tete"><div><h2>Suivi et relances</h2><p>Relance à J+2, J+5 et J+10, jamais deux fois en trois jours.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Suivi et relances en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="relance-conversation"><div class="type-texte"><p class="nom">Relance d'une conversation</p><p class="detail">Quand un client ne répond plus.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour relance-conversation"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="offre" data-capacite="relances.auto"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Part seul : inclus dans Signature</span></div></li>
+    <li class="type" data-type="relance-devis"><div class="type-texte"><p class="nom">Relance d'un devis</p><p class="detail">Rien si le client a écrit, appelé ou signé entre-temps.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour relance-devis"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="offre" data-capacite="assistant.pilote"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Part seul : inclus dans Signature</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="facturation">
+  <header class="dep-tete"><div><h2>Facturation et encaissement</h2><p>Prépare la facture quand le chantier est fini ; relance jusqu'au paiement ou au motif.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Facturation et encaissement en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="envoi-facture"><div class="type-texte"><p class="nom">Envoi d'une facture déjà émise</p><p class="detail">La facture que vous avez émise, avec son lien de paiement.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour envoi-facture"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="offre" data-capacite="assistant.pilote"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Part seul : inclus dans Signature</span></div></li>
+    <li class="type" data-type="relance-impaye"><div class="type-texte"><p class="nom">Relance d'impayé</p><p class="detail">S'arrête au paiement, ou au motif que vous rangez (contestation, échéancier).</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour relance-impaye"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="offre" data-capacite="factures.relances.auto"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Part seul : inclus dans Signature</span></div></li>
+    <li class="type" data-type="emettre-facture"><div class="type-texte"><p class="nom">Émettre une facture, marquer payée</p><p class="detail">C'est de l'argent : toujours votre clic.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour emettre-facture"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="jamais"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Toujours à vous</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="apres">
+  <header class="dep-tete"><div><h2>Après-chantier et avis</h2><p>Demande l'avis par un canal que le client a accepté ; prépare les réponses.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Après-chantier et avis en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="demande-avis"><div class="type-texte"><p class="nom">Demande d'avis après chantier</p><p class="detail">Pas encore ouvert à l'envoi seul.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour demande-avis"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="non-ouvert"><svg class="i" aria-hidden="true"><use href="#i-horloge"/></svg>Bientôt, après essais</span></div></li>
+    <li class="type" data-type="rappel-entretien"><div class="type-texte"><p class="nom">Rappel d'entretien</p><p class="detail">Pas encore ouvert à l'envoi seul.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour rappel-entretien"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="non-ouvert"><svg class="i" aria-hidden="true"><use href="#i-horloge"/></svg>Bientôt, après essais</span></div></li>
+    <li class="type" data-type="avis-negatif"><div class="type-texte"><p class="nom">Réponse à un avis négatif</p><p class="detail">Vous revient toujours, quelle que soit l'offre.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour avis-negatif"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="jamais"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Toujours à vous</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="operations">
+  <header class="dep-tete"><div><h2>Agenda, chantiers et stock</h2><p>Lit vos créneaux libres et votre stock ; prépare rendez-vous et commandes.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Agenda, chantiers et stock en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-type="rendez-vous"><div class="type-texte"><p class="nom">Rendez-vous sur un créneau libre</p><p class="detail">Le créneau est lu dans votre agenda ; il ne se pose qu'après votre clic.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour rendez-vous"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="jamais"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Toujours à vous</span></div></li>
+    <li class="type" data-type="rappel-veille"><div class="type-texte"><p class="nom">Rappel la veille du rendez-vous</p><p class="detail">Pas encore ouvert à l'envoi seul.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour rappel-veille"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="non-ouvert"><svg class="i" aria-hidden="true"><use href="#i-horloge"/></svg>Bientôt, après essais</span></div></li>
+    <li class="type" data-type="commande-fournisseur"><div class="type-texte"><p class="nom">Commande fournisseur</p><p class="detail">C'est une dépense : toujours votre clic.</p></div><div class="type-mode"><div class="seg" role="group" aria-label="Mode pour commande-fournisseur"><button type="button" data-mode="a-valider" aria-pressed="true" disabled>À valider</button><button type="button" data-mode="part-seul" aria-pressed="false" disabled>Part seul</button></div></div><div class="type-info"><span class="verrou" data-verrou="jamais"><svg class="i" aria-hidden="true"><use href="#i-cadenas"/></svg>Toujours à vous</span></div></li>
+  </ul>
+</article>
+<article class="carte departement" data-departement="direction">
+  <header class="dep-tete"><div><h2>Votre direction</h2><p>Pour vous seul : rien n'y part chez un client.</p></div><button class="interrupteur" type="button" role="switch" aria-checked="true" data-interrupteur><span class="sr">Votre direction en marche</span></button></header>
+  <ul class="types">
+    <li class="type" data-tache-interne="page-matin"><div class="type-texte"><p class="nom">Page du matin</p><p class="detail">Chaque jour à 7 h 30, pour vous seul.</p></div><div class="type-mode"></div><div class="type-info"><span class="verrou" data-verrou="interne">Pour vous seul</span></div></li>
+    <li class="type" data-tache-interne="rapport-lundi"><div class="type-texte"><p class="nom">Rapport du lundi</p><p class="detail">Ce qui a rapporté la semaine passée, en euros.</p></div><div class="type-mode"></div><div class="type-info"><span class="verrou" data-verrou="interne">Pour vous seul</span></div></li>
+  </ul>
+</article>
+</section>
+    </div>
+  </main>
+</div>
+
+<nav class="bas-mobile" aria-label="Navigation mobile">
+  <a href="centre-de-commande.html"><svg class="i" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</a>
+  <a href="centre-de-commande.html#a-valider"><svg class="i" aria-hidden="true"><use href="#i-valider"/></svg>À valider<span class="compte"><span class="p-sig">2</span><span class="p-stu">6</span></span></a>
+  <a href="crm-atelier.html"><svg class="i" aria-hidden="true"><use href="#i-clients"/></svg>Clients</a>
+  <a href="ce-qui-a-ete-fait.html"><svg class="i" aria-hidden="true"><use href="#i-fait"/></svg>Fait</a>
+  <a href="departements.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-dep"/></svg>Réglages</a>
+</nav>
+</body>
+</html>
