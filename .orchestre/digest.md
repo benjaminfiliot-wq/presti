@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-11-03T23:16:00Z
+# Digest — 2026-11-03T23:39:20Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (hermes, antigravity, codex) : 214 tâche(s) PASS, 228390 ligne(s) · faites par Claude Code : 203 tâche(s) PASS, 520824 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
-**État** — file : 60 · en cours : 0 · faites : 479 · refusées : 17
+**Mesure** — déléguées (hermes, antigravity, codex) : 214 tâche(s) PASS, 228390 ligne(s) · faites par Claude Code : 204 tâche(s) PASS, 526793 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
+**État** — file : 60 · en cours : 0 · faites : 480 · refusées : 17
 
 ## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -83,6 +83,7 @@
 | 028-021 | feature | file | codex | — | Nouvelle séquence de prospection PAR ÉTAPES (méthode de Benj du 08/10) : messages courts qui questionnent d'abord (d'où viennent vos clients ? que trouve-t-on sur Google quand on vous cherche ? un chantier vous rapporte combien ?), relances programmées, puis maquette ; respect de toutes les gardes de conformité existantes |
 | 029-002 | test | file | antigravity | — | La qualité des réponses de l'assistant de gestion est mesurée avec le vrai modèle sur les scénarios de plans/016-assistant.md §7 (ai-eval --assistant), et chaque scénario échoué est expliqué |
 | 036-022 | feature | file | claude-code | — | Prompt 6, mise en service (Benj, 03/11 vers 16 h 30 : « active aussi toutes les automatisations en les testant bien sûr » ; « les migrations, je te laisse gérer tout » ; « tu peux créer un compte test gratuitement pour tester ») : suivre plans/011-cadrage-01-11/p6-signature/mise-en-service.md étape par étape — migrations posées par la session principale (0185, puis 0192 reprise de 032-047 et jugée, puis 0193), réglages de n8n, publication des enfants avant les parents, puis activation en MODE OMBRE sur un compte de test créé par l'API admin et supprimé après, comparaison, puis réel par offre et par type |
+| 036-042 | feature | fait | claude-code | PASS | 2026-11-03T23:39:19Z · 0s · 5969 l. |
 | 036-038 | feature | fait | cx-reel2 | PASS | 2026-11-03T23:16:00Z · 3s · 0 l. |
 | 036-041 | feature | fait | ag-tableau2 | PASS | 2026-11-03T21:53:50Z · 5s · 3816 l. |
 | 036-036 | feature | fait | cx-depts | PASS | 2026-11-03T21:14:59Z · 1s · 0 l. |
@@ -122,6 +123,5 @@
 | 036-003 | feature | fait | claude-code | PASS | 2026-11-03T11:06:18Z · 69s · 0 l. |
 | 036-001 | feature | fait | claude-code | PASS | 2026-11-03T11:01:32Z · 76s · 0 l. |
 | 036-002 | feature | fait | claude-code | PASS | 2026-11-03T10:22:50Z · 78s · 2566 l. |
-| 036-000 | feature | fait | claude-code | PASS | 2026-11-03T09:53:31Z · 1s · 0 l. |
 
-… 456 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 457 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

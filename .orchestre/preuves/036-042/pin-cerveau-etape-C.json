@@ -1,0 +1,1079 @@
+{
+ "Toutes les minutes": [
+  {
+   "json": {
+    "timestamp": "2026-11-03T08:00:00.000Z"
+   }
+  }
+ ],
+ "Lire les interrupteurs généraux": [
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "departement": "tous",
+    "palier": "ombre",
+    "en_marche": true
+   }
+  }
+ ],
+ "Lire les réglages des départements": [
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "departement": "tous",
+    "palier": "ombre",
+    "en_marche": true,
+    "plafond_jour": 20
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "departement": "accueil",
+    "palier": "ombre",
+    "en_marche": true,
+    "plafond_jour": 20
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "departement": "devis",
+    "palier": "ombre",
+    "en_marche": true,
+    "plafond_jour": 20
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "departement": "suivi",
+    "palier": "ombre",
+    "en_marche": true,
+    "plafond_jour": 20
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "departement": "facturation",
+    "palier": "ombre",
+    "en_marche": true,
+    "plafond_jour": 20
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "departement": "apres",
+    "palier": "ombre",
+    "en_marche": true,
+    "plafond_jour": 20
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "departement": "operations",
+    "palier": "ombre",
+    "en_marche": true,
+    "plafond_jour": 20
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "departement": "direction",
+    "palier": "ombre",
+    "en_marche": true,
+    "plafond_jour": 20
+   }
+  }
+ ],
+ "Lire les comptes et leurs offres": [
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-0000000000c6",
+    "plan": "signature",
+    "nom": "Exemple. Bâti-Démo",
+    "suppression_demandee_le": null,
+    "est_demo": false
+   }
+  }
+ ],
+ "Lire les modes de réponse": [
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "mode_reponse": "assistee"
+   }
+  }
+ ],
+ "Lire les événements non traités": [
+  {
+   "json": {
+    "id": "eeeeeeee-0000-4000-8000-c60000000000",
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "type": "demande_recue",
+    "objet_type": "lead",
+    "objet_id": "00000000-0000-4000-8000-c60000000001",
+    "cle": "demande_recue:00000000-0000-4000-8000-c60000000001",
+    "faits": {
+     "lead_id": "00000000-0000-4000-8000-c60000000001"
+    },
+    "survenu_le": "2026-11-03T07:59:00.000Z"
+   }
+  },
+  {
+   "json": {
+    "id": "eeeeeeee-0000-4000-8000-c60000000001",
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "type": "devis_a_preparer",
+    "objet_type": "devis",
+    "objet_id": "00000000-0000-4000-8000-c60000000011",
+    "cle": "devis_a_preparer:00000000-0000-4000-8000-c60000000011",
+    "faits": {
+     "devis_id": "00000000-0000-4000-8000-c60000000011",
+     "lead_id": "00000000-0000-4000-8000-c60000000012",
+     "qualifiee": true,
+     "escalade": null,
+     "lignes": 2
+    },
+    "survenu_le": "2026-11-03T08:00:00.000Z"
+   }
+  },
+  {
+   "json": {
+    "id": "eeeeeeee-0000-4000-8000-c60000000002",
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "type": "relance_due",
+    "objet_type": "lead",
+    "objet_id": "00000000-0000-4000-8000-c60000000021",
+    "cle": "relance_due:00000000-0000-4000-8000-c60000000021:r1",
+    "faits": {
+     "lead_id": "00000000-0000-4000-8000-c60000000021",
+     "rang": 1,
+     "echeance": "2026-11-03T07:00:00.000Z",
+     "statut": "repondu",
+     "canal": "email",
+     "depuis_le": "2026-11-01T09:00:00.000Z",
+     "registre_lu": true,
+     "sujet_escalade": false,
+     "pause_generale": false,
+     "stop": false
+    },
+    "survenu_le": "2026-11-03T08:00:00.000Z"
+   }
+  },
+  {
+   "json": {
+    "id": "eeeeeeee-0000-4000-8000-c60000000003",
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "type": "impaye_echu",
+    "objet_type": "facture",
+    "objet_id": "00000000-0000-4000-8000-c60000000031",
+    "cle": "impaye_echu:00000000-0000-4000-8000-c60000000031:j10",
+    "faits": {
+     "facture_id": "00000000-0000-4000-8000-c60000000031",
+     "date_echeance": "2026-10-20",
+     "jours_retard": 14,
+     "palier": 10,
+     "montant_ttc_centimes": 123400,
+     "contestation": false
+    },
+    "survenu_le": "2026-11-03T08:00:00.000Z"
+   }
+  },
+  {
+   "json": {
+    "id": "eeeeeeee-0000-4000-8000-c60000000004",
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "type": "chantier_termine",
+    "objet_type": "chantier",
+    "objet_id": "00000000-0000-4000-8000-c60000000041",
+    "cle": "chantier_termine:00000000-0000-4000-8000-c60000000041",
+    "faits": {
+     "chantier_id": "00000000-0000-4000-8000-c60000000041",
+     "date_fin_reelle": "2026-11-01",
+     "devis_id": "00000000-0000-4000-8000-c60000000042",
+     "email_connu": true,
+     "opposition": false,
+     "litige": false
+    },
+    "survenu_le": "2026-11-03T08:00:00.000Z"
+   }
+  },
+  {
+   "json": {
+    "id": "eeeeeeee-0000-4000-8000-c60000000005",
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "type": "stock_sous_le_seuil",
+    "objet_type": "materiau",
+    "objet_id": "00000000-0000-4000-8000-c60000000051",
+    "cle": "stock_sous_le_seuil:00000000-0000-4000-8000-c60000000051:2026-11-03",
+    "faits": {
+     "materiau_id": "00000000-0000-4000-8000-c60000000051",
+     "quantite": 2,
+     "seuil": 10,
+     "jour": "2026-11-03"
+    },
+    "survenu_le": "2026-11-03T08:00:00.000Z"
+   }
+  },
+  {
+   "json": {
+    "id": "eeeeeeee-0000-4000-8000-c60000000006",
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "type": "page_du_matin",
+    "objet_type": null,
+    "objet_id": null,
+    "cle": "page_du_matin:2026-11-03",
+    "faits": {
+     "jour": "2026-11-03"
+    },
+    "survenu_le": "2026-11-03T08:00:00.000Z"
+   }
+  }
+ ],
+ "Lire les demandes des événements": [
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-c60000000001",
+    "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+    "canal": "page_p",
+    "created_at": "2026-11-03T07:59:00.000Z",
+    "message": "Exemple. Bonjour, je voudrais refaire la faïence de ma salle de bain (environ 8 m2). Possible en décembre ?",
+    "urgence": "normal",
+    "type_chantier": "Exemple. Salle de bain",
+    "photos": []
+   }
+  }
+ ],
+ "Lire les tables des départements": [
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "id": "00000000-0000-4000-8000-c60000000011",
+      "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+      "lead_id": "00000000-0000-4000-8000-c60000000012",
+      "numero": "DEV-EX-0101",
+      "statut": "brouillon"
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "devis_id": "00000000-0000-4000-8000-c60000000011",
+      "ordre": 0,
+      "designation": "Exemple. Dépose de l’ancien WC",
+      "quantite": 1,
+      "source_prix": "vos tarifs · pose"
+     },
+     {
+      "devis_id": "00000000-0000-4000-8000-c60000000011",
+      "ordre": 1,
+      "designation": "Exemple. Fourniture WC suspendu",
+      "quantite": 1,
+      "source_prix": null
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "id": "00000000-0000-4000-8000-c60000000031",
+      "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+      "numero": "FAC-EX-0101",
+      "statut": "emise",
+      "avoir_de": null,
+      "tva_regime": "tva",
+      "date_echeance": "2026-10-20"
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+      "actif": true,
+      "jours": [
+       3,
+       10,
+       21
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": []
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "id": "00000000-0000-4000-8000-c60000000021",
+      "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+      "statut": "repondu",
+      "prise_en_main": false,
+      "created_at": "2026-10-30T09:00:00.000Z"
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "id": "00000000-0000-4000-8000-c60000000041",
+      "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+      "titre": "Exemple. Salle de bain",
+      "statut": "termine",
+      "date_fin_reelle": "2026-11-01"
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+      "avis": true,
+      "entretien": true,
+      "actif_depuis": "2026-10-01"
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "id": "00000000-0000-4000-8000-c60000000051",
+      "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+      "nom": "Exemple. Colle carrelage",
+      "unite": "sac"
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "id": "00000000-0000-4000-8000-c60000000031",
+      "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+      "numero": "FAC-EX-0101",
+      "total_ttc": 1234,
+      "date_echeance": "2026-10-20"
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "id": "00000000-0000-4000-8000-c60000000061",
+      "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+      "numero": "DEV-EX-0090",
+      "total_ttc": 2500,
+      "envoye_le": "2026-10-20T10:00:00.000Z"
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": [
+     {
+      "id": "00000000-0000-4000-8000-c60000000062",
+      "artisan_id": "00000000-0000-4000-8000-0000000000c6",
+      "urgence": "urgent"
+     }
+    ]
+   }
+  },
+  {
+   "json": {
+    "statusCode": 200,
+    "headers": {},
+    "body": []
+   }
+  }
+ ],
+ "Lire les jours fériés (calendrier.api.gouv.fr)": [
+  {
+   "json": {
+    "2026-11-01": "Toussaint",
+    "2026-11-11": "Armistice",
+    "2026-12-25": "Jour de Noël"
+   }
+  }
+ ],
+ "Appeler presti-dep-accueil": [
+  {
+   "json": {
+    "contrat": "presti-dep-accueil@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:accueil:0000000000c6:2026-11-03T2324",
+    "simulation": true,
+    "resultat": {
+     "demandes_recues": 1,
+     "classes": {
+      "peut_attendre": 1
+     },
+     "spam": [],
+     "escalades": [],
+     "questions": [
+      {
+       "demande_id": "00000000-0000-4000-8000-c60000000001",
+       "question": "Pour quand souhaitez-vous les travaux ?"
+      }
+     ],
+     "decisions": [
+      {
+       "demande_id": "00000000-0000-4000-8000-c60000000001",
+       "action": "carte",
+       "motif": "inactif"
+      }
+     ],
+     "cartes": [],
+     "pilote": [],
+     "brouillons_demandes": [
+      "00000000-0000-4000-8000-c60000000001"
+     ],
+     "refus_porte": [],
+     "deja_faits": [],
+     "photos": [],
+     "note_du_chef": {
+      "statut": "ok",
+      "avis": "rien_a_signaler",
+      "note": "Banc 036-042 : chef épinglé, aucun appel au modèle.",
+      "points_a_confirmer": [],
+      "points_ecartes": 0,
+      "specialistes_consultes": [],
+      "appels_specialistes": [],
+      "pilotes_retenus": []
+     }
+    },
+    "effets_prevus": [
+     {
+      "effet": "ecrire_note",
+      "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+      "lead_id": "00000000-0000-4000-8000-c60000000001",
+      "cle": "h:qualification:d1972677e8e8a387c2bfada8449d3e4a696f9c090bb75020",
+      "note": 0,
+      "priorite": "a_revoir",
+      "categorie": "Exemple. Salle de bain",
+      "doublon": false
+     },
+     {
+      "effet": "demander_brouillon",
+      "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+      "cle": "brouillon:00000000-0000-4000-8000-c60000000001",
+      "objet_type": "demande",
+      "objet_id": "00000000-0000-4000-8000-c60000000001",
+      "pour": "036-003"
+     },
+     {
+      "effet": "inserer_journal",
+      "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+      "lignes": 3,
+      "cles": [
+       "j:0eb05b22aa0f976070183c0c5851569f743ed4d75f54043d:0",
+       "j:0eb05b22aa0f976070183c0c5851569f743ed4d75f54043d:1",
+       "j:0eb05b22aa0f976070183c0c5851569f743ed4d75f54043d:2"
+      ]
+     }
+    ],
+    "effets_faits": [],
+    "journal": [],
+    "erreurs": []
+   }
+  }
+ ],
+ "Appeler presti-dep-devis": [
+  {
+   "json": {
+    "contrat": "presti-dep-devis@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:devis:0000000000c6:2026-11-03T2324",
+    "simulation": true,
+    "resultat": {
+     "evenements_recus": 1,
+     "rejets": [],
+     "non_traites": [],
+     "a_preparer": [],
+     "devis_prets": [
+      {
+       "cle": "h:decision:5ddc458e10514f67b8c57747a886c93e86114b1df29c6778",
+       "devis_id": "00000000-0000-4000-8000-c60000000011",
+       "numero": "DEV-EX-0101",
+       "total_ttc_affiche": null,
+       "cible": "carte",
+       "motif_carte": "escalade",
+       "tous_prix_sources": false,
+       "a_estimer": 2,
+       "envoi": "au clic de l artisan",
+       "lignes": [
+        {
+         "rang": 0,
+         "designation": "Exemple. Dépose de l’ancien WC",
+         "prix_affiche": null,
+         "statut_prix": "estime",
+         "source": null,
+         "repere": null
+        },
+        {
+         "rang": 1,
+         "designation": "Exemple. Fourniture WC suspendu",
+         "prix_affiche": null,
+         "statut_prix": "estime",
+         "source": null,
+         "repere": null
+        }
+       ]
+      }
+     ],
+     "cartes": [
+      "h:decision:5ddc458e10514f67b8c57747a886c93e86114b1df29c6778"
+     ],
+     "pilote": [],
+     "refus_porte": [],
+     "deja_faits": [],
+     "sorties_vers_un_modele": 0,
+     "note_du_chef": {
+      "statut": "ok",
+      "avis": "rien_a_signaler",
+      "note": "Banc 036-042 : chef épinglé, aucun appel au modèle.",
+      "points_a_confirmer": [],
+      "points_ecartes": 0,
+      "specialistes_consultes": [],
+      "appels_specialistes": [],
+      "pilotes_retenus": []
+     }
+    },
+    "effets_prevus": [
+     {
+      "effet": "ecrire_carte",
+      "table": "opportunites",
+      "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+      "entetes": {
+       "Prefer": "resolution=ignore-duplicates,return=representation"
+      },
+      "corps": {
+       "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+       "cle": "h:decision:5ddc458e10514f67b8c57747a886c93e86114b1df29c6778",
+       "type_action": "devis_pret",
+       "objet_type": "devis",
+       "objet_id": "00000000-0000-4000-8000-c60000000011"
+      }
+     },
+     {
+      "effet": "inserer_journal",
+      "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+      "lignes": 3,
+      "cles": [
+       "j:1dc715b0bf4e977a782ccae9afc409d2ccd3d5566ab8737a:0",
+       "j:1dc715b0bf4e977a782ccae9afc409d2ccd3d5566ab8737a:1",
+       "j:1dc715b0bf4e977a782ccae9afc409d2ccd3d5566ab8737a:2"
+      ]
+     }
+    ],
+    "effets_faits": [],
+    "journal": [],
+    "erreurs": []
+   }
+  }
+ ],
+ "Appeler presti-dep-suivi": [
+  {
+   "json": {
+    "contrat": "presti-dep-suivi@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:suivi:0000000000c6:2026-11-03T2324",
+    "simulation": true,
+    "resultat": {
+     "objets_recus": 1,
+     "decisions": [
+      {
+       "objet_id": "00000000-0000-4000-8000-c60000000021",
+       "objet_type": "conversation",
+       "palier": 1,
+       "issue": "reste_du",
+       "motifs": [
+        "refus_porte",
+        "lecture_en_erreur"
+       ],
+       "note": 0,
+       "tranche": "froid"
+      }
+     ],
+     "prepare": 0,
+     "part_seul": 0,
+     "attente_lot": 0,
+     "reste_du": 1,
+     "annule": 0,
+     "rien": 0,
+     "lot": null,
+     "refus_porte": [
+      "00000000-0000-4000-8000-c60000000021"
+     ],
+     "rejets": {
+      "autre_compte": 0
+     },
+     "note_du_chef": {
+      "statut": "ok",
+      "avis": "rien_a_signaler",
+      "note": "Banc 036-042 : chef épinglé, aucun appel au modèle.",
+      "points_a_confirmer": [],
+      "points_ecartes": 0,
+      "specialistes_consultes": [],
+      "appels_specialistes": [],
+      "pilotes_retenus": []
+     }
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [],
+    "erreurs": []
+   }
+  }
+ ],
+ "Appeler presti-dep-facturation": [
+  {
+   "json": {
+    "contrat": "presti-dep-facturation@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:facturation:0000000000c6:2026-11-03T2324",
+    "simulation": true,
+    "resultat": {
+     "evenements_recus": 1,
+     "rejets": [],
+     "non_traites": [],
+     "factures_a_emettre": [],
+     "relances": [
+      {
+       "cle": "h:decision:65a744b3931cd2b235d68c681a7f71c70b3ea9b304faadcb",
+       "facture_id": "00000000-0000-4000-8000-c60000000031",
+       "numero": "FAC-EX-0101",
+       "palier": 2,
+       "total_ttc_affiche": null,
+       "cible": "carte",
+       "part_seul": false,
+       "a_relire": false,
+       "brouillon": {
+        "objet": "Exemple. Facture FAC-EX-0101",
+        "texte": "{{salutation}}\n\nExemple. Nous nous permettons de vous rappeler la facture FAC-EX-0101 d’un montant de 1 234,00 € TTC, arrivée à échéance le 20 octobre 2026. Si vous avez une question, nous restons à votre disposition.\n\nExemple. Bâti-Démo"
+       }
+      }
+     ],
+     "relances_arretees": [],
+     "cartes_motif": [],
+     "cartes": [
+      "h:decision:65a744b3931cd2b235d68c681a7f71c70b3ea9b304faadcb"
+     ],
+     "pilote": [],
+     "refus_porte": [],
+     "deja_faits": [],
+     "sorties_vers_un_modele": 0,
+     "note_du_chef": {
+      "statut": "ok",
+      "avis": "rien_a_signaler",
+      "note": "Banc 036-042 : chef épinglé, aucun appel au modèle.",
+      "points_a_confirmer": [],
+      "points_ecartes": 0,
+      "specialistes_consultes": [],
+      "appels_specialistes": [],
+      "pilotes_retenus": []
+     }
+    },
+    "effets_prevus": [
+     {
+      "effet": "ecrire_carte",
+      "table": "opportunites",
+      "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+      "entetes": {
+       "Prefer": "resolution=ignore-duplicates,return=representation"
+      },
+      "corps": {
+       "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+       "cle": "h:decision:65a744b3931cd2b235d68c681a7f71c70b3ea9b304faadcb",
+       "type_action": "relance_impaye",
+       "objet_type": "facture",
+       "objet_id": "00000000-0000-4000-8000-c60000000031",
+       "palier": 2,
+       "canal": "email",
+       "brouillon": {
+        "objet": "Exemple. Facture FAC-EX-0101",
+        "texte": "{{salutation}}\n\nExemple. Nous nous permettons de vous rappeler la facture FAC-EX-0101 d’un montant de 1 234,00 € TTC, arrivée à échéance le 20 octobre 2026. Si vous avez une question, nous restons à votre disposition.\n\nExemple. Bâti-Démo"
+       }
+      }
+     },
+     {
+      "effet": "inserer_journal",
+      "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+      "lignes": 3,
+      "cles": [
+       "j:fbe515b8681b001dc13b94c6e0e8ef7ff0c9e36c9b54c1ed:0",
+       "j:fbe515b8681b001dc13b94c6e0e8ef7ff0c9e36c9b54c1ed:1",
+       "j:fbe515b8681b001dc13b94c6e0e8ef7ff0c9e36c9b54c1ed:2"
+      ]
+     }
+    ],
+    "effets_faits": [],
+    "journal": [],
+    "erreurs": []
+   }
+  }
+ ],
+ "Appeler presti-dep-apres": [
+  {
+   "json": {
+    "contrat": "presti-dep-apres@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:apres:0000000000c6:2026-11-03T2324",
+    "simulation": true,
+    "resultat": {
+     "departement": "apres",
+     "arret": null,
+     "evenements_recus": 1,
+     "propositions": [
+      {
+       "cle": "avis:00000000-0000-4000-8000-c60000000041",
+       "chantier_id": "00000000-0000-4000-8000-c60000000041",
+       "type": "demande_avis",
+       "echeance": "2026-11-04"
+      }
+     ],
+     "demandes_avis": {
+      "dues": 1,
+      "destinataires": 1,
+      "exclus": {},
+      "reportes": 0
+     },
+     "entretiens": {
+      "dus": 0,
+      "cartes": 0,
+      "exclus": {}
+     },
+     "avis": {
+      "recus": 0,
+      "negatifs": 0,
+      "suspects": 0,
+      "cartes": 0
+     },
+     "cartes": 1,
+     "parti_seul": 0,
+     "note_du_chef": {
+      "statut": "ok",
+      "avis": "rien_a_signaler",
+      "note": "Banc 036-042 : chef épinglé, aucun appel au modèle.",
+      "points_a_confirmer": [],
+      "points_ecartes": 0,
+      "specialistes_consultes": [],
+      "appels_specialistes": [],
+      "pilotes_retenus": []
+     }
+    },
+    "effets_prevus": [
+     {
+      "effet": "preparer_carte_lot",
+      "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+      "cle": "lot-avis:2026-11-04",
+      "type": "demande_avis_lot",
+      "destinataires": [
+       {
+        "chantier_id": "00000000-0000-4000-8000-c60000000041",
+        "cle": "avis:00000000-0000-4000-8000-c60000000041",
+        "canal": "email",
+        "texte": "Bonjour Madame, Monsieur,\n\nMerci de nous avoir fait confiance pour « Exemple. Salle de bain ». Votre avis sur notre fiche en ligne, quel qu’il soit, nous intéresse et aide les prochains clients à se décider.\n\nPour toute question sur le chantier, répondez simplement à ce message.\n\nExemple. Bâti-Démo",
+        "echeance": "2026-11-04",
+        "a_ecrit_depuis_fin": false
+       }
+      ],
+      "exclus": [],
+      "reportes": 0,
+      "part_seul": false,
+      "publication": "apres_clic_artisan",
+      "pied": "PIED_APRES"
+     }
+    ],
+    "effets_faits": [],
+    "journal": [],
+    "erreurs": []
+   }
+  }
+ ],
+ "Appeler presti-dep-operations": [
+  {
+   "json": {
+    "contrat": "presti-dep-operations@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:operations:0000000000c6:2026-11-03T2324",
+    "simulation": true,
+    "resultat": {
+     "genre": "stock",
+     "jour": "2026-11-04",
+     "source": "stock lu le 04/11/2026",
+     "cartes": [
+      {
+       "cle": "cmd:00000000-0000-4000-8000-c60000000051:2026-11-04",
+       "type_action": "commande_fournisseur",
+       "statut": "a_valider",
+       "article": "00000000-0000-4000-8000-c60000000051",
+       "titre": "Commander Exemple. Colle carrelage",
+       "reste": 2,
+       "seuil": 10,
+       "unite": "sac",
+       "fournisseur": null,
+       "quantite": null,
+       "prix": null,
+       "montant_centimes": null,
+       "a_completer": [
+        "fournisseur à choisir dans votre liste",
+        "quantité à saisir"
+       ],
+       "envoi": "jamais seul : une commande est de l’argent, elle attend le clic de l’artisan"
+      }
+     ],
+     "sauts": {
+      "au_dessus_du_seuil": 0,
+      "commande_ouverte": 0,
+      "deja_prepare": 0
+     },
+     "note_du_chef": {
+      "statut": "ok",
+      "avis": "rien_a_signaler",
+      "note": "Banc 036-042 : chef épinglé, aucun appel au modèle.",
+      "points_a_confirmer": [],
+      "points_ecartes": 0,
+      "specialistes_consultes": [],
+      "appels_specialistes": [],
+      "pilotes_retenus": []
+     }
+    },
+    "effets_prevus": [
+     {
+      "effet": "preparer_carte",
+      "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+      "cle": "cmd:00000000-0000-4000-8000-c60000000051:2026-11-04",
+      "type_action": "commande_fournisseur",
+      "statut": "a_valider",
+      "titre": "Commander Exemple. Colle carrelage",
+      "fournisseur_id": null,
+      "quantite": null,
+      "montant_centimes": null,
+      "a_completer": [
+       "fournisseur à choisir dans votre liste",
+       "quantité à saisir"
+      ]
+     },
+     {
+      "effet": "noter_evenement",
+      "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+      "type": "commandes_preparees",
+      "cle": "ev:cmd:2026-11-04",
+      "faits": {
+       "cartes": 1
+      }
+     }
+    ],
+    "effets_faits": [],
+    "journal": [],
+    "erreurs": []
+   }
+  }
+ ],
+ "Appeler presti-dep-direction": [
+  {
+   "json": {
+    "contrat": "presti-dep-direction@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:direction:0000000000c6:2026-11-03T2324",
+    "simulation": true,
+    "resultat": {
+     "genre": "matin",
+     "jour": "2026-11-04",
+     "page": {
+      "date": "2026-11-04",
+      "titre": "Votre point du jour",
+      "blocs": [
+       {
+        "type": "argent",
+        "titre": "L’argent d’abord",
+        "lignes": [
+         {
+          "id": "impayes",
+          "libelle": "Impayés",
+          "nombre": 1,
+          "montant_centimes": 123400,
+          "texte": "Impayés : 1 facture échue, 1 234 €",
+          "source": "factures émises et échues non payées, lues le 2026-11-04",
+          "date": "2026-11-04",
+          "confiance": "mesure"
+         },
+         {
+          "id": "devis_a_signer",
+          "libelle": "Devis à signer",
+          "nombre": 1,
+          "montant_centimes": 250000,
+          "texte": "Devis à signer : 1 devis sans réponse depuis 7 jours ou plus, 2 500 €",
+          "source": "devis envoyés sans réponse, lus le 2026-11-04",
+          "date": "2026-11-04",
+          "confiance": "mesure"
+         },
+         {
+          "id": "demandes_sans_reponse",
+          "libelle": "Demandes sans réponse",
+          "nombre": 1,
+          "montant_centimes": null,
+          "texte": "Demandes sans réponse : 1",
+          "source": "demandes en attente de réponse, lues le 2026-11-04",
+          "date": "2026-11-04",
+          "confiance": "mesure"
+         }
+        ]
+       },
+       {
+        "type": "priorites",
+        "titre": "Vos trois priorités",
+        "priorites": [
+         {
+          "cle": "devis:00000000-0000-4000-8000-c60000000061",
+          "objet": "devis:00000000-0000-4000-8000-c60000000061",
+          "famille": "devis",
+          "montant": 2500,
+          "href": "/devis/00000000-0000-4000-8000-c60000000061",
+          "texte": "Relancer ce client : 2 500 € en attente",
+          "detail": "DEV-EX-0090 · sans réponse depuis 15 jours"
+         },
+         {
+          "cle": "impaye:00000000-0000-4000-8000-c60000000031",
+          "objet": "facture:00000000-0000-4000-8000-c60000000031",
+          "famille": "impaye",
+          "montant": 1234,
+          "href": "/factures",
+          "texte": "Un client vous doit 1 234 €",
+          "detail": "FAC-EX-0101 · 15 jours de retard"
+         },
+         {
+          "cle": "demande:00000000-0000-4000-8000-c60000000062",
+          "objet": "lead:00000000-0000-4000-8000-c60000000062",
+          "famille": "demande",
+          "montant": null,
+          "href": "/messages",
+          "texte": "Répondre à une nouvelle demande",
+          "detail": "Demande urgente"
+         }
+        ],
+        "autres": 0
+       },
+       {
+        "type": "cartes",
+        "titre": "À valider",
+        "cartes": [],
+        "nombre": 0,
+        "non_montrees": 0,
+        "texte": "Rien à valider"
+       }
+      ],
+      "dernier_bloc": "cartes",
+      "rien_a_signaler": false
+     },
+     "note_du_chef": {
+      "statut": "ok",
+      "avis": "rien_a_signaler",
+      "note": "Banc 036-042 : chef épinglé, aucun appel au modèle.",
+      "points_a_confirmer": [],
+      "points_ecartes": 0,
+      "specialistes_consultes": [],
+      "appels_specialistes": [],
+      "pilotes_retenus": []
+     }
+    },
+    "effets_prevus": [
+     {
+      "effet": "deposer_page",
+      "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+      "cle": "pm:2026-11-04",
+      "destination": "centre_de_commande",
+      "jour": "2026-11-04"
+     },
+     {
+      "effet": "noter_evenement",
+      "organisation_id": "00000000-0000-4000-8000-0000000000c6",
+      "type": "page_du_matin_prete",
+      "cle": "pm:2026-11-04",
+      "faits": {
+       "priorites": 3,
+       "cartes": 0
+      }
+     }
+    ],
+    "effets_faits": [],
+    "journal": [],
+    "erreurs": []
+   }
+  }
+ ],
+ "Marquer les événements traités": [
+  {
+   "json": {
+    "banc": "epingle"
+   }
+  }
+ ],
+ "Appeler lib-journaliser": [
+  {
+   "json": {
+    "statut": "ok",
+    "simulation": true
+   }
+  }
+ ],
+ "Appeler lib-battement": [
+  {
+   "json": {
+    "statut": "ok",
+    "simulation": true
+   }
+  }
+ ]
+}

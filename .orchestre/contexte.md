@@ -1,4 +1,4 @@
-# Carte du code — presti (2026-11-03T23:16:00Z)
+# Carte du code — presti (2026-11-03T23:39:20Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -496,5 +496,5 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 
 ## Scripts — `scripts/` (601 .mjs, dont 88 suites e2e)
 
-## Orchestre — file : 60 · en cours : 0 · faites : 479 · refusées : 17
+## Orchestre — file : 60 · en cours : 0 · faites : 480 · refusées : 17
 

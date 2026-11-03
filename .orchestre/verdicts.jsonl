@@ -1289,3 +1289,4 @@
 {"id":"036-038","verdict":"FAIL","ligne":"FAIL — Studio envoie sans clic","code":1,"date":"2026-11-03T22:05:01Z","duree_s":0,"agent":"cx-reel2","executant":"codex","lignes":0,"dossier":"en-cours"}
 {"id":"036-038","verdict":"FAIL","ligne":"FAIL — Signature envoie un type interdit","code":1,"date":"2026-11-03T22:11:52Z","duree_s":0,"agent":"cx-reel2","executant":"codex","lignes":0,"dossier":"en-cours"}
 {"id":"036-038","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T23:16:00Z","duree_s":3,"agent":"cx-reel2","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"036-042","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T23:39:19Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":5969,"dossier":"fait"}
