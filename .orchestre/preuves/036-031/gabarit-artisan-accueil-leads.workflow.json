@@ -1,0 +1,958 @@
+{
+  "id": "WYLdqfoVOLHSdSoY",
+  "name": "gabarit-artisan-accueil-leads",
+  "active": false,
+  "isArchived": false,
+  "versionId": "d32be0c7-cb08-4b5c-b321-38885c7ab818",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 14,
+  "createdAt": "2026-11-03T13:01:06.717Z",
+  "updatedAt": "2026-11-03T13:01:06.717Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "connections": {
+    "Cadence : Facebook Lead Ads": {
+      "main": [
+        [
+          {
+            "node": "Compte de cette copie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compte de cette copie": {
+      "main": [
+        [
+          {
+            "node": "Lire les départements (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les réglages": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation (lecture)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation (lecture)": {
+      "main": [
+        [
+          {
+            "node": "Leads enregistrés (simulation)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lire les leads Facebook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leads enregistrés (simulation)": {
+      "main": [
+        [
+          {
+            "node": "Normaliser les leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normaliser les leads": {
+      "main": [
+        [
+          {
+            "node": "À déposer ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les leads Facebook": {
+      "main": [
+        [
+          {
+            "node": "Normaliser les leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "À déposer ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation (dépôt)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ignoré (journal)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation (dépôt)": {
+      "main": [
+        [
+          {
+            "node": "Dépôt prévu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Déposer dans la plateforme",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Déposer dans la plateforme": {
+      "main": [
+        [
+          {
+            "node": "Journaliser le dépôt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les départements (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire le compte (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le compte (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire le pilote (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le pilote (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire le mode de réponse (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le mode de réponse (base)": {
+      "main": [
+        [
+          {
+            "node": "Compter les départs du pilote (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compter les départs du pilote (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les faits déjà écrits (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les faits déjà écrits (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les cartes déjà posées (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les cartes déjà posées (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les connexions (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les connexions (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les réglages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "33135964-a614-4d13-8f1c-0ea8d2848648",
+      "name": "Cadence : Facebook Lead Ads",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        192
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "notes": "Toutes les 15 minutes. n8n n'est pas exposé sur Internet : il tire les leads par l'API Graph au lieu de les recevoir par webhook."
+    },
+    {
+      "id": "255bf850-6930-412d-b0a8-510a3fa57def",
+      "name": "Compte de cette copie",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        192
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "organisation",
+              "name": "organisation_id",
+              "value": "A_RENSEIGNER_A_LA_COPIE",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "Une copie du gabarit sert un seul compte : l'identifiant se pose ici, à la copie."
+    },
+    {
+      "id": "81be8785-395b-4745-b5b4-03fa82c88e08",
+      "name": "Porte simulation (lecture)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        192
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "sim",
+              "leftValue": "={{ $json.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, aucun appel à Facebook, un lead enregistré et fictif. Faux : la lecture réelle par l'API Graph."
+    },
+    {
+      "id": "00050444-6160-4c69-be2b-e80706f33c89",
+      "name": "Leads enregistrés (simulation)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Simulation : un lead enregistre, au format de l'API Graph (/{formulaire}/leads). Exemple. Donnees fictives.\nconst courriel = 'paul.exemple' + String.fromCharCode(64) + 'exemple.invalid';\nreturn [{ json: { id: 'lead-0001', created_time: '2026-11-06T09:30:00+0100', field_data: [\n  { name: 'full_name', values: ['Exemple. Paul'] },\n  { name: 'email', values: [courriel] },\n  { name: 'phone_number', values: ['+33600000000'] },\n  { name: 'message', values: ['Exemple. Bonjour, je souhaite un devis pour une terrasse en bois.'] },\n] } }];"
+      },
+      "notes": "Simulation : un lead fictif daté, au format de l'API Graph. Rien n'est lu chez Facebook."
+    },
+    {
+      "id": "c11f2ae7-1046-4dad-9cc5-31dbed154bc9",
+      "name": "Normaliser les leads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Gabarit Accueil, leads : un lead Facebook devient un message normalise (canal d'origine facebook_lead).\nconst cfg = $('Lire les réglages').first().json || {};\nconst org = $('Compte de cette copie').first().json.organisation_id;\nconst simulation = cfg.simulation !== false;\nconst coupe = cfg.interrupteur_general === false || cfg.interrupteur_departement === false;\nconst champ = (lead, nom) => { const f = (lead.field_data || []).find((x) => x.name === nom); return f && f.values && f.values[0] ? String(f.values[0]) : ''; };\nconst vus = new Set();\nconst sortie = [];\nfor (const it of $input.all()) {\n  const l = it.json;\n  const cle = 'fl:' + org + ':' + l.id;\n  const courriel = champ(l, 'email').trim().toLowerCase();\n  const tel = champ(l, 'phone_number').trim();\n  let motif = null;\n  if (coupe) motif = 'interrupteur_coupe';\n  else if (!l.id) motif = 'sans_identifiant';\n  else if (!courriel && !tel) motif = 'sans_contact';\n  else if (vus.has(cle)) motif = 'doublon';\n  if (!motif) vus.add(cle);\n  sortie.push({ json: { organisation_id: org, simulation: simulation, source: 'facebook_lead', canal_origine: 'facebook_lead', cle: cle, ref_externe: String(l.id || ''), id_boite: '', fil_externe: '', conversation_cle: courriel ? 'c:' + courriel : 'tel:' + tel, de_adresse: courriel, de_nom: champ(l, 'full_name').slice(0, 120), telephone: tel, sujet: 'Demande reçue par Facebook Lead Ads', texte: (champ(l, 'message') || 'Demande de devis reçue par un formulaire Facebook.').slice(0, 4000), recu_le: l.created_time || new Date().toISOString(), a_photo: false, repondre_au_client: true, voie: motif ? 'ignorer' : 'deposer', motif: motif } });\n}\nreturn sortie;"
+      },
+      "notes": "Un lead Facebook devient le même message normalisé qu'un courriel. Un lead sans moyen de contact est ignoré ; un lead déjà vu n'entre pas deux fois (clé du lead)."
+    },
+    {
+      "id": "2331e271-ccff-4d73-a37a-810aae7433bc",
+      "name": "Lire les leads Facebook",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        896,
+        288
+      ],
+      "parameters": {
+        "hostUrl": "graph.facebook.com",
+        "httpRequestMethod": "GET",
+        "graphApiVersion": "v21.0",
+        "node": "={{ $('Lire les réglages').first().json.formulaire_leads_id }}",
+        "edge": "leads",
+        "options": {
+          "fields": {
+            "field": [
+              {
+                "name": "id"
+              },
+              {
+                "name": "created_time"
+              },
+              {
+                "name": "field_data"
+              }
+            ]
+          }
+        }
+      },
+      "notes": "Lit les leads du formulaire Lead Ads du client par l'API Graph (GET, champs nommés). Écrit : rien chez Facebook. Identifiant : celui du client, branché par lui sur sa copie."
+    },
+    {
+      "id": "2819130e-9d1f-477f-bd57-e025f1834456",
+      "name": "À déposer ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        192
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "voie",
+              "leftValue": "={{ $json.voie }}",
+              "rightValue": "deposer",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "6f3f3d9e-f8f3-4375-bbe0-2718555fe7b9",
+      "name": "Porte simulation (dépôt)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "sim",
+              "leftValue": "={{ $json.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien n'est écrit dans la plateforme. Faux : le dépôt réel."
+    },
+    {
+      "id": "8eaeeadc-5779-4770-99c0-d649423ee928",
+      "name": "Dépôt prévu",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Simulation : rien n'est ecrit dans la plateforme ; le depot prevu part au journal.\nconst prevus = $input.all().map((it) => ({ effet: 'deposer_message', organisation_id: it.json.organisation_id, cle: it.json.cle, conversation_cle: it.json.conversation_cle, canal_origine: it.json.canal_origine }));\nreturn [{ json: { simulation: true, effets_prevus: prevus, effets_faits: [] } }];"
+      },
+      "notes": "Simulation : le dépôt qui aurait lieu, listé et non fait."
+    },
+    {
+      "id": "c47d19a8-38dd-4ff4-a064-bd9a4ccc417d",
+      "name": "Déposer dans la plateforme",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1792,
+        192
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/rpc/deposer_message",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p: { artisan_id: $json.organisation_id, cle: $json.cle, conversation_cle: $json.conversation_cle, canal_origine: $json.canal_origine, ref_externe: $json.ref_externe, sujet: $json.sujet, texte: $json.texte, de_nom: $json.de_nom, de_adresse: $json.de_adresse, telephone: $json.telephone, recu_le: $json.recu_le, a_photo: $json.a_photo, repondre_au_client: $json.repondre_au_client } }) }}",
+        "options": {}
+      },
+      "notes": "Écrit chez le client : le lead est rangé dans la plateforme, dans la conversation du client, avec son canal d'origine « facebook_lead » (fonction de dépôt idempotente par clé). Rien ne part vers le client."
+    },
+    {
+      "id": "777006c9-fad3-4856-9c05-0eb94a22d91b",
+      "name": "Journaliser le dépôt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2016,
+        192
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/evenements_metier?on_conflict=artisan_id,cle",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "resolution=ignore-duplicates,return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ artisan_id: $('Normaliser les leads').item.json.organisation_id, type: 'lead_depose', objet_type: null, objet_id: null, cle: String('fait:depot:'.concat($('Normaliser les leads').item.json.cle)).replace(/[^A-Za-z0-9_:.-]/g, '_').slice(0, 120), faits: {} }) }}",
+        "options": {}
+      },
+      "notes": "Écrit chez le client : une ligne « fait : lead déposé » au journal, sans le texte du lead."
+    },
+    {
+      "id": "e4254e07-dd2d-4f42-937e-edeca9f5536d",
+      "name": "Ignoré (journal)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        288
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Un lead ecarte ne produit aucun effet : il ne reste que son motif.\nreturn [{ json: { ignores: $input.all().map((it) => ({ cle: it.json.cle, motif: it.json.motif })), effets_faits: [] } }];"
+      },
+      "notes": "Lead écarté avec son motif ; rien n'est écrit."
+    },
+    {
+      "id": "821d25e9-11bb-4158-9732-10ae023c7b7a",
+      "name": "Sticky Note ec359767",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        96
+      ],
+      "parameters": {
+        "content": "## Accueil · Facebook Lead Ads\nUn déclencheur horaire lit les leads par l'API Graph (nœud Facebook Graph, lecture), derrière une première porte « simulation ». Le lead est déposé d'abord dans la plateforme (deuxième porte), où il devient une conversation comme les autres.",
+        "color": 4,
+        "width": 1056,
+        "height": 224
+      }
+    },
+    {
+      "id": "036031-accueil-leads-0",
+      "name": "Lire les départements (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        352
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/departements_reglages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "artisan_id,departement,palier,en_marche,plafond_jour"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "departement",
+              "value": "in.(tous,accueil)"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (departements_reglages), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-leads-1",
+      "name": "Lire le compte (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        512
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,plan,horaires"
+            },
+            {
+              "name": "id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "suppression_demandee_le",
+              "value": "is.null"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (artisans), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-leads-2",
+      "name": "Lire le pilote (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        672
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/pilote_reglages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "actif,types"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (pilote_reglages), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-leads-3",
+      "name": "Lire le mode de réponse (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        832
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/plateforme_config",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "mode_reponse,ton,escalade_mots"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (plateforme_config), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-leads-4",
+      "name": "Compter les départs du pilote (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        992
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/actions_auto",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "statut",
+              "value": "eq.partie"
+            },
+            {
+              "name": "traite_le",
+              "value": "=gte.{{ $now.minus({ hours: 24 }).toISO() }}"
+            },
+            {
+              "name": "limit",
+              "value": "500"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (actions_auto), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-leads-5",
+      "name": "Lire les faits déjà écrits (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        1152
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/evenements_metier",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "cle"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "cle",
+              "value": "like.fait:*"
+            },
+            {
+              "name": "survenu_le",
+              "value": "=gte.{{ $now.minus({ days: 60 }).toISO() }}"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (evenements_metier), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-leads-6",
+      "name": "Lire les cartes déjà posées (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        1312
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/assistant_actions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "cle"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "origine",
+              "value": "eq.agent"
+            },
+            {
+              "name": "departement",
+              "value": "eq.accueil"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (assistant_actions), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-leads-7",
+      "name": "Lire les connexions (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        1472
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/connexions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "fournisseur,etat"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "etat",
+              "value": "eq.active"
+            },
+            {
+              "name": "limit",
+              "value": "40"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (connexions), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "ff882b91-d219-40da-ac98-585b750c7def",
+      "name": "Lire les réglages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        1632
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// 036-031 · La configuration de ce gabarit, COMPOSÉE depuis les vraies tables (aucune vue inventée) :\n//   departements_reglages (0193:184 : palier, interrupteur, plafond) · artisans (offre = plan, nom, horaires) · pilote_reglages (0174:20)\n//   plateforme_config (0032:4 : mode de réponse, ton, mots d'escalade) · actions_auto (0174:28 : départs du pilote sur 24 h)\n//   evenements_metier (0185:125 : faits « fait:… » déjà écrits) · assistant_actions (0157 + 0194 : cartes déjà posées) · connexions (0193:99, sans secret).\n// Lecture absente ou en erreur : interrupteurs fermés et simulation (côté sûr). Capacités : copie figée de lib/plans.ts, comme « Composer les\n// comptes » de presti-cerveau (036-030). Ce que la base ne porte pas reste vide (null ou []), jamais deviné.\nconst DEP = 'accueil';\nconst lire = (nom) => { try { return $(nom).all().map((x) => x.json).filter((j) => j && typeof j === 'object' && !j.error && Object.keys(j).length > 0); } catch (e) { return []; } };\nconst OFFRE = {\"studio\":\"studio\",\"signature\":\"signature\",\"business\":\"signature\",\"entreprise\":\"signature\",\"essentiel\":\"essentiel\",\"gratuit\":\"essai\",\"essai\":\"essai\"};\nconst CAPACITES = {\"studio\":[\"canaux.email\",\"relances\",\"factures.relances\",\"assistant\"],\"essentiel\":[\"canaux.email\",\"relances\",\"factures.relances\"],\"essai\":[\"canaux.email\"],\"signature\":[\"canaux.email\",\"relances\",\"factures.relances\",\"assistant\",\"plateforme.ia.auto\",\"relances.auto\",\"factures.relances.auto\",\"crm\",\"assistant.pilote\"]};\nconst QUALIFICATION = {\"grille\":[{\"critere\":\"urgence=urgent\",\"poids\":40},{\"critere\":\"canal=formulaire\",\"poids\":25},{\"critere\":\"canal=site\",\"poids\":25},{\"critere\":\"canal=telephone\",\"poids\":15},{\"critere\":\"canal=email\",\"poids\":15}],\"seuils\":{\"haute\":60,\"normale\":30},\"delais_cibles_min\":{\"haute\":15,\"normale\":60,\"a_revoir\":240}};\nconst reg = lire('Lire les départements (base)');\nconst tous = reg.find((r) => r.departement === 'tous');\nconst dep = reg.find((r) => r.departement === DEP);\nconst art = lire('Lire le compte (base)')[0] || {};\nconst pil = lire('Lire le pilote (base)')[0] || {};\nconst pc = lire('Lire le mode de réponse (base)')[0] || {};\nconst offre = OFFRE[String(art.plan || '')] || null;\nconst marche = (r) => Boolean(r) && r.en_marche === true && r.palier !== 'arret';\nconst reel = Boolean(tous) && Boolean(dep) && tous.palier === 'reel' && dep.palier === 'reel';\nconst cles = [].concat(lire('Lire les faits déjà écrits (base)').map((x) => String(x.cle || '').replace(/^fait:/, '')), lire('Lire les cartes déjà posées (base)').map((x) => String(x.cle || ''))).filter(Boolean);\nconst actives = lire('Lire les connexions (base)').map((x) => x.fournisseur);\nconst premier = (liste) => liste.find((f) => actives.includes(f)) || null;\nconst types = pil.types && typeof pil.types === 'object' ? pil.types : {};\nreturn [{ json: {\n  organisation_id: art.id || null, artisan_id: art.id || null, departement: DEP, offre, capacites: offre ? CAPACITES[offre] : [],\n  simulation: !reel, palier: dep ? dep.palier : 'simulation', interrupteur_general: marche(tous), interrupteur_departement: marche(dep),\n  plafond_jour: dep && Number.isInteger(dep.plafond_jour) ? dep.plafond_jour : 20,\n  pilote: { actif: pil.actif === true, types }, actif: pil.actif === true, types,\n  parties_depuis_24h: lire('Compter les départs du pilote (base)').length,\n  mode_reponse: ['auto', 'assistee', 'manuelle'].includes(pc.mode_reponse) ? pc.mode_reponse : 'assistee',\n  ton: typeof pc.ton === 'string' ? pc.ton : null, mots_escalade_artisan: Array.isArray(pc.escalade_mots) ? pc.escalade_mots : [],\n  enseigne: art.nom || null, marque_artisan: art.nom || null, signature: art.nom || null, horaires: art.horaires || null,\n  cles_existantes: [...new Set(cles)], empreintes_connues: [], fournisseurs: [], qualification: QUALIFICATION,\n  boite: premier(['gmail', 'outlook', 'imap']), stockage: premier(['google_drive', 'onedrive']),\n  outil_agenda: premier(['google_agenda', 'outlook_agenda']), outil_courrier: premier(['gmail', 'outlook', 'imap']), outil_fichiers: premier(['google_drive', 'onedrive']), outil_tableur: null,\n  canal_direction: null, destination_direction: null, signature_electronique: null, comptable: null, relances_impayes: null, sms_api: null, expediteur: null,\n  paliers_conversation_jours: null, paliers_devis_jours: null, formulaire_leads_id: null, maintenant: $now.toISO(),\n} }];"
+      },
+      "notes": "036-031 : configuration composée depuis les vraies tables (schema-gabarits.md)."
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-013), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

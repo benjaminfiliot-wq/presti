@@ -1,0 +1,60 @@
+gabarit-artisan-accueil-boite | Lire les réglages | composé (8 lectures réelles)
+gabarit-artisan-accueil-boite | Déposer dans la plateforme | POST rpc/deposer_message
+gabarit-artisan-accueil-boite | Journaliser le dépôt | POST evenements_metier
+gabarit-artisan-accueil-envoi | Lire les réglages | composé (8 lectures réelles)
+gabarit-artisan-accueil-envoi | Lire les envois dus | GET actions_auto
+gabarit-artisan-accueil-envoi | Repasser en carte | PATCH actions_auto
+gabarit-artisan-accueil-envoi | Marquer l’action partie | PATCH actions_auto
+gabarit-artisan-accueil-leads | Lire les réglages | composé (8 lectures réelles)
+gabarit-artisan-accueil-leads | Déposer dans la plateforme | POST rpc/deposer_message
+gabarit-artisan-accueil-leads | Journaliser le dépôt | POST evenements_metier
+gabarit-artisan-accueil-reponse | Lire les réglages | composé (8 lectures réelles)
+gabarit-artisan-accueil-reponse | Lire les événements non traités | GET n8n_evenements_a_traiter
+gabarit-artisan-accueil-reponse | Écrire la carte | POST assistant_actions
+gabarit-artisan-accueil-reponse | Mettre en file du pilote | POST assistant_actions
+gabarit-artisan-accueil-reponse | Écrire le journal | POST evenements_metier
+gabarit-artisan-accueil-reponse | Lire le destinataire | GET leads
+gabarit-artisan-devis | Relire la configuration | composé (8 lectures réelles)
+gabarit-artisan-devis | Lire les demandes à chiffrer | GET n8n_evenements_a_traiter
+gabarit-artisan-devis | Lire les tarifs | GET prix_artisan
+gabarit-artisan-devis | Lire les devis prêts | GET devis
+gabarit-artisan-devis | Lire les lignes des devis | GET devis_lignes
+gabarit-artisan-devis | Lire le destinataire | GET leads
+gabarit-artisan-devis | Inscrire au registre | POST evenements_metier
+gabarit-artisan-devis | Lire les repères de prix | GET prix_artisan
+gabarit-artisan-facturation | Relire la configuration | composé (8 lectures réelles)
+gabarit-artisan-facturation | Lire les factures | GET factures
+gabarit-artisan-facturation | Lire les chantiers terminés | GET n8n_evenements_a_traiter
+gabarit-artisan-facturation | Déposer la carte | POST assistant_actions
+gabarit-artisan-facturation | Lire le destinataire | GET factures
+gabarit-artisan-facturation | Inscrire au registre | POST evenements_metier
+gabarit-artisan-facturation | Inscrire le palier | POST relances_impayes
+gabarit-artisan-suivi | Relire la configuration | composé (8 lectures réelles)
+gabarit-artisan-suivi | Lire les relances dues | GET n8n_evenements_a_traiter
+gabarit-artisan-suivi | Déposer la carte | POST assistant_actions
+gabarit-artisan-suivi | Lire le destinataire | GET devis
+gabarit-artisan-suivi | Inscrire au registre | POST evenements_metier
+gabarit-artisan-suivi | Déposer dans la conversation | POST messages
+gabarit-artisan-apres | Lire la configuration | composé (8 lectures réelles)
+gabarit-artisan-apres | Lire les clés déjà traitées | GET evenements_metier
+gabarit-artisan-apres | Lire les chantiers finis | GET chantiers
+gabarit-artisan-apres | Journaliser la réponse | POST evenements_metier
+gabarit-artisan-apres | Lire le destinataire consenti | GET clients
+gabarit-artisan-apres | Journaliser la demande | POST evenements_metier
+gabarit-artisan-apres | Déposer la carte | POST assistant_actions
+gabarit-artisan-direction | Lire la configuration | composé (8 lectures réelles)
+gabarit-artisan-direction | Lire les chiffres du jour | GET n8n_evenements_a_traiter
+gabarit-artisan-direction | Lire le rapport de la semaine | GET n8n_evenements_a_traiter
+gabarit-artisan-direction | Lire le coût IA | GET couts_ia_jour
+gabarit-artisan-direction | Journaliser la page | POST evenements_metier
+gabarit-artisan-operations | Lire la configuration | composé (8 lectures réelles)
+gabarit-artisan-operations | Lire les demandes | GET evenements_metier
+gabarit-artisan-operations | Lire les rendez-vous de demain | GET crm_rappels
+gabarit-artisan-operations | Lire le stock sous le seuil | GET n8n_evenements_a_traiter
+gabarit-artisan-operations | Lire les chantiers | GET chantiers
+gabarit-artisan-operations | Journaliser le rendez-vous | POST evenements_metier
+gabarit-artisan-operations | Lire le contact du rappel | GET clients
+gabarit-artisan-operations | Journaliser le rappel | POST evenements_metier
+gabarit-artisan-operations | Journaliser la commande | POST evenements_metier
+gabarit-artisan-operations | Journaliser le classement | POST evenements_metier
+gabarit-artisan-operations | Déposer la carte | POST assistant_actions

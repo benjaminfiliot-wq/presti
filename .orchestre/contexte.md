@@ -1,11 +1,11 @@
-# Carte du code — presti (2026-11-03T18:20:01Z)
+# Carte du code — presti (2026-11-03T18:38:11Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
 
 SaaS pour les artisans du bâtiment : plateforme de conversation, devis, factures, site à la demande Pile : Next.js + Supabase + Vercel.
 
-## Pages (59) — `app/**/page.tsx`
+## Pages (60) — `app/**/page.tsx`
 - `/abonnement` : ·
 - `/aide` : ·
 - `/assistant` : ·
@@ -17,7 +17,7 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/connexion` : lien
 - `/contact` : ·
 - `/controle` : compta-tableaux, ·, station
-- `/crm` : chantiers/[id], clients/[ref], ·
+- `/crm` : chantiers/[id], clients/[ref], outils, ·
 - `/dashboard` : ·
 - `/devis` : [id], ·
 - `/direction` : ·
@@ -485,10 +485,10 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/ville.ts` (2) : NB_COMMUNES, villeDe
 - `lib/zip.ts` (2) : crc32, ZipFlux
 
-## Migrations — `supabase/migrations` (180)
-- dernières : 0190_demandes_demo.sql, 0191_suivi_artisan_envois.sql, 0192_accuse_reception_n8n.sql, 0193_systeme_agents.sql, 0194_cartes_agents.sql
+## Migrations — `supabase/migrations` (181)
+- dernières : 0191_suivi_artisan_envois.sql, 0192_accuse_reception_n8n.sql, 0193_systeme_agents.sql, 0194_cartes_agents.sql, 0195_deposer_message.sql
 
-## Scripts — `scripts/` (598 .mjs, dont 88 suites e2e)
+## Scripts — `scripts/` (599 .mjs, dont 88 suites e2e)
 
-## Orchestre — file : 60 · en cours : 3 · faites : 469 · refusées : 17
+## Orchestre — file : 60 · en cours : 1 · faites : 471 · refusées : 17
 

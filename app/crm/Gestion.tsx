@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { actif } from '@/lib/flags'
 import { peut } from '@/lib/plans'
 import BoiteAgents from './BoiteAgents'
+import { OUTILS } from './outils/vue'
 
 // L'OUTIL DE GESTION (03/11/2026, demande de Benj, mot pour mot : « j'avais juste demandé qu'on puisse tout voir via l'outil de gestion,
 // donc le CRM. Juste tu vires tout ce qui va être devis, facture et tout, et tout va dans l'outil de gestion : là tu peux aller sur son
@@ -56,19 +57,25 @@ export default function Gestion() {
   // Le plan sert à UNE chose : annoncer « Offre Signature » sur la porte 3D d'un compte qui ne l'a pas. Lecture ratée : pas de badge, la porte reste ouverte
   // (la page du CRM dit alors elle-même ce qui manque).
   const [plan, setPlan] = useState<string | null | undefined>(undefined)
+  // 036-033 : un fondateur compte comme Business pour « Mes outils », comme dans les routes du circuit (lib/connexions/serveur.ts).
+  const [fondateur, setFondateur] = useState(false)
   useEffect(() => {
     let vivant = true
     void (async () => {
       try {
         const { data } = await supabase.auth.getSession()
         if (!data.session) return
-        const { data: prof } = await supabase.from('artisans').select('plan').eq('id', data.session.user.id).maybeSingle()
-        if (vivant) setPlan((prof as { plan?: string | null } | null)?.plan ?? null)
+        const { data: prof } = await supabase.from('artisans').select('plan, is_founder').eq('id', data.session.user.id).maybeSingle()
+        const p = prof as { plan?: string | null; is_founder?: boolean | null } | null
+        if (vivant) { setPlan(p?.plan ?? null); setFondateur(p?.is_founder === true) }
       } catch { /* pas de badge */ }
     })()
     return () => { vivant = false }
   }, [])
   const sans3D = plan !== undefined && !peut(plan, 'crm')
+  // 036-033 : le lien « Mes outils » n'existe que drapeau `connexions` levé ET si l'offre ouvre au moins un outil (peut()). Drapeau
+  // baissé : rien dans le DOM (la page /crm/outils répond 404).
+  const outils = actif('connexions') && plan !== undefined && OUTILS.some((o) => peut(fondateur ? 'business' : plan, o.capacite))
 
   return (
     <div className="gst" data-gestion>
@@ -101,6 +108,16 @@ export default function Gestion() {
           </section>
         )
       })}
+      {outils ? (
+        <section className="gst-groupe" aria-labelledby="gst-g-outils" data-gestion-outils>
+          <h3 className="crm-sous" id="gst-g-outils">Mes outils</h3>
+          <ul className="gst-liste">
+            <li>
+              <a href="/crm/outils" data-gestion-ecran="outils"><b>Mes outils</b><span>Gmail, Google Agenda, Google Drive : connecter, voir, retirer.</span></a>
+            </li>
+          </ul>
+        </section>
+      ) : null}
     </div>
   )
 }

@@ -1,0 +1,1425 @@
+{
+  "id": "QZSMHbM6D5taI04i",
+  "name": "gabarit-artisan-accueil-envoi",
+  "active": false,
+  "isArchived": false,
+  "versionId": "40614888-6e3b-46b1-903f-d467bb31cb89",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 18,
+  "createdAt": "2026-11-03T13:07:01.591Z",
+  "updatedAt": "2026-11-03T13:07:01.591Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "connections": {
+    "Cadence : envois dus du pilote": {
+      "main": [
+        [
+          {
+            "node": "Compte de cette copie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compte de cette copie": {
+      "main": [
+        [
+          {
+            "node": "Lire les départements (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les réglages": {
+      "main": [
+        [
+          {
+            "node": "Lire les envois dus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les envois dus": {
+      "main": [
+        [
+          {
+            "node": "Contrôle avant envoi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrôle avant envoi": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Envois prévus",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Par quel canal ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Par quel canal ?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Repasser en carte",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Répondre par Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Répondre par Outlook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Répondre par SMTP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Répondre par WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Répondre par Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Répondre sur Messenger",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Répondre sur Instagram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Repasser en carte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Répondre par Gmail": {
+      "main": [
+        [
+          {
+            "node": "Marquer l’action partie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Répondre par Outlook": {
+      "main": [
+        [
+          {
+            "node": "Marquer l’action partie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Répondre par SMTP": {
+      "main": [
+        [
+          {
+            "node": "Marquer l’action partie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Répondre par WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Marquer l’action partie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Répondre par Telegram": {
+      "main": [
+        [
+          {
+            "node": "Marquer l’action partie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Répondre sur Messenger": {
+      "main": [
+        [
+          {
+            "node": "Marquer l’action partie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Répondre sur Instagram": {
+      "main": [
+        [
+          {
+            "node": "Marquer l’action partie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les départements (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire le compte (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le compte (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire le pilote (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le pilote (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire le mode de réponse (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le mode de réponse (base)": {
+      "main": [
+        [
+          {
+            "node": "Compter les départs du pilote (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compter les départs du pilote (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les faits déjà écrits (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les faits déjà écrits (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les cartes déjà posées (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les cartes déjà posées (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les connexions (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les connexions (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les réglages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "d8a45d55-c131-48a6-aacd-049d74ab185f",
+      "name": "Cadence : envois dus du pilote",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        512
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "notes": "Toutes les minutes. Reprend les réponses que le gabarit « répondre » a mises dans la file du pilote (Signature) et dont les 10 minutes d'annulation sont écoulées."
+    },
+    {
+      "id": "e39f0627-08b8-4bf8-b7f6-03f10427f0df",
+      "name": "Compte de cette copie",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        512
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "organisation",
+              "name": "organisation_id",
+              "value": "A_RENSEIGNER_A_LA_COPIE",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "Une copie du gabarit sert un seul compte : l'identifiant se pose ici, à la copie."
+    },
+    {
+      "id": "74dda368-618d-4d9d-b3f4-d1764b675519",
+      "name": "Lire les envois dus",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        512
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/actions_auto",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,type,cle,statut,ref_id,lead_id,libelle,prete_le,part_le"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "statut",
+              "value": "eq.a_partir"
+            },
+            {
+              "name": "part_le",
+              "value": "=lte.{{ $now.toISO() }}"
+            },
+            {
+              "name": "order",
+              "value": "prete_le.asc"
+            },
+            {
+              "name": "limit",
+              "value": "20"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "lecture-pour-envoi: Répondre par Gmail\nLecture faite AU MOMENT d'envoyer : le texte et les coordonnées du client ne sont lus que pour la réponse qui part, filtre du compte, 20 au plus. Rien n'est gardé dans n8n."
+    },
+    {
+      "id": "6a9238e5-785e-4c27-a5a9-08f13aee9ab7",
+      "name": "Contrôle avant envoi",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        512
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Gabarit Accueil, envoi : les conditions de lib-boite-envoyer et de lib/pilote/regles.ts, rejouees avant toute reponse. Un doute vaut un refus.\nconst cfg = $('Lire les réglages').first().json || {};\nconst org = $('Compte de cette copie').first().json.organisation_id;\nconst simulation = cfg.simulation !== false;\nconst maintenant = cfg.maintenant ? Date.parse(cfg.maintenant) : Date.now();\nconst cap = cfg.capacites || [];\nconst autonome = cap.indexOf('plateforme.ia.auto') >= 0 && cap.indexOf('assistant.pilote') >= 0;\nconst pilote = cfg.pilote || {};\nconst coupe = cfg.interrupteur_general === false || cfg.interrupteur_departement === false;\nconst DIX_MIN = 600000;\nconst JOUR = 86400000;\nconst CANAUX = ['gmail', 'outlook', 'imap', 'whatsapp', 'telegram', 'messenger', 'instagram'];\nlet partis = Number(cfg.parties_depuis_24h || 0);\nconst plafond = Number(cfg.plafond_jour || 0);\nconst sortie = [];\nfor (const it of $input.all()) {\n  const l = it.json;\n  const age = maintenant - Date.parse(l.prete_le);\n  let decision = 'envoyer';\n  let motif = null;\n  if (coupe) motif = 'interrupteur';\n  else if (!autonome) motif = 'offre';\n  else if (cfg.mode_reponse !== 'auto') motif = 'mode';\n  else if (!(pilote.drapeau && pilote.actif)) motif = 'pilote';\n  else if (l.type !== 'reponse_prospect') motif = 'type_action';\n  else if (!(pilote.types && pilote.types.reponse_prospect === true)) motif = 'type';\n  else if (l.opposition !== false) motif = 'opposition';\n  else if (CANAUX.indexOf(l.canal_origine) < 0) motif = 'canal_non_branche';\n  else if (!(age >= 0) || age > JOUR) motif = 'perime';\n  else if (age < DIX_MIN) { decision = 'attendre'; motif = 'delai_10_minutes'; }\n  else if (partis >= plafond) motif = 'plafond';\n  if (!motif) partis += 1;\n  else if (decision !== 'attendre') decision = 'repli';\n  sortie.push({ json: Object.assign({}, l, { organisation_id: org, simulation: simulation, decision: decision, motif: motif, marque_artisan: cfg.marque_artisan }) });\n}\nreturn sortie;"
+      },
+      "notes": "Rejoue les conditions du pilote avant toute réponse : offre (plateforme.ia.auto et assistant.pilote), mode auto, pilote actif, type reponse_prospect activé, opposition, 10 minutes écoulées, moins de 24 h, plafond du jour. Un doute vaut un refus : l'action repasse en carte."
+    },
+    {
+      "id": "7050359c-5fe8-4800-baa4-8ab41badd88f",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        512
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "sim",
+              "leftValue": "={{ $json.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part, les envois prévus sont listés. Faux : l'envoi réel."
+    },
+    {
+      "id": "4c6d8cda-9631-4e97-bc74-0d60ee2592e8",
+      "name": "Envois prévus",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        352
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Simulation : rien ne part ; les envois prevus sont listes. Studio n'envoie jamais (decision repli, motif offre).\nconst prevus = [];\nfor (const it of $input.all()) {\n  const l = it.json;\n  if (l.decision === 'envoyer') prevus.push({ effet: 'envoyer_' + l.canal_origine, action: l.id });\n  else if (l.decision === 'repli') prevus.push({ effet: 'repasser_en_carte', action: l.id, motif: l.motif });\n  else prevus.push({ effet: 'attendre', action: l.id, motif: l.motif });\n}\nreturn [{ json: { simulation: true, effets_prevus: prevus, effets_faits: [] } }];"
+      },
+      "notes": "Simulation : la liste de ce qui serait parti (un envoi par canal) ou repassé en carte. effets_faits reste vide."
+    },
+    {
+      "id": "855d8672-0822-4843-afb5-5990aa844012",
+      "name": "Par quel canal ?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1344,
+        544
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputKey": "attendre",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decision }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "attendre"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "repli",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decision }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "repli"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "gmail",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decision }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "envoyer"
+                  },
+                  {
+                    "leftValue": "={{ $json.canal_origine }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "gmail"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "outlook",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decision }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "envoyer"
+                  },
+                  {
+                    "leftValue": "={{ $json.canal_origine }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "outlook"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "smtp",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decision }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "envoyer"
+                  },
+                  {
+                    "leftValue": "={{ $json.canal_origine }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "imap"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "whatsapp",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decision }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "envoyer"
+                  },
+                  {
+                    "leftValue": "={{ $json.canal_origine }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "whatsapp"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "telegram",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decision }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "envoyer"
+                  },
+                  {
+                    "leftValue": "={{ $json.canal_origine }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "telegram"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "messenger",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decision }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "envoyer"
+                  },
+                  {
+                    "leftValue": "={{ $json.canal_origine }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "messenger"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "instagram",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.decision }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "envoyer"
+                  },
+                  {
+                    "leftValue": "={{ $json.canal_origine }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "instagram"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Canal non branché"
+        }
+      }
+    },
+    {
+      "id": "4f9b973f-1632-4a51-9d34-a73cd6c9887f",
+      "name": "Repasser en carte",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1568,
+        0
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/actions_auto",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $json.organisation_id }}"
+            },
+            {
+              "name": "id",
+              "value": "=eq.{{ $json.id }}"
+            },
+            {
+              "name": "statut",
+              "value": "eq.a_partir"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ statut: \"manuel\", motif: String($json.motif || \"canal_non_branche\").slice(0, 300), traite_le: $now.toISO() }) }}",
+        "options": {}
+      },
+      "notes": "Écrit chez le client : une action qui ne peut pas partir (offre, mode, type non activé, opposition, plafond, canal non branché) repasse en carte « À traiter à la main », avec son motif. Rien ne part."
+    },
+    {
+      "id": "f67ac0ff-ac6b-46ef-a5b0-c06b39663d13",
+      "name": "Répondre par Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        192
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "reply",
+        "messageId": "={{ $(\"Contrôle avant envoi\").item.json.id_boite }}",
+        "emailType": "text",
+        "message": "={{ $(\"Contrôle avant envoi\").item.json.texte.indexOf(\"envoyé automatiquement par l’assistant\") >= 0 ? $(\"Contrôle avant envoi\").item.json.texte : $(\"Contrôle avant envoi\").item.json.texte + \"\\n\\n—\\nMessage rédigé et envoyé automatiquement par l’assistant de \" + $(\"Contrôle avant envoi\").item.json.marque_artisan + \".\" }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ $(\"Contrôle avant envoi\").item.json.marque_artisan }}"
+        }
+      },
+      "notes": "pied: mention\nEnvoie chez le client (Signature, type reponse_prospect activé) : la réponse part DE sa boîte Gmail, dans le fil du client, à son nom. Sans mention de n8n.",
+      "webhookId": "11fd6944-ace1-4760-80c6-3c8d15ee945a"
+    },
+    {
+      "id": "d0f4a73d-420c-418f-98d9-93c68f12e60c",
+      "name": "Marquer l’action partie",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1792,
+        928
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/actions_auto",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $(\"Contrôle avant envoi\").item.json.organisation_id }}"
+            },
+            {
+              "name": "id",
+              "value": "=eq.{{ $(\"Contrôle avant envoi\").item.json.id }}"
+            },
+            {
+              "name": "statut",
+              "value": "in.(a_partir,en_cours)"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ statut: \"partie\", traite_le: $now.toISO() }) }}",
+        "options": {}
+      },
+      "notes": "Écrit chez le client : l'action de la file du pilote passe à « partie » (filtre du compte et de l'action)."
+    },
+    {
+      "id": "06ac7971-3a01-4c06-a30b-5bfe0fcf6547",
+      "name": "Répondre par Outlook",
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        384
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "reply",
+        "messageId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $(\"Contrôle avant envoi\").item.json.id_boite }}"
+        },
+        "replyToSenderOnly": true,
+        "message": "={{ $(\"Contrôle avant envoi\").item.json.texte.indexOf(\"envoyé automatiquement par l’assistant\") >= 0 ? $(\"Contrôle avant envoi\").item.json.texte : $(\"Contrôle avant envoi\").item.json.texte + \"\\n\\n—\\nMessage rédigé et envoyé automatiquement par l’assistant de \" + $(\"Contrôle avant envoi\").item.json.marque_artisan + \".\" }}",
+        "options": {
+          "saveAsDraft": false
+        }
+      },
+      "notes": "pied: mention\nEnvoie chez le client (Signature, type reponse_prospect activé) : la réponse part DE sa boîte Outlook, à son nom.",
+      "webhookId": "60e60fa9-8228-423f-9a5e-10336727085f"
+    },
+    {
+      "id": "f5900884-60da-4e0e-97c0-c66a6799f87e",
+      "name": "Répondre par SMTP",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1568,
+        576
+      ],
+      "parameters": {
+        "resource": "email",
+        "operation": "send",
+        "fromEmail": "={{ $(\"Contrôle avant envoi\").item.json.adresse_artisan }}",
+        "toEmail": "={{ $(\"Contrôle avant envoi\").item.json.adresse_client }}",
+        "subject": "={{ \"Re: \" + $(\"Contrôle avant envoi\").item.json.objet }}",
+        "emailFormat": "text",
+        "text": "={{ $(\"Contrôle avant envoi\").item.json.texte.indexOf(\"envoyé automatiquement par l’assistant\") >= 0 ? $(\"Contrôle avant envoi\").item.json.texte : $(\"Contrôle avant envoi\").item.json.texte + \"\\n\\n—\\nMessage rédigé et envoyé automatiquement par l’assistant de \" + $(\"Contrôle avant envoi\").item.json.marque_artisan + \".\" }}",
+        "options": {
+          "appendAttribution": false,
+          "replyTo": "={{ $(\"Contrôle avant envoi\").item.json.adresse_artisan }}"
+        }
+      },
+      "notes": "pied: mention\nEnvoie chez le client (Signature) pour une boîte IMAP : la réponse part par le serveur SMTP du client, de son adresse, avec son adresse en réponse. Sans mention de n8n.",
+      "webhookId": "c08d53ae-fd59-41b6-9abd-3bf0f08e668d"
+    },
+    {
+      "id": "747ec126-2082-4011-a7be-3f1d1cc739c2",
+      "name": "Répondre par WhatsApp",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        1568,
+        768
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "phoneNumberId": "={{ $(\"Contrôle avant envoi\").item.json.identifiant_numero_whatsapp }}",
+        "recipientPhoneNumber": "={{ $(\"Contrôle avant envoi\").item.json.numero_client }}",
+        "messageType": "text",
+        "textBody": "={{ $(\"Contrôle avant envoi\").item.json.texte.indexOf(\"envoyé automatiquement par l’assistant\") >= 0 ? $(\"Contrôle avant envoi\").item.json.texte : $(\"Contrôle avant envoi\").item.json.texte + \"\\n\\n—\\nMessage rédigé et envoyé automatiquement par l’assistant de \" + $(\"Contrôle avant envoi\").item.json.marque_artisan + \".\" }}"
+      },
+      "notes": "pied: mention\nEnvoie chez le client (Signature) : la réponse part du numéro WhatsApp Business du client, dans la conversation ouverte par le client.",
+      "webhookId": "46c33b74-aad1-4885-8038-05f229b3b603"
+    },
+    {
+      "id": "93eb4507-2b53-43c5-99ea-fbf6b5d5b556",
+      "name": "Répondre par Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        960
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $(\"Contrôle avant envoi\").item.json.identifiant_canal_client }}",
+        "text": "={{ $(\"Contrôle avant envoi\").item.json.texte.indexOf(\"envoyé automatiquement par l’assistant\") >= 0 ? $(\"Contrôle avant envoi\").item.json.texte : $(\"Contrôle avant envoi\").item.json.texte + \"\\n\\n—\\nMessage rédigé et envoyé automatiquement par l’assistant de \" + $(\"Contrôle avant envoi\").item.json.marque_artisan + \".\" }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "notes": "pied: mention\nEnvoie chez le client (Signature) : la réponse part du bot Telegram du client, dans la conversation ouverte par le client. La conversation vient de la base, jamais écrite dans le gabarit.",
+      "webhookId": "db0106e9-0b3f-4427-a087-5fb6a49964b3"
+    },
+    {
+      "id": "b1c1d25e-d2aa-4fd4-bb24-0f6709a0d43a",
+      "name": "Répondre sur Messenger",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        1152
+      ],
+      "parameters": {
+        "hostUrl": "graph.facebook.com",
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v21.0",
+        "node": "={{ $(\"Contrôle avant envoi\").item.json.identifiant_compte_graph }}",
+        "edge": "messages",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "messaging_type",
+                "value": "RESPONSE"
+              },
+              {
+                "name": "recipient",
+                "value": "={{ JSON.stringify({ id: $(\"Contrôle avant envoi\").item.json.identifiant_canal_client }) }}"
+              },
+              {
+                "name": "message",
+                "value": "={{ JSON.stringify({ text: $(\"Contrôle avant envoi\").item.json.texte.indexOf(\"envoyé automatiquement par l’assistant\") >= 0 ? $(\"Contrôle avant envoi\").item.json.texte : $(\"Contrôle avant envoi\").item.json.texte + \"\\n\\n—\\nMessage rédigé et envoyé automatiquement par l’assistant de \" + $(\"Contrôle avant envoi\").item.json.marque_artisan + \".\" }) }}"
+              }
+            ]
+          }
+        }
+      },
+      "notes": "Envoie chez le client (Signature) par l'API Graph : la réponse part de la page Facebook du client, dans la conversation ouverte par le client (fenêtre de réponse de 24 h). Texte avec la mention de l'assistant."
+    },
+    {
+      "id": "42963c15-9a2e-4d6d-82b7-137dd9dbc0fa",
+      "name": "Répondre sur Instagram",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        1344
+      ],
+      "parameters": {
+        "hostUrl": "graph.facebook.com",
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v21.0",
+        "node": "={{ $(\"Contrôle avant envoi\").item.json.identifiant_compte_graph }}",
+        "edge": "messages",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "recipient",
+                "value": "={{ JSON.stringify({ id: $(\"Contrôle avant envoi\").item.json.identifiant_canal_client }) }}"
+              },
+              {
+                "name": "message",
+                "value": "={{ JSON.stringify({ text: $(\"Contrôle avant envoi\").item.json.texte.indexOf(\"envoyé automatiquement par l’assistant\") >= 0 ? $(\"Contrôle avant envoi\").item.json.texte : $(\"Contrôle avant envoi\").item.json.texte + \"\\n\\n—\\nMessage rédigé et envoyé automatiquement par l’assistant de \" + $(\"Contrôle avant envoi\").item.json.marque_artisan + \".\" }) }}"
+              }
+            ]
+          }
+        }
+      },
+      "notes": "Envoie chez le client (Signature) par l'API Graph : la réponse part du compte Instagram professionnel du client, dans la conversation ouverte par le client. Texte avec la mention de l'assistant."
+    },
+    {
+      "id": "428680ff-3f5a-46dd-b3d7-2f0285197e72",
+      "name": "Sticky Note 7f648b10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        864,
+        416
+      ],
+      "parameters": {
+        "content": "## Accueil · envoyer\nSignature seulement. Les réponses que le pilote a préparées partent après leurs 10 minutes d'annulation, depuis la boîte ou le numéro du client, par le canal d'où vient le message : Gmail, Outlook, SMTP, WhatsApp, Telegram, Messenger, Instagram. Studio ne passe jamais ici : tout repasse en carte.",
+        "color": 4,
+        "width": 160,
+        "height": 224
+      }
+    },
+    {
+      "id": "036031-accueil-envoi-0",
+      "name": "Lire les départements (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        672
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/departements_reglages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "artisan_id,departement,palier,en_marche,plafond_jour"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "departement",
+              "value": "in.(tous,accueil)"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (departements_reglages), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-envoi-1",
+      "name": "Lire le compte (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        832
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,plan,horaires"
+            },
+            {
+              "name": "id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "suppression_demandee_le",
+              "value": "is.null"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (artisans), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-envoi-2",
+      "name": "Lire le pilote (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        992
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/pilote_reglages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "actif,types"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (pilote_reglages), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-envoi-3",
+      "name": "Lire le mode de réponse (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        1152
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/plateforme_config",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "mode_reponse,ton,escalade_mots"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (plateforme_config), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-envoi-4",
+      "name": "Compter les départs du pilote (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        1312
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/actions_auto",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "statut",
+              "value": "eq.partie"
+            },
+            {
+              "name": "traite_le",
+              "value": "=gte.{{ $now.minus({ hours: 24 }).toISO() }}"
+            },
+            {
+              "name": "limit",
+              "value": "500"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (actions_auto), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-envoi-5",
+      "name": "Lire les faits déjà écrits (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        1472
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/evenements_metier",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "cle"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "cle",
+              "value": "like.fait:*"
+            },
+            {
+              "name": "survenu_le",
+              "value": "=gte.{{ $now.minus({ days: 60 }).toISO() }}"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (evenements_metier), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-envoi-6",
+      "name": "Lire les cartes déjà posées (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        1632
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/assistant_actions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "cle"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "origine",
+              "value": "eq.agent"
+            },
+            {
+              "name": "departement",
+              "value": "eq.accueil"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (assistant_actions), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "036031-accueil-envoi-7",
+      "name": "Lire les connexions (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        1792
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/connexions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "fournisseur,etat"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Compte de cette copie').first().json.organisation_id }}"
+            },
+            {
+              "name": "etat",
+              "value": "eq.active"
+            },
+            {
+              "name": "limit",
+              "value": "40"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (connexions), filtrée sur le compte ; composée par « Lire les réglages »."
+    },
+    {
+      "id": "43c7f839-d76c-49f7-8768-24fc4e6b9253",
+      "name": "Lire les réglages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        1952
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// 036-031 · La configuration de ce gabarit, COMPOSÉE depuis les vraies tables (aucune vue inventée) :\n//   departements_reglages (0193:184 : palier, interrupteur, plafond) · artisans (offre = plan, nom, horaires) · pilote_reglages (0174:20)\n//   plateforme_config (0032:4 : mode de réponse, ton, mots d'escalade) · actions_auto (0174:28 : départs du pilote sur 24 h)\n//   evenements_metier (0185:125 : faits « fait:… » déjà écrits) · assistant_actions (0157 + 0194 : cartes déjà posées) · connexions (0193:99, sans secret).\n// Lecture absente ou en erreur : interrupteurs fermés et simulation (côté sûr). Capacités : copie figée de lib/plans.ts, comme « Composer les\n// comptes » de presti-cerveau (036-030). Ce que la base ne porte pas reste vide (null ou []), jamais deviné.\nconst DEP = 'accueil';\nconst lire = (nom) => { try { return $(nom).all().map((x) => x.json).filter((j) => j && typeof j === 'object' && !j.error && Object.keys(j).length > 0); } catch (e) { return []; } };\nconst OFFRE = {\"studio\":\"studio\",\"signature\":\"signature\",\"business\":\"signature\",\"entreprise\":\"signature\",\"essentiel\":\"essentiel\",\"gratuit\":\"essai\",\"essai\":\"essai\"};\nconst CAPACITES = {\"studio\":[\"canaux.email\",\"relances\",\"factures.relances\",\"assistant\"],\"essentiel\":[\"canaux.email\",\"relances\",\"factures.relances\"],\"essai\":[\"canaux.email\"],\"signature\":[\"canaux.email\",\"relances\",\"factures.relances\",\"assistant\",\"plateforme.ia.auto\",\"relances.auto\",\"factures.relances.auto\",\"crm\",\"assistant.pilote\"]};\nconst QUALIFICATION = {\"grille\":[{\"critere\":\"urgence=urgent\",\"poids\":40},{\"critere\":\"canal=formulaire\",\"poids\":25},{\"critere\":\"canal=site\",\"poids\":25},{\"critere\":\"canal=telephone\",\"poids\":15},{\"critere\":\"canal=email\",\"poids\":15}],\"seuils\":{\"haute\":60,\"normale\":30},\"delais_cibles_min\":{\"haute\":15,\"normale\":60,\"a_revoir\":240}};\nconst reg = lire('Lire les départements (base)');\nconst tous = reg.find((r) => r.departement === 'tous');\nconst dep = reg.find((r) => r.departement === DEP);\nconst art = lire('Lire le compte (base)')[0] || {};\nconst pil = lire('Lire le pilote (base)')[0] || {};\nconst pc = lire('Lire le mode de réponse (base)')[0] || {};\nconst offre = OFFRE[String(art.plan || '')] || null;\nconst marche = (r) => Boolean(r) && r.en_marche === true && r.palier !== 'arret';\nconst reel = Boolean(tous) && Boolean(dep) && tous.palier === 'reel' && dep.palier === 'reel';\nconst cles = [].concat(lire('Lire les faits déjà écrits (base)').map((x) => String(x.cle || '').replace(/^fait:/, '')), lire('Lire les cartes déjà posées (base)').map((x) => String(x.cle || ''))).filter(Boolean);\nconst actives = lire('Lire les connexions (base)').map((x) => x.fournisseur);\nconst premier = (liste) => liste.find((f) => actives.includes(f)) || null;\nconst types = pil.types && typeof pil.types === 'object' ? pil.types : {};\nreturn [{ json: {\n  organisation_id: art.id || null, artisan_id: art.id || null, departement: DEP, offre, capacites: offre ? CAPACITES[offre] : [],\n  simulation: !reel, palier: dep ? dep.palier : 'simulation', interrupteur_general: marche(tous), interrupteur_departement: marche(dep),\n  plafond_jour: dep && Number.isInteger(dep.plafond_jour) ? dep.plafond_jour : 20,\n  pilote: { actif: pil.actif === true, types }, actif: pil.actif === true, types,\n  parties_depuis_24h: lire('Compter les départs du pilote (base)').length,\n  mode_reponse: ['auto', 'assistee', 'manuelle'].includes(pc.mode_reponse) ? pc.mode_reponse : 'assistee',\n  ton: typeof pc.ton === 'string' ? pc.ton : null, mots_escalade_artisan: Array.isArray(pc.escalade_mots) ? pc.escalade_mots : [],\n  enseigne: art.nom || null, marque_artisan: art.nom || null, signature: art.nom || null, horaires: art.horaires || null,\n  cles_existantes: [...new Set(cles)], empreintes_connues: [], fournisseurs: [], qualification: QUALIFICATION,\n  boite: premier(['gmail', 'outlook', 'imap']), stockage: premier(['google_drive', 'onedrive']),\n  outil_agenda: premier(['google_agenda', 'outlook_agenda']), outil_courrier: premier(['gmail', 'outlook', 'imap']), outil_fichiers: premier(['google_drive', 'onedrive']), outil_tableur: null,\n  canal_direction: null, destination_direction: null, signature_electronique: null, comptable: null, relances_impayes: null, sms_api: null, expediteur: null,\n  paliers_conversation_jours: null, paliers_devis_jours: null, formulaire_leads_id: null, maintenant: $now.toISO(),\n} }];"
+      },
+      "notes": "036-031 : configuration composée depuis les vraies tables (schema-gabarits.md)."
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-013), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

@@ -330,7 +330,7 @@ export const FLAGS = {
   /** 03/11/2026 — prompt 6, prompt 1, lots 036-002 et 036-009. L'écran « Connexions » et les routes « Connecter » (OAuth sur Presti,
    *  jamais sur n8n) : la table `connexions` de 0193, deux secrets chiffrés au format v1 de lib/secretBox.ts, jamais lisibles par le
    *  navigateur. Baissé : route 404, rien à l'écran, aucun jeton stocké. On colle 0193, PUIS on lève, après le juge de 036-009 vert. */
-  connexions: false,
+  connexions: true,
   /** 03/11/2026 — tâche 036-030 (audit 036-029 § 2). La boîte « À valider » des agents n8n dans l'outil de gestion (app/crm) et sa route
    *  (app/api/assistant/agents) : les cartes que les départements préparent en palier « ombre » (assistant_actions, origine « agent »,
    *  migration 0194). Valider ou refuser ne fait que noter la décision : rien n'est envoyé par l'app, sur aucune offre. Baissé : rien

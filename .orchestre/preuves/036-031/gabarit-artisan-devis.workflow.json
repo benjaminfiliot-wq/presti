@@ -1,0 +1,2253 @@
+{
+  "id": "ywIdvdqFQS7S7oQ0",
+  "name": "gabarit-artisan-devis",
+  "active": false,
+  "isArchived": false,
+  "versionId": "7415c8c4-6035-4deb-961f-d121a0bf9a04",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 42,
+  "createdAt": "2026-11-03T13:11:01.063Z",
+  "updatedAt": "2026-11-03T13:19:19.571Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 900,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true,
+    "saveExecutionProgress": false
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "Gabarit outillé (036-014) : le département Devis d'un artisan avec ses vrais outils. Inactif, simulation, sans identifiant.",
+  "canExecute": true,
+  "connections": {
+    "Toutes les 10 minutes": {
+      "main": [
+        [
+          {
+            "node": "Préparer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer": {
+      "main": [
+        [
+          {
+            "node": "Lire les départements (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Relire la configuration": {
+      "main": [
+        [
+          {
+            "node": "Lire les demandes à chiffrer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les demandes à chiffrer": {
+      "main": [
+        [
+          {
+            "node": "Lire les tarifs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les tarifs": {
+      "main": [
+        [
+          {
+            "node": "Lire les devis prêts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les devis prêts": {
+      "main": [
+        [
+          {
+            "node": "Lire les lignes des devis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Constituer le dossier": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation (modèle)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation (modèle)": {
+      "main": [
+        [
+          {
+            "node": "Modèle enregistré (simulation)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rédacteur de lignes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modèle enregistré (simulation)": {
+      "main": [
+        [
+          {
+            "node": "Revalider les lignes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rédacteur de lignes": {
+      "main": [
+        [
+          {
+            "node": "Revalider les lignes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude (Sonnet 5.5)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rédacteur de lignes",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schéma des lignes": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Rédacteur de lignes",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tarifs (Google Sheets)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Rédacteur de lignes",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tarifs (Excel)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Rédacteur de lignes",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le fil (Gmail)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Rédacteur de lignes",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le message (Outlook)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Rédacteur de lignes",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pièces du chantier (Drive)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Rédacteur de lignes",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revalider les lignes": {
+      "main": [
+        [
+          {
+            "node": "Préparer l'appel du chef",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer l'appel du chef": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-devis (montants par le code)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-devis (montants par le code)": {
+      "main": [
+        [
+          {
+            "node": "Décider de la voie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Décider de la voie": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation (effets)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation (effets)": {
+      "main": [
+        [
+          {
+            "node": "Effets prévus",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Choisir la voie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choisir la voie": {
+      "main": [
+        [
+          {
+            "node": "Lire le destinataire",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lire le destinataire",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le destinataire": {
+      "main": [
+        [
+          {
+            "node": "Lire le PDF du devis (rendu par le code)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le PDF du devis (rendu par le code)": {
+      "main": [
+        [
+          {
+            "node": "Convertir en fichier PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convertir en fichier PDF": {
+      "main": [
+        [
+          {
+            "node": "Choisir le stockage",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Choisir la messagerie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choisir le stockage": {
+      "main": [
+        [
+          {
+            "node": "Ranger le PDF dans Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ranger le PDF dans OneDrive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choisir la messagerie": {
+      "main": [
+        [
+          {
+            "node": "Envoyer par Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envoyer par Outlook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Brouillon Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Brouillon Outlook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoyer par Gmail": {
+      "main": [
+        [
+          {
+            "node": "Choisir la signature électronique",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoyer par Outlook": {
+      "main": [
+        [
+          {
+            "node": "Choisir la signature électronique",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choisir la signature électronique": {
+      "main": [
+        [
+          {
+            "node": "Demander la signature (Yousign)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Demander la signature (DocuSign)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Inscrire au registre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Demander la signature (Yousign)": {
+      "main": [
+        [
+          {
+            "node": "Inscrire au registre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Demander la signature (DocuSign)": {
+      "main": [
+        [
+          {
+            "node": "Inscrire au registre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brouillon Gmail": {
+      "main": [
+        [
+          {
+            "node": "Inscrire au registre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brouillon Outlook": {
+      "main": [
+        [
+          {
+            "node": "Inscrire au registre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inscrire au registre": {
+      "main": [
+        [
+          {
+            "node": "Bilan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les lignes des devis": {
+      "main": [
+        [
+          {
+            "node": "Lire les repères de prix",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les repères de prix": {
+      "main": [
+        [
+          {
+            "node": "Constituer le dossier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les départements (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire le compte (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le compte (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire le pilote (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le pilote (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire le mode de réponse (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le mode de réponse (base)": {
+      "main": [
+        [
+          {
+            "node": "Compter les départs du pilote (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compter les départs du pilote (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les faits déjà écrits (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les faits déjà écrits (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les cartes déjà posées (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les cartes déjà posées (base)": {
+      "main": [
+        [
+          {
+            "node": "Lire les connexions (base)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les connexions (base)": {
+      "main": [
+        [
+          {
+            "node": "Relire la configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "29564475-6da6-4d49-862c-0b51469960c8",
+      "name": "Toutes les 10 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        320
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "notes": "Déclencheur à intervalle : n8n d'Oracle n'est pas exposé à Internet, aucun webhook (R22)."
+    },
+    {
+      "id": "2a5748d3-cea1-4822-8b3d-a399e003c862",
+      "name": "Préparer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Gabarit sans compte : l'organisation_id (le compte de l'artisan) est posé dans la copie du client, jamais saisi ici.\nreturn [{ json: { organisation_id: '00000000-0000-4000-8000-0000000000e1', departement: 'devis' } }];"
+      }
+    },
+    {
+      "id": "35da9e6d-5940-4e7b-8f3e-667dd3441415",
+      "name": "Lire les demandes à chiffrer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        320
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/n8n_evenements_a_traiter",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "cle,lead_id:objet_id,devis_id:faits->>devis_id,qualifiee:faits->qualifiee,escalade:faits->escalade,delai_annulation_ecoule:faits->delai_annulation_ecoule"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "type",
+              "value": "eq.devis_a_preparer"
+            },
+            {
+              "name": "objet_type",
+              "value": "eq.lead"
+            },
+            {
+              "name": "order",
+              "value": "survenu_le.asc,id.asc"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "Demandes qualifiées, déjà déposées dans la plateforme (une entrée = la même demande que la page /p). Vue étroite à écrire.",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "262a3fb1-c9e5-4bf6-88f9-1fb40aea7a96",
+      "name": "Lire les tarifs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        320
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/prix_artisan",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "reference,designation,unite,prix_ht,tva_taux,source_prix:source,date_prix"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "actif",
+              "value": "is.true"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "Les tarifs de l'artisan (lib/prix/) : la SEULE source d'un prix sourcé. Entiers en centimes, rendus par la base.",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "394e5bc0-ccd0-455f-8611-2f078a8eb1c0",
+      "name": "Lire les devis prêts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        320
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/devis",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "artisan_id,devis_id:id,lead_id,numero,statut,total_ht,total_ttc"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "statut",
+              "value": "eq.brouillon"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "Les devis que l'application a chiffrés : total écrit par le code.",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "e1c14458-8a7a-4f71-8dc1-58cef83320f7",
+      "name": "Lire les lignes des devis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        470
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/devis_lignes",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "devis_id,rang:ordre,designation,quantite,unite,prix_unitaire_ht,tva_taux,source_prix,devis!inner(artisan_id)"
+            },
+            {
+              "name": "devis.artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "Les lignes chiffrées, avec la source de chaque prix et le repère d'un ancien chantier (cité, jamais une source).",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "e8bebe27-06b4-4564-87f5-5d5531decde8",
+      "name": "Constituer le dossier",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        470
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Un seul dossier par passage. Interrupteurs fermés, lecture absente, clé déjà faite : rien (côté sûr). Simulation par défaut : seul « simulation: false » la lève.\nconst rows = (nom) => $(nom).all().map((i) => i.json).filter((j) => j && typeof j === 'object' && Object.keys(j).length > 0);\nconst cfg = rows('Relire la configuration')[0];\nif (!cfg || cfg.interrupteur_general !== true || cfg.interrupteur_departement !== true) return [];\nconst simulation = cfg.simulation !== false;\nconst deja = Array.isArray(cfg.cles_existantes) ? cfg.cles_existantes : [];\nconst demande = rows('Lire les demandes à chiffrer').find((d) => d.lead_id && d.qualifiee === true && !deja.includes('devis:'.concat(d.lead_id)));\nif (!demande) return [];\nreturn [{ json: {\n  organisation_id: $('Préparer').first().json.organisation_id,\n  cle: 'devis:'.concat(demande.lead_id),\n  simulation,\n  lead_id: demande.lead_id,\n  devis_id: demande.devis_id ?? null,\n  escalade: demande.escalade !== false,\n  resume_demande: String(demande.resume_demande ?? '').slice(0, 1500),\n  enseigne: String(cfg.enseigne ?? '').slice(0, 70),\n  offre: cfg.offre ?? null,\n  capacites: Array.isArray(cfg.capacites) ? cfg.capacites : [],\n  pilote: cfg.pilote && typeof cfg.pilote === 'object' ? cfg.pilote : {},\n  parties_depuis_24h: cfg.parties_depuis_24h ?? null,\n  plafond_jour: cfg.plafond_jour ?? null,\n  boite: cfg.boite === 'outlook' ? 'outlook' : 'gmail',\n  stockage: cfg.stockage === 'onedrive' ? 'onedrive' : 'drive',\n  signature_electronique: ['yousign', 'docusign'].includes(cfg.signature_electronique) ? cfg.signature_electronique : 'aucune',\n  annulation_ecoulee: demande.delai_annulation_ecoule === true,\n  tarifs: rows('Lire les tarifs'),\n  reperes: rows('Lire les repères de prix'),\n  enregistrement_modele: simulation ? (demande.enregistrement_modele ?? null) : null,\n  lectures_simulees: { configuration: [cfg], devis: rows('Lire les devis prêts'), lignes: rows('Lire les lignes des devis') },\n} }];"
+      },
+      "notes": "Un seul dossier par passage. Interrupteurs fermés ou lecture absente : rien."
+    },
+    {
+      "id": "86747b22-efb7-4210-86dd-4ea17086913f",
+      "name": "Porte simulation (modèle)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        470
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ed400bee-82ea-45f6-893d-496f9c68eea4",
+              "leftValue": "={{ $json.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part (le modèle n'est pas appelé : sa sortie vient d'un enregistrement daté). Faux : l'effet réel. Une simulation absente ou illisible est une erreur, jamais un « faux »."
+    },
+    {
+      "id": "b15a7b1f-0ce2-4429-87f5-b8d46f5fd6fa",
+      "name": "Modèle enregistré (simulation)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        470
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Sortie de modèle ENREGISTRÉE le 03/11/2026, jamais un appel : en simulation le modèle n'est pas appelé (OUTILLAGE.md O4).\n// Un essai peut fournir la sienne dans la demande (enregistrement_modele), honorée seulement quand la simulation est vraie.\nconst ENREGISTRE = { resume: 'Exemple. Pose de la porte et finitions.', lignes: [{ designation: 'Exemple. Pose', quantite: 1, unite: 'forfait', reference_tarif: 'REF-POSE', motif: 'Exemple.' }] };\nreturn [{ json: { output: $input.first().json.enregistrement_modele ?? ENREGISTRE } }];"
+      }
+    },
+    {
+      "id": "ea80b180-da16-423e-8d2f-08c8ed6fdc71",
+      "name": "Rédacteur de lignes",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        240,
+        470
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify({ demande: $json.resume_demande, tarifs: $json.tarifs.map((t) => ({ reference: t.reference, designation: t.designation, unite: t.unite })) }) }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Tu prépares les LIGNES d'un devis pour un artisan français, à partir de la demande de son client et de la liste de ses tarifs. Pour chaque poste : une désignation claire, une quantité, une unité, et la référence du tarif de l'artisan qui correspond ; si aucun tarif ne correspond, mets reference_tarif à null. Tu ne donnes JAMAIS un prix, un total, une TVA ni un délai : les montants sont lus dans les tarifs par le code. Tu n'inventes ni fournisseur ni quantité que la demande ne dit pas. Réponds seulement par le schéma demandé.",
+          "maxIterations": 4,
+          "passthroughBinaryImages": false
+        }
+      },
+      "notes": "Un agent par spécialiste : Claude, un parseur à schéma strict, des outils de LECTURE seulement. Atteint par la sortie « faux » de la porte (appeler le modèle est un effet)."
+    },
+    {
+      "id": "c2808469-8ca8-4b3d-8a65-05afe91618c0",
+      "name": "Claude (Sonnet 5.5)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        940
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-5-5"
+        },
+        "options": {
+          "maxTokensToSample": 1200,
+          "temperature": 0.2
+        }
+      }
+    },
+    {
+      "id": "6330cf0b-daed-41cc-88fa-8d43e40f6066",
+      "name": "Schéma des lignes",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        1090
+      ],
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"resume\",\"lignes\"],\"properties\":{\"resume\":{\"type\":\"string\",\"maxLength\":600},\"lignes\":{\"type\":\"array\",\"minItems\":1,\"maxItems\":40,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"designation\",\"quantite\",\"unite\",\"reference_tarif\",\"motif\"],\"properties\":{\"designation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":120},\"quantite\":{\"type\":\"number\",\"exclusiveMinimum\":0,\"maximum\":100000},\"unite\":{\"type\":\"string\",\"maxLength\":20},\"reference_tarif\":{\"type\":[\"string\",\"null\"],\"maxLength\":60},\"motif\":{\"type\":\"string\",\"maxLength\":200}}}}}}",
+        "autoFix": false
+      }
+    },
+    {
+      "id": "8c76f967-ed2b-4d65-886a-3058ad38608d",
+      "name": "Tarifs (Google Sheets)",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        1090
+      ],
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "CLASSEUR_SHEETS_DU_CLIENT"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Tarifs"
+        }
+      },
+      "notes": "outil: lecture\nSi l'artisan tient ses tarifs dans Google Sheets : l'agent lit les lignes, jamais ne les modifie."
+    },
+    {
+      "id": "d9dc31b3-f1f4-4eb3-8d22-c8db86ec8018",
+      "name": "Tarifs (Excel)",
+      "type": "n8n-nodes-base.microsoftExcelTool",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        1090
+      ],
+      "parameters": {
+        "resource": "table",
+        "operation": "lookup",
+        "workbook": {
+          "__rl": true,
+          "mode": "id",
+          "value": "CLASSEUR_EXCEL_DU_CLIENT"
+        },
+        "worksheet": {
+          "__rl": true,
+          "mode": "id",
+          "value": "{00000000-0001-0000-0000-000000000001}"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "{00000000-0002-0000-0000-000000000001}"
+        },
+        "lookupColumn": "reference",
+        "lookupValue": "={{ $fromAI('reference', 'la référence de tarif cherchée', 'string') }}"
+      },
+      "notes": "outil: lecture\nSi l'artisan tient ses tarifs dans Excel (OneDrive) : recherche d'une référence."
+    },
+    {
+      "id": "00f172fa-1e70-43e4-8415-feea0e2bd158",
+      "name": "Lire le fil (Gmail)",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        1090
+      ],
+      "parameters": {
+        "resource": "thread",
+        "operation": "get",
+        "threadId": "={{ $fromAI('fil', 'identifiant du fil de discussion', 'string') }}"
+      },
+      "notes": "outil: lecture\nLa demande reçue par e-mail : lecture du fil.",
+      "webhookId": "daa713c7-b46c-49fe-a3b6-1b7607a2c7cb"
+    },
+    {
+      "id": "430a8a22-c94e-4c8b-8150-15ca59f68b90",
+      "name": "Lire le message (Outlook)",
+      "type": "n8n-nodes-base.microsoftOutlookTool",
+      "typeVersion": 2,
+      "position": [
+        640,
+        1090
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "get",
+        "messageId": "={{ $fromAI('message', 'identifiant du message', 'string') }}"
+      },
+      "notes": "outil: lecture\nLa demande reçue sur Outlook : lecture du message.",
+      "webhookId": "8b07fcdb-f3f0-4b85-9f01-b9faf767f044"
+    },
+    {
+      "id": "43e91c35-5b16-4e0e-8172-b14d51be0439",
+      "name": "Pièces du chantier (Drive)",
+      "type": "n8n-nodes-base.googleDriveTool",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        1240
+      ],
+      "parameters": {
+        "resource": "fileFolder",
+        "operation": "search",
+        "searchMethod": "name",
+        "queryString": "={{ $fromAI('nom', 'nom ou début du nom du fichier', 'string') }}",
+        "returnAll": false,
+        "limit": 10,
+        "filter": {},
+        "options": {}
+      },
+      "notes": "outil: lecture\nPhotos et plans déposés par le client dans le dossier du chantier."
+    },
+    {
+      "id": "26604b76-b090-4825-8e41-98cad445b36b",
+      "name": "Revalider les lignes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        770
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// R18 : la sortie du modèle repasse le schéma, hors schéma = rejet. Le MODÈLE rédige des libellés et des quantités, JAMAIS un prix : le prix de chaque ligne\n// est LU dans les tarifs de l'artisan (entier en centimes, rendu par la base) ; sans tarif sourcé la ligne est « estimée » et n'a pas de prix.\n// Aucun montant n'est calculé ici : ni somme, ni produit, ni conversion. Le total vient du chef presti-dep-devis, qui le lit dans la base.\nconst dossier = $('Constituer le dossier').first().json;\nconst brut = $input.first().json.output;\nconst CLES = ['designation', 'quantite', 'unite', 'reference_tarif', 'motif'];\nconst SOURCE_OK = /^(vos tarifs|tarif de l.artisan|prix donn[ée] par l.artisan)/i;\nconst rejet = (m) => { throw new Error('hors schéma : '.concat(m)); };\nif (!brut || typeof brut !== 'object' || Array.isArray(brut)) rejet('sortie');\nfor (const k of Object.keys(brut)) if (!['resume', 'lignes'].includes(k)) rejet('clé '.concat(k));\nif (!Array.isArray(brut.lignes) || brut.lignes.length < 1 || brut.lignes.length > 40) rejet('lignes');\nconst parReference = new Map(dossier.tarifs.map((t) => [t.reference, t]));\nconst lignes = brut.lignes.map((l, rang) => {\n  if (!l || typeof l !== 'object' || Array.isArray(l)) rejet('ligne');\n  for (const k of Object.keys(l)) if (!CLES.includes(k)) rejet('clé de ligne '.concat(k));\n  if (typeof l.designation !== 'string' || l.designation.trim() === '' || l.designation.length > 120) rejet('désignation');\n  if (typeof l.quantite !== 'number' || !Number.isFinite(l.quantite) || l.quantite <= 0 || l.quantite > 100000) rejet('quantité');\n  const tarif = typeof l.reference_tarif === 'string' ? parReference.get(l.reference_tarif) : undefined;\n  const prix = tarif && Number.isInteger(tarif.prix_unitaire_ht_centimes) && tarif.prix_unitaire_ht_centimes > 0 ? tarif.prix_unitaire_ht_centimes : null;\n  const source = tarif && typeof tarif.source_prix === 'string' ? tarif.source_prix.trim() : '';\n  const sourcee = prix !== null && SOURCE_OK.test(source);\n  // Un prix pratiqué sur un ancien chantier est un REPÈRE cité (B9), LU dans la base : il ne rend jamais une ligne sourcée.\n  const repere = typeof l.reference_tarif === 'string' ? dossier.reperes.find((r) => r.reference === l.reference_tarif) : undefined;\n  return { rang, designation: l.designation.trim(), quantite: l.quantite, unite: String(l.unite ?? ''), reference_tarif: tarif ? tarif.reference : null,\n    prix_unitaire_ht_centimes: sourcee ? prix : null, source_prix: sourcee ? source : null, statut_prix: sourcee ? 'source' : 'estime',\n    repere: sourcee || !repere ? null : { affiche: repere.repere_affiche, chantier_le: repere.repere_chantier_le } };\n});\nreturn [{ json: { cle: dossier.cle, lignes, tous_prix_sources: lignes.every((l) => l.statut_prix === 'source') } }];"
+      },
+      "notes": "R18 : hors schéma = rejet. Le prix de chaque ligne est LU dans les tarifs, jamais écrit par le modèle."
+    },
+    {
+      "id": "700cc4cc-6424-453d-8f99-8f15f3eaabbe",
+      "name": "Préparer l'appel du chef",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        770
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// L'enveloppe@1 du chef presti-dep-devis : il lit les montants dans la base (ou, en simulation, dans les lectures que ce gabarit a faites) et rend le total\n// déjà écrit par le code de l'application. Un devis que l'application n'a pas encore chiffré (devis_id nul) n'est pas confié au chef : carte « à chiffrer ».\nconst dossier = $('Constituer le dossier').first().json;\nconst evenement = { id: dossier.lead_id, artisan_id: dossier.organisation_id, type: 'devis_a_preparer', cle: dossier.cle,\n  donnees: { lead_id: dossier.lead_id, devis_id: dossier.devis_id, qualifiee: true, escalade: dossier.escalade } };\nreturn [{ json: {\n  contrat: 'presti-dep-devis@1',\n  organisation_id: dossier.organisation_id,\n  simulation: dossier.simulation,\n  cle_idempotence: 'dep:'.concat(dossier.cle),\n  trace: { execution_parent: 'gabarit-artisan-devis', declencheur: 'gabarit-artisan-devis', tentative: 0 },\n  config: dossier.simulation ? { lectures_simulees: dossier.lectures_simulees } : {},\n  donnees: { evenements: dossier.devis_id ? [evenement] : [] },\n} }];"
+      }
+    },
+    {
+      "id": "da3d06af-471d-4fa3-820f-dfcd52fdb8f6",
+      "name": "Appeler presti-dep-devis (montants par le code)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        770
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "dNikTYPKKsivUbd3"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le chef Devis (036-005), inactif tant qu'il n'est pas publié : il lit le total écrit par le code de l'application et la source de chaque prix, et prépare la carte « devis prêt ». Appelé avec la simulation du gabarit. Ses callerIds doivent contenir la copie du client.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "0613a946-3dd3-416c-8a59-dc1a370a7f77",
+      "name": "Décider de la voie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        770
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Copie de la règle du pilote (lib/pilote/regles.ts, decisionPilote pour envoi_devis) : l'envoi seul exige Signature, pilote actif, type activé, aucune\n// escalade, TOUTES les lignes sourcées (par le chef ET par la revalidation), plafond non atteint, délai d'annulation écoulé. Sinon : brouillon (Studio) ou carte.\n// Le total affiché est celui du chef, recopié tel quel. Une réponse du chef absente ou en erreur : carte (côté sûr).\nconst dossier = $('Constituer le dossier').first().json;\nconst revalide = $('Revalider les lignes').first().json;\nconst chef = $input.first().json;\nconst resultat = chef && chef.resultat && typeof chef.resultat === 'object' ? chef.resultat : {};\nconst pret = Array.isArray(resultat.devis_prets) ? resultat.devis_prets.find((p) => p.devis_id === dossier.devis_id) : undefined;\nconst peut = (c) => dossier.capacites.includes(c);\nconst pilote = dossier.pilote;\nconst type_actif = pilote.drapeau === true && pilote.actif === true && Boolean(pilote.types) && pilote.types.envoi_devis === true;\nlet voie = 'carte';\nlet motif = 'a_chiffrer';\nif (dossier.devis_id && pret) {\n  if (dossier.escalade) { voie = 'carte'; motif = 'escalade'; }\n  else if (!peut('assistant.pilote')) { voie = 'brouillon'; motif = 'studio'; }\n  else if (!type_actif) { voie = 'brouillon'; motif = 'type_inactif'; }\n  else if (pret.tous_prix_sources !== true || revalide.tous_prix_sources !== true) { voie = 'carte'; motif = 'prix_non_source'; }\n  else if (!(dossier.parties_depuis_24h < dossier.plafond_jour)) { voie = 'carte'; motif = 'plafond'; }\n  else if (dossier.annulation_ecoulee !== true) { voie = 'carte'; motif = 'annulation_en_cours'; }\n  else { voie = 'envoi'; motif = 'prix_sources'; }\n}\nconst numero = pret ? pret.numero : null;\nconst total = pret ? pret.total_ttc_affiche : null;\nreturn [{ json: {\n  cle: dossier.cle, simulation: dossier.simulation, voie, motif, devis_id: dossier.devis_id, lead_id: dossier.lead_id, organisation_id: dossier.organisation_id,\n  boite: dossier.boite, stockage: dossier.stockage, signature_electronique: dossier.signature_electronique, enseigne: dossier.enseigne,\n  numero, total_affiche: total,\n  texte_mail: ['Bonjour,', '', 'Veuillez trouver ci-joint votre devis ', numero, ', d’un montant total de ', total, '.'].join(''),\n} }];"
+      },
+      "notes": "Copie de decisionPilote pour envoi_devis (lib/pilote/regles.ts). Studio : brouillon et carte. Signature : envoi seul si TOUS les prix viennent des tarifs."
+    },
+    {
+      "id": "35b415fb-dd69-4572-8929-f8e2c4c3fdde",
+      "name": "Porte simulation (effets)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        770
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7db85dd4-aa78-407d-8bab-e6d150ccbcdf",
+              "leftValue": "={{ $json.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part (seuls les effets prévus sont journalisés). Faux : l'effet réel. Une simulation absente ou illisible est une erreur, jamais un « faux »."
+    },
+    {
+      "id": "83076b98-f673-45c3-839f-0c1972f72cc6",
+      "name": "Effets prévus",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        920
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Branche « simulation » : rien n'est lu, écrit ni envoyé ; ce qui serait fait part au journal. Les montants et textes sont ceux du chef, recopiés.\nconst d = $input.first().json;\nconst prevus = [];\nif (d.voie === 'envoi' || d.voie === 'brouillon') {\n  prevus.push('pdf_'.concat(d.stockage));\n  prevus.push(d.voie === 'envoi' ? 'envoi_'.concat(d.boite) : 'brouillon_'.concat(d.boite));\n  if (d.voie === 'envoi' && d.signature_electronique !== 'aucune') prevus.push('signature_'.concat(d.signature_electronique));\n}\nprevus.push('registre');\nreturn [{ json: { cle: d.cle, simulation: true, voie: d.voie, motif: d.motif, numero: d.numero, total_affiche: d.total_affiche, effets_prevus: prevus, effets_faits: [] } }];"
+      }
+    },
+    {
+      "id": "15e2570b-eee2-4440-8d89-cbeaaa593baf",
+      "name": "Choisir la voie",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -240,
+        920
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6c541dae-2f2c-43ca-8408-d7b06d68c63d",
+                    "leftValue": "={{ $('Décider de la voie').first().json.voie }}",
+                    "rightValue": "envoi",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "envoi"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3d01b6f6-3a1c-481a-8402-3d78136140e8",
+                    "leftValue": "={{ $('Décider de la voie').first().json.voie }}",
+                    "rightValue": "brouillon",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "brouillon"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "autre"
+        }
+      },
+      "notes": "Fallback = carte : la carte « devis prêt » est écrite par le chef, rien d'autre à faire."
+    },
+    {
+      "id": "ccb0abc0-4b79-4790-89a8-b99a3bd10c85",
+      "name": "Lire le destinataire",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        920
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/leads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "objet_id:id,client_contact:contact"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "id",
+              "value": "=eq.{{ $('Décider de la voie').first().json.lead_id }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "lecture-pour-envoi: Envoyer par Gmail\nLue AU MOMENT d'envoyer, après la porte : le contact du client ne sert qu'à ce nœud d'envoi.",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "9b8f85e0-805a-492e-82ed-0d7f5845a080",
+      "name": "Lire le PDF du devis (rendu par le code)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        920
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/rpc/n8n_pdf_devis",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ organisation_id: $('Décider de la voie').first().json.organisation_id, objet_id: $('Décider de la voie').first().json.devis_id }) }}",
+        "options": {}
+      },
+      "notes": "Le PDF est rendu par le CODE de l'application (lib/DevisPDF.tsx, lib/envoisPdfServeur.ts) : la fonction n8n_pdf_devis rend le fichier en base64, avec les montants déjà écrits. n8n ne compose aucun document. À écrire dans la base (hors de ce lot)."
+    },
+    {
+      "id": "82f84857-7930-4ab6-8b7c-fcfb29db890f",
+      "name": "Convertir en fichier PDF",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        920
+      ],
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "pdf_base64",
+        "binaryPropertyName": "data",
+        "options": {
+          "fileName": "={{ $('Décider de la voie').first().json.numero }}.pdf",
+          "mimeType": "application/pdf"
+        }
+      }
+    },
+    {
+      "id": "322ba4ea-5db8-40a7-8bd8-e16c70c69e14",
+      "name": "Choisir le stockage",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        400,
+        920
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "75390948-eeb8-4336-8fc0-e37f2e791c6b",
+                    "leftValue": "={{ $('Décider de la voie').first().json.stockage }}",
+                    "rightValue": "drive",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "drive"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "81e61f17-5f2b-4a61-8207-a824c6ad4a9f",
+                    "leftValue": "={{ $('Décider de la voie').first().json.stockage }}",
+                    "rightValue": "onedrive",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "onedrive"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "autre"
+        }
+      }
+    },
+    {
+      "id": "fbfb8337-da03-44c2-8931-31d4704f52cf",
+      "name": "Ranger le PDF dans Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -400,
+        1070
+      ],
+      "parameters": {
+        "resource": "file",
+        "operation": "upload",
+        "inputDataFieldName": "data",
+        "name": "={{ $('Décider de la voie').first().json.numero }}.pdf",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "DOSSIER_DRIVE_DU_CLIENT"
+        },
+        "options": {}
+      },
+      "notes": "Le PDF rendu par l'application est rangé dans le Drive de l'artisan (un dossier par client et par chantier : à régler dans la copie)."
+    },
+    {
+      "id": "a4056049-70fc-4604-810e-f884840ccc9e",
+      "name": "Ranger le PDF dans OneDrive",
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        1070
+      ],
+      "parameters": {
+        "resource": "file",
+        "operation": "upload",
+        "binaryData": true,
+        "binaryPropertyName": "data",
+        "fileName": "={{ $('Décider de la voie').first().json.numero }}.pdf",
+        "parentId": "DOSSIER_ONEDRIVE_DU_CLIENT"
+      },
+      "notes": "Le PDF rendu par l'application est rangé dans le OneDrive de l'artisan."
+    },
+    {
+      "id": "71e7e3ce-04a9-41d9-8321-cf68eb0fcd79",
+      "name": "Choisir la messagerie",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -80,
+        1070
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0514694d-9ca5-47d9-8295-f2da5ec5e37a",
+                    "leftValue": "={{ $('Décider de la voie').first().json.voie.concat(':', $('Décider de la voie').first().json.boite) }}",
+                    "rightValue": "envoi:gmail",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "envoi:gmail"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a2e6ddc6-6932-42d4-8637-8feecb0ab205",
+                    "leftValue": "={{ $('Décider de la voie').first().json.voie.concat(':', $('Décider de la voie').first().json.boite) }}",
+                    "rightValue": "envoi:outlook",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "envoi:outlook"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a4911999-2506-4ac7-8650-5b273e9e4a8c",
+                    "leftValue": "={{ $('Décider de la voie').first().json.voie.concat(':', $('Décider de la voie').first().json.boite) }}",
+                    "rightValue": "brouillon:gmail",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "brouillon:gmail"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "66516728-474b-4118-841e-d643b4f56ced",
+                    "leftValue": "={{ $('Décider de la voie').first().json.voie.concat(':', $('Décider de la voie').first().json.boite) }}",
+                    "rightValue": "brouillon:outlook",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "brouillon:outlook"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "autre"
+        }
+      }
+    },
+    {
+      "id": "df048db4-0f2b-4e7a-8ca6-9d3cdde4eaac",
+      "name": "Envoyer par Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        80,
+        1070
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Lire le destinataire').first().json.client_email }}",
+        "subject": "={{ 'Devis '.concat($('Décider de la voie').first().json.numero) }}",
+        "emailType": "text",
+        "message": "={{ $('Décider de la voie').first().json.texte_mail }}\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de {{ $('Décider de la voie').first().json.enseigne }}.",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ $('Décider de la voie').first().json.enseigne }}",
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "data"
+              }
+            ]
+          }
+        }
+      },
+      "notes": "pied: mention\nEnvoi depuis la boîte Gmail de l'artisan, à son nom. Atteint par la sortie « faux » de la porte seulement.",
+      "webhookId": "743f1d3f-ade8-4af8-b4e7-010d3bac8e70"
+    },
+    {
+      "id": "1daa7056-0cee-4cfd-871a-5961399188dc",
+      "name": "Envoyer par Outlook",
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        1070
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "toRecipients": "={{ $('Lire le destinataire').first().json.client_email }}",
+        "subject": "={{ 'Devis '.concat($('Décider de la voie').first().json.numero) }}",
+        "bodyContent": "={{ $('Décider de la voie').first().json.texte_mail }}\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de {{ $('Décider de la voie').first().json.enseigne }}.",
+        "additionalFields": {
+          "bodyContentType": "Text",
+          "saveToSentItems": true,
+          "attachments": {
+            "attachments": [
+              {
+                "binaryPropertyName": "data"
+              }
+            ]
+          }
+        }
+      },
+      "notes": "pied: mention\nEnvoi depuis la boîte Outlook de l'artisan, à son nom.",
+      "webhookId": "dea4da03-2b10-4463-8558-2267aa9f1928"
+    },
+    {
+      "id": "e845bbd5-715d-440f-8884-4f82a5c48bfa",
+      "name": "Brouillon Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        1070
+      ],
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ 'Devis '.concat($('Décider de la voie').first().json.numero) }}",
+        "emailType": "text",
+        "message": "={{ $('Décider de la voie').first().json.texte_mail }}\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de {{ $('Décider de la voie').first().json.enseigne }}.",
+        "options": {
+          "sendTo": "={{ $('Lire le destinataire').first().json.client_email }}",
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "data"
+              }
+            ]
+          }
+        }
+      },
+      "notes": "pied: mention\nStudio : le brouillon est écrit dans la vraie boîte Gmail de l'artisan, qui le relit et l'envoie de chez lui.",
+      "webhookId": "89e6424a-328d-4969-94e2-4fd38d2aca37"
+    },
+    {
+      "id": "e345116c-70e4-4357-8a38-5f3b4aa0c8ed",
+      "name": "Brouillon Outlook",
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        1220
+      ],
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ 'Devis '.concat($('Décider de la voie').first().json.numero) }}",
+        "bodyContent": "={{ $('Décider de la voie').first().json.texte_mail }}\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de {{ $('Décider de la voie').first().json.enseigne }}.",
+        "additionalFields": {
+          "toRecipients": "={{ $('Lire le destinataire').first().json.client_email }}",
+          "bodyContentType": "Text",
+          "attachments": {
+            "attachments": [
+              {
+                "binaryPropertyName": "data"
+              }
+            ]
+          }
+        }
+      },
+      "notes": "pied: mention\nStudio : brouillon dans la boîte Outlook de l'artisan.",
+      "webhookId": "47c37530-2b92-4ce8-9a01-1d1f64d78934"
+    },
+    {
+      "id": "0478bd63-40ed-41b5-8550-5d2c33745c59",
+      "name": "Choisir la signature électronique",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -240,
+        1220
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "25db44aa-5dcc-4dd3-8c35-f4b9116fd22c",
+                    "leftValue": "={{ $('Décider de la voie').first().json.signature_electronique }}",
+                    "rightValue": "yousign",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "yousign"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a14fbee0-c60b-41fa-867d-e4e9d5622f10",
+                    "leftValue": "={{ $('Décider de la voie').first().json.signature_electronique }}",
+                    "rightValue": "docusign",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "docusign"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "autre"
+        }
+      },
+      "notes": "Fallback = aucune signature demandée."
+    },
+    {
+      "id": "63f0667a-ca8b-40b6-8658-d3537ca3dd7f",
+      "name": "Demander la signature (Yousign)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        1220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.yousign.app/v3/signature_requests",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpTemplatedCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ name: 'Devis '.concat($('Décider de la voie').first().json.numero), delivery_mode: 'none', ordered_signers: false, external_id: $('Décider de la voie').first().json.cle, timezone: 'Europe/Paris' }) }}",
+        "options": {}
+      },
+      "notes": "Signature électronique par l'API Yousign (hôte écrit en dur). Crée la demande ; le document, le signataire et l'activation sont les appels suivants de la fiche connecteur. La clé API est celle du client, branchée par lui dans la copie."
+    },
+    {
+      "id": "d9b1b599-f34b-4e28-838a-32dd2965724d",
+      "name": "Demander la signature (DocuSign)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        1220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://eu.docusign.net/restapi/v2.1/accounts/COMPTE_DOCUSIGN_DU_CLIENT/envelopes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpTemplatedCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ emailSubject: 'Devis '.concat($('Décider de la voie').first().json.numero), status: 'created', customFields: { textCustomFields: [{ name: 'cle', value: $('Décider de la voie').first().json.cle }] } }) }}",
+        "options": {}
+      },
+      "notes": "Signature électronique par l'API DocuSign (hôte écrit en dur ; le COMPTE_DOCUSIGN_DU_CLIENT du chemin est remplacé dans la copie). Enveloppe créée en brouillon."
+    },
+    {
+      "id": "ea34d629-9a2b-48de-825a-cff87491af3e",
+      "name": "Inscrire au registre",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        1220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/evenements_metier?on_conflict=artisan_id,cle",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "resolution=ignore-duplicates,return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ artisan_id: $('Décider de la voie').first().json.organisation_id, type: $('Décider de la voie').first().json.voie === 'envoi' ? 'devis_envoye' : 'devis_brouillon', objet_type: 'devis', objet_id: $('Décider de la voie').first().json.devis_id, cle: String('fait:'.concat($('Décider de la voie').first().json.cle)).replace(/[^A-Za-z0-9_:.-]/g, '_').slice(0, 120), faits: {} }) }}",
+        "options": {}
+      },
+      "notes": "Dépôt de chaque action dans la plateforme (registre commun : jamais deux envois pour le même devis). Idempotent."
+    },
+    {
+      "id": "8f58edf3-a417-4771-8025-f1d4653802a6",
+      "name": "Bilan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        1220
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Branche réelle : ce qui a été fait, d'après les nœuds exécutés.\nconst d = $('Décider de la voie').first().json;\nreturn [{ json: { cle: d.cle, simulation: false, voie: d.voie, motif: d.motif, numero: d.numero, effets_faits: [d.voie] } }];"
+      }
+    },
+    {
+      "id": "897ef510-2b17-42d2-8831-5030600f4b71",
+      "name": "Lire les repères de prix",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1400,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/prix_artisan",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "reference,designation,prix_ht,repere_chantier_le:date_prix"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "source",
+              "value": "eq.devis_valide"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "notes": "Prix déjà pratiqués par l'artisan sur d'anciens chantiers : un REPÈRE cité dans le devis (B9), jamais une source de prix. Le modèle ne les voit pas.",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "036031-devis-0",
+      "name": "Lire les départements (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        480
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/departements_reglages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "artisan_id,departement,palier,en_marche,plafond_jour"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "departement",
+              "value": "in.(tous,devis)"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (departements_reglages), filtrée sur le compte ; composée par « Relire la configuration »."
+    },
+    {
+      "id": "036031-devis-1",
+      "name": "Lire le compte (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        640
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/artisans",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,plan,horaires"
+            },
+            {
+              "name": "id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "suppression_demandee_le",
+              "value": "is.null"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (artisans), filtrée sur le compte ; composée par « Relire la configuration »."
+    },
+    {
+      "id": "036031-devis-2",
+      "name": "Lire le pilote (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        800
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/pilote_reglages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "actif,types"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (pilote_reglages), filtrée sur le compte ; composée par « Relire la configuration »."
+    },
+    {
+      "id": "036031-devis-3",
+      "name": "Lire le mode de réponse (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        960
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/plateforme_config",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "mode_reponse,ton,escalade_mots"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (plateforme_config), filtrée sur le compte ; composée par « Relire la configuration »."
+    },
+    {
+      "id": "036031-devis-4",
+      "name": "Compter les départs du pilote (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        1120
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/actions_auto",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "statut",
+              "value": "eq.partie"
+            },
+            {
+              "name": "traite_le",
+              "value": "=gte.{{ $now.minus({ hours: 24 }).toISO() }}"
+            },
+            {
+              "name": "limit",
+              "value": "500"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (actions_auto), filtrée sur le compte ; composée par « Relire la configuration »."
+    },
+    {
+      "id": "036031-devis-5",
+      "name": "Lire les faits déjà écrits (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        1280
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/evenements_metier",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "cle"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "cle",
+              "value": "like.fait:*"
+            },
+            {
+              "name": "survenu_le",
+              "value": "=gte.{{ $now.minus({ days: 60 }).toISO() }}"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (evenements_metier), filtrée sur le compte ; composée par « Relire la configuration »."
+    },
+    {
+      "id": "036031-devis-6",
+      "name": "Lire les cartes déjà posées (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        1440
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/assistant_actions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "cle"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "origine",
+              "value": "eq.agent"
+            },
+            {
+              "name": "departement",
+              "value": "eq.devis"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (assistant_actions), filtrée sur le compte ; composée par « Relire la configuration »."
+    },
+    {
+      "id": "036031-devis-7",
+      "name": "Lire les connexions (base)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        1600
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gorcdvmueakcncsmrouo.supabase.co/rest/v1/connexions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "specifyQuery": "keypair",
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "fournisseur,etat"
+            },
+            {
+              "name": "artisan_id",
+              "value": "=eq.{{ $('Préparer').first().json.organisation_id }}"
+            },
+            {
+              "name": "etat",
+              "value": "eq.active"
+            },
+            {
+              "name": "limit",
+              "value": "40"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": false,
+        "sendHeaders": false
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "notes": "036-031 : lecture réelle (connexions), filtrée sur le compte ; composée par « Relire la configuration »."
+    },
+    {
+      "id": "4daa64d6-d68a-46c0-8347-5e755b59e2c2",
+      "name": "Relire la configuration",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        1760
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// 036-031 · La configuration de ce gabarit, COMPOSÉE depuis les vraies tables (aucune vue inventée) :\n//   departements_reglages (0193:184 : palier, interrupteur, plafond) · artisans (offre = plan, nom, horaires) · pilote_reglages (0174:20)\n//   plateforme_config (0032:4 : mode de réponse, ton, mots d'escalade) · actions_auto (0174:28 : départs du pilote sur 24 h)\n//   evenements_metier (0185:125 : faits « fait:… » déjà écrits) · assistant_actions (0157 + 0194 : cartes déjà posées) · connexions (0193:99, sans secret).\n// Lecture absente ou en erreur : interrupteurs fermés et simulation (côté sûr). Capacités : copie figée de lib/plans.ts, comme « Composer les\n// comptes » de presti-cerveau (036-030). Ce que la base ne porte pas reste vide (null ou []), jamais deviné.\nconst DEP = 'devis';\nconst lire = (nom) => { try { return $(nom).all().map((x) => x.json).filter((j) => j && typeof j === 'object' && !j.error && Object.keys(j).length > 0); } catch (e) { return []; } };\nconst OFFRE = {\"studio\":\"studio\",\"signature\":\"signature\",\"business\":\"signature\",\"entreprise\":\"signature\",\"essentiel\":\"essentiel\",\"gratuit\":\"essai\",\"essai\":\"essai\"};\nconst CAPACITES = {\"studio\":[\"canaux.email\",\"relances\",\"factures.relances\",\"assistant\"],\"essentiel\":[\"canaux.email\",\"relances\",\"factures.relances\"],\"essai\":[\"canaux.email\"],\"signature\":[\"canaux.email\",\"relances\",\"factures.relances\",\"assistant\",\"plateforme.ia.auto\",\"relances.auto\",\"factures.relances.auto\",\"crm\",\"assistant.pilote\"]};\nconst QUALIFICATION = {\"grille\":[{\"critere\":\"urgence=urgent\",\"poids\":40},{\"critere\":\"canal=formulaire\",\"poids\":25},{\"critere\":\"canal=site\",\"poids\":25},{\"critere\":\"canal=telephone\",\"poids\":15},{\"critere\":\"canal=email\",\"poids\":15}],\"seuils\":{\"haute\":60,\"normale\":30},\"delais_cibles_min\":{\"haute\":15,\"normale\":60,\"a_revoir\":240}};\nconst reg = lire('Lire les départements (base)');\nconst tous = reg.find((r) => r.departement === 'tous');\nconst dep = reg.find((r) => r.departement === DEP);\nconst art = lire('Lire le compte (base)')[0] || {};\nconst pil = lire('Lire le pilote (base)')[0] || {};\nconst pc = lire('Lire le mode de réponse (base)')[0] || {};\nconst offre = OFFRE[String(art.plan || '')] || null;\nconst marche = (r) => Boolean(r) && r.en_marche === true && r.palier !== 'arret';\nconst reel = Boolean(tous) && Boolean(dep) && tous.palier === 'reel' && dep.palier === 'reel';\nconst cles = [].concat(lire('Lire les faits déjà écrits (base)').map((x) => String(x.cle || '').replace(/^fait:/, '')), lire('Lire les cartes déjà posées (base)').map((x) => String(x.cle || ''))).filter(Boolean);\nconst actives = lire('Lire les connexions (base)').map((x) => x.fournisseur);\nconst premier = (liste) => liste.find((f) => actives.includes(f)) || null;\nconst types = pil.types && typeof pil.types === 'object' ? pil.types : {};\nreturn [{ json: {\n  organisation_id: art.id || null, artisan_id: art.id || null, departement: DEP, offre, capacites: offre ? CAPACITES[offre] : [],\n  simulation: !reel, palier: dep ? dep.palier : 'simulation', interrupteur_general: marche(tous), interrupteur_departement: marche(dep),\n  plafond_jour: dep && Number.isInteger(dep.plafond_jour) ? dep.plafond_jour : 20,\n  pilote: { actif: pil.actif === true, types }, actif: pil.actif === true, types,\n  parties_depuis_24h: lire('Compter les départs du pilote (base)').length,\n  mode_reponse: ['auto', 'assistee', 'manuelle'].includes(pc.mode_reponse) ? pc.mode_reponse : 'assistee',\n  ton: typeof pc.ton === 'string' ? pc.ton : null, mots_escalade_artisan: Array.isArray(pc.escalade_mots) ? pc.escalade_mots : [],\n  enseigne: art.nom || null, marque_artisan: art.nom || null, signature: art.nom || null, horaires: art.horaires || null,\n  cles_existantes: [...new Set(cles)], empreintes_connues: [], fournisseurs: [], qualification: QUALIFICATION,\n  boite: premier(['gmail', 'outlook', 'imap']), stockage: premier(['google_drive', 'onedrive']),\n  outil_agenda: premier(['google_agenda', 'outlook_agenda']), outil_courrier: premier(['gmail', 'outlook', 'imap']), outil_fichiers: premier(['google_drive', 'onedrive']), outil_tableur: null,\n  canal_direction: null, destination_direction: null, signature_electronique: null, comptable: null, relances_impayes: null, sms_api: null, expediteur: null,\n  paliers_conversation_jours: null, paliers_devis_jours: null, formulaire_leads_id: null, maintenant: $now.toISO(),\n} }];"
+      },
+      "notes": "036-031 : configuration composée depuis les vraies tables (schema-gabarits.md)."
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T13:20:13.727Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-014), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}
