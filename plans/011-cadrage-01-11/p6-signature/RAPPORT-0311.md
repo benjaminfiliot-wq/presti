@@ -6,6 +6,33 @@ est `outillage/OUTILLAGE.md`.
 
 ## En bref
 
+**Vers 20 h : où on en est vraiment (deux audits indépendants, 036-028 et 036-029)**
+- **Vrai** : la logique de décision est construite dans n8n et prouvée en simulation (exécution 882, 8 juges à mutants verts). Studio
+  prépare, Signature envoie par le Pilote, les montants viennent du code, le schéma est strict, la marque blanche et la porte de simulation
+  sont en place.
+- **Pas encore vrai** :
+  - rien ne lit la vraie base ;
+  - 52 des 61 objets de base appelés par les gabarits n'existent pas ;
+  - le chef et ses spécialistes ne sont pas dans n8n (ils sont dans les fichiers) ;
+  - aucun artisan n'est branché ;
+  - le bouton « Connecter » n'existe dans aucun écran : la route est faite et son juge est vert (39/39), mais aucun bouton ne l'appelle.
+- `offres-affichage-qa` n'est pas rouge : lancé comme le lanceur, il passe 286 contrôles sur 286.
+- **Posés ce soir** :
+  - l'identifiant OAuth Google de Benj (Vercel et `.env.local`, jamais affiché), avec `GOOGLE_OAUTH_REDIRECT_URI` ;
+  - `BOITE_CLE_N8N` ;
+  - les exécuteurs n8n avec les modules mail.
+- **Sur Oracle, sur la clé API de Benj** :
+  - 036-030 branche les vraies lectures, les cartes et la boîte « À valider » ;
+  - 036-031 fait parler les gabarits au vrai schéma.
+- **À la reprise**, dans l'ordre :
+  1. rapatrier et juger 036-030 et 036-031, puis les pousser (les variables Vercel neuves ne valent qu'au prochain déploiement) ;
+  2. poser 0194 et 0195 s'ils existent ;
+  3. mettre le vrai multi-agents dans n8n ;
+  4. construire le bouton « Connecter » dans l'outil de gestion, puis lever `connexions` ;
+  5. prouver `$env.BOITE_CLE_N8N` par un banc ;
+  6. mode ombre sur un compte de test Studio, puis Signature ;
+  7. bascule type par type.
+
 **Soir (mis à jour vers 19 h 15)**
 - **En ligne (`cb49d81`, vérifié en direct)** : l'offre Entreprise refaite (036-026). Elle comprend :
   - la carte enrichie ;
