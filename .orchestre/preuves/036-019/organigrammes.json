@@ -1,0 +1,529 @@
+{
+  "sansAgent": [
+    "gabarit-artisan-accueil-boite",
+    "gabarit-artisan-accueil-envoi",
+    "gabarit-artisan-accueil-leads"
+  ],
+  "gabarits": [
+    {
+      "nomFichier": "gabarit-artisan-accueil-reponse.workflow.json",
+      "nom": "gabarit-artisan-accueil-reponse",
+      "dept": "accueil",
+      "ancre": "Rédacteur",
+      "predecesseur": "Revalider la qualification",
+      "chef": "Chef du département accueil",
+      "specs": [
+        {
+          "nom": "Spécialiste : Qualificateur",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire le fil Gmail (qualificateur)",
+            "Lire le message Outlook (qualificateur)",
+            "Trier la demande (lib-trier-demande)",
+            "Lire la photo (lib-lire-photo)"
+          ],
+          "role": "reprend la consigne de « Qualificateur » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : Rédacteur",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire le fil Gmail (rédacteur)",
+            "Lire le message Outlook (rédacteur)"
+          ],
+          "role": "reprend la consigne de « Rédacteur » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire le fil Gmail (qualificateur)",
+            "Lire le message Outlook (qualificateur)"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-artisan-apres.workflow.json",
+      "nom": "gabarit-artisan-apres",
+      "dept": "après-chantier",
+      "ancre": "Préparateur de réponses",
+      "predecesseur": "Un avis à préparer ?",
+      "chef": "Chef du département après-chantier",
+      "specs": [
+        {
+          "nom": "Spécialiste : Préparateur de réponses",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Outil : relire les avis de la fiche",
+            "Outil : lire et classer un avis"
+          ],
+          "role": "reprend la consigne de « Préparateur de réponses » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Outil : relire les avis de la fiche",
+            "Outil : lire et classer un avis"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-artisan-devis.workflow.json",
+      "nom": "gabarit-artisan-devis",
+      "dept": "devis",
+      "ancre": "Rédacteur de lignes",
+      "predecesseur": "Porte simulation (modèle)",
+      "chef": "Chef du département devis",
+      "specs": [
+        {
+          "nom": "Spécialiste : Rédacteur de lignes",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Tarifs (Google Sheets)",
+            "Tarifs (Excel)",
+            "Lire le fil (Gmail)",
+            "Lire le message (Outlook)"
+          ],
+          "role": "reprend la consigne de « Rédacteur de lignes » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Tarifs (Google Sheets)",
+            "Tarifs (Excel)"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-artisan-direction.workflow.json",
+      "nom": "gabarit-artisan-direction",
+      "dept": "direction",
+      "ancre": "Rédacteur de la page",
+      "predecesseur": "Page du matin ?",
+      "chef": "Chef du département direction",
+      "specs": [
+        {
+          "nom": "Spécialiste : Rédacteur de la page",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Outil : alertes ouvertes",
+            "Outil : coût IA"
+          ],
+          "role": "reprend la consigne de « Rédacteur de la page » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : Rédacteur du rapport",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Outil : relire les rapports passés",
+            "Outil : coût IA (rapport)"
+          ],
+          "role": "reprend la consigne de « Rédacteur du rapport » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Outil : alertes ouvertes",
+            "Outil : coût IA"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-artisan-facturation.workflow.json",
+      "nom": "gabarit-artisan-facturation",
+      "dept": "facturation",
+      "ancre": "Relanceur d'impayés",
+      "predecesseur": "Porte simulation (modèle)",
+      "chef": "Chef du département facturation",
+      "specs": [
+        {
+          "nom": "Spécialiste : Relanceur d'impayés",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire un paiement (Stripe)",
+            "Lire le fil (Gmail)",
+            "Lire le message (Outlook)",
+            "Contrôleur de conflit (lib-controler-conflit)"
+          ],
+          "role": "reprend la consigne de « Relanceur d'impayés » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire un paiement (Stripe)",
+            "Lire le fil (Gmail)"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-artisan-operations.workflow.json",
+      "nom": "gabarit-artisan-operations",
+      "dept": "opérations",
+      "ancre": "Planificateur",
+      "predecesseur": "Créneaux à proposer ?",
+      "chef": "Chef du département opérations",
+      "specs": [
+        {
+          "nom": "Spécialiste : Planificateur",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Outil : disponibilité Google Agenda",
+            "Outil : événements Outlook"
+          ],
+          "role": "reprend la consigne de « Planificateur » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : Gardien du stock",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Outil : lire le tableur de stock"
+          ],
+          "role": "reprend la consigne de « Gardien du stock » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : Archiviste",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Outil : chercher dans Drive"
+          ],
+          "role": "reprend la consigne de « Archiviste » (agent déjà construit) pour conseiller le chef"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-artisan-suivi.workflow.json",
+      "nom": "gabarit-artisan-suivi",
+      "dept": "suivi",
+      "ancre": "Relanceur",
+      "predecesseur": "Porte simulation (modèle)",
+      "chef": "Chef du département suivi",
+      "specs": [
+        {
+          "nom": "Spécialiste : Relanceur",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Contrôleur de conflit (lib-controler-conflit)",
+            "Lire le fil (Gmail)",
+            "Lire le message (Outlook)",
+            "Registre des relances (Google Sheets)"
+          ],
+          "role": "reprend la consigne de « Relanceur » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Contrôleur de conflit (lib-controler-conflit)",
+            "Lire le fil (Gmail)"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-ent-accueil.workflow.json",
+      "nom": "gabarit-ent-accueil",
+      "dept": "accueil",
+      "ancre": "Trieur",
+      "predecesseur": "Porte simulation",
+      "chef": "Chef du département accueil",
+      "specs": [
+        {
+          "nom": "Spécialiste : Trieur",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Trier la demande"
+          ],
+          "role": "reprend la consigne de « Trieur » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : Qualificateur",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire le fil Gmail",
+            "Lire le fil Outlook",
+            "Trier la demande",
+            "Lire la photo"
+          ],
+          "role": "reprend la consigne de « Qualificateur » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Trier la demande"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-ent-administratif.workflow.json",
+      "nom": "gabarit-ent-administratif",
+      "dept": "administratif",
+      "ancre": "Rédacteur de relances",
+      "predecesseur": "Relances à rédiger",
+      "chef": "Chef du département administratif",
+      "specs": [
+        {
+          "nom": "Spécialiste : Rédacteur de relances",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire le fil Gmail",
+            "Lire le fil Outlook",
+            "Chercher dans le Drive (outil)"
+          ],
+          "role": "reprend la consigne de « Rédacteur de relances » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : Rédacteur d’attestations",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Chercher dans le Drive (outil) (attestations)",
+            "Lire le classeur Sheets (outil)"
+          ],
+          "role": "reprend la consigne de « Rédacteur d’attestations » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire le fil Gmail",
+            "Lire le fil Outlook"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-ent-apres-vente.workflow.json",
+      "nom": "gabarit-ent-apres-vente",
+      "dept": "après-vente",
+      "ancre": "Rédacteur de réponses",
+      "predecesseur": "Retours à traiter",
+      "chef": "Chef du département après-vente",
+      "specs": [
+        {
+          "nom": "Spécialiste : Rédacteur de réponses",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Avis de la fiche Google (outil)",
+            "Ticket Zendesk (outil)",
+            "Lire le fil Gmail",
+            "Lire le fil Outlook"
+          ],
+          "role": "reprend la consigne de « Rédacteur de réponses » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Avis de la fiche Google (outil)",
+            "Ticket Zendesk (outil)"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-ent-direction.workflow.json",
+      "nom": "gabarit-ent-direction",
+      "dept": "direction",
+      "ancre": "Rédacteur de la direction",
+      "predecesseur": "Mode privé ?",
+      "chef": "Chef du département direction",
+      "specs": [
+        {
+          "nom": "Spécialiste : Rédacteur de la direction",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire le classeur Sheets (outil)",
+            "Chercher dans le Drive (outil)"
+          ],
+          "role": "reprend la consigne de « Rédacteur de la direction » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire le classeur Sheets (outil)",
+            "Chercher dans le Drive (outil)"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-ent-finance.workflow.json",
+      "nom": "gabarit-ent-finance",
+      "dept": "finance",
+      "ancre": "Rédacteur d’impayés",
+      "predecesseur": "Relances à rédiger",
+      "chef": "Chef du département finance",
+      "specs": [
+        {
+          "nom": "Spécialiste : Rédacteur d’impayés",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Paiement Stripe (outil)",
+            "Facture QuickBooks (outil)",
+            "Facture Xero (outil)",
+            "Lire le fil Gmail"
+          ],
+          "role": "reprend la consigne de « Rédacteur d’impayés » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Paiement Stripe (outil)",
+            "Facture QuickBooks (outil)"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-ent-leads.workflow.json",
+      "nom": "gabarit-ent-leads",
+      "dept": "leads",
+      "ancre": "Rédacteur de séquence",
+      "predecesseur": "Leads à rédiger",
+      "chef": "Chef du département leads",
+      "specs": [
+        {
+          "nom": "Spécialiste : Rédacteur de séquence",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Fiche CRM : HubSpot",
+            "Fiche CRM : Airtable",
+            "Fiche CRM : Notion",
+            "Contrôler les conflits"
+          ],
+          "role": "reprend la consigne de « Rédacteur de séquence » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Fiche CRM : HubSpot",
+            "Fiche CRM : Airtable"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-ent-marketing.workflow.json",
+      "nom": "gabarit-ent-marketing",
+      "dept": "marketing",
+      "ancre": "Rédacteur de contenu",
+      "predecesseur": "Entrées à rédiger",
+      "chef": "Chef du département marketing",
+      "specs": [
+        {
+          "nom": "Spécialiste : Rédacteur de contenu",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Idées et calendrier (Notion)",
+            "Contenus passés (Airtable)"
+          ],
+          "role": "reprend la consigne de « Rédacteur de contenu » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Idées et calendrier (Notion)",
+            "Contenus passés (Airtable)"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-ent-operations.workflow.json",
+      "nom": "gabarit-ent-operations",
+      "dept": "opérations",
+      "ancre": "Répartiteur",
+      "predecesseur": "Chantiers à répartir",
+      "chef": "Chef du département opérations",
+      "specs": [
+        {
+          "nom": "Spécialiste : Répartiteur",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire l’agenda Google (outil)",
+            "Lire l’agenda Outlook (outil)",
+            "Tâches ClickUp (outil)",
+            "Lire le classeur Sheets (outil)"
+          ],
+          "role": "reprend la consigne de « Répartiteur » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Lire l’agenda Google (outil)",
+            "Lire l’agenda Outlook (outil)"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    },
+    {
+      "nomFichier": "gabarit-ent-ventes.workflow.json",
+      "nom": "gabarit-ent-ventes",
+      "dept": "ventes",
+      "ancre": "Rédacteur de propositions",
+      "predecesseur": "Entrées à proposer",
+      "chef": "Chef du département ventes",
+      "specs": [
+        {
+          "nom": "Spécialiste : Rédacteur de propositions",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Fiche CRM : HubSpot",
+            "Fiche CRM : Pipedrive",
+            "Fiche CRM : Salesforce",
+            "Fiche CRM : Zoho CRM"
+          ],
+          "role": "reprend la consigne de « Rédacteur de propositions » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : Relanceur",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Contrôler les conflits",
+            "Lire le fil Gmail",
+            "Lire le fil Outlook"
+          ],
+          "role": "reprend la consigne de « Relanceur » (agent déjà construit) pour conseiller le chef"
+        },
+        {
+          "nom": "Spécialiste : vérificateur des faits",
+          "modele": "claude-haiku-5-5",
+          "outils": [
+            "Fiche CRM : HubSpot",
+            "Fiche CRM : Pipedrive"
+          ],
+          "role": "vérifie les faits contre les données et les outils de lecture"
+        }
+      ]
+    }
+  ]
+}

@@ -31,13 +31,12 @@ const NAV: { group: string; items: Nav[] }[] = [
     items: [
       { key: 'dashboard', label: 'Tableau de bord', href: '/dashboard', icon: ic(<><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></>) },
       { key: 'messages', label: 'Messages', href: '/messages', offre: 'Studio', cap: 'plateforme.conversation', icon: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></>) },
-      { key: 'devis', label: 'Devis', href: '/devis', icon: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M8 13h8M8 17h5" /></>) },
-      { key: 'factures', label: 'Factures', href: '/factures', icon: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M9 15h6" /></>) },
+      // L'OUTIL DE GESTION (03/11, demande de Benj : « tout passe par l'outil de gestion, le CRM »). Devis, Factures, Mes tarifs et Inventaire
+      // ne sont plus au menu : leurs adresses (/devis, /factures, /tarifs, /inventaire) marchent toujours, et on y va depuis /crm, qui s'ouvre
+      // sur deux portes (CRM 3D ou tableau de bord) puis donne chaque écran métier (app/crm/Gestion.tsx).
+      // Absent du menu tant que le drapeau `crm` est baissé.
+      ...(enEssai('crm') ? [{ key: 'crm', essai: 'crm' as Flag, label: 'Outil de gestion', href: '/crm', icon: ic(<><path d="M3 21h18" /><path d="M5 21V9l7-5 7 5v12" /><path d="M9 21v-6h6v6" /></>) }] : []),
       { key: 'chiffres', label: 'Mes chiffres', href: '/chiffres', offre: 'Studio', cap: 'chiffres', icon: ic(<><path d="M4 20V10" /><path d="M10 20V4" /><path d="M16 20v-7" /><path d="M22 20H2" /></>) },
-      // CRM atelier (0141) : absent du menu tant que le drapeau `crm` est baissé.
-      ...(enEssai('crm') ? [{ key: 'crm', essai: 'crm' as Flag, offre: 'Signature', label: 'CRM atelier', href: '/crm', icon: ic(<><path d="M3 21h18" /><path d="M5 21V9l7-5 7 5v12" /><path d="M9 21v-6h6v6" /></>) }] : []),
-      { key: 'tarifs', label: 'Mes tarifs', href: '/tarifs', icon: ic(<><path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h9z" /><circle cx="7.5" cy="7.5" r="1.4" /></>) },
-      { key: 'inventaire', label: 'Inventaire', href: '/inventaire', icon: ic(<><path d="M3 7l9-4 9 4v10l-9 4-9-4z" /><path d="M3 7l9 4 9-4M12 11v10" /></>) },
       { key: 'profil', label: 'Ma page', href: '/profil', icon: ic(<><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></>) },
       ...(actif('siteCommandeVente') ? [{ key: 'site', label: 'Commander mon site', href: '/site/commander', icon: ic(<><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><path d="M8 21h8M12 17v4" /></>) }] : []),
       { key: 'plateforme', label: 'Ma plateforme', href: '/plateforme', offre: 'Studio', cap: 'plateforme.gestion', icon: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></>) },

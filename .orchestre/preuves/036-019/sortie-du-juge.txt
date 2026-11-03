@@ -1,0 +1,60 @@
+✓ gabarit-artisan-accueil-reponse.workflow.json : 1 chef, 3 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-artisan-apres.workflow.json : 1 chef, 2 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-artisan-devis.workflow.json : 1 chef, 2 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-artisan-direction.workflow.json : 1 chef, 3 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-artisan-facturation.workflow.json : 1 chef, 2 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-artisan-operations.workflow.json : 1 chef, 3 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-artisan-suivi.workflow.json : 1 chef, 2 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-ent-accueil.workflow.json : 1 chef, 3 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-ent-administratif.workflow.json : 1 chef, 3 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-ent-apres-vente.workflow.json : 1 chef, 2 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-ent-direction.workflow.json : 1 chef, 2 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-ent-finance.workflow.json : 1 chef, 2 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-ent-leads.workflow.json : 1 chef, 2 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-ent-marketing.workflow.json : 1 chef, 2 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-ent-operations.workflow.json : 1 chef, 2 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+✓ gabarit-ent-ventes.workflow.json : 1 chef, 3 spécialistes en agents-outils, parseur strict, aucune somme du chef, aucun effet sans la porte
+
+Mutants (chacun doit faire rougir le juge pour sa raison) :
+  ✓ mutant « gabarit sans chef » (gabarit-artisan-devis) fait rougir le juge
+      → M1 0 chef(s) : un seul AI Agent doit recevoir des agents-outils
+  ✓ mutant « gabarit sans chef » (gabarit-ent-ventes) fait rougir le juge
+      → M1 0 chef(s) : un seul AI Agent doit recevoir des agents-outils
+  ✓ mutant « agent-outil qui écrit (Gmail en envoi) » (gabarit-artisan-devis) fait rougir le juge
+      → M3 Envoyer en outil : outil de spécialiste qui écrit ou envoie (send)
+  ✓ mutant « agent-outil qui écrit (Gmail en envoi) » (gabarit-ent-ventes) fait rougir le juge
+      → M3 Envoyer en outil : outil de spécialiste qui écrit ou envoie (send)
+  ✓ mutant « agent-outil dont l’outil perd son opération (envoi par défaut) » (gabarit-artisan-devis) fait rougir le juge
+      → M3 Tarifs (Google Sheets) [spéc. Rédacteur de lignes] : outil de spécialiste qui écrit ou envoie (opération par défaut)
+  ✓ mutant « agent-outil dont l’outil perd son opération (envoi par défaut) » (gabarit-ent-ventes) fait rougir le juge
+      → M3 Fiche CRM : HubSpot [spéc. Rédacteur de propositions] : outil de spécialiste qui écrit ou envoie (opération par défaut)
+  ✓ mutant « chef sans parseur » (gabarit-artisan-devis) fait rougir le juge
+      → M4 Chef du département devis : un seul Structured Output Parser strict attendu
+  ✓ mutant « chef sans parseur » (gabarit-ent-ventes) fait rougir le juge
+      → M4 Chef du département ventes : un seul Structured Output Parser strict attendu
+  ✓ mutant « parseur du chef non strict (autoFix vrai) » (gabarit-artisan-devis) fait rougir le juge
+      → M4 Schéma : Chef du département devis : JSON Schema saisi (manual) et autoFix faux attendus
+  ✓ mutant « parseur du chef non strict (autoFix vrai) » (gabarit-ent-ventes) fait rougir le juge
+      → M4 Schéma : Chef du département ventes : JSON Schema saisi (manual) et autoFix faux attendus
+  ✓ mutant « montant dans le schéma du chef » (gabarit-artisan-devis) fait rougir le juge
+      → M5 Schéma : Chef du département devis : le schéma du chef porte une propriété d'argent (montant_ttc)
+  ✓ mutant « montant dans le schéma du chef » (gabarit-ent-ventes) fait rougir le juge
+      → M5 Schéma : Chef du département ventes : le schéma du chef porte une propriété d'argent (montant_ttc)
+  ✓ mutant « montant pris dans la sortie du chef » (gabarit-artisan-devis) fait rougir le juge
+      → M5 Calculer avec le chef : une somme est lue dans la note du chef (le code compte, le chef ne décide jamais d'un montant)
+  ✓ mutant « montant pris dans la sortie du chef » (gabarit-ent-ventes) fait rougir le juge
+      → M5 Calculer avec le chef : une somme est lue dans la note du chef (le code compte, le chef ne décide jamais d'un montant)
+  ✓ mutant « agent-outil sans modèle » (gabarit-artisan-devis) fait rougir le juge
+      → M3 Spécialiste : Rédacteur de lignes : un modèle Anthropic nommé est attendu (agent-outil sans modèle)
+  ✓ mutant « agent-outil sans modèle » (gabarit-ent-ventes) fait rougir le juge
+      → M3 Spécialiste : Rédacteur de propositions : un modèle Anthropic nommé est attendu (agent-outil sans modèle)
+  ✓ mutant « un seul agent-outil » (gabarit-artisan-devis) fait rougir le juge
+      → M2 Chef du département devis : 1 agent(s)-outil(s), au moins deux attendus
+  ✓ mutant « un seul agent-outil » (gabarit-ent-ventes) fait rougir le juge
+      → M2 Chef du département ventes : 1 agent(s)-outil(s), au moins deux attendus
+  ✓ mutant « porte « simulation » contournée (le chef atteint par « vrai ») » (gabarit-artisan-devis) fait rougir le juge
+      → M6 Chef du département devis : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+  ✓ mutant « porte « simulation » contournée (le chef atteint par « vrai ») » (gabarit-ent-ventes) fait rougir le juge
+      → M6 Chef du département ventes : effet atteignable sans passer par la sortie « faux » d'une porte « simulation »
+
+OK : 16 gabarits multi-agents tenus, 20 mutants rouges

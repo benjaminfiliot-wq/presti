@@ -22,6 +22,7 @@ import { enEssai } from '@/lib/flags'
 import { contexteDeObjet } from '@/lib/crm/assistantCrm'
 import { BoutonDemander } from '../assistant/PanneauAssistant'
 import { ActiviteAssistant } from '../assistant/Activite'
+import LigneFait from './LigneFait'
 
 // Le panneau qui s'ouvre au clic sur un objet de la maquette — le MÊME en 3D et dans le repli 2D (mêmes données, mêmes
 // actions). Chaque action passe par un chemin qui existe déjà :
@@ -58,6 +59,8 @@ export default function Panneau({ objet, donnees, demo, resume, onFermer, onVue2
         {enEssai('assistant') && contexteDeObjet(objet) && <span className="aca-demander-objet"><BoutonDemander contexte={contexteDeObjet(objet)} /></span>}
       </header>
       <div className="atl-panneau-corps">
+        {/* 03/11 — la ligne « fait : … » : ce que les assistants ont fait sur CET objet (même fil que le poste des assistants). */}
+        {enEssai('assistant') && <LigneFait objet={objet} />}
         {objet.type === 'chantier' && <PanneauChantier objet={objet} donnees={donnees} demo={demo} resume={resume} onChange={onChange} carte={carte} />}
         {objet.type === 'categorie' && <PanneauInventaire objet={objet} donnees={donnees} demo={demo} onChange={onChange} metier={metier} />}
         {objet.type === 'structure' && <PanneauStructure objet={objet} donnees={donnees} metier={metier ?? metier3DDe(donnees.metier)} onVue2D={onVue2D} onChoisir={onChoisir} onChange={onChange} />}

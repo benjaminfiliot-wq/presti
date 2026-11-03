@@ -1,0 +1,38 @@
+[
+  {
+    "workflow": "gabarit-artisan-accueil-reponse",
+    "nom": "une note valide passe et l’élément d’origine est gardé",
+    "resultat": "accepté",
+    "attendu_tenu": true
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-reponse",
+    "nom": "une somme écrite par le chef est rejetée",
+    "resultat": "rejeté : somme écrite par le chef : elle vient des données du client",
+    "attendu_tenu": true
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-reponse",
+    "nom": "une clé en trop (montant) est rejetée",
+    "resultat": "rejeté : note du chef hors schéma",
+    "attendu_tenu": true
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-reponse",
+    "nom": "une décision hors liste est rejetée",
+    "resultat": "rejeté : décision du chef hors de la liste",
+    "attendu_tenu": true
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-reponse",
+    "nom": "un spécialiste inconnu est rejeté",
+    "resultat": "rejeté : spécialiste inconnu cité par le chef",
+    "attendu_tenu": true
+  },
+  {
+    "workflow": "gabarit-artisan-accueil-reponse",
+    "nom": "le nom de la plateforme est rejeté",
+    "resultat": "rejeté : nom de la plateforme dans la note du chef (marque blanche)",
+    "attendu_tenu": true
+  }
+]

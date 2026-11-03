@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
+import Gestion from './Gestion'
 import { appel, bloquerEcritures, dateHeureFr } from './client'
 import type { Vue } from './types'
 import TableauCrmVue from './Tableau'
@@ -50,7 +51,26 @@ const CLE_ONGLET = 'presti-crm-onglet'
 const compteVide = (v: Vue) => v.pipeline.vide && !v.chantiers.length && !v.clients.length
   && !v.atelier.materiaux.length && !v.atelier.vehicules.length && !v.atelier.membres.length
 
+/**
+ * Le point d'entrée de l'OUTIL DE GESTION (03/11, demande de Benj). /crm sans paramètre s'ouvre sur le choix « CRM 3D » ou « Tableau de bord »
+ * puis sur les écrans métier (app/crm/Gestion.tsx) : aucune lecture de données, donc ouvert à tous les comptes. Toute adresse qui nomme une
+ * vue (?vue=…, ?exemple=1, ?mesure=1) ouvre le CRM tel qu'avant : rien n'est supprimé, les liens et signets existants marchent.
+ */
 export default function Crm() {
+  const [porte, setPorte] = useState<'?' | 'choix' | 'vue'>('?')
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search)
+    setPorte(p.has('vue') || p.get('exemple') === '1' || p.get('mesure') === '1' ? 'vue' : 'choix')
+  }, [])
+  if (porte === 'vue') return <CrmVue />
+  return (
+    <AppShell active="crm" title="Outil de gestion" crumb="Devis, factures, stock, clients, chantiers" wide>
+      {porte === 'choix' ? <Gestion /> : <p className="muted" role="status">Ouverture…</p>}
+    </AppShell>
+  )
+}
+
+function CrmVue() {
   const router = useRouter()
   const [onglet, setOnglet] = useState<Onglet>('atelier')
   // Le choix explicite de l'artisan (retenu pour cet onglet du navigateur) ; null = la règle : exemple si le compte est vide.
@@ -130,6 +150,7 @@ export default function Crm() {
       ) : (
         <ModeExemple actif={exemple}>
          <div className={`crm-racine${onglet === 'atelier' ? ' crm-plein' : ''}`}>
+          <p className="crm-retour-gestion"><a className="crm-retour" href="/crm" data-gestion-retour>← Outil de gestion</a></p>
           <div className={`crm-mode${exemple ? ' exemple' : ''}`} role="note" data-crm-mode={exemple ? 'exemple' : 'donnees'}>
             {exemple ? (
               <>

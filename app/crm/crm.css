@@ -465,3 +465,31 @@ span.crm-lien-inerte.psh-btn, span.crm-lien-inerte.tag { opacity: .62 }
 .crm-maquette-etiquettes button[data-mode="cachee"] { visibility: hidden }
 .crm-maquette-etiquettes button[data-mode="pastille"] { max-width: 40px; overflow: hidden; white-space: nowrap }
 .crm-maquette-bulle { position: absolute; left: 12px; bottom: 10px; margin: 0; padding: 5px 10px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); font-size: 12.5px; font-weight: 600; pointer-events: none; box-shadow: var(--shadow-sm) }
+
+/* — L'outil de gestion (app/crm/Gestion.tsx) : deux portes, puis les écrans métier. Jetons de base.css seulement, corail en accent. — */
+.crm-retour-gestion { margin: 0 0 -4px }
+.gst { display: flex; flex-direction: column; gap: 22px; min-width: 0 }
+.gst-titre { margin: 0; font-family: var(--font-display); font-size: 24px; letter-spacing: -.02em }
+.gst-portes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px }
+.gst-porte { display: flex; align-items: center; gap: 18px; min-width: 0; padding: 22px; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); transition: border-color .18s var(--ease-out), transform .18s var(--ease-out) }
+.gst-porte:hover { border-color: var(--accent-tint-2); transform: translateY(-2px) }
+.gst-porte:active { transform: scale(.985) }
+.gst-porte:focus-visible, .gst-liste a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.gst-porte-3d { background: linear-gradient(135deg, var(--accent-tint), var(--surface) 70%); border-color: var(--accent-tint-2) }
+.gst-porte-texte { display: flex; flex-direction: column; gap: 6px; min-width: 0 }
+.gst-porte-texte b { font-family: var(--font-display); font-size: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap }
+.gst-porte-texte > span { color: var(--muted); font-size: 13.5px; line-height: 1.45 }
+.gst-badge { font-family: var(--font-body); font-size: 11px }
+.gst-maquette { flex: 0 0 120px; width: 120px; height: 80px }
+.gst-maquette path { stroke: var(--line) }
+.gst-sol { fill: var(--surface-2) }
+.gst-f1 { fill: var(--accent-2) } .gst-f2 { fill: var(--accent) } .gst-f3 { fill: var(--accent-hover) }
+.gst-groupe { display: flex; flex-direction: column; gap: 8px }
+.gst-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px }
+.gst-liste a { display: flex; flex-direction: column; gap: 3px; min-height: 64px; padding: 12px 14px; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); transition: border-color .15s var(--ease-out) }
+.gst-liste a:hover { border-color: var(--accent-tint-2) }
+.gst-liste a span { color: var(--muted); font-size: 12.5px; line-height: 1.4 }
+.atl-fait { margin: 0 0 10px; font-size: 12.5px; line-height: 1.45; color: var(--ink-soft) }
+.atl-fait b { color: var(--ok) }
+@media (max-width: 720px) { .gst-portes { grid-template-columns: minmax(0, 1fr) } .gst-maquette { flex-basis: 84px; width: 84px; height: 56px } }
+@media (prefers-reduced-motion: reduce) { .gst-porte, .gst-liste a { transition: none } .gst-porte:hover { transform: none } .gst-porte:active { transform: none } }
