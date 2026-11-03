@@ -6,6 +6,16 @@ est `outillage/OUTILLAGE.md`.
 
 ## En bref
 
+**La cause de « crypto refusé aux nœuds Code » (relevée vers 23 h 45)**
+- Le n8n principal tourne en mode d'exécuteurs **interne** : ni `N8N_RUNNERS_MODE` ni `NODE_FUNCTION_ALLOW_*` ne sont posés dans son
+  environnement. Ses nœuds Code passent donc par l'exécuteur interne, sans module permis.
+- Le conteneur `runners` (`presti/runners:2.45.7-mail`, avec crypto, dns, net, imapflow, nodemailer et mailparser dans
+  `/etc/n8n-task-runners.json`) **n'est pas utilisé**.
+- **Correctif à poser après le palier réel**, pour ne pas casser les essais d'Antigravity dans n8n : dans l'override, sur le service `n8n`,
+  `N8N_RUNNERS_MODE: external` et `N8N_RUNNERS_BROKER_LISTEN_ADDRESS: 0.0.0.0` (même `N8N_RUNNERS_AUTH_TOKEN`). Ensuite,
+  `docker compose up -d n8n runners`, puis un essai d'un nœud Code avec `require('crypto')` et `require('imapflow')`.
+- Retour arrière : retirer les deux variables, puis relancer.
+
 **Vers 23 h 30 : état au moment de l'arrêt**
 - **En ligne** : les six autres départements (`bd06225`), leurs vrais événements, les jours fériés par une API publique gratuite, et les sept
   départements du compte payant en ombre. Le centre d'aide est refait (`8c32421`) et le registre RGPD à jour (§ 23 ter). L'identifiant
