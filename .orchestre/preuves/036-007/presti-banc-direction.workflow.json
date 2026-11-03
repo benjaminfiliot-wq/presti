@@ -1,0 +1,750 @@
+{
+  "id": "K7lsk0lRJtH5xEOJ",
+  "name": "presti-banc-direction",
+  "active": false,
+  "isArchived": false,
+  "versionId": "96df98d8-5264-4ecf-9d22-153a3c4fc612",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 23,
+  "createdAt": "2026-11-03T11:26:56.003Z",
+  "updatedAt": "2026-11-03T11:30:37.061Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 180,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "presti-banc-direction (036-007) : banc d'essai de la Direction, dix cas fictifs, jamais publié. Inactif.",
+  "canExecute": true,
+  "connections": {
+    "Banc (jamais publié)": {
+      "main": [
+        [
+          {
+            "node": "Cas : page du matin",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : page sans lecture",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : rapport du lundi",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : diagnostic sans données",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : diagnostic avec données",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : alertes du jour",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : coût qui dérive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : interrupteur coupé",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : plafond atteint",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : alertes de nuit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : page du matin": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-direction (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-direction (1)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : page sans lecture": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-direction (2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-direction (2)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : rapport du lundi": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-direction (3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-direction (3)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : diagnostic sans données": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-direction (4)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-direction (4)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : diagnostic avec données": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-direction (5)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-direction (5)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : alertes du jour": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-alerte-liste (6)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : coût qui dérive": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-cout-ia (7)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : interrupteur coupé": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-direction (8)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-direction (8)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : plafond atteint": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-cout-ia (9)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-cout-ia (9)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-alerte-liste (6)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-cout-ia (7)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : alertes de nuit": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-alerte-liste (10)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-alerte-liste (10)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "1562694c-a9b8-495c-bda0-7485f8ada42d",
+      "name": "Banc (jamais publié)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ba6450f0-7087-4fb1-b77d-d1a2a2c81d2b",
+      "name": "Cas : page du matin",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -640
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Quatre impayés ou devis, trois demandes, deux cartes : l’argent d’abord, trois priorités, fin sur les cartes.\nconst cas = {\"contrat\":\"presti-dep-direction@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:matin\",\"trace\":{\"execution_parent\":\"Exemple. essai : direction\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"seuil_impaye_centimes\":100000,\"plafond_alertes_jour\":5,\"plafond_cout_jour_centimes\":100,\"seuil_derive_pct\":50,\"jours_base_min\":3,\"plancher_derive_centimes\":50},\"donnees\":{\"evenements\":[],\"genre\":\"matin\",\"maintenant\":\"2026-11-03T06:30:00.000Z\",\"matin\":{\"sources\":{\"impayes\":{\"lue\":true,\"le\":\"2026-11-03\"},\"devis\":{\"lue\":true,\"le\":\"2026-11-03\"},\"demandes\":{\"lue\":true,\"le\":\"2026-11-03\"},\"cartes\":{\"lue\":true,\"le\":\"2026-11-03\"}},\"impayes\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000811\",\"numero\":\"Exemple. F-001\",\"total_ttc\":1840.5,\"date_echeance\":\"2026-10-20\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000812\",\"numero\":\"Exemple. F-002\",\"total_ttc\":620,\"date_echeance\":\"2026-09-30\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000813\",\"numero\":\"Exemple. F-003\",\"total_ttc\":90,\"date_echeance\":\"2026-11-10\"}],\"devis\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000821\",\"numero\":\"Exemple. D-101\",\"total_ttc\":5200,\"envoye_le\":\"2026-10-20T09:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000822\",\"numero\":\"Exemple. D-102\",\"total_ttc\":1300,\"envoye_le\":\"2026-10-30T09:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000823\",\"numero\":\"Exemple. D-103\",\"total_ttc\":2750,\"envoye_le\":\"2026-10-24T09:00:00.000Z\"}],\"demandes\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000831\",\"urgent\":true},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000832\",\"urgent\":false},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000833\",\"urgent\":false}],\"stock\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000841\",\"article\":\"Exemple. joint\",\"reste\":2}],\"exclus\":[\"lead:00000000-0000-4000-8000-000000000832\"],\"cartes\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"cle\":\"relance_impaye:00000000-0000-4000-8000-000000000812\",\"type_action\":\"relance_impaye\",\"objet\":\"facture:00000000-0000-4000-8000-000000000812\",\"titre\":\"Relancer la facture Exemple. F-002\",\"apercu\":\"Exemple. Bonjour, un rappel pour la facture F-002.\",\"montant_centimes\":62000,\"preparee_le\":\"2026-11-03T05:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"cle\":\"relance_devis:00000000-0000-4000-8000-000000000821\",\"type_action\":\"relance_devis\",\"objet\":\"devis:00000000-0000-4000-8000-000000000821\",\"titre\":\"Relancer le devis Exemple. D-101\",\"apercu\":\"Exemple. Bonjour, avez-vous pu regarder le devis D-101 ?\",\"montant_centimes\":520000,\"preparee_le\":\"2026-11-03T05:05:00.000Z\"}],\"cles_existantes\":[]}}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "5694b6e4-7c7e-49e5-b173-1c2efaf2b92f",
+      "name": "Appeler presti-dep-direction (1)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -640
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "oHGOyqsZGoUooxa6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "a0cb8c78-58e2-4b55-b8ac-1bd3f3919476",
+      "name": "Bilan du banc",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Bilan agrégé, sans donnée : par contrat, le nombre de sorties par statut. Un effet fait en simulation, ou un appel en erreur, compte en défaut.\nconst bilan = {};\nlet defauts = 0;\nfor (const { json: s } of $input.all()) {\n  const c = typeof s.contrat === 'string' ? s.contrat : 'appel en erreur';\n  bilan[c] = bilan[c] || {};\n  const st = typeof s.statut === 'string' ? s.statut : 'erreur';\n  bilan[c][st] = (bilan[c][st] || 0) + 1;\n  if (!s.contrat || (s.simulation === true && Array.isArray(s.effets_faits) && s.effets_faits.length)) defauts++;\n}\nreturn [{ json: { bilan: bilan, defauts: defauts } }];"
+      }
+    },
+    {
+      "id": "6db836ee-537a-4c0d-a634-fed0a173ddea",
+      "name": "Cas : page sans lecture",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -480
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Les impayés n’ont pas pu être lus : la ligne est « non lue », jamais un zéro.\nconst cas = {\"contrat\":\"presti-dep-direction@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:matin-sans-lecture\",\"trace\":{\"execution_parent\":\"Exemple. essai : direction\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"seuil_impaye_centimes\":100000,\"plafond_alertes_jour\":5,\"plafond_cout_jour_centimes\":100,\"seuil_derive_pct\":50,\"jours_base_min\":3,\"plancher_derive_centimes\":50},\"donnees\":{\"evenements\":[],\"genre\":\"matin\",\"maintenant\":\"2026-11-03T06:30:00.000Z\",\"matin\":{\"sources\":{\"impayes\":{\"lue\":false,\"le\":\"2026-11-03\"},\"devis\":{\"lue\":true,\"le\":\"2026-11-03\"},\"demandes\":{\"lue\":true,\"le\":\"2026-11-03\"},\"cartes\":{\"lue\":true,\"le\":\"2026-11-03\"}},\"impayes\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000811\",\"numero\":\"Exemple. F-001\",\"total_ttc\":1840.5,\"date_echeance\":\"2026-10-20\"}],\"devis\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000821\",\"numero\":\"Exemple. D-101\",\"total_ttc\":5200,\"envoye_le\":\"2026-10-20T09:00:00.000Z\"}],\"demandes\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000831\",\"urgent\":true}],\"cartes\":[]}}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "b3a7cf73-4165-4be8-92ac-1aab4668aecc",
+      "name": "Appeler presti-dep-direction (2)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -480
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "oHGOyqsZGoUooxa6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "58cc8a89-14f6-47d6-aa16-22db20b04890",
+      "name": "Cas : rapport du lundi",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Une relance précède une signature, une autre la suit : seule la première est créditée.\nconst cas = {\"contrat\":\"presti-dep-direction@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:lundi\",\"trace\":{\"execution_parent\":\"Exemple. essai : direction\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"seuil_impaye_centimes\":100000,\"plafond_alertes_jour\":5,\"plafond_cout_jour_centimes\":100,\"seuil_derive_pct\":50,\"jours_base_min\":3,\"plancher_derive_centimes\":50},\"donnees\":{\"evenements\":[],\"genre\":\"lundi\",\"maintenant\":\"2026-11-02T07:00:00.000Z\",\"lundi\":{\"du\":\"2026-10-26\",\"au\":\"2026-11-01\",\"lu_le\":\"2026-11-02\",\"kpis\":[\"actions_preparees\",\"relances_preparees\",\"fait_seul\",\"en_attente\",\"echecs\"],\"bases_de_depart\":{\"relances_preparees\":{\"valeur\":2,\"source\":\"Exemple. fiche de découverte, dit par le titulaire\",\"date\":\"2026-10-01\",\"confiance\":\"declare\"}},\"actions\":[{\"type_action\":\"relance_facture\",\"etat\":\"fait_seul\",\"le\":\"2026-10-27T09:00:00.000+01:00\"},{\"type_action\":\"relance_facture\",\"etat\":\"fait_seul\",\"le\":\"2026-10-28T09:00:00.000+01:00\"},{\"type_action\":\"reponse_prospect\",\"etat\":\"fait_seul\",\"le\":\"2026-10-29T10:00:00.000+01:00\"},{\"type_action\":\"relance_devis\",\"etat\":\"en_attente\",\"le\":\"2026-10-29T11:00:00.000+01:00\"},{\"type_action\":\"relance_devis\",\"etat\":\"en_attente\",\"le\":\"2026-10-30T09:00:00.000+01:00\"},{\"type_action\":\"relance_facture\",\"etat\":\"echec\",\"le\":\"2026-10-31T10:00:00.000+01:00\"},{\"type_action\":\"relance_devis\",\"etat\":\"fait_seul\",\"le\":\"2026-11-02T09:00:00.000+01:00\"}],\"devis_signes\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000821\",\"montant_centimes\":480000,\"signe_le\":\"2026-10-29T10:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000822\",\"montant_centimes\":120000,\"signe_le\":\"2026-10-30T15:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000823\",\"montant_centimes\":250000,\"signe_le\":\"2026-10-27T09:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000824\",\"montant_centimes\":99000,\"signe_le\":\"2026-10-20T09:00:00.000Z\"}],\"relances\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"devis_id\":\"00000000-0000-4000-8000-000000000821\",\"le\":\"2026-10-25T08:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"devis_id\":\"00000000-0000-4000-8000-000000000822\",\"le\":\"2026-10-31T08:00:00.000Z\"}],\"encaissements\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000851\",\"montant_centimes\":300000,\"paye_le\":\"2026-10-28T12:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000852\",\"montant_centimes\":150000,\"paye_le\":\"2026-11-01T12:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"id\":\"00000000-0000-4000-8000-000000000853\",\"montant_centimes\":90000,\"paye_le\":\"2026-10-20T12:00:00.000Z\"}],\"impayes_en_cours\":{\"lue\":true,\"nombre\":2,\"montant_centimes\":246050},\"lues\":{\"encaissements\":true,\"devis_signes\":true,\"relances\":true,\"journal\":true}}}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "f62066d7-25eb-43ba-ac62-d14710388bdf",
+      "name": "Appeler presti-dep-direction (3)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -320
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "oHGOyqsZGoUooxa6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "58199a8b-b748-4df7-afd8-a0a9bf5f17dc",
+      "name": "Cas : diagnostic sans données",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Un compte neuf : « pas encore de données », rien d’estimé.\nconst cas = {\"contrat\":\"presti-dep-direction@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:diagnostic-vide\",\"trace\":{\"execution_parent\":\"Exemple. essai : direction\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"seuil_impaye_centimes\":100000,\"plafond_alertes_jour\":5,\"plafond_cout_jour_centimes\":100,\"seuil_derive_pct\":50,\"jours_base_min\":3,\"plancher_derive_centimes\":50},\"donnees\":{\"evenements\":[],\"genre\":\"diagnostic\",\"maintenant\":\"2026-11-03T06:30:00.000Z\",\"diagnostic\":{\"lu_le\":\"2026-11-03\",\"periode_jours\":30,\"depuis\":null,\"demandes\":null,\"devis\":null}}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "6e8020de-fe78-4ee6-a033-9c90daf92074",
+      "name": "Appeler presti-dep-direction (4)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "oHGOyqsZGoUooxa6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "1d887630-31ad-41de-9cf2-5444cd719795",
+      "name": "Cas : diagnostic avec données",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Des demandes sans réponse et des devis non signés, lus.\nconst cas = {\"contrat\":\"presti-dep-direction@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:diagnostic\",\"trace\":{\"execution_parent\":\"Exemple. essai : direction\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"seuil_impaye_centimes\":100000,\"plafond_alertes_jour\":5,\"plafond_cout_jour_centimes\":100,\"seuil_derive_pct\":50,\"jours_base_min\":3,\"plancher_derive_centimes\":50},\"donnees\":{\"evenements\":[],\"genre\":\"diagnostic\",\"maintenant\":\"2026-11-03T06:30:00.000Z\",\"diagnostic\":{\"lu_le\":\"2026-11-03\",\"periode_jours\":30,\"depuis\":\"2026-10-04\",\"demandes\":{\"recues\":14,\"sans_reponse\":3,\"delai_median_min\":42},\"devis\":{\"envoyes\":9,\"signes\":4,\"non_signes_nombre\":5,\"non_signes_centimes\":1830000}}}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "14720619-3e05-4555-8e44-7c88b61b0315",
+      "name": "Appeler presti-dep-direction (5)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "oHGOyqsZGoUooxa6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "1c0991be-f636-4fd5-a152-e4be71863ea3",
+      "name": "Cas : alertes du jour",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Sept événements : trois alertes de la liste fermée, un type hors liste, un déjà alerté, deux sans condition remplie.\nconst cas = {\"contrat\":\"lib-alerte-liste@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:alertes-jour\",\"trace\":{\"execution_parent\":\"Exemple. essai : direction\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"interrupteur_general\":true,\"interrupteur_departement\":true,\"seuil_impaye_centimes\":100000,\"plafond_alertes_jour\":5},\"donnees\":{\"evenements\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"type\":\"demande_de_prix_ferme\",\"cle\":\"e1\",\"survenu_le\":\"2026-11-03T11:00:00.000Z\",\"faits\":{\"prix_ferme\":true}},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"type\":\"nouvelle_demande\",\"cle\":\"e5\",\"survenu_le\":\"2026-11-03T11:05:00.000Z\",\"faits\":{}},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"type\":\"impaye_au_dessus_du_seuil\",\"cle\":\"e6\",\"survenu_le\":\"2026-11-03T10:00:00.000Z\",\"faits\":{\"montant_centimes\":184050}},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"type\":\"impaye_au_dessus_du_seuil\",\"cle\":\"e7\",\"survenu_le\":\"2026-11-03T10:10:00.000Z\",\"faits\":{\"montant_centimes\":50000}},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"type\":\"workflow_en_panne\",\"cle\":\"e8\",\"survenu_le\":\"2026-11-03T09:00:00.000Z\",\"faits\":{\"workflow\":\"presti-boite\"}},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"type\":\"litige\",\"cle\":\"e9\",\"survenu_le\":\"2026-11-03T08:00:00.000Z\",\"faits\":{\"litige\":true}},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"type\":\"message_urgent_tard\",\"cle\":\"e4\",\"survenu_le\":\"2026-11-03T11:00:00.000Z\",\"faits\":{\"urgent\":true}}],\"cles_deja_alertees\":[\"litige:e9\"],\"alertes_envoyees_aujourdhui\":0,\"maintenant\":\"2026-11-03T12:00:00.000Z\"}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "d81bd7ab-8b49-48b2-aba7-db83603235e9",
+      "name": "Appeler lib-alerte-liste (6)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "v2wfT9qB5e0LHtFI"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "d10f37dc-c0b5-45a7-a8bd-cc044066b9c9",
+      "name": "Cas : coût qui dérive",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Le coût du jour dépasse de 50 % la moyenne des jours précédents : dérive levée, un appel sans tarif daté, un doublon ignoré.\nconst cas = {\"contrat\":\"lib-cout-ia@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:cout-derive\",\"trace\":{\"execution_parent\":\"Exemple. essai : direction\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"interrupteur_general\":true,\"interrupteur_departement\":true,\"plafond_jour_centimes\":100,\"seuil_derive_pct\":50,\"jours_base_min\":3,\"plancher_derive_centimes\":50},\"donnees\":{\"maintenant\":\"2026-11-03T18:00:00.000Z\",\"jour\":\"2026-11-03\",\"appels\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"cle\":\"exec-1001:n1\",\"departement\":\"accueil\",\"modele\":\"claude-haiku-5-5\",\"externe\":true,\"jetons_entree\":1200,\"jetons_sortie\":300,\"cout_eur\":0.0021,\"source_tarif\":\"Exemple. tarif du modèle, relevé du 2026-11-01\",\"survenu_le\":\"2026-11-03T08:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"cle\":\"exec-1001:n2\",\"departement\":\"accueil\",\"modele\":\"claude-haiku-5-5\",\"externe\":true,\"jetons_entree\":2000,\"jetons_sortie\":300,\"cout_eur\":0.0034,\"source_tarif\":\"Exemple. tarif du modèle, relevé du 2026-11-01\",\"survenu_le\":\"2026-11-03T08:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"cle\":\"exec-1002:n1\",\"departement\":\"direction\",\"modele\":\"qwen3-8b\",\"externe\":false,\"jetons_entree\":1200,\"jetons_sortie\":300,\"cout_eur\":0,\"source_tarif\":\"Exemple. Oracle, aucun coût par appel, relevé du 2026-11-01\",\"survenu_le\":\"2026-11-03T08:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"cle\":\"exec-1003:n1\",\"departement\":\"accueil\",\"modele\":\"claude-haiku-5-5\",\"externe\":true,\"jetons_entree\":1200,\"jetons_sortie\":300,\"cout_eur\":null,\"source_tarif\":null,\"survenu_le\":\"2026-11-03T08:00:00.000Z\"},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"cle\":\"exec-0999:n1\",\"departement\":\"accueil\",\"modele\":\"claude-haiku-5-5\",\"externe\":true,\"jetons_entree\":1200,\"jetons_sortie\":300,\"cout_eur\":0.0021,\"source_tarif\":\"Exemple. tarif du modèle, relevé du 2026-11-01\",\"survenu_le\":\"2026-11-03T08:00:00.000Z\"}],\"cumul_du_jour\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"jour\":\"2026-11-03\",\"departement\":\"accueil\",\"modele\":\"claude-haiku-5-5\",\"externe\":true,\"appels\":6,\"cout_millicentimes\":61000}],\"jours_precedents\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"jour\":\"2026-10-30\",\"cout_millicentimes\":20000},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"jour\":\"2026-10-31\",\"cout_millicentimes\":20000},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"jour\":\"2026-11-01\",\"cout_millicentimes\":20000},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"jour\":\"2026-11-02\",\"cout_millicentimes\":20000}],\"cles_connues\":[\"exec-0999:n1\"]}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "9b5da28a-37c0-46c8-92e5-43b2e5f9015e",
+      "name": "Appeler lib-cout-ia (7)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        320
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "JtGOKOG1ssFP5z1u"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "24b3c161-a2f3-4d81-a2de-50482b6aac41",
+      "name": "Cas : interrupteur coupé",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        480
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Le département est coupé : rien n’est appelé.\nconst cas = {\"contrat\":\"presti-dep-direction@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:coupe\",\"trace\":{\"execution_parent\":\"Exemple. essai : direction\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":false,\"seuil_impaye_centimes\":100000,\"plafond_alertes_jour\":5,\"plafond_cout_jour_centimes\":100,\"seuil_derive_pct\":50,\"jours_base_min\":3,\"plancher_derive_centimes\":50},\"donnees\":{\"evenements\":[],\"genre\":\"matin\",\"maintenant\":\"2026-11-03T06:30:00.000Z\"}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "8f26dcee-865e-4a71-81e2-74dbbb7548f4",
+      "name": "Appeler presti-dep-direction (8)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        480
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "oHGOyqsZGoUooxa6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "bc68afc8-1a5c-4063-ad53-ce84d33ab8ab",
+      "name": "Cas : plafond atteint",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        640
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Le plafond du jour est de 60 centimes : il est atteint.\nconst cas = {\"contrat\":\"lib-cout-ia@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:plafond\",\"trace\":{\"execution_parent\":\"Exemple. essai : direction\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"interrupteur_general\":true,\"interrupteur_departement\":true,\"plafond_jour_centimes\":60,\"seuil_derive_pct\":50,\"jours_base_min\":3,\"plancher_derive_centimes\":50},\"donnees\":{\"maintenant\":\"2026-11-03T18:00:00.000Z\",\"jour\":\"2026-11-03\",\"appels\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"cle\":\"exec-2001:n1\",\"departement\":\"accueil\",\"modele\":\"claude-haiku-5-5\",\"externe\":true,\"jetons_entree\":1200,\"jetons_sortie\":300,\"cout_eur\":0.0021,\"source_tarif\":\"Exemple. tarif du modèle, relevé du 2026-11-01\",\"survenu_le\":\"2026-11-03T08:00:00.000Z\"}],\"cumul_du_jour\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"jour\":\"2026-11-03\",\"departement\":\"accueil\",\"modele\":\"claude-haiku-5-5\",\"externe\":true,\"appels\":6,\"cout_millicentimes\":61000}],\"jours_precedents\":[],\"cles_connues\":[]}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "1649f517-bcf3-406b-9553-37750564d8d3",
+      "name": "Appeler lib-cout-ia (9)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        640
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "JtGOKOG1ssFP5z1u"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "ad6e623a-b4b8-4be0-8fa6-c07deb1fd222",
+      "name": "Sticky Note 21265f35",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## presti-banc-direction (036-007)\nBanc d'essai de la Direction : dix cas fictifs (« Exemple. »), six pour le chef et quatre pour ses enfants ; le seul appelant permis des enfants avec le chef.\nINACTIF, jamais publié, jamais planifié. Ne lit ni n'écrit rien en base, n'envoie rien.\nJuge : scripts/direction-n8n-qa.mjs",
+        "color": 4,
+        "width": 416,
+        "height": 224
+      }
+    },
+    {
+      "id": "0fefaeab-a1bb-48ed-9d82-f5a28951d893",
+      "name": "Cas : alertes de nuit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        800
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. 23 h 40 à Paris : seul le message urgent tard réveille ; le reste attend la page du matin.\nconst cas = {\"contrat\":\"lib-alerte-liste@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:alertes-nuit\",\"trace\":{\"execution_parent\":\"Exemple. essai : direction\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"interrupteur_general\":true,\"interrupteur_departement\":true,\"seuil_impaye_centimes\":100000,\"plafond_alertes_jour\":5},\"donnees\":{\"evenements\":[{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"type\":\"client_mecontent\",\"cle\":\"n2\",\"survenu_le\":\"2026-11-03T21:50:00.000Z\",\"faits\":{\"mecontent\":true}},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"type\":\"message_urgent_tard\",\"cle\":\"n3\",\"survenu_le\":\"2026-11-03T21:15:00.000Z\",\"faits\":{\"urgent\":true}},{\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"type\":\"impaye_au_dessus_du_seuil\",\"cle\":\"n10\",\"survenu_le\":\"2026-11-03T21:20:00.000Z\",\"faits\":{\"montant_centimes\":184050}}],\"cles_deja_alertees\":[],\"alertes_envoyees_aujourdhui\":0,\"maintenant\":\"2026-11-03T22:40:00.000Z\"}};\nreturn [cas].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "148f363e-3817-4153-bfdc-2362b1192949",
+      "name": "Appeler lib-alerte-liste (10)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        800
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "v2wfT9qB5e0LHtFI"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T11:30:45.569Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-007), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

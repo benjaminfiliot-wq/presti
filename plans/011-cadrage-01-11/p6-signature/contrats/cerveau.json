@@ -1,0 +1,722 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "tache": "036-001",
+  "source": "plans/011-cadrage-01-11/p6-signature/premiere-reponse.md, ligne 036-001 et § 3",
+  "regle": "Hors contrat = rejet (statut « rejete »), une ligne de journal, rien ne part. Toute requête filtre sur artisan_id (« Supabase account » passe outre la RLS).",
+  "titre": "presti-cerveau@1 — ce que le Cerveau lit, et comment il route",
+  "routes": {
+    "demande_recue": "accueil",
+    "devis_a_preparer": "devis",
+    "relance_due": "suivi",
+    "facture_a_emettre": "facturation",
+    "impaye_echu": "facturation",
+    "chantier_termine": "apres",
+    "rendez_vous_a_poser": "operations",
+    "page_du_matin": "direction"
+  },
+  "departements": [
+    "accueil",
+    "devis",
+    "suivi",
+    "facturation",
+    "apres",
+    "operations",
+    "direction"
+  ],
+  "lectures": {
+    "Lire l'interrupteur général (simulation : épinglé)": {
+      "requete": "GET systeme_reglages?select=interrupteur_general,organisation_systeme,passage,maintenant&artisan_id=is.null&limit=1",
+      "schema": "interrupteur"
+    },
+    "Lire les comptes (simulation : épinglé)": {
+      "requete": "GET departements_reglages?select=artisan_id,palier,offre,interrupteurs,accueil,empreintes_connues,cles_existantes&artisan_id=in.(<comptes en palier>)&limit=200",
+      "schema": "compte"
+    },
+    "Lire les événements non traités, page par page (simulation : épinglé)": {
+      "requete": "GET evenements_a_traiter?select=id,artisan_id,type,cle,demande,donnees&artisan_id=eq.<compte>&traite_le=is.null&order=survenu_le.asc&limit=50&offset=<page>",
+      "schema": "page"
+    }
+  },
+  "interrupteur": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "interrupteur_general",
+      "organisation_systeme",
+      "passage",
+      "maintenant"
+    ],
+    "properties": {
+      "interrupteur_general": {
+        "type": "boolean"
+      },
+      "organisation_systeme": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "passage": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{4}$"
+      },
+      "maintenant": {
+        "type": "string",
+        "format": "date-time"
+      }
+    }
+  },
+  "compte": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "artisan_id",
+      "palier",
+      "offre",
+      "interrupteurs",
+      "accueil",
+      "empreintes_connues",
+      "cles_existantes"
+    ],
+    "properties": {
+      "artisan_id": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "palier": {
+        "enum": [
+          "simulation",
+          "ombre",
+          "reel"
+        ]
+      },
+      "offre": {
+        "enum": [
+          "studio",
+          "signature",
+          "essentiel",
+          "essai"
+        ]
+      },
+      "interrupteurs": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "general",
+          "departements"
+        ],
+        "properties": {
+          "general": {
+            "type": "boolean"
+          },
+          "departements": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "accueil",
+              "devis",
+              "suivi",
+              "facturation",
+              "apres",
+              "operations",
+              "direction"
+            ],
+            "properties": {
+              "accueil": {
+                "type": "boolean"
+              },
+              "devis": {
+                "type": "boolean"
+              },
+              "suivi": {
+                "type": "boolean"
+              },
+              "facturation": {
+                "type": "boolean"
+              },
+              "apres": {
+                "type": "boolean"
+              },
+              "operations": {
+                "type": "boolean"
+              },
+              "direction": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "accueil": {
+        "type": "object",
+        "description": "presti-dep-accueil@1 config, moins interrupteur_general et interrupteur_departement (posés par le Cerveau depuis interrupteurs)"
+      },
+      "empreintes_connues": {
+        "type": "array",
+        "maxItems": 1000,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "empreinte",
+            "lead_id"
+          ],
+          "properties": {
+            "empreinte": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "lead_id": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "cles_existantes": {
+        "type": "array",
+        "maxItems": 1000,
+        "items": {
+          "type": "string",
+          "maxLength": 80
+        }
+      }
+    }
+  },
+  "page": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "artisan_id",
+      "page",
+      "suivante",
+      "evenements"
+    ],
+    "properties": {
+      "artisan_id": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "page": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "suivante": {
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "evenements": {
+        "type": "array",
+        "maxItems": 50,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "artisan_id",
+            "type",
+            "cle"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "artisan_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": {
+              "enum": [
+                "demande_recue",
+                "devis_a_preparer",
+                "relance_due",
+                "facture_a_emettre",
+                "impaye_echu",
+                "chantier_termine",
+                "rendez_vous_a_poser",
+                "page_du_matin"
+              ]
+            },
+            "cle": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60,
+              "pattern": "^[A-Za-z0-9_:.-]+$"
+            },
+            "demande": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "canal",
+                "recu_le",
+                "message",
+                "champs",
+                "empreinte_contact",
+                "client_existant",
+                "honeypot",
+                "photo",
+                "proposition",
+                "destinataire"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "canal": {
+                  "enum": [
+                    "page_p",
+                    "email",
+                    "telegram"
+                  ]
+                },
+                "recu_le": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 4000
+                },
+                "champs": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "canal": {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^[a-z_]+$"
+                    },
+                    "origine": {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^[a-z0-9_]+$"
+                    },
+                    "urgence": {
+                      "enum": [
+                        "urgent",
+                        "normal"
+                      ]
+                    },
+                    "type_chantier": {
+                      "type": "string",
+                      "maxLength": 60,
+                      "pattern": "^[^/@:]+$"
+                    },
+                    "taille": {
+                      "enum": [
+                        "1",
+                        "2 à 5",
+                        "6 à 20",
+                        "plus de 20"
+                      ]
+                    },
+                    "activite": {
+                      "enum": [
+                        "Artisan",
+                        "Entreprise du bâtiment",
+                        "Architecte",
+                        "Autre"
+                      ]
+                    },
+                    "budget_tranche": {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^[^/@:]+$"
+                    },
+                    "delai_souhaite": {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^[^/@:]+$"
+                    },
+                    "surface_m2": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000
+                    },
+                    "photo_jointe": {
+                      "type": "boolean"
+                    },
+                    "dans_zone": {
+                      "type": "boolean"
+                    },
+                    "recu_hors_horaires": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "empreinte_contact": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "client_existant": {
+                  "type": "boolean"
+                },
+                "honeypot": {
+                  "type": "boolean"
+                },
+                "photo": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": false,
+                  "required": [
+                    "ref",
+                    "type_mime"
+                  ],
+                  "properties": {
+                    "ref": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9._-]{1,80}$"
+                    },
+                    "type_mime": {
+                      "enum": [
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp",
+                        "image/heic"
+                      ]
+                    }
+                  }
+                },
+                "proposition": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": false,
+                  "required": [
+                    "canal",
+                    "objet",
+                    "texte",
+                    "outil"
+                  ],
+                  "properties": {
+                    "canal": {
+                      "enum": [
+                        "email",
+                        "sms"
+                      ]
+                    },
+                    "objet": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 120
+                    },
+                    "texte": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1700
+                    },
+                    "outil": {
+                      "type": "string",
+                      "pattern": "^[a-z_]{2,60}$"
+                    }
+                  }
+                },
+                "destinataire": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "opposition",
+                    "consentement_sms"
+                  ],
+                  "properties": {
+                    "opposition": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "consentement_sms": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "donnees": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    }
+  },
+  "evenement": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "id",
+      "artisan_id",
+      "type",
+      "cle"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "artisan_id": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "type": {
+        "enum": [
+          "demande_recue",
+          "devis_a_preparer",
+          "relance_due",
+          "facture_a_emettre",
+          "impaye_echu",
+          "chantier_termine",
+          "rendez_vous_a_poser",
+          "page_du_matin"
+        ]
+      },
+      "cle": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 60,
+        "pattern": "^[A-Za-z0-9_:.-]+$"
+      },
+      "demande": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "canal",
+          "recu_le",
+          "message",
+          "champs",
+          "empreinte_contact",
+          "client_existant",
+          "honeypot",
+          "photo",
+          "proposition",
+          "destinataire"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canal": {
+            "enum": [
+              "page_p",
+              "email",
+              "telegram"
+            ]
+          },
+          "recu_le": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 4000
+          },
+          "champs": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "canal": {
+                "type": "string",
+                "maxLength": 30,
+                "pattern": "^[a-z_]+$"
+              },
+              "origine": {
+                "type": "string",
+                "maxLength": 30,
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "urgence": {
+                "enum": [
+                  "urgent",
+                  "normal"
+                ]
+              },
+              "type_chantier": {
+                "type": "string",
+                "maxLength": 60,
+                "pattern": "^[^/@:]+$"
+              },
+              "taille": {
+                "enum": [
+                  "1",
+                  "2 à 5",
+                  "6 à 20",
+                  "plus de 20"
+                ]
+              },
+              "activite": {
+                "enum": [
+                  "Artisan",
+                  "Entreprise du bâtiment",
+                  "Architecte",
+                  "Autre"
+                ]
+              },
+              "budget_tranche": {
+                "type": "string",
+                "maxLength": 30,
+                "pattern": "^[^/@:]+$"
+              },
+              "delai_souhaite": {
+                "type": "string",
+                "maxLength": 30,
+                "pattern": "^[^/@:]+$"
+              },
+              "surface_m2": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100000
+              },
+              "photo_jointe": {
+                "type": "boolean"
+              },
+              "dans_zone": {
+                "type": "boolean"
+              },
+              "recu_hors_horaires": {
+                "type": "boolean"
+              }
+            }
+          },
+          "empreinte_contact": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "client_existant": {
+            "type": "boolean"
+          },
+          "honeypot": {
+            "type": "boolean"
+          },
+          "photo": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "ref",
+              "type_mime"
+            ],
+            "properties": {
+              "ref": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._-]{1,80}$"
+              },
+              "type_mime": {
+                "enum": [
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp",
+                  "image/heic"
+                ]
+              }
+            }
+          },
+          "proposition": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "canal",
+              "objet",
+              "texte",
+              "outil"
+            ],
+            "properties": {
+              "canal": {
+                "enum": [
+                  "email",
+                  "sms"
+                ]
+              },
+              "objet": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 120
+              },
+              "texte": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1700
+              },
+              "outil": {
+                "type": "string",
+                "pattern": "^[a-z_]{2,60}$"
+              }
+            }
+          },
+          "destinataire": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "opposition",
+              "consentement_sms"
+            ],
+            "properties": {
+              "opposition": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "consentement_sms": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object"
+      }
+    }
+  },
+  "envoi_vers_un_chef": {
+    "contrat": "presti-dep-<departement>@1",
+    "enveloppe": "enveloppe@1 (035-003) : contrat, organisation_id = artisan_id, simulation (vrai en simulation), cle_idempotence, trace, config, donnees"
+  },
+  "sauts": {
+    "palier_non_branche": "palier ombre ou reel : non branché dans ce lot",
+    "interrupteur_coupe": "interrupteur général du compte ou du département fermé"
+  },
+  "rejets": [
+    "compte_inconnu",
+    "autre_compte",
+    "type_sans_departement",
+    "doublon",
+    "evenement_hors_forme"
+  ]
+}

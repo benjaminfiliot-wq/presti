@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "tache": "036-005",
+  "source": "plans/011-cadrage-01-11/p6-signature/premiere-reponse.md, ligne 036-005 et § 3.3",
+  "regle": "Hors contrat = rejet (statut « rejete »), une ligne de journal, rien ne part. Toute lecture filtre sur artisan_id (« Supabase account » passe outre la RLS). Le code calcule, n8n route : aucun montant n’est calculé, converti ni additionné dans n8n ; les montants (centimes entiers et texte affiché) viennent du code de l’application ou de la base et sont recopiés tels quels. Aucun modèle n’est appelé.",
+  "titre": "presti-dep-devis@1 — le département Devis",
+  "entree": {
+    "config": {
+      "type": "object"
+    },
+    "donnees": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evenements"
+      ],
+      "properties": {
+        "evenements": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "entree_simulation": "config.lectures_simulees = { configuration, devis, lignes } : les lignes de lecture que le banc fournit, honorées seulement quand simulation est vrai",
+  "evenement_traite": "devis_a_preparer (table de routage de contrats/cerveau.json) ; faits sans texte : devis_a_preparer : lead_id (uuid), devis_id (uuid, nul tant que l’application n’a pas chiffré), qualifiee (booléen), escalade (booléen ; absent ou nul = escalade)",
+  "lectures": {
+    "Lire la configuration du compte (simulation : épinglé)": {
+      "requete": "GET n8n_config_agents?select=artisan_id,nom_artisan,ton,signature,offre,capacites,pilote,parties_depuis_24h,interrupteur_general,interrupteur_departement,mots_escalade_artisan,horaires,plafond_jour,relances_impayes,cles_existantes,maintenant&artisan_id=eq.<compte>&departement=eq.facturation&limit=1",
+      "lignes_rendues": "artisan_id, nom_artisan, ton, signature, offre, capacites[], pilote{drapeau,actif,types}, parties_depuis_24h, interrupteur_general, interrupteur_departement, mots_escalade_artisan[], horaires{jours_permis[],heures_permises{debut,fin}}, plafond_jour, relances_impayes{actif,jours[]}, cles_existantes[], maintenant"
+    },
+    "Lire les devis préparés par l’application (simulation : épinglé)": {
+      "requete": "GET n8n_devis_prets?select=artisan_id,devis_id,lead_id,numero,statut,total_ttc_centimes,total_ttc_affiche&artisan_id=eq.<compte>&devis_id=in.(<devis des événements>)&limit=200",
+      "lignes_rendues": "artisan_id, devis_id, lead_id, numero, statut (brouillon | envoye…), total_ttc_centimes (entier calculé par le code), total_ttc_affiche (texte rendu par le code)"
+    },
+    "Lire les lignes de ces devis (simulation : épinglé)": {
+      "requete": "GET n8n_devis_lignes?select=artisan_id,devis_id,rang,designation,quantite,prix_unitaire_ht_centimes,prix_affiche,source_prix,repere_affiche,repere_chantier_le&artisan_id=eq.<compte>&devis_id=in.(<devis des événements>)&order=rang.asc&limit=2000",
+      "lignes_rendues": "artisan_id, devis_id, rang, designation, quantite, prix_unitaire_ht_centimes (entier calculé par le code), prix_affiche, source_prix (« vos tarifs · … », « prix donné par l’artisan », ou vide), repere_affiche (prix pratiqué sur un ancien chantier, cité), repere_chantier_le"
+    }
+  },
+  "vues_a_ecrire": "les vues étroites n8n_config_agents, n8n_devis_prets, n8n_devis_lignes ne sont PAS écrites par ce lot (supabase/** hors périmètre) ; leur colonne montant est calculée par la base",
+  "specialistes": [
+    "lib-decider@1",
+    "lib-porte-conformite@1",
+    "lib-executer@1",
+    "lib-journaliser@1"
+  ],
+  "sortie": {
+    "statut": [
+      "ok",
+      "rien_a_faire",
+      "rejete",
+      "erreur"
+    ],
+    "resultat": [
+      "evenements_recus",
+      "rejets",
+      "non_traites",
+      "a_preparer",
+      "devis_prets",
+      "cartes",
+      "pilote",
+      "refus_porte",
+      "deja_faits",
+      "sorties_vers_un_modele"
+    ],
+    "devis_pret": "cle, devis_id, numero, total_ttc_affiche, cible (toujours carte), motif_carte, tous_prix_sources, a_estimer, envoi, lignes[{rang, designation, prix_affiche, statut_prix (source | estime), source, repere{affiche, chantier_le}}]"
+  },
+  "regles": {
+    "prix_source": "une ligne est sourcée si son prix est entier, > 0 et sa provenance commence par « vos tarifs », « tarif de l’artisan » ou « prix donné par l’artisan » (copie de SOURCE_OK, lib/pilote/regles.ts) ; sinon « estimé »",
+    "repere": "un prix pratiqué sur un ancien chantier est un repère cité (repere_affiche) ; il ne rend jamais une ligne sourcée (B9, lib/pilote/regles.ts:116-124)",
+    "envoi_seul": "dans l’application, envoi_devis part seul seulement en Signature, pilote actif, type activé, plafond non atteint, aucune escalade et TOUTES les lignes sourcées (lib/pilote/regles.ts:272) ; dans n8n il reste une carte : lib-decider@1 et la porte classent envoyer_devis parmi les gestes P5:226 (devis engageant)",
+    "chiffrage": "jamais ici : lib/devisAuto.ts, au clic de l’artisan"
+  },
+  "studio_signature": {
+    "studio": "carte « préparer le devis » puis carte « devis prêt » ; rien ne part sans un clic",
+    "signature": "idem : l’envoi d’un devis reste un clic de l’artisan dans n8n (lib-decider@1 et la porte réservent envoyer_devis, p5:226) ; le pilote de l’application garde sa règle « toutes les lignes sourcées »"
+  }
+}

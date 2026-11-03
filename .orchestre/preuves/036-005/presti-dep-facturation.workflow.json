@@ -1,0 +1,1019 @@
+{
+  "id": "bNAF6Xzx5On853kD",
+  "name": "presti-dep-facturation",
+  "active": false,
+  "isArchived": false,
+  "versionId": "ab04ddd7-006b-48b4-93b7-0c64082245d0",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 30,
+  "createdAt": "2026-11-03T10:17:08.728Z",
+  "updatedAt": "2026-11-03T11:29:02.994Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "596OC5mL2aMBq6SD,LRO3Jng6Te4Xn7Pg",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "connections": {
+    "Appelé par le Cerveau": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Lire la configuration du compte (simulation : épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire la configuration du compte (simulation : épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Lire les aperçus de facture de l’application (simulation : épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les aperçus de facture de l’application (simulation : épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Lire les factures (simulation : épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les factures (simulation : épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Lire les arrêts de relance (simulation : épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les arrêts de relance (simulation : épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Constituer les dossiers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Constituer les dossiers": {
+      "main": [
+        [
+          {
+            "node": "Préparer la relance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la relance": {
+      "main": [
+        [
+          {
+            "node": "Aucune relance à décider ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aucune relance à décider ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer la décision",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-relancer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-relancer": {
+      "main": [
+        [
+          {
+            "node": "Préparer la décision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la décision": {
+      "main": [
+        [
+          {
+            "node": "Rien à décider ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à décider ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-decider",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-decider": {
+      "main": [
+        [
+          {
+            "node": "Préparer la rédaction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la rédaction": {
+      "main": [
+        [
+          {
+            "node": "Rien à rédiger ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à rédiger ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer la porte",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-rediger-message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-rediger-message": {
+      "main": [
+        [
+          {
+            "node": "Préparer la porte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la porte": {
+      "main": [
+        [
+          {
+            "node": "Rien à contrôler ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à contrôler ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-porte-conformite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-porte-conformite": {
+      "main": [
+        [
+          {
+            "node": "Préparer l'exécution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer l'exécution": {
+      "main": [
+        [
+          {
+            "node": "Rien à exécuter ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à exécuter ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-executer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-executer": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le journal": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-journaliser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-journaliser": {
+      "main": [
+        [
+          {
+            "node": "Assembler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assembler": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "916e34ca-cd55-4268-b58d-78ab0522a096",
+      "name": "Appelé par le Cerveau",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        80
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "006c8994-6d04-4404-8633-8a3fbbaa8f97",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de presti-dep-facturation@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'presti-dep-facturation@1';\nconst SCHEMA = {\"sans_contact\":false,\"config\":{\"type\":\"object\"},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"evenements\"],\"properties\":{\"evenements\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\"}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: presti-dep-facturation@1"
+    },
+    {
+      "id": "64856b40-2622-43f8-9314-1b56670db890",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "entreconforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "6444eee6-c3c7-4e2c-8107-2f5fba7f02be",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6048,
+        176
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de presti-dep-facturation@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'presti-dep-facturation@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "a5512ead-6b06-4d7e-920d-6aca0664e4c3",
+      "name": "Sticky Note c2da8748",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -16
+      ],
+      "parameters": {
+        "content": "## presti-dep-facturation (036-005)\nDépartement 4, Facturation et encaissement (A14, B7) : « facture quand le chantier est fini » + « Ask you » = une carte « facture prête » (l'émission reste le clic de l'artisan : creer_facture est jamais automatique) ; l'envoi d'une facture déjà émise ; la relance d'impayé J+3, J+10, J+21 jusqu'au paiement ou au motif rangé d'un geste, jamais jusqu'au silence.\nn8n n'émet aucune facture, ne marque aucun paiement, ne calcule aucun montant. Lecteur de paiements (Stripe de l'artisan) : fiche seulement.\nINACTIF, jamais publié, en simulation, aucun identifiant, aucun modèle. Juge : scripts/devis-facture-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 224
+      }
+    },
+    {
+      "id": "a31c6f6e-37e7-4daa-98d9-12265b5ecdc6",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "portesimulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché dans ce lot."
+    },
+    {
+      "id": "1f980549-254e-4001-b5cd-30a8d36693da",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        672,
+        464
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (tâche 036-005). Rien n'a été lu, écrit ni envoyé."
+      },
+      "notes": "Simulation : aucun effet réel n'est branché. Hors simulation, le travail s'arrête ici, avant tout appel."
+    },
+    {
+      "id": "75bc4d0d-ccce-4e95-97db-2ade147fd028",
+      "name": "Lire la configuration du compte (simulation : épinglé)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        896,
+        96
+      ],
+      "parameters": {},
+      "notes": "requete: GET n8n_config_agents?select=artisan_id,nom_artisan,ton,signature,offre,capacites,pilote,parties_depuis_24h,interrupteur_general,interrupteur_departement,mots_escalade_artisan,horaires,plafond_jour,relances_impayes,cles_existantes,maintenant&artisan_id=eq.<compte>&departement=eq.facturation&limit=1\nSimulation : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai ; le banc fournit ses lignes dans config.lectures_simulees (honorées seulement en simulation). Les montants lus sont ceux du code de l'application, jamais recalculés. Non fourni, le chef n'agit pas (fail-closed)."
+    },
+    {
+      "id": "fbf893f4-508c-4eb6-972c-b8bf7f8f8e06",
+      "name": "Lire les aperçus de facture de l’application (simulation : épinglé)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        96
+      ],
+      "parameters": {},
+      "notes": "requete: GET n8n_apercus_facture?select=artisan_id,devis_id,chantier_termine,deja_facturee,apercu_ok,apercu_erreur,apercu_type,apercu_total_ttc_centimes,apercu_total_ttc_affiche,apercu_nb_deduites,apercu_le&artisan_id=eq.<compte>&devis_id=in.(<devis des événements>)&limit=200\nSimulation : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai ; le banc fournit ses lignes dans config.lectures_simulees (honorées seulement en simulation). Les montants lus sont ceux du code de l'application, jamais recalculés. Non fourni, le chef n'agit pas (fail-closed)."
+    },
+    {
+      "id": "9216da1b-9bff-488b-a9ec-9ff1015ed1ec",
+      "name": "Lire les factures (simulation : épinglé)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        96
+      ],
+      "parameters": {},
+      "notes": "requete: GET n8n_factures_argent?select=artisan_id,facture_id,numero,objet,statut,avoir_de,regime_tva,date_echeance,total_ttc_centimes,total_ttc_affiche,contestation,paliers_envoyes,historique&artisan_id=eq.<compte>&facture_id=in.(<factures des événements>)&limit=200\nSimulation : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai ; le banc fournit ses lignes dans config.lectures_simulees (honorées seulement en simulation). Les montants lus sont ceux du code de l'application, jamais recalculés. Non fourni, le chef n'agit pas (fail-closed)."
+    },
+    {
+      "id": "c6685ca5-e38c-4050-a306-513b9316e962",
+      "name": "Lire les arrêts de relance (simulation : épinglé)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        96
+      ],
+      "parameters": {},
+      "notes": "requete: GET relances_impayes_arrets?select=artisan_id,facture_id,raison,le,reprise_le,motif&artisan_id=eq.<compte>&facture_id=in.(<factures des événements>)&limit=200\nSimulation : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai ; le banc fournit ses lignes dans config.lectures_simulees (honorées seulement en simulation). Les montants lus sont ceux du code de l'application, jamais recalculés. Non fourni, le chef n'agit pas (fail-closed)."
+    },
+    {
+      "id": "affa3445-4486-4f17-8e06-29e0937419cb",
+      "name": "Constituer les dossiers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst LU = (nom, cle) => {\n  const n = $(nom);\n  const lues = n.isExecuted ? n.all().map((x) => x.json).filter((x) => x && typeof x.artisan_id === 'string') : [];\n  for (const e of ENVS) { const s = e.simulation === true && e.config && e.config.lectures_simulees ? e.config.lectures_simulees[cle] : null; if (Array.isArray(s)) for (const r of s) lues.push(r); }\n  return lues;\n};\nconst CONFIGS = {}; for (const r of LU(\"Lire la configuration du compte (simulation : épinglé)\", 'configuration')) CONFIGS[r.artisan_id] = r;\nconst APERCUS = {}; for (const r of LU(\"Lire les aperçus de facture de l’application (simulation : épinglé)\", 'apercus')) if (typeof r.devis_id === 'string') APERCUS[r.artisan_id + '|' + r.devis_id] = r;\nconst FACTURES = {}; for (const r of LU(\"Lire les factures (simulation : épinglé)\", 'factures')) if (typeof r.facture_id === 'string') FACTURES[r.artisan_id + '|' + r.facture_id] = r;\nconst ARRETS = {}; for (const r of LU(\"Lire les arrêts de relance (simulation : épinglé)\", 'arrets')) if (typeof r.facture_id === 'string') { const q = r.artisan_id + '|' + r.facture_id; if (!ARRETS[q] || String(r.le) > String(ARRETS[q].le)) ARRETS[q] = r; }\nconst DOSSIERS = [], REJETS = [], vus = new Set();\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  const org = e.organisation_id;\n  if (ev.artisan_id !== org) { REJETS.push({ org: org, id: ev.id, motif: 'autre_compte' }); continue; }\n  if (ev.type !== 'facture_a_emettre' && ev.type !== 'impaye_echu') { REJETS.push({ org: org, id: ev.id, motif: 'type_hors_departement' }); continue; }\n  const cle = org + ':' + ev.cle; if (vus.has(cle)) { REJETS.push({ org: org, id: ev.id, motif: 'doublon' }); continue; } vus.add(cle);\n  const f = ev.donnees && typeof ev.donnees === 'object' ? ev.donnees : {}, c = CONFIGS[org];\n  const d = { org: org, ev: ev, f: f, c: c, kind: ev.type === 'impaye_echu' ? 'relancer' : 'emettre', row: null, arret: null, etat: null };\n  if (d.kind === 'relancer') { d.row = f.facture_id ? FACTURES[org + '|' + f.facture_id] || null : null; d.arret = f.facture_id ? ARRETS[org + '|' + f.facture_id] || null : null; }\n  else d.row = f.devis_id ? APERCUS[org + '|' + f.devis_id] || null : null;\n  const r = d.row;\n  if (!c) d.etat = 'configuration_non_lue';\n  else if (!r) d.etat = d.kind === 'emettre' ? 'apercu_introuvable' : 'facture_introuvable';\n  else if (d.kind === 'emettre') d.etat = r.chantier_termine !== true ? 'chantier_non_termine' : r.deja_facturee !== false ? 'deja_facturee' : r.apercu_ok !== true ? 'apercu_refuse' : 'a_emettre';\n  else if (r.statut === 'payee') d.etat = 'payee';\n  else if (r.statut !== 'emise' || r.avoir_de) d.etat = 'pas_relancable';\n  else if (!c.relances_impayes || c.relances_impayes.actif !== true) d.etat = 'relances_non_activees';\n  else if (d.arret && !d.arret.reprise_le && d.arret.motif !== 'oubli') d.etat = 'motif_' + (d.arret.motif || 'a_ranger');\n  else d.etat = 'a_relancer';\n  DOSSIERS.push(d);\n}\nreturn [{ json: { envs: ENVS.map((e) => ({ organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: e.cle_idempotence, trace: e.trace, nb: e.donnees.evenements.length })), dossiers: DOSSIERS, rejets: REJETS } }];"
+      },
+      "notes": "Lit les lectures et les événements UNE fois, sans rien calculer : les dossiers que les étapes suivantes relisent. Un événement d’un autre compte, d’un autre département ou en double est rejeté ici."
+    },
+    {
+      "id": "2369886c-ef17-43b5-b739-1611c07b71c1",
+      "name": "Préparer la relance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Facturation (B7) : la relance d'impayé suit son calendrier (J+3, J+10, J+21, opt-in) JUSQU'AU PAIEMENT OU AU MOTIF rangé d'un geste, jamais jusqu'au\n// silence. Seule une facture ÉMISE, non payée, non annulée, sans avoir, aux relances activées et SANS arrêt motivé arrive à lib-relancer. Un paiement\n// (statut payée) ou un arrêt avec motif ne passe pas : il devient un arrêt journalisé ou une carte de motif. Aucune date n'est calculée ici.\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-facturation', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst JAMAIS = [\"marquer_facture_payee\",\"creer_facture\",\"creer_facture_libre\",\"rembourser\",\"payer\",\"creer_avoir\",\"supprimer_devis_brouillon\",\"supprimer_tarif\",\"supprimer_article\",\"augmenter_tarifs\"];\nconst MOTIFS = {\"a_ranger\":\"ranger_motif_impaye\",\"dit_avoir_paye\":\"verifier_paiement\",\"litige\":\"escalader_litige\",\"autre\":\"traiter_impaye_a_la_main\"};\nconst niveauMax = (c, outil) => (c.capacites.includes('assistant.pilote') && (outil !== 'relancer_facture' || c.capacites.includes('factures.relances.auto')) ? 3 : 2);\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst estMotif = (d) => d.etat.slice(0, 6) === 'motif_';\nconst motifDe = (d) => d.etat.slice(6);\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1');\n// La décision à prendre pour un dossier : { outil, etape, escalade, objet_type, objet_id, type_action, palier, relire } ou null.\nconst plan = (d) => {\n  if (d.etat === 'a_emettre') return { outil: 'creer_facture', etape: 'facture-prete', escalade: false, objet_type: 'devis', objet_id: d.f.devis_id, type_action: 'creer_facture' };\n  if (estMotif(d)) { const m = motifDe(d); return { outil: MOTIFS[m], etape: 'motif-' + m.split('_').join('-'), escalade: m === 'litige', objet_type: 'facture', objet_id: d.f.facture_id, type_action: MOTIFS[m] }; }\n  if (d.etat === 'a_relancer') { const r = rel['r:' + d.ev.id];\n    if (!r || !r.resultat || !r.resultat.palier) return null;\n    const relire = r.resultat.motif === 'litige_ou_escalade';\n    if (!relire && r.resultat.a_relancer !== true) return null;\n    return { outil: 'relancer_facture', etape: 'relance-p' + r.resultat.palier + (relire ? '-a-relire' : ''), escalade: relire, objet_type: 'facture', objet_id: d.f.facture_id, type_action: 'relance_impaye', palier: r.resultat.palier, relire: relire }; }\n  return null;\n};\n// Les faits d'une relance, tels que la base les a rendus : la rédaction et la porte les relisent, rien n'est recalculé.\nconst faitsDe = (d, p) => ({ type_relance: 'relance_facture', palier: p.palier, numero: d.row.numero, objet: typeof d.row.objet === 'string' ? d.row.objet : null, montant_ttc_centimes: d.row.total_ttc_centimes, montant_ht_centimes: null, echeance_le: d.row.date_echeance, emis_le: null, regime_tva: d.row.regime_tva });\nconst s = [];\nfor (const d of DOSSIERS) { if (d.etat !== 'a_relancer') continue;\n  const c = d.c, r = d.row;\n  s.push({ json: env(ENVB[d.org], 'lib-relancer@1', 'r:' + d.ev.id, { paliers_jours: c.relances_impayes.jours, jours_permis: c.horaires.jours_permis, heures_permises: c.horaires.heures_permises, sauf: 'impayes' },\n    { objet_type: 'facture', objet_id: d.f.facture_id, depuis_le: r.date_echeance + 'T00:00:00.000Z', historique: r.historique, paliers_envoyes: Array.isArray(r.paliers_envoyes) ? r.paliers_envoyes : [], stop: false, escalade: typeof r.contestation === 'boolean' ? r.contestation : null, maintenant: c.maintenant }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "0047dfc0-008c-4e64-a589-789dba5c6061",
+      "name": "Préparer la décision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2688,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Facturation (A14) : chantier terminé → « facture prête » (aperçu rendu par le code de l'application, simulerFacture) ; l'ÉMISSION reste un clic de l'artisan\n// (creer_facture est dans OUTILS_JAMAIS_AUTO : une carte, en Studio comme en Signature) = l'étape « Ask you » ; relance due → relance_impaye ; arrêt motivé →\n// carte de motif. lib-decider décide : carte ou ligne du pilote (relance seulement), jamais l'émission ni l'encaissement. L'envoi d'une facture déjà émise\n// n'est pas porté ici : la porte exige un texte et lib-rediger-message@1 ne rédige que des relances (écart écrit dans la preuve).\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-facturation', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst JAMAIS = [\"marquer_facture_payee\",\"creer_facture\",\"creer_facture_libre\",\"rembourser\",\"payer\",\"creer_avoir\",\"supprimer_devis_brouillon\",\"supprimer_tarif\",\"supprimer_article\",\"augmenter_tarifs\"];\nconst MOTIFS = {\"a_ranger\":\"ranger_motif_impaye\",\"dit_avoir_paye\":\"verifier_paiement\",\"litige\":\"escalader_litige\",\"autre\":\"traiter_impaye_a_la_main\"};\nconst niveauMax = (c, outil) => (c.capacites.includes('assistant.pilote') && (outil !== 'relancer_facture' || c.capacites.includes('factures.relances.auto')) ? 3 : 2);\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst estMotif = (d) => d.etat.slice(0, 6) === 'motif_';\nconst motifDe = (d) => d.etat.slice(6);\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1');\n// La décision à prendre pour un dossier : { outil, etape, escalade, objet_type, objet_id, type_action, palier, relire } ou null.\nconst plan = (d) => {\n  if (d.etat === 'a_emettre') return { outil: 'creer_facture', etape: 'facture-prete', escalade: false, objet_type: 'devis', objet_id: d.f.devis_id, type_action: 'creer_facture' };\n  if (estMotif(d)) { const m = motifDe(d); return { outil: MOTIFS[m], etape: 'motif-' + m.split('_').join('-'), escalade: m === 'litige', objet_type: 'facture', objet_id: d.f.facture_id, type_action: MOTIFS[m] }; }\n  if (d.etat === 'a_relancer') { const r = rel['r:' + d.ev.id];\n    if (!r || !r.resultat || !r.resultat.palier) return null;\n    const relire = r.resultat.motif === 'litige_ou_escalade';\n    if (!relire && r.resultat.a_relancer !== true) return null;\n    return { outil: 'relancer_facture', etape: 'relance-p' + r.resultat.palier + (relire ? '-a-relire' : ''), escalade: relire, objet_type: 'facture', objet_id: d.f.facture_id, type_action: 'relance_impaye', palier: r.resultat.palier, relire: relire }; }\n  return null;\n};\n// Les faits d'une relance, tels que la base les a rendus : la rédaction et la porte les relisent, rien n'est recalculé.\nconst faitsDe = (d, p) => ({ type_relance: 'relance_facture', palier: p.palier, numero: d.row.numero, objet: typeof d.row.objet === 'string' ? d.row.objet : null, montant_ttc_centimes: d.row.total_ttc_centimes, montant_ht_centimes: null, echeance_le: d.row.date_echeance, emis_le: null, regime_tva: d.row.regime_tva });\nconst s = [];\nfor (const d of DOSSIERS) { const p = plan(d); if (!p) continue;\n  const c = d.c;\n  s.push({ json: env(ENVB[d.org], 'lib-decider@1', 'd:' + d.ev.id, { autonomie: { niveau_max: niveauMax(c, p.outil), niveau_defaut: 2, niveaux: {} }, plan: c.offre, pilote: c.pilote, parties_depuis_24h: c.parties_depuis_24h },\n    { objet_type: p.objet_type, objet_id: p.objet_id, constat: { outil: p.outil, etape: p.etape, escalade: p.escalade } }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "6cb8adc6-ae74-4b82-9233-a9b29e97eb25",
+      "name": "Préparer la rédaction",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Facturation : le texte d'une relance est écrit par lib-rediger-message (modèle ÉPINGLÉ en simulation, jamais appelé), à partir des seuls faits rendus par la base :\n// le montant est un fait (centimes entiers produits par le code), le modèle le recopie, et la porte refuse tout montant qui n'est pas ce fait. La mention d'IA\n// n'est demandée que si la relance partirait sans relecture (ligne du pilote).\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-facturation', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst JAMAIS = [\"marquer_facture_payee\",\"creer_facture\",\"creer_facture_libre\",\"rembourser\",\"payer\",\"creer_avoir\",\"supprimer_devis_brouillon\",\"supprimer_tarif\",\"supprimer_article\",\"augmenter_tarifs\"];\nconst MOTIFS = {\"a_ranger\":\"ranger_motif_impaye\",\"dit_avoir_paye\":\"verifier_paiement\",\"litige\":\"escalader_litige\",\"autre\":\"traiter_impaye_a_la_main\"};\nconst niveauMax = (c, outil) => (c.capacites.includes('assistant.pilote') && (outil !== 'relancer_facture' || c.capacites.includes('factures.relances.auto')) ? 3 : 2);\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst estMotif = (d) => d.etat.slice(0, 6) === 'motif_';\nconst motifDe = (d) => d.etat.slice(6);\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1');\n// La décision à prendre pour un dossier : { outil, etape, escalade, objet_type, objet_id, type_action, palier, relire } ou null.\nconst plan = (d) => {\n  if (d.etat === 'a_emettre') return { outil: 'creer_facture', etape: 'facture-prete', escalade: false, objet_type: 'devis', objet_id: d.f.devis_id, type_action: 'creer_facture' };\n  if (estMotif(d)) { const m = motifDe(d); return { outil: MOTIFS[m], etape: 'motif-' + m.split('_').join('-'), escalade: m === 'litige', objet_type: 'facture', objet_id: d.f.facture_id, type_action: MOTIFS[m] }; }\n  if (d.etat === 'a_relancer') { const r = rel['r:' + d.ev.id];\n    if (!r || !r.resultat || !r.resultat.palier) return null;\n    const relire = r.resultat.motif === 'litige_ou_escalade';\n    if (!relire && r.resultat.a_relancer !== true) return null;\n    return { outil: 'relancer_facture', etape: 'relance-p' + r.resultat.palier + (relire ? '-a-relire' : ''), escalade: relire, objet_type: 'facture', objet_id: d.f.facture_id, type_action: 'relance_impaye', palier: r.resultat.palier, relire: relire }; }\n  return null;\n};\n// Les faits d'une relance, tels que la base les a rendus : la rédaction et la porte les relisent, rien n'est recalculé.\nconst faitsDe = (d, p) => ({ type_relance: 'relance_facture', palier: p.palier, numero: d.row.numero, objet: typeof d.row.objet === 'string' ? d.row.objet : null, montant_ttc_centimes: d.row.total_ttc_centimes, montant_ht_centimes: null, echeance_le: d.row.date_echeance, emis_le: null, regime_tva: d.row.regime_tva });\nconst dec = parCle('Appeler lib-decider', 'lib-decider@1');\nconst s = [];\nfor (const d of DOSSIERS) { const p = plan(d), r = dec['d:' + d.ev.id]; if (!p || p.type_action !== 'relance_impaye' || !bon(r) || r.resultat.action === 'rien') continue;\n  const c = d.c;\n  s.push({ json: env(ENVB[d.org], 'lib-rediger-message@1', 'm:' + d.ev.id, { canal: 'email', ton: c.ton, signature: c.signature, nom_artisan: c.nom_artisan, mention_ia: r.resultat.action === 'pilote' }, { action_cle: r.resultat.cle_idempotence, faits: faitsDe(d, p) }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "d845afe3-4364-4fa0-a5dd-04e0ea3caef2",
+      "name": "Préparer la porte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4032,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Facturation : la porte de conformité (veto) avant TOUT effet. Une carte ou un arrêt n'a pas de texte (message nul) ; une relance porte le brouillon rendu par la\n// rédaction, avec les mêmes faits : tout montant ou date du texte doit y être, sinon la porte refuse.\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-facturation', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst JAMAIS = [\"marquer_facture_payee\",\"creer_facture\",\"creer_facture_libre\",\"rembourser\",\"payer\",\"creer_avoir\",\"supprimer_devis_brouillon\",\"supprimer_tarif\",\"supprimer_article\",\"augmenter_tarifs\"];\nconst MOTIFS = {\"a_ranger\":\"ranger_motif_impaye\",\"dit_avoir_paye\":\"verifier_paiement\",\"litige\":\"escalader_litige\",\"autre\":\"traiter_impaye_a_la_main\"};\nconst niveauMax = (c, outil) => (c.capacites.includes('assistant.pilote') && (outil !== 'relancer_facture' || c.capacites.includes('factures.relances.auto')) ? 3 : 2);\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst estMotif = (d) => d.etat.slice(0, 6) === 'motif_';\nconst motifDe = (d) => d.etat.slice(6);\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1');\n// La décision à prendre pour un dossier : { outil, etape, escalade, objet_type, objet_id, type_action, palier, relire } ou null.\nconst plan = (d) => {\n  if (d.etat === 'a_emettre') return { outil: 'creer_facture', etape: 'facture-prete', escalade: false, objet_type: 'devis', objet_id: d.f.devis_id, type_action: 'creer_facture' };\n  if (estMotif(d)) { const m = motifDe(d); return { outil: MOTIFS[m], etape: 'motif-' + m.split('_').join('-'), escalade: m === 'litige', objet_type: 'facture', objet_id: d.f.facture_id, type_action: MOTIFS[m] }; }\n  if (d.etat === 'a_relancer') { const r = rel['r:' + d.ev.id];\n    if (!r || !r.resultat || !r.resultat.palier) return null;\n    const relire = r.resultat.motif === 'litige_ou_escalade';\n    if (!relire && r.resultat.a_relancer !== true) return null;\n    return { outil: 'relancer_facture', etape: 'relance-p' + r.resultat.palier + (relire ? '-a-relire' : ''), escalade: relire, objet_type: 'facture', objet_id: d.f.facture_id, type_action: 'relance_impaye', palier: r.resultat.palier, relire: relire }; }\n  return null;\n};\n// Les faits d'une relance, tels que la base les a rendus : la rédaction et la porte les relisent, rien n'est recalculé.\nconst faitsDe = (d, p) => ({ type_relance: 'relance_facture', palier: p.palier, numero: d.row.numero, objet: typeof d.row.objet === 'string' ? d.row.objet : null, montant_ttc_centimes: d.row.total_ttc_centimes, montant_ht_centimes: null, echeance_le: d.row.date_echeance, emis_le: null, regime_tva: d.row.regime_tva });\nconst dec = parCle('Appeler lib-decider', 'lib-decider@1'), red = {};\nfor (const b of sorties('Appeler lib-rediger-message')) if (b && b.statut === 'ok' && b.resultat) red[b.resultat.action_cle] = b.resultat;\nconst s = [];\nfor (const d of DOSSIERS) { const p = plan(d), r = dec['d:' + d.ev.id]; if (!p || !bon(r) || r.resultat.action === 'rien') continue;\n  const c = d.c, cible = r.resultat.action === 'pilote' ? 'pilote' : 'carte', b = red[r.resultat.cle_idempotence];\n  if (p.type_action === 'relance_impaye' && !b) continue;\n  const donnees = { action: { type_action: r.resultat.type_action, outil: p.outil, prix_sources: true, cible: cible, sans_relecture: cible === 'pilote' }, message: p.type_action === 'relance_impaye' ? { canal: b.canal, objet: b.objet, texte: b.texte } : null,\n    destinataire: { opposition: false, consentement_sms: null, escalade: false }, maintenant: c.maintenant, compteurs: { envoyes_aujourdhui: c.parties_depuis_24h } };\n  if (p.type_action === 'relance_impaye') donnees.faits = faitsDe(d, p);\n  s.push({ json: env(ENVB[d.org], 'lib-porte-conformite@1', 'p:' + d.ev.id, { jamais_auto: [], regles_metier: { fournisseurs: [], mots_escalade_artisan: c.mots_escalade_artisan, jours_permis: c.horaires.jours_permis, heures_permises: c.horaires.heures_permises }, plafond_jour: c.plafond_jour }, donnees) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "74bbff9b-d0a1-4c16-8426-e9fd52566358",
+      "name": "Préparer l'exécution",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4704,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Facturation : SEUL ce que la porte laisse passer va à lib-executer (interrupteurs relus juste avant l'effet, clés déjà en base). Une facture, une étape, une clé.\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-facturation', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst JAMAIS = [\"marquer_facture_payee\",\"creer_facture\",\"creer_facture_libre\",\"rembourser\",\"payer\",\"creer_avoir\",\"supprimer_devis_brouillon\",\"supprimer_tarif\",\"supprimer_article\",\"augmenter_tarifs\"];\nconst MOTIFS = {\"a_ranger\":\"ranger_motif_impaye\",\"dit_avoir_paye\":\"verifier_paiement\",\"litige\":\"escalader_litige\",\"autre\":\"traiter_impaye_a_la_main\"};\nconst niveauMax = (c, outil) => (c.capacites.includes('assistant.pilote') && (outil !== 'relancer_facture' || c.capacites.includes('factures.relances.auto')) ? 3 : 2);\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst estMotif = (d) => d.etat.slice(0, 6) === 'motif_';\nconst motifDe = (d) => d.etat.slice(6);\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1');\n// La décision à prendre pour un dossier : { outil, etape, escalade, objet_type, objet_id, type_action, palier, relire } ou null.\nconst plan = (d) => {\n  if (d.etat === 'a_emettre') return { outil: 'creer_facture', etape: 'facture-prete', escalade: false, objet_type: 'devis', objet_id: d.f.devis_id, type_action: 'creer_facture' };\n  if (estMotif(d)) { const m = motifDe(d); return { outil: MOTIFS[m], etape: 'motif-' + m.split('_').join('-'), escalade: m === 'litige', objet_type: 'facture', objet_id: d.f.facture_id, type_action: MOTIFS[m] }; }\n  if (d.etat === 'a_relancer') { const r = rel['r:' + d.ev.id];\n    if (!r || !r.resultat || !r.resultat.palier) return null;\n    const relire = r.resultat.motif === 'litige_ou_escalade';\n    if (!relire && r.resultat.a_relancer !== true) return null;\n    return { outil: 'relancer_facture', etape: 'relance-p' + r.resultat.palier + (relire ? '-a-relire' : ''), escalade: relire, objet_type: 'facture', objet_id: d.f.facture_id, type_action: 'relance_impaye', palier: r.resultat.palier, relire: relire }; }\n  return null;\n};\n// Les faits d'une relance, tels que la base les a rendus : la rédaction et la porte les relisent, rien n'est recalculé.\nconst faitsDe = (d, p) => ({ type_relance: 'relance_facture', palier: p.palier, numero: d.row.numero, objet: typeof d.row.objet === 'string' ? d.row.objet : null, montant_ttc_centimes: d.row.total_ttc_centimes, montant_ht_centimes: null, echeance_le: d.row.date_echeance, emis_le: null, regime_tva: d.row.regime_tva });\nconst dec = parCle('Appeler lib-decider', 'lib-decider@1'), pin = parCle('Préparer la porte', 'lib-porte-conformite@1');\nconst s = [];\nfor (const q of sorties('Appeler lib-porte-conformite')) { if (!q || q.contrat !== 'lib-porte-conformite@1' || !q.resultat || q.resultat.verdict !== 'passe') continue;\n  const id = q.cle_idempotence.slice(2), d = PAR_EV[id], r = dec['d:' + id], p = d ? plan(d) : null; if (!d || !p || !bon(r)) continue;\n  const c = d.c, charge = { type_action: r.resultat.type_action, objet_type: p.objet_type, objet_id: p.objet_id }; if (p.palier) charge.palier = p.palier;\n  const m = pin['p:' + id] ? pin['p:' + id].donnees.message : null; if (m) { charge.canal = m.canal; charge.brouillon = { objet: m.objet, texte: m.texte }; }\n  s.push({ json: env(ENVB[d.org], 'lib-executer@1', r.resultat.cle_idempotence, { niveau_max: niveauMax(c, p.outil) }, { verdict: 'passe', cible: q.resultat.cible, cle_idempotence: r.resultat.cle_idempotence, charge: charge,\n    interrupteurs: { general: c.interrupteur_general, agent: c.interrupteur_departement }, cles_existantes: c.cles_existantes }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "214c4f70-6c0b-4d0f-a370-7896c91fcca2",
+      "name": "Aucune relance à décider ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2240,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aucunerelancedcider",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "d58ad784-09c9-4e50-a995-323bc9b1ce78",
+      "name": "Rien à décider ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2912,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "riendcider",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "abad4337-8944-418b-9b35-b77c956a0f5b",
+      "name": "Rien à rédiger ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3584,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienrdiger",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "f16160e4-c11a-4cbe-9386-653ebfb432cc",
+      "name": "Rien à contrôler ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4256,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "riencontrler",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "d82511f1-fa5e-4a37-936d-7f0ce943022d",
+      "name": "Rien à exécuter ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4928,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienexcuter",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "da1af78e-ca6c-4f9a-84a6-021c32090258",
+      "name": "Appeler lib-relancer",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2464,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "jGM56jxeLUVXZIiM"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "La décision de relance (035-005) : palier atteint, registre de 3 jours, horaires. Aucun modèle. En simulation, sa sortie est épinglée dans l'essai du chef tant que lib-relancer n'a pas presti-dep-facturation dans ses callerIds (session principale)."
+    },
+    {
+      "id": "a9810fd9-b37a-43d5-ad52-b9d1c868002d",
+      "name": "Appeler lib-decider",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3136,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "hckqX1tQjIommtTH"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Carte, pilote ou rien (035-004), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que lib-decider n'a pas presti-dep-facturation dans ses callerIds (session principale)."
+    },
+    {
+      "id": "e57922d7-a295-4814-b448-33f4e9309be6",
+      "name": "Appeler lib-rediger-message",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3808,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "xfRUnkwOKSwQezVb"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "La rédaction d’une relance (035-005) : modèle ÉPINGLÉ, jamais appelé en simulation ; la porte refuse tout montant qui n’est pas un fait. En simulation, sa sortie est épinglée dans l'essai du chef tant que lib-rediger-message n'a pas presti-dep-facturation dans ses callerIds (session principale)."
+    },
+    {
+      "id": "881472f0-b968-4f26-aa1b-53634bcf885d",
+      "name": "Appeler lib-porte-conformite",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4480,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "8c8vkUeSkfgB5FAM"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "La porte de conformité (035-005), veto avant tout effet. En simulation, sa sortie est épinglée dans l'essai du chef tant que lib-porte-conformite n'a pas presti-dep-facturation dans ses callerIds (session principale)."
+    },
+    {
+      "id": "b2110d43-72a7-4616-9361-9b9b221fc0e5",
+      "name": "Appeler lib-executer",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        5152,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ADX5mPWqIvq1LGs6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "La carte ou la ligne du pilote PRÉVUE (035-005) ; relit les interrupteurs juste avant l’effet. En simulation, sa sortie est épinglée dans l'essai du chef tant que lib-executer n'a pas presti-dep-facturation dans ses callerIds (session principale)."
+    },
+    {
+      "id": "b42fe6ac-5ee0-4fc7-b26a-5aaff79eb7e8",
+      "name": "Préparer le journal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5376,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Facturation : le journal (lib-journaliser), une enveloppe par compte : des identifiants, des états et des décisions, jamais un nom, un contact, un texte ni un montant.\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-facturation', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst JAMAIS = [\"marquer_facture_payee\",\"creer_facture\",\"creer_facture_libre\",\"rembourser\",\"payer\",\"creer_avoir\",\"supprimer_devis_brouillon\",\"supprimer_tarif\",\"supprimer_article\",\"augmenter_tarifs\"];\nconst MOTIFS = {\"a_ranger\":\"ranger_motif_impaye\",\"dit_avoir_paye\":\"verifier_paiement\",\"litige\":\"escalader_litige\",\"autre\":\"traiter_impaye_a_la_main\"};\nconst niveauMax = (c, outil) => (c.capacites.includes('assistant.pilote') && (outil !== 'relancer_facture' || c.capacites.includes('factures.relances.auto')) ? 3 : 2);\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst estMotif = (d) => d.etat.slice(0, 6) === 'motif_';\nconst motifDe = (d) => d.etat.slice(6);\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1');\n// La décision à prendre pour un dossier : { outil, etape, escalade, objet_type, objet_id, type_action, palier, relire } ou null.\nconst plan = (d) => {\n  if (d.etat === 'a_emettre') return { outil: 'creer_facture', etape: 'facture-prete', escalade: false, objet_type: 'devis', objet_id: d.f.devis_id, type_action: 'creer_facture' };\n  if (estMotif(d)) { const m = motifDe(d); return { outil: MOTIFS[m], etape: 'motif-' + m.split('_').join('-'), escalade: m === 'litige', objet_type: 'facture', objet_id: d.f.facture_id, type_action: MOTIFS[m] }; }\n  if (d.etat === 'a_relancer') { const r = rel['r:' + d.ev.id];\n    if (!r || !r.resultat || !r.resultat.palier) return null;\n    const relire = r.resultat.motif === 'litige_ou_escalade';\n    if (!relire && r.resultat.a_relancer !== true) return null;\n    return { outil: 'relancer_facture', etape: 'relance-p' + r.resultat.palier + (relire ? '-a-relire' : ''), escalade: relire, objet_type: 'facture', objet_id: d.f.facture_id, type_action: 'relance_impaye', palier: r.resultat.palier, relire: relire }; }\n  return null;\n};\n// Les faits d'une relance, tels que la base les a rendus : la rédaction et la porte les relisent, rien n'est recalculé.\nconst faitsDe = (d, p) => ({ type_relance: 'relance_facture', palier: p.palier, numero: d.row.numero, objet: typeof d.row.objet === 'string' ? d.row.objet : null, montant_ttc_centimes: d.row.total_ttc_centimes, montant_ht_centimes: null, echeance_le: d.row.date_echeance, emis_le: null, regime_tva: d.row.regime_tva });\nconst dec = parCle('Appeler lib-decider', 'lib-decider@1'), po = parCle('Appeler lib-porte-conformite', 'lib-porte-conformite@1'), ex = parCle('Appeler lib-executer', 'lib-executer@1');\nconst s = [];\nfor (const e of ENVS) { const L = [];\n  const ligne = (evenement, ref, decision) => L.push({ evenement: evenement, agent: 'presti-dep-facturation', objet_ref: ref, decision: String(decision).slice(0, 200), modele: null, jetons_entree: null, jetons_sortie: null, cout_eur: null, source_tarif: null, simulation: e.simulation });\n  for (const x of REJETS) if (x.org === e.organisation_id) ligne('evenement_rejete', x.id, x.motif);\n  for (const d of DOSSIERS) { if (d.org !== e.organisation_id) continue;\n    if (d.etat === 'payee') { ligne('relance_arretee_paiement', d.ev.id, 'facture payée : plus aucune relance'); continue; }\n    if (estMotif(d)) ligne('relance_arretee_motif', d.ev.id, 'arrêt motivé (' + motifDe(d) + ') : plus de relance, une carte pour l artisan');\n    const p = plan(d); if (!p) { if (!estMotif(d)) ligne('facturation_non_traitee', d.ev.id, d.etat === 'a_relancer' ? 'aucune relance due' : d.etat); continue; }\n    const r = dec['d:' + d.ev.id]; if (!bon(r)) { ligne('decision_en_echec', d.ev.id, 'lib-decider n a pas répondu'); continue; }\n    ligne('decision', d.ev.id, p.type_action + ' : ' + r.resultat.action + ' (' + r.resultat.motif + ')');\n    const q = po['p:' + d.ev.id]; if (q && q.resultat) ligne(q.resultat.verdict === 'passe' ? 'porte_passe' : 'porte_refuse', d.ev.id, q.resultat.verdict + (q.resultat.motifs.length ? ' (' + q.resultat.motifs.join(', ') + ')' : ''));\n    const x = ex[r.resultat.cle_idempotence]; if (x && x.resultat) ligne(x.resultat.deja_fait ? 'deja_traite' : 'action_prevue', d.ev.id, x.resultat.deja_fait ? 'déjà fait : rien de refait' : (x.resultat.motif || 'prévue (simulation)')); }\n  s.push({ json: env(e, 'lib-journaliser@1', 'j:' + e.cle_idempotence, {}, { entrees: L.slice(0, 200) }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "bf9981b9-72fb-4100-bc4c-8e79dd6a3d26",
+      "name": "Appeler lib-journaliser",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        5600,
+        96
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "NQg0KDXIa5hhzAvq"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le journal (035-003), une enveloppe par compte."
+    },
+    {
+      "id": "a083edfa-0c43-44ea-a472-4cf0fcdf31f5",
+      "name": "Assembler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5824,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Facturation : la sortie, une par compte. « Facture prête » = l'aperçu tel que l'application l'a rendu (type, total affiché, factures déduites) et la question à\n// l'artisan : rien n'est émis ici, n8n n'émet aucune facture, ne marque aucun paiement, ne calcule aucun montant. Les montants sont recopiés des lectures.\n// Les effets prévus viennent de lib-executer. Contrôle final : aucun geste de OUTILS_JAMAIS_AUTO ne peut être une ligne du pilote.\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-facturation', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst JAMAIS = [\"marquer_facture_payee\",\"creer_facture\",\"creer_facture_libre\",\"rembourser\",\"payer\",\"creer_avoir\",\"supprimer_devis_brouillon\",\"supprimer_tarif\",\"supprimer_article\",\"augmenter_tarifs\"];\nconst MOTIFS = {\"a_ranger\":\"ranger_motif_impaye\",\"dit_avoir_paye\":\"verifier_paiement\",\"litige\":\"escalader_litige\",\"autre\":\"traiter_impaye_a_la_main\"};\nconst niveauMax = (c, outil) => (c.capacites.includes('assistant.pilote') && (outil !== 'relancer_facture' || c.capacites.includes('factures.relances.auto')) ? 3 : 2);\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst estMotif = (d) => d.etat.slice(0, 6) === 'motif_';\nconst motifDe = (d) => d.etat.slice(6);\nconst rel = parCle('Appeler lib-relancer', 'lib-relancer@1');\n// La décision à prendre pour un dossier : { outil, etape, escalade, objet_type, objet_id, type_action, palier, relire } ou null.\nconst plan = (d) => {\n  if (d.etat === 'a_emettre') return { outil: 'creer_facture', etape: 'facture-prete', escalade: false, objet_type: 'devis', objet_id: d.f.devis_id, type_action: 'creer_facture' };\n  if (estMotif(d)) { const m = motifDe(d); return { outil: MOTIFS[m], etape: 'motif-' + m.split('_').join('-'), escalade: m === 'litige', objet_type: 'facture', objet_id: d.f.facture_id, type_action: MOTIFS[m] }; }\n  if (d.etat === 'a_relancer') { const r = rel['r:' + d.ev.id];\n    if (!r || !r.resultat || !r.resultat.palier) return null;\n    const relire = r.resultat.motif === 'litige_ou_escalade';\n    if (!relire && r.resultat.a_relancer !== true) return null;\n    return { outil: 'relancer_facture', etape: 'relance-p' + r.resultat.palier + (relire ? '-a-relire' : ''), escalade: relire, objet_type: 'facture', objet_id: d.f.facture_id, type_action: 'relance_impaye', palier: r.resultat.palier, relire: relire }; }\n  return null;\n};\n// Les faits d'une relance, tels que la base les a rendus : la rédaction et la porte les relisent, rien n'est recalculé.\nconst faitsDe = (d, p) => ({ type_relance: 'relance_facture', palier: p.palier, numero: d.row.numero, objet: typeof d.row.objet === 'string' ? d.row.objet : null, montant_ttc_centimes: d.row.total_ttc_centimes, montant_ht_centimes: null, echeance_le: d.row.date_echeance, emis_le: null, regime_tva: d.row.regime_tva });\nconst po = parCle('Appeler lib-porte-conformite', 'lib-porte-conformite@1'), dec = parCle('Appeler lib-decider', 'lib-decider@1'), ex = parCle('Appeler lib-executer', 'lib-executer@1'), jr = parCle('Appeler lib-journaliser', 'lib-journaliser@1'), red = {};\nfor (const b of sorties('Appeler lib-rediger-message')) if (b && b.statut === 'ok' && b.resultat) red[b.resultat.action_cle] = b.resultat;\nconst communes = [];\nfor (const nom of ['Appeler lib-relancer', 'Appeler lib-decider', 'Appeler lib-rediger-message', 'Appeler lib-porte-conformite', 'Appeler lib-executer', 'Appeler lib-journaliser']) for (const x of sorties(nom)) if (!x || typeof x.contrat !== 'string') communes.push(nom + ' : appel en échec');\nreturn ENVS.map((e) => {\n  const erreurs = communes.slice(), effets = [];\n  const r0 = { evenements_recus: e.nb, rejets: [], non_traites: [], factures_a_emettre: [], relances: [], relances_arretees: [], cartes_motif: [], cartes: [], pilote: [], refus_porte: [], deja_faits: [], sorties_vers_un_modele: 0 };\n  for (const x of REJETS) if (x.org === e.organisation_id) r0.rejets.push({ id: x.id, motif: x.motif });\n  for (const d of DOSSIERS) { if (d.org !== e.organisation_id) continue;\n    if (d.etat === 'payee') { r0.relances_arretees.push({ facture_id: d.f.facture_id, raison: 'paiement' }); continue; }\n    const p = plan(d);\n    if (!p) { r0.non_traites.push({ ref: d.ev.id, raison: d.etat === 'a_relancer' ? 'aucune_relance_due' : d.etat }); continue; }\n    if (estMotif(d)) r0.relances_arretees.push({ facture_id: d.f.facture_id, raison: 'motif_' + motifDe(d) });\n    const r = dec['d:' + d.ev.id], q = po['p:' + d.ev.id];\n    if (!bon(r)) { erreurs.push('lib-decider : ' + (r ? r.statut : 'absent')); continue; }\n    if (r.resultat.action === 'rien') { r0.non_traites.push({ ref: d.ev.id, raison: r.resultat.motif }); continue; }\n    if (q && q.resultat && q.resultat.verdict !== 'passe') r0.refus_porte.push({ ref: d.ev.id, motifs: q.resultat.motifs, repli: q.resultat.repli });\n    const x = ex[r.resultat.cle_idempotence]; let cible = null;\n    if (x && x.resultat) { if (Array.isArray(x.effets_prevus)) for (const y of x.effets_prevus) effets.push(y);\n      if (x.resultat.deja_fait) r0.deja_faits.push(r.resultat.cle_idempotence);\n      else if (x.statut === 'ok' && x.resultat.prevu && q && q.resultat) { cible = q.resultat.cible; (cible === 'pilote' ? r0.pilote : r0.cartes).push(r.resultat.cle_idempotence); }\n      if (x.statut !== 'ok' && !x.resultat.deja_fait) erreurs.push('lib-executer : ' + (x.resultat.motif || x.statut)); }\n    if (!cible) continue;\n    if (cible === 'pilote' && (JAMAIS.includes(p.outil) || p.type_action !== 'relance_impaye')) { erreurs.push('geste non permis dans le pilote : ' + p.outil); continue; }\n    const cle = r.resultat.cle_idempotence;\n    if (d.kind === 'emettre') r0.factures_a_emettre.push({ cle: cle, devis_id: d.f.devis_id, question: 'Émettre cette facture ?', type: d.row.apercu_type, total_ttc_affiche: d.row.apercu_total_ttc_affiche, nb_deduites: d.row.apercu_nb_deduites, apercu_le: d.row.apercu_le, cible: cible, emission: 'au clic de l artisan' });\n    else if (estMotif(d)) r0.cartes_motif.push({ cle: cle, facture_id: d.f.facture_id, motif: motifDe(d), geste: p.outil });\n    else { const b = red[cle]; r0.relances.push({ cle: cle, facture_id: d.f.facture_id, numero: d.row.numero, palier: p.palier, total_ttc_affiche: d.row.total_ttc_affiche, cible: cible, part_seul: cible === 'pilote', a_relire: p.relire === true, brouillon: b ? { objet: b.objet, texte: b.texte } : null }); } }\n  const j = jr['j:' + e.cle_idempotence]; if (j && Array.isArray(j.effets_prevus)) for (const y of j.effets_prevus) effets.push(y);\n  const statut = erreurs.length ? 'erreur' : e.nb ? 'ok' : 'rien_a_faire';\n  return { json: { enveloppe: e, statut: statut, resultat: r0, effets_prevus: effets.slice(0, 1000), effets_faits: [], journal: j && Array.isArray(j.journal) ? j.journal : [], erreurs: erreurs.slice(0, 20) } };\n});"
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T11:29:27.815Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-005), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

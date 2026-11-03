@@ -1,0 +1,219 @@
+{
+  "id": "LRO3Jng6Te4Xn7Pg",
+  "name": "presti-banc-argent",
+  "active": false,
+  "isArchived": false,
+  "versionId": "70a54d00-9986-46c0-bcb3-f82940f15787",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 7,
+  "createdAt": "2026-11-03T11:21:41.294Z",
+  "updatedAt": "2026-11-03T11:22:09.864Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 300,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "connections": {
+    "Banc (jamais planifié : inactif)": {
+      "main": [
+        [
+          {
+            "node": "Cas fictifs : devis (deux comptes)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas fictifs : devis (deux comptes)": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-devis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-devis": {
+      "main": [
+        [
+          {
+            "node": "Cas fictifs : facturation (deux comptes)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas fictifs : facturation (deux comptes)": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-facturation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-facturation": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "4df8c815-2b23-4823-80d2-9f2d15cccb6d",
+      "name": "Banc (jamais planifié : inactif)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "67ae0d19-2d50-408f-82b9-c47286591b7c",
+      "name": "Cas fictifs : devis (deux comptes)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-banc-argent (036-005) : les dossiers FICTIFS du département Devis pour deux comptes (Studio A, Signature B), « Exemple. » devant tout nom, un lundi matin.\n// Chaque enveloppe porte ses lectures dans config.lectures_simulees (honorées seulement en simulation). Rien de réel : ni adresse, ni téléphone.\nconst ORG = { A: '00000000-0000-4000-8000-0000000000a1', B: '00000000-0000-4000-8000-0000000000b2' };\nconst U = (c, s, i) => '00000000-0000-4000-8000-' + (c === 'A' ? 'a' : 'b') + s + String(i).padStart(10, '0');\nconst OFFRE = { A: { nom: 'Exemple. Plomberie Arnal-Démo', offre: 'studio', capacites: ['canaux.email', 'relances', 'factures.relances', 'assistant'], pilote: { drapeau: true, actif: false, types: {} }, parties: 0 },\n  B: { nom: 'Exemple. Menuiserie Berthier-Démo', offre: 'signature', capacites: ['canaux.email', 'relances', 'factures.relances', 'assistant', 'plateforme.ia.auto', 'relances.auto', 'factures.relances.auto', 'crm', 'assistant.pilote'], pilote: { drapeau: true, actif: true, types: { envoi_devis: true, envoi_facture: true, relance_impaye: true } }, parties: 3 } };\nconst config = (c) => ({ artisan_id: ORG[c], nom_artisan: OFFRE[c].nom, ton: 'professionnel et courtois', signature: 'Exemple. L’équipe', offre: OFFRE[c].offre, capacites: OFFRE[c].capacites, pilote: OFFRE[c].pilote, parties_depuis_24h: OFFRE[c].parties,\n  interrupteur_general: true, interrupteur_departement: true, mots_escalade_artisan: ['Exemple. mot sensible'], horaires: { jours_permis: [1, 2, 3, 4, 5, 6, 7], heures_permises: { debut: '08:00', fin: '19:00' } }, plafond_jour: 20,\n  relances_impayes: { actif: true, jours: [3, 10, 21] }, cles_existantes: [], maintenant: '2026-11-09T10:00:00.000+01:00' });\nconst enveloppe = (c, dep, evenements, lectures) => ({ contrat: 'presti-dep-' + dep + '@1', organisation_id: ORG[c], simulation: true, cle_idempotence: 'dep:' + dep + ':' + ORG[c].slice(24) + ':2026-11-09T1000',\n  trace: { execution_parent: 'presti-banc-argent:2026-11-09T1000', declencheur: 'presti-banc-argent', tentative: 0 }, config: { lectures_simulees: lectures }, donnees: { evenements: evenements } });\nconst SRC = 'vos tarifs · Exemple. Pose carrelage', SRC2 = 'prix donné par l’artisan';\n// [compte, n°, devis chiffré ? (n° du devis ou 0), qualifiée, escalade, statut du devis, total (centimes, affiché), numéro, lignes : [désignation, centimes, affiché, source, repère]]\nconst CAS = [\n  ['A', 1, 0, true, false],\n  ['A', 2, 2, true, false, 'brouillon', 245000, '2 450,00 € TTC', 'DEV-EX-0002', [['Exemple. Dépose et évacuation', 40000, '400,00 € HT', SRC], ['Exemple. Pose carrelage 12 m²', 120000, '1 200,00 € HT', SRC], ['Exemple. Joints et finitions', 15000, '150,00 € HT', SRC2]]],\n  ['A', 3, 3, true, false, 'brouillon', 98000, '980,00 € TTC', 'DEV-EX-0003', [['Exemple. Robinetterie', 30000, '300,00 € HT', SRC], ['Exemple. Main-d’œuvre pose', 51000, '510,00 € HT', null, ['480,00 € HT', '2026-03-14']]]],\n  ['A', 4, 0, false, false],\n  ['B', 5, 5, true, false, 'brouillon', 120000, '1 200,00 € TTC', 'DEV-EX-0005', [['Exemple. Porte d’entrée chêne', 70000, '700,00 € HT', SRC], ['Exemple. Pose', 30000, '300,00 € HT', SRC2]]],\n  ['B', 6, 6, true, false, 'brouillon', 150000, '1 500,00 € TTC', 'DEV-EX-0006', [['Exemple. Dressing sur mesure', 90000, '900,00 € HT', SRC], ['Exemple. Pose et réglages', 35000, '350,00 € HT', null, ['420,00 € HT', '2026-02-02']]]],\n  ['B', 7, 7, true, true, 'brouillon', 60000, '600,00 € TTC', 'DEV-EX-0007', [['Exemple. Étagère murale', 50000, '500,00 € HT', SRC]]],\n  ['B', 8, 8, true, false, 'brouillon', 36000, '360,00 € TTC', 'DEV-EX-0008', [['Exemple. Plinthes séjour', 30000, '300,00 € HT', '']]],\n  ['B', 9, 0, true, false],\n  ['B', 10, 5, true, false, 'brouillon', 120000, '1 200,00 € TTC', 'DEV-EX-0005', null, 'exemple-devis_a_preparer-5'],\n  ['B', 12, 12, true, false, 'envoye', 80000, '800,00 € TTC', 'DEV-EX-0012', [['Exemple. Lambris', 66000, '660,00 € HT', SRC]]],\n];\nconst evs = { A: [], B: [] }, lec = { A: { configuration: [config('A')], devis: [], lignes: [] }, B: { configuration: [config('B')], devis: [], lignes: [] } };\nfor (const [c, i, d, qual, esc, statut, total, affiche, numero, lignes, cle] of CAS) {\n  evs[c].push({ id: U(c, 3, i), artisan_id: ORG[c], type: 'devis_a_preparer', cle: cle || 'exemple-devis_a_preparer-' + i, donnees: { lead_id: U(c, 1, i), devis_id: d ? U(c, 2, d) : null, qualifiee: qual, escalade: esc } });\n  if (!d || !lignes) continue;\n  lec[c].devis.push({ artisan_id: ORG[c], devis_id: U(c, 2, d), lead_id: U(c, 1, i), numero: numero, statut: statut, total_ttc_centimes: total, total_ttc_affiche: affiche });\n  lignes.forEach((l, k) => lec[c].lignes.push({ artisan_id: ORG[c], devis_id: U(c, 2, d), rang: k + 1, designation: l[0], quantite: 1, prix_unitaire_ht_centimes: l[1], prix_affiche: l[2], source_prix: l[3], repere_affiche: l[4] ? l[4][0] : null, repere_chantier_le: l[4] ? l[4][1] : null }));\n}\n// Un événement de l'autre compte, glissé dans l'enveloppe de B : rejeté.\nevs.B.push({ id: U('A', 3, 11), artisan_id: ORG.A, type: 'devis_a_preparer', cle: 'exemple-etranger', donnees: { lead_id: U('A', 1, 2), devis_id: null, qualifiee: true, escalade: false } });\nreturn [{ json: enveloppe('A', 'devis', evs.A, lec.A) }, { json: enveloppe('B', 'devis', evs.B, lec.B) }];"
+      }
+    },
+    {
+      "id": "31783595-937f-4d57-b155-3d84223305f6",
+      "name": "Appeler presti-dep-devis",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "dNikTYPKKsivUbd3"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le chef Devis, appelé pour de vrai : ses appels aux lib-* sont refusés tant que leurs callerIds ne le contiennent pas (politique d'appel, essai 443 de 035-007) ; il rend alors « erreur » et aucun effet.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "b7e9e627-f1d5-4418-89d9-b2273757b991",
+      "name": "Cas fictifs : facturation (deux comptes)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-banc-argent (036-005) : les dossiers FICTIFS du département Facturation pour deux comptes (Studio A, Signature B), « Exemple. » devant tout nom, un lundi matin.\n// Chaque enveloppe porte ses lectures dans config.lectures_simulees (honorées seulement en simulation). Rien de réel : ni adresse, ni téléphone.\nconst ORG = { A: '00000000-0000-4000-8000-0000000000a1', B: '00000000-0000-4000-8000-0000000000b2' };\nconst U = (c, s, i) => '00000000-0000-4000-8000-' + (c === 'A' ? 'a' : 'b') + s + String(i).padStart(10, '0');\nconst OFFRE = { A: { nom: 'Exemple. Plomberie Arnal-Démo', offre: 'studio', capacites: ['canaux.email', 'relances', 'factures.relances', 'assistant'], pilote: { drapeau: true, actif: false, types: {} }, parties: 0 },\n  B: { nom: 'Exemple. Menuiserie Berthier-Démo', offre: 'signature', capacites: ['canaux.email', 'relances', 'factures.relances', 'assistant', 'plateforme.ia.auto', 'relances.auto', 'factures.relances.auto', 'crm', 'assistant.pilote'], pilote: { drapeau: true, actif: true, types: { envoi_devis: true, envoi_facture: true, relance_impaye: true } }, parties: 3 } };\nconst config = (c) => ({ artisan_id: ORG[c], nom_artisan: OFFRE[c].nom, ton: 'professionnel et courtois', signature: 'Exemple. L’équipe', offre: OFFRE[c].offre, capacites: OFFRE[c].capacites, pilote: OFFRE[c].pilote, parties_depuis_24h: OFFRE[c].parties,\n  interrupteur_general: true, interrupteur_departement: true, mots_escalade_artisan: ['Exemple. mot sensible'], horaires: { jours_permis: [1, 2, 3, 4, 5, 6, 7], heures_permises: { debut: '08:00', fin: '19:00' } }, plafond_jour: 20,\n  relances_impayes: { actif: true, jours: [3, 10, 21] }, cles_existantes: [], maintenant: '2026-11-09T10:00:00.000+01:00' });\nconst enveloppe = (c, dep, evenements, lectures) => ({ contrat: 'presti-dep-' + dep + '@1', organisation_id: ORG[c], simulation: true, cle_idempotence: 'dep:' + dep + ':' + ORG[c].slice(24) + ':2026-11-09T1000',\n  trace: { execution_parent: 'presti-banc-argent:2026-11-09T1000', declencheur: 'presti-banc-argent', tentative: 0 }, config: { lectures_simulees: lectures }, donnees: { evenements: evenements } });\nconst apercu = (c, d, o) => Object.assign({ artisan_id: ORG[c], devis_id: U(c, 2, d), chantier_termine: true, deja_facturee: false, apercu_ok: true, apercu_erreur: null, apercu_type: 'standard', apercu_total_ttc_centimes: 245000, apercu_total_ttc_affiche: '2 450,00 € TTC', apercu_nb_deduites: 0, apercu_le: '2026-11-09' }, o);\nconst facture = (c, f, o) => Object.assign({ artisan_id: ORG[c], facture_id: U(c, 4, f), numero: 'FAC-EX-' + String(f).padStart(4, '0'), objet: 'Exemple. Travaux de rénovation', statut: 'emise', avoir_de: null, regime_tva: 'tva', date_echeance: '2026-11-05', total_ttc_centimes: 180000, total_ttc_affiche: '1 800,00 € TTC', contestation: false, paliers_envoyes: [], historique: { ok: true, traces: [] } }, o);\nconst arret = (c, f, motif) => ({ artisan_id: ORG[c], facture_id: U(c, 4, f), raison: 'reponse_client', le: '2026-11-07T09:00:00.000Z', reprise_le: null, motif: motif });\n// [compte, n°, type de l'événement, aperçu | facture (écarts), arrêt (motif ; undefined = pas d'arrêt)]\nconst CAS = [\n  ['A', 21, 'facture_a_emettre', {}], ['A', 22, 'facture_a_emettre', { chantier_termine: false }], ['A', 23, 'facture_a_emettre', { deja_facturee: true }],\n  ['A', 24, 'impaye_echu', {}], ['A', 25, 'impaye_echu', { statut: 'payee' }], ['A', 26, 'impaye_echu', {}, 'litige'], ['A', 27, 'impaye_echu', {}, null],\n  ['B', 31, 'facture_a_emettre', { apercu_total_ttc_centimes: 120000, apercu_total_ttc_affiche: '1 200,00 € TTC', apercu_type: 'solde', apercu_nb_deduites: 1 }],\n  ['B', 34, 'impaye_echu', { date_echeance: '2026-10-15', paliers_envoyes: [1, 2] }], ['B', 35, 'impaye_echu', {}, 'dit_avoir_paye'], ['B', 36, 'impaye_echu', { contestation: true }],\n  ['B', 37, 'impaye_echu', { date_echeance: '2026-11-04' }, 'oubli'], ['B', 38, 'impaye_echu', { statut: 'payee' }], ['B', 39, 'impaye_echu', {}, 'autre'],\n];\nconst evs = { A: [], B: [] }, lec = { A: { configuration: [config('A')], apercus: [], factures: [], arrets: [] }, B: { configuration: [config('B')], apercus: [], factures: [], arrets: [] } };\nfor (const [c, i, type, o, motif] of CAS) {\n  const emettre = type === 'facture_a_emettre';\n  evs[c].push({ id: U(c, 3, i), artisan_id: ORG[c], type: type, cle: 'exemple-' + type + '-' + i, donnees: emettre ? { devis_id: U(c, 2, i) } : { facture_id: U(c, 4, i) } });\n  if (emettre) lec[c].apercus.push(apercu(c, i, o)); else lec[c].factures.push(facture(c, i, o));\n  if (motif !== undefined) lec[c].arrets.push(arret(c, i, motif));\n}\nreturn [{ json: enveloppe('A', 'facturation', evs.A, lec.A) }, { json: enveloppe('B', 'facturation', evs.B, lec.B) }];"
+      }
+    },
+    {
+      "id": "c434dcc2-bb51-4bea-8f4f-7a364eb99420",
+      "name": "Appeler presti-dep-facturation",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "bNAF6Xzx5On853kD"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le chef Facturation, appelé pour de vrai (même remarque).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "4eddbab8-a892-4886-a96f-21c24c224fa6",
+      "name": "Bilan du banc",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Banc : le bilan agrégé, sans donnée : par département et par compte, le statut, les erreurs, les cartes, les lignes du pilote.\nconst lire = (nom) => $(nom).all().map((x) => x.json).map((s) => ({ statut: s.statut, erreurs: (s.erreurs || []).length, cartes: s.resultat && s.resultat.cartes ? s.resultat.cartes.length : null, pilote: s.resultat && s.resultat.pilote ? s.resultat.pilote.length : null }));\nreturn [{ json: { devis: lire('Appeler presti-dep-devis'), facturation: lire('Appeler presti-dep-facturation') } }];"
+      }
+    },
+    {
+      "id": "07fdd71c-522b-48e2-910a-b2dc94a44a5e",
+      "name": "Sticky Note 9f1bc0d7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        496,
+        192
+      ],
+      "parameters": {
+        "content": "## presti-banc-argent (036-005)\nBanc des départements Devis et Facturation : des dossiers fictifs, deux comptes (Studio, Signature). INACTIF, jamais publié, jamais planifié. Le juge hors ligne scripts/devis-facture-n8n-qa.mjs rejoue ces dossiers sur les exports."
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-005), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

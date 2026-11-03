@@ -1,0 +1,544 @@
+{
+  "id": "yQK50I6JXchYBH7Y",
+  "name": "presti-boite",
+  "active": false,
+  "isArchived": false,
+  "versionId": "22612002-ea99-4855-a0a1-464c7f72deee",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 16,
+  "createdAt": "2026-11-03T10:39:17.648Z",
+  "updatedAt": "2026-11-03T10:39:17.648Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 240,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "presti-boite : toutes les 5 minutes, relève, brouillon (Studio), envoi (Signature), tout en simulation (036-003). Inactif.",
+  "canExecute": true,
+  "connections": {
+    "Toutes les 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "Lire l'interrupteur général (simulation : épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire l'interrupteur général (simulation : épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Interrupteur général ouvert ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interrupteur général ouvert ?": {
+      "main": [
+        [
+          {
+            "node": "Lire le travail dû (simulation : épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bilan du passage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire le travail dû (simulation : épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Classer le travail dû",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classer le travail dû": {
+      "main": [
+        [
+          {
+            "node": "Une boîte à relever ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Une boîte à relever ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer la relève",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Un brouillon à écrire ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la relève": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-boite-lire",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-boite-lire": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Réunir les sorties": {
+      "main": [
+        [
+          {
+            "node": "Bilan du passage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Un brouillon à écrire ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le brouillon",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer l'envoi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le brouillon": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-boite-brouillon",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-boite-brouillon": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Préparer l'envoi": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-boite-envoyer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-boite-envoyer": {
+      "main": [
+        [
+          {
+            "node": "Réunir les sorties",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "2780863e-fc4b-429f-91ad-8ca7942272cd",
+      "name": "Toutes les 5 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        272
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "notes": "Cadence de la relève : un e-mail reçu à 7 h 05 n'attend plus le lendemain (le cron Vercel de 7 h, app/api/canaux/relever/route.ts:9-25, reste en place jusqu'au pas 4 de la migration)."
+    },
+    {
+      "id": "f4018d9d-b7f3-4193-88bb-06882af0d782",
+      "name": "Lire l'interrupteur général (simulation : épinglé)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        224,
+        272
+      ],
+      "parameters": {},
+      "notes": "requete : GET systeme_reglages?select=interrupteur_general&artisan_id=is.null&limit=1\nSimulation : emplacement épinglé (données fictives). Réel : cette lecture, select= limité. Non épinglé, il ne rend rien d'utile et le passage s'arrête sans effet (fail-closed)."
+    },
+    {
+      "id": "86d13f7b-6cbd-421c-a125-369ad9185b5d",
+      "name": "Interrupteur général ouvert ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        272
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-interrupteur_general-----true",
+              "leftValue": "={{ $json.interrupteur_general === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Faux (coupé, absent ou illisible) : le passage s'arrête, rien n'est appelé."
+    },
+    {
+      "id": "3755ef97-d50b-46b1-816e-9be1b9c7462a",
+      "name": "Lire le travail dû (simulation : épinglé)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        672,
+        192
+      ],
+      "parameters": {},
+      "notes": "Une ligne par boîte à relever (canaux actifs, connexions, Message-ID déjà importés, conversations ouvertes de 30 jours), par brouillon à écrire (Studio) et par envoi dû (Signature, 10 minutes écoulées).\nSimulation : emplacement épinglé. Réel : lectures HTTP, select= limité, filtre artisan_id (vue étroite à naître). Contrats : plans/011-cadrage-01-11/p6-signature/contrats/boite.json."
+    },
+    {
+      "id": "486d5f0f-d845-4caa-9f04-e98da506499c",
+      "name": "Classer le travail dû",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-boite : le travail dû de ce passage de 5 minutes (lu en base ; épinglé en simulation). Une ligne par boîte à relever, par brouillon à\n// écrire (Studio) ou par envoi dû (Signature). Un genre inconnu est traité comme un envoi : son enfant le rejette au Contrat, sans effet.\nconst GENRES = ['boite', 'brouillon', 'envoi'];\nreturn $input.all().map((item) => {\n  const x = item.json || {};\n  const genre = GENRES.includes(x.genre) ? x.genre : 'envoi';\n  return { json: { ...x, genre: genre, est_boite: genre === 'boite', est_brouillon: genre === 'brouillon' } };\n});"
+      }
+    },
+    {
+      "id": "502edc88-3dc5-4153-9361-40b3d0b06406",
+      "name": "Une boîte à relever ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        192
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_boite",
+              "leftValue": "={{ $json.est_boite }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "8b738706-6334-40f3-a4a1-06432c769911",
+      "name": "Préparer la relève",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const passage = (iso) => new Date(Math.floor(Date.parse(iso) / 300000) * 300000).toISOString().slice(0, 16).replace(':', '');\n// presti-boite → lib-boite-lire@1 : une enveloppe par boîte. Simulation : vrai, toujours (elle ne passera à faux qu'au « go » de Benj).\nreturn $input.all().map((item) => {\n  const x = item.json;\n  return { json: { contrat: 'lib-boite-lire@1', organisation_id: x.artisan_id, simulation: true, cle_idempotence: 'relever:' + x.canal.id + ':' + passage(x.maintenant),\n    trace: { execution_parent: 'presti-boite:' + passage(x.maintenant), declencheur: 'presti-boite', tentative: 0 },\n    config: { lot_max: 40, fenetre_jours: 7, reseaux: x.reseaux },\n    donnees: { canal: x.canal, connexion: x.connexion, boite: x.boite, deja_importes: x.deja_importes, conversations: x.conversations, maintenant: x.maintenant } } };\n});"
+      }
+    },
+    {
+      "id": "da5ee509-c1b7-456a-8732-c3e88f9ef78c",
+      "name": "Appeler lib-boite-lire",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1792,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "cQqfkVseZU2Ax0xQ"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Lecteur de boîte (036-003). Une enveloppe par boîte ; un échec ne fait pas échouer le passage.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "8506fca5-768a-41bf-a96d-37de3858fd96",
+      "name": "Réunir les sorties",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2016,
+        176
+      ],
+      "parameters": {
+        "mode": "append",
+        "numberInputs": 3
+      }
+    },
+    {
+      "id": "9dbcd9aa-aafe-4de3-b2fa-3f2f4ea317a7",
+      "name": "Un brouillon à écrire ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        288
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_brouillon",
+              "leftValue": "={{ $json.est_brouillon }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Faux : un envoi dû (Signature) ou une ligne hors forme, rejetée au Contrat par l'enfant."
+    },
+    {
+      "id": "ce6ec940-5a32-47c7-93a6-5afc4a967b6e",
+      "name": "Préparer le brouillon",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        192
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const passage = (iso) => new Date(Math.floor(Date.parse(iso) / 300000) * 300000).toISOString().slice(0, 16).replace(':', '');\n// presti-boite → lib-boite-brouillon@1 : Studio. Le brouillon n'est jamais envoyé (l'enfant n'a aucun effet d'envoi).\nreturn $input.all().map((item) => {\n  const x = item.json;\n  return { json: { contrat: 'lib-boite-brouillon@1', organisation_id: x.artisan_id, simulation: true, cle_idempotence: ('brouillon:' + x.donnees.proposition.id).slice(0, 80),\n    trace: { execution_parent: 'presti-boite:' + passage(x.maintenant), declencheur: 'presti-boite', tentative: 0 }, config: x.config, donnees: x.donnees } };\n});"
+      }
+    },
+    {
+      "id": "d9c73fa9-df67-4ff4-aa87-4d5b3157340e",
+      "name": "Appeler lib-boite-brouillon",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1792,
+        192
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "zw2k0vo9wpv7lNfr"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Brouillon de Studio (036-003) : écrit, jamais envoyé.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "cc07c010-a0b2-42b7-b510-268c3dcb9f0b",
+      "name": "Préparer l'envoi",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        384
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const passage = (iso) => new Date(Math.floor(Date.parse(iso) / 300000) * 300000).toISOString().slice(0, 16).replace(':', '');\n// presti-boite → lib-boite-envoyer@1 : Signature, une réponse partie du pilote. L'enfant relit toutes les conditions avant l'effet.\nreturn $input.all().map((item) => {\n  const x = item.json;\n  return { json: { contrat: 'lib-boite-envoyer@1', organisation_id: x.artisan_id, simulation: true, cle_idempotence: ('envoyer:' + (x.donnees && x.donnees.action ? x.donnees.action.id : 'inconnu')).slice(0, 80),\n    trace: { execution_parent: 'presti-boite:' + passage(x.maintenant || '2026-01-01T00:00:00.000Z'), declencheur: 'presti-boite', tentative: 0 }, config: x.config, donnees: x.donnees } };\n});"
+      }
+    },
+    {
+      "id": "759beece-b037-4eae-a842-e11f92045273",
+      "name": "Appeler lib-boite-envoyer",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1792,
+        384
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "UkMVpSxETSIY4Mku"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Envoi de Signature (036-003) : nœud SMTP désactivé, toutes les conditions du pilote relues.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "b0c482db-c25d-4520-9441-8e3c24a57f0d",
+      "name": "Bilan du passage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        368
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Bilan agrégé du passage, sans donnée de client : par contrat, le nombre de sorties par statut ; ce qui est prévu (messages déposés, brouillons,\n// envois). Un effet FAIT en simulation, une sortie hors simulation ou un appel en erreur comptent en défaut.\nconst bilan = {};\nlet importes = 0, deposes = 0, brouillons = 0, envois_prevus = 0, defauts = 0, arret = null;\nfor (const { json: s } of $input.all()) {\n  if (s && s.interrupteur_general === false) { arret = 'interrupteur_general_coupe'; continue; }\n  const c = s && typeof s.contrat === 'string' ? s.contrat : 'appel en erreur';\n  bilan[c] = bilan[c] || {};\n  const st = s && typeof s.statut === 'string' ? s.statut : 'erreur';\n  bilan[c][st] = (bilan[c][st] || 0) + 1;\n  if (!s || !s.contrat || s.simulation !== true || (Array.isArray(s.effets_faits) && s.effets_faits.length)) defauts++;\n  if (s && s.resultat && Number.isInteger(s.resultat.importes)) importes += s.resultat.importes;\n  for (const f of s && Array.isArray(s.effets_prevus) ? s.effets_prevus : []) {\n    if (f.effet === 'deposer_message') deposes++;\n    if (f.effet === 'ajouter_brouillon_imap') brouillons++;\n    if (f.effet === 'envoyer_smtp') envois_prevus++;\n  }\n}\nreturn [{ json: { simulation: true, arret: arret, bilan: bilan, importes: importes, deposes: deposes, brouillons: brouillons, envois_prevus: envois_prevus, effets_faits: 0, defauts: defauts } }];"
+      }
+    },
+    {
+      "id": "455bb8e7-830d-4d2f-9951-b7405017b26e",
+      "name": "Sticky Note c11a6ffe",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        176
+      ],
+      "parameters": {
+        "content": "## presti-boite (036-003)\nLa boîte mail de l'artisan DANS la plateforme (p6:279-285, A11) : toutes les 5 minutes, chaque message est relevé, déposé UNE fois dans la conversation du client, puis la réponse préparée devient un brouillon (Studio) ou part (Signature, après le délai du pilote).\nINACTIF, jamais publié, en simulation (mode A) : les lectures sont épinglées, aucune écriture n'est faite (effets_prevus). Aucun identifiant.\nCe workflow ne relève QUE la boîte ; la qualification et la rédaction restent à presti-dep-accueil.\nPas 1 à 3 de .claude/rules/migration-production.md pour la relève quotidienne ; les pas 4 et 5 restent à Benj.\nJuge : scripts/boite-n8n-qa.mjs",
+        "color": 4,
+        "width": 384,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T10:44:10.687Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-003), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

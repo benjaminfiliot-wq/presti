@@ -1,0 +1,271 @@
+{
+  "id": "cQqfkVseZU2Ax0xQ",
+  "name": "lib-boite-lire",
+  "active": false,
+  "isArchived": false,
+  "versionId": "72137c05-5800-478e-882e-5ef79bed6a2c",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 8,
+  "createdAt": "2026-11-03T10:36:46.974Z",
+  "updatedAt": "2026-11-03T10:41:41.444Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "availableInMCP": true,
+    "callerIds": "yQK50I6JXchYBH7Y,tNEvzy2enkNF41z2"
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "lib-boite-lire : relève IMAP épinglée, dépôt une fois dans la bonne conversation (036-003). Inactif, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par presti-boite": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Lire la boîte épinglée et la ranger",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire la boîte épinglée et la ranger": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "22179371-78c0-403d-8c35-f49d4571acf9",
+      "name": "Appelé par presti-boite",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "7a61959b-83a6-4f74-887a-8bdf6613ad5e",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de lib-boite-lire@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'lib-boite-lire@1';\nconst SCHEMA = {\"sans_contact\":false,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"lot_max\",\"fenetre_jours\",\"reseaux\"],\"properties\":{\"lot_max\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":40},\"fenetre_jours\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":7},\"reseaux\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"actifs\",\"domaines\"],\"properties\":{\"actifs\":{\"type\":\"boolean\"},\"domaines\":{\"type\":\"array\",\"maxItems\":60,\"items\":{\"type\":\"string\",\"maxLength\":60}}}}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"canal\",\"connexion\",\"boite\",\"deja_importes\",\"conversations\",\"maintenant\"],\"properties\":{\"canal\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"artisan_id\",\"adresse\",\"derniere_releve\"],\"properties\":{\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"adresse\":{\"type\":\"string\",\"minLength\":3,\"maxLength\":254,\"pattern\":\"^[^\\\\s@]+@[^\\\\s@]+\\\\.[^\\\\s@]{2,}$\"},\"derniere_releve\":{\"type\":[\"string\",\"null\"],\"format\":\"date-time\"}}},\"connexion\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"id\",\"artisan_id\",\"fournisseur\",\"etat\",\"secret_n8n\",\"verifiee_le\"],\"properties\":{\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"fournisseur\":{\"enum\":[\"imap\"]},\"etat\":{\"enum\":[\"a_verifier\",\"active\",\"expiree\",\"retiree\",\"erreur\"]},\"secret_n8n\":{\"type\":[\"string\",\"null\"],\"maxLength\":16384},\"verifiee_le\":{\"type\":[\"string\",\"null\"],\"format\":\"date-time\"}}},\"boite\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"issue\",\"messages\"],\"properties\":{\"issue\":{\"enum\":[\"ok\",\"identifiants_refuses\",\"jeton_expire\",\"serveur_refuse\",\"injoignable\"]},\"messages\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"uid\",\"message_id\",\"de_email\",\"de_nom\",\"sujet\",\"texte\",\"date\"],\"properties\":{\"uid\":{\"type\":\"integer\",\"minimum\":0},\"message_id\":{\"type\":[\"string\",\"null\"],\"maxLength\":250},\"de_email\":{\"type\":[\"string\",\"null\"],\"maxLength\":254},\"de_nom\":{\"type\":[\"string\",\"null\"],\"maxLength\":120},\"sujet\":{\"type\":\"string\",\"maxLength\":300},\"texte\":{\"type\":\"string\",\"maxLength\":8000},\"date\":{\"type\":[\"string\",\"null\"],\"format\":\"date-time\"}}}}}},\"deja_importes\":{\"type\":\"array\",\"maxItems\":5000,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"message_id\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"message_id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":250}}}},\"conversations\":{\"type\":\"array\",\"maxItems\":2000,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"lead_id\",\"artisan_id\",\"contact\",\"created_at\"],\"properties\":{\"lead_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"contact\":{\"type\":\"string\",\"minLength\":3,\"maxLength\":254,\"pattern\":\"^[^\\\\s@]+@[^\\\\s@]+\\\\.[^\\\\s@]{2,}$\"},\"created_at\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: lib-boite-lire@1"
+    },
+    {
+      "id": "289d5aff-fa5b-4117-b11e-f3d2c192b46f",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-conforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "c16ab3f3-4976-4f3b-9b5f-7fe13b905514",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "9f75e0a9-1b0a-49c9-b8fa-03af2b5fc8cb",
+      "name": "Lire la boîte épinglée et la ranger",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// lib-boite-lire (036-003 ; p6:279-285 « tout message arrive d'abord dans la plateforme ») : refait dans n8n le comportement de releverCanal\n// (lib/releveCanal.ts:68), sans le modifier. Mode A : la boîte, les messages déjà importés et les conversations ouvertes sont ÉPINGLÉS par\n// l'appelant ; le vrai nœud IMAP (imapflow) est préparé dans connecteurs/imap.md, pas ici (R19 : aucun module dans un nœud Code).\n// Chaque message entre UNE fois (clé de compte + Message-ID), dans la conversation du client QUEL QUE SOIT le canal (même adresse, 30 jours),\n// avec son canal d'origine. Le secret n'est jamais lu ni recopié : seule la forme du chiffré est contrôlée. Écritures : effets_prevus seulement.\nfunction sha256(texte) {\n  const o = [];\n  for (const car of String(texte)) {\n    const c = car.codePointAt(0);\n    if (c < 0x80) o.push(c);\n    else if (c < 0x800) o.push(0xc0 | (c >> 6), 0x80 | (c & 63));\n    else if (c < 0x10000) o.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));\n    else o.push(0xf0 | (c >> 18), 0x80 | ((c >> 12) & 63), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));\n  }\n  const K = [], H = [];\n  for (let n = 2; K.length < 64; n++) {\n    let premier = true;\n    for (let d = 2; d * d <= n; d++) if (n % d === 0) { premier = false; break; }\n    if (premier) { if (H.length < 8) H.push(((Math.sqrt(n) % 1) * 4294967296) | 0); K.push(((Math.cbrt(n) % 1) * 4294967296) | 0); }\n  }\n  const l = o.length * 8;\n  o.push(0x80);\n  while (o.length % 64 !== 56) o.push(0);\n  for (let i = 7; i >= 0; i--) o.push(i >= 4 ? 0 : (l >>> (i * 8)) & 255);\n  const r = (x, k) => (x >>> k) | (x << (32 - k));\n  for (let i = 0; i < o.length; i += 64) {\n    const w = [];\n    for (let t = 0; t < 64; t++) {\n      if (t < 16) w[t] = (o[i + 4 * t] << 24) | (o[i + 4 * t + 1] << 16) | (o[i + 4 * t + 2] << 8) | o[i + 4 * t + 3];\n      else w[t] = (w[t - 16] + (r(w[t - 15], 7) ^ r(w[t - 15], 18) ^ (w[t - 15] >>> 3)) + w[t - 7] + (r(w[t - 2], 17) ^ r(w[t - 2], 19) ^ (w[t - 2] >>> 10))) | 0;\n    }\n    let [a, b, c, d, e, f, g, h] = H;\n    for (let t = 0; t < 64; t++) {\n      const t1 = (h + (r(e, 6) ^ r(e, 11) ^ r(e, 25)) + ((e & f) ^ (~e & g)) + K[t] + w[t]) | 0;\n      const t2 = ((r(a, 2) ^ r(a, 13) ^ r(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;\n      h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;\n    }\n    const v = [a, b, c, d, e, f, g, h];\n    for (let k = 0; k < 8; k++) H[k] = (H[k] + v[k]) | 0;\n  }\n  return H.map((x) => (x >>> 0).toString(16).padStart(8, '0')).join('');\n}\n// Copie figée de lib/releveCanal.ts:29-30 et :59-66 (comparée au code par scripts/boite-n8n-qa.mjs, qui exécute aussi le vrai estUneVraieDemande).\nconst AUTOMATIQUE = /^(no-?reply|ne-?pas-?repondre|donotreply|mailer-daemon|postmaster|notifications?|newsletter|bounce|noreply)[@.-]/i;\nconst INDESIRABLE = /(facture[s]? ?orange|newsletter|se désinscrire|unsubscribe|linkedin|no-reply)/i;\nfunction motifIgnore(deEmail, sujet, texte, adresseCanal) {\n  if (!deEmail) return 'sans_expediteur';\n  if (deEmail.toLowerCase() === adresseCanal.toLowerCase()) return 'soi_meme';\n  if (AUTOMATIQUE.test(deEmail)) return 'automatique';\n  if (texte.trim().length < 12) return 'trop_court';\n  if (INDESIRABLE.test(sujet) && texte.length < 400) return 'indesirable';\n  return null;\n}\nconst JOUR = 86400000;\nconst FORMAT_SECRET = /^v1\\.[A-Za-z0-9_-]{16}\\.[A-Za-z0-9_-]{22}\\.[A-Za-z0-9_-]+$/;\n// Les textes sont ceux de releverCanal (l.71, l.82, l.215-216) ; l'autorisation expirée est neuve (connexions.etat « expiree », 0193).\nconst ECHECS = {\n  identifiants_illisibles: { permanent: true, motif: 'identifiants_illisibles', texte: 'Identifiants illisibles — reconnectez la boîte.' },\n  identifiants_refuses: { permanent: true, motif: 'identifiants_refuses', texte: 'Identifiants refusés — le mot de passe de la boîte a peut-être changé.' },\n  jeton_expire: { permanent: true, motif: 'autorisation_expiree', texte: 'Autorisation expirée — reconnectez la boîte.' },\n  serveur_refuse: { permanent: true, motif: 'serveur_refuse', texte: 'Connexion impossible à ce serveur de messagerie.' },\n  injoignable: { permanent: false, motif: 'serveur_injoignable', texte: 'Connexion à la boîte impossible pour l’instant.' },\n};\nconst domaineDe = (email) => { const m = /@([^@]+)$/.exec(String(email || '')); return m ? m[1].toLowerCase() : ''; };\nconst surDomaine = (d, liste) => liste.some((x) => d === x || d.endsWith('.' + x));\nconst etats = new Map(); // un état par compte, partagé par les lignes d'une même exécution : deux boîtes du même passage ne déposent pas deux fois le même message\nfunction refus(j, e, raison) {\n  return { ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: [raison],\n    journal: [{ evenement: 'releve_refusee', agent: 'lib-boite-lire', objet_ref: null, decision: raison, simulation: e.simulation }] };\n}\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, c = e.config, org = e.organisation_id, sim = e.simulation === true;\n    const canal = d.canal, cx = d.connexion, maintenant = Date.parse(d.maintenant);\n    const journal = [];\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: 'lib-boite-lire', objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    if (canal.artisan_id !== org || cx.artisan_id !== org || d.conversations.some((x) => x.artisan_id !== org) || d.deja_importes.some((x) => x.artisan_id !== org)) {\n      return refus(j, e, 'autre_compte : la boîte, la connexion ou les lignes lues ne sont pas celles de ce compte');\n    }\n    if (cx.etat === 'erreur' || cx.etat === 'expiree' || cx.etat === 'retiree') {\n      journal.push(ligne('releve_silencieuse', canal.id, 'connexion ' + cx.etat + ' : le département se tait, rien n’est lu'));\n      return { ...j, statut: 'rien_a_faire', resultat: { canal_id: canal.id, importes: 0, silence: true, etat_connexion: cx.etat, erreur: null, motif_erreur: null }, effets_prevus: [], journal: journal };\n    }\n    const secretLisible = typeof cx.secret_n8n === 'string' && FORMAT_SECRET.test(cx.secret_n8n);\n    const issue = secretLisible ? d.boite.issue : 'identifiants_illisibles';\n    if (issue !== 'ok') {\n      const f = ECHECS[issue];\n      const effets = [{ effet: 'maj_canal', organisation_id: org, canal_id: canal.id, derniere_erreur: f.texte }];\n      if (f.permanent) {\n        effets.push({ effet: 'maj_connexion', organisation_id: org, connexion_id: cx.id, etat: 'erreur', motif_erreur: f.motif });\n        effets.push({ effet: 'alerter', contrat: 'lib-alerter@1', donnees: { categorie: 'workflow_en_panne', workflow: 'lib-boite-lire', lien_execution: null, destinataire_role: 'titulaire', survenue_le: d.maintenant } });\n      } else {\n        effets.push({ effet: 'compter_echec', contrat: 'lib-disjoncteur@1', donnees: { agent: 'lib-boite-lire', issue: 'echec' }, organisation_id: org });\n      }\n      journal.push(ligne('releve_echec', canal.id, (f.permanent ? 'échec durable (' : 'échec passager (') + f.motif + ') : ' + (f.permanent ? 'état « erreur » prévu pour Connexions, alerte prévue, le département se tait' : 'compté au disjoncteur, aucune alerte')));\n      return { ...j, statut: f.permanent ? 'ok' : 'rien_a_faire', resultat: { canal_id: canal.id, importes: 0, silence: false, etat_connexion: f.permanent ? 'erreur' : cx.etat, erreur: f.texte, motif_erreur: f.motif }, effets_prevus: effets, journal: journal };\n    }\n    const depuis = Math.max(canal.derniere_releve ? Date.parse(canal.derniere_releve) : 0, maintenant - c.fenetre_jours * JOUR);\n    const jourDepuis = Math.floor(depuis / JOUR);\n    const limite = maintenant - 30 * JOUR;\n    if (!etats.has(org)) etats.set(org, { vus: new Set(), existantes: new Map(), nouvelles: new Map() });\n    const etat = etats.get(org);\n    const dejaVus = etat.vus;\n    for (const x of d.deja_importes) dejaVus.add(x.message_id);\n    const existantes = etat.existantes;\n    for (const l of d.conversations) {\n      const t = Date.parse(l.created_at);\n      const k = l.contact.toLowerCase();\n      const p = existantes.get(k);\n      if (t >= limite && (!p || t > p.t)) existantes.set(k, { lead_id: l.lead_id, t: t });\n    }\n    const nouvelles = etat.nouvelles;\n    const ignores = { sans_expediteur: 0, soi_meme: 0, automatique: 0, trop_court: 0, indesirable: 0, doublon: 0, hors_fenetre: 0, sans_message_id: 0, laisse_au_code: 0 };\n    const effets = [], rangs = [];\n    let importes = 0, restants = 0;\n    const msgs = d.boite.messages.slice().sort((a, b) => a.uid - b.uid);\n    for (let i = 0; i < msgs.length; i++) {\n      const m = msgs[i];\n      if (importes >= c.lot_max) { restants = msgs.length - i; break; }\n      if (m.date && Math.floor(Date.parse(m.date) / JOUR) < jourDepuis) { ignores.hors_fenetre++; continue; }\n      if (!m.message_id) { ignores.sans_message_id++; continue; }\n      const contact = m.de_email ? m.de_email.toLowerCase() : null;\n      if (c.reseaux.actifs && contact && surDomaine(domaineDe(contact), c.reseaux.domaines)) { ignores.laisse_au_code++; continue; }\n      const motif = motifIgnore(contact, m.sujet, m.texte, canal.adresse);\n      if (motif) { ignores[motif]++; continue; }\n      if (dejaVus.has(m.message_id)) { ignores.doublon++; continue; }\n      dejaVus.add(m.message_id);\n      const texteComplet = (m.sujet ? m.sujet + '\\n\\n' : '') + m.texte;\n      const cle = 'bm:' + sha256(org + '|' + m.message_id).slice(0, 48);\n      let conv = existantes.get(contact) || nouvelles.get(contact) || null;\n      const nouvelle = !conv;\n      if (nouvelle) {\n        conv = { lead_id: null, cle_conversation: 'cv:' + sha256(org + '|' + contact).slice(0, 48) };\n        nouvelles.set(contact, conv);\n        effets.push({ effet: 'creer_conversation', organisation_id: org, cle_conversation: conv.cle_conversation, canal: 'email', nom_prospect: m.de_nom || contact.split('@')[0],\n          contact: contact, message: texteComplet, statut: 'nouveau', a_calculer_par_le_code: ['type_chantier', 'ville'] });\n      }\n      effets.push({ effet: 'deposer_message', organisation_id: org, cle: cle, canal_id: canal.id, canal_origine: 'email', conversation: conv.lead_id ? { lead_id: conv.lead_id } : { cle_conversation: conv.cle_conversation },\n        sens: 'in', type: 'email', externe_id: m.message_id, contenu: texteComplet, sent_at: m.date || d.maintenant });\n      effets.push({ effet: 'noter_evenement', organisation_id: org, type: 'demande_recue', cle: cle, faits: { canal: 'email', client_existant: !nouvelle, lead_id: conv.lead_id } });\n      rangs.push({ cle: cle, conversation: nouvelle ? 'nouvelle' : 'existante' });\n      journal.push(ligne('message_range', cle, nouvelle ? 'nouvelle conversation prévue' : 'rangé dans la conversation ouverte'));\n      importes++;\n    }\n    effets.push({ effet: 'maj_canal', organisation_id: org, canal_id: canal.id, derniere_releve: d.maintenant, derniere_erreur: null });\n    effets.push(cx.etat === 'a_verifier'\n      ? { effet: 'maj_connexion', organisation_id: org, connexion_id: cx.id, etat: 'active', verifiee_le: d.maintenant, derniere_synchro: d.maintenant }\n      : { effet: 'maj_connexion', organisation_id: org, connexion_id: cx.id, derniere_synchro: d.maintenant });\n    const ignoresTotal = Object.values(ignores).reduce((a, b) => a + b, 0);\n    journal.unshift(ligne('releve_boite', canal.id, importes + ' importé(s), ' + ignoresTotal + ' ignoré(s), ' + restants + ' reporté(s) au passage suivant'));\n    return { ...j, statut: importes > 0 ? 'ok' : 'rien_a_faire', resultat: { canal_id: canal.id, importes: importes, ignores: ignores, restants: restants, silence: false,\n      etat_connexion: cx.etat === 'a_verifier' ? 'active' : cx.etat, erreur: null, motif_erreur: null, rangs: rangs }, effets_prevus: effets, journal: journal.slice(0, 200) };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, erreurs: ['relève : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "8552f554-bb2d-4a43-baef-f6e50c0224b5",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de lib-boite-lire@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-boite-lire@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "121cea97-63c4-40fd-a894-c8914ab2b41d",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        120
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 036-003). Rien n'a été écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (IMAP, SMTP, base) n'est pas branché. Il le sera au « go » de Benj, derrière cette même porte."
+    },
+    {
+      "id": "6256725a-e05c-4dad-8818-92019a7f1149",
+      "name": "Sticky Note 4d302a01",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## lib-boite-lire (036-003)\nLecteur de boîte (A11) : refait releverCanal (lib/releveCanal.ts:68) dans n8n. Chaque message entre UNE fois (compte + Message-ID), dans la conversation du client quel que soit le canal, avec son canal d'origine. Jeton refusé ou expiré : le département se tait, l'état « erreur » est prévu pour Connexions, l'alerte part par lib-alerter.\nContrat lib-boite-lire@1 (enveloppe@1, gabarit « Contrat » de 035-003). Appelé par presti-boite et par presti-banc-boite.\nINACTIF, jamais publié, en simulation (mode A) : la boîte et la base sont épinglées, les écritures partent dans effets_prevus. Aucun identifiant.\nJuge : scripts/boite-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 400
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T10:44:10.365Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-003), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

@@ -1,0 +1,2140 @@
+[
+  {
+    "workflow": "presti-banc-direction",
+    "execution": "554",
+    "statut_n8n": "success",
+    "declencheur_epingle": [],
+    "entrees_epinglees": {},
+    "sorties": {
+      "Appeler presti-dep-direction (1)": [
+        [
+          {
+            "contrat": "presti-dep-direction@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:matin",
+            "simulation": true,
+            "resultat": {
+              "genre": "matin",
+              "jour": "2026-11-03",
+              "page": {
+                "date": "2026-11-03",
+                "titre": "Votre point du jour",
+                "blocs": [
+                  {
+                    "type": "argent",
+                    "titre": "L’argent d’abord",
+                    "lignes": [
+                      {
+                        "id": "impayes",
+                        "libelle": "Impayés",
+                        "nombre": 2,
+                        "montant_centimes": 246050,
+                        "texte": "Impayés : 2 factures échues, 2 460,50 €",
+                        "source": "factures émises et échues non payées, lues le 2026-11-03",
+                        "date": "2026-11-03",
+                        "confiance": "mesure"
+                      },
+                      {
+                        "id": "devis_a_signer",
+                        "libelle": "Devis à signer",
+                        "nombre": 2,
+                        "montant_centimes": 795000,
+                        "texte": "Devis à signer : 2 devis sans réponse depuis 7 jours ou plus, 7 950 €",
+                        "source": "devis envoyés sans réponse, lus le 2026-11-03",
+                        "date": "2026-11-03",
+                        "confiance": "mesure"
+                      },
+                      {
+                        "id": "demandes_sans_reponse",
+                        "libelle": "Demandes sans réponse",
+                        "nombre": 3,
+                        "montant_centimes": null,
+                        "texte": "Demandes sans réponse : 3",
+                        "source": "demandes en attente de réponse, lues le 2026-11-03",
+                        "date": "2026-11-03",
+                        "confiance": "mesure"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "priorites",
+                    "titre": "Vos trois priorités",
+                    "priorites": [
+                      {
+                        "cle": "devis:00000000-0000-4000-8000-000000000821",
+                        "objet": "devis:00000000-0000-4000-8000-000000000821",
+                        "famille": "devis",
+                        "montant": 5200,
+                        "href": "/devis/00000000-0000-4000-8000-000000000821",
+                        "texte": "Relancer ce client : 5 200 € en attente",
+                        "detail": "Exemple. D-101 · sans réponse depuis 14 jours"
+                      },
+                      {
+                        "cle": "devis:00000000-0000-4000-8000-000000000823",
+                        "objet": "devis:00000000-0000-4000-8000-000000000823",
+                        "famille": "devis",
+                        "montant": 2750,
+                        "href": "/devis/00000000-0000-4000-8000-000000000823",
+                        "texte": "Relancer ce client : 2 750 € en attente",
+                        "detail": "Exemple. D-103 · sans réponse depuis 10 jours"
+                      },
+                      {
+                        "cle": "impaye:00000000-0000-4000-8000-000000000811",
+                        "objet": "facture:00000000-0000-4000-8000-000000000811",
+                        "famille": "impaye",
+                        "montant": 1840.5,
+                        "href": "/factures",
+                        "texte": "Un client vous doit 1 841 €",
+                        "detail": "Exemple. F-001 · 14 jours de retard"
+                      }
+                    ],
+                    "autres": 4
+                  },
+                  {
+                    "type": "cartes",
+                    "titre": "À valider",
+                    "cartes": [
+                      {
+                        "cle": "relance_impaye:00000000-0000-4000-8000-000000000812",
+                        "type_action": "relance_impaye",
+                        "objet": "facture:00000000-0000-4000-8000-000000000812",
+                        "titre": "Relancer la facture Exemple. F-002",
+                        "apercu": "Exemple. Bonjour, un rappel pour la facture F-002.",
+                        "montant_centimes": 62000,
+                        "preparee_le": "2026-11-03T05:00:00.000Z",
+                        "statut": "a_valider"
+                      },
+                      {
+                        "cle": "relance_devis:00000000-0000-4000-8000-000000000821",
+                        "type_action": "relance_devis",
+                        "objet": "devis:00000000-0000-4000-8000-000000000821",
+                        "titre": "Relancer le devis Exemple. D-101",
+                        "apercu": "Exemple. Bonjour, avez-vous pu regarder le devis D-101 ?",
+                        "montant_centimes": 520000,
+                        "preparee_le": "2026-11-03T05:05:00.000Z",
+                        "statut": "a_valider"
+                      }
+                    ],
+                    "nombre": 2,
+                    "non_montrees": 0,
+                    "texte": "2 cartes à valider d’un geste"
+                  }
+                ],
+                "dernier_bloc": "cartes",
+                "rien_a_signaler": false
+              }
+            },
+            "effets_prevus": [
+              {
+                "effet": "deposer_page",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "pm:2026-11-03",
+                "destination": "centre_de_commande",
+                "jour": "2026-11-03"
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "page_du_matin_prete",
+                "cle": "pm:2026-11-03",
+                "faits": {
+                  "priorites": 3,
+                  "cartes": 2
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "page_du_matin",
+                "agent": "presti-dep-direction",
+                "objet_ref": "pm:2026-11-03",
+                "decision": "3 priorité(s), 2 carte(s), l’argent d’abord, fin sur les cartes",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler presti-dep-direction (2)": [
+        [
+          {
+            "contrat": "presti-dep-direction@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:matin-sans-lecture",
+            "simulation": true,
+            "resultat": {
+              "genre": "matin",
+              "jour": "2026-11-03",
+              "page": {
+                "date": "2026-11-03",
+                "titre": "Votre point du jour",
+                "blocs": [
+                  {
+                    "type": "argent",
+                    "titre": "L’argent d’abord",
+                    "lignes": [
+                      {
+                        "id": "impayes",
+                        "libelle": "Impayés",
+                        "nombre": null,
+                        "montant_centimes": null,
+                        "texte": "Impayés : non lus (lecture en erreur), rien n’est affirmé",
+                        "source": "factures : lecture en erreur",
+                        "date": "2026-11-03",
+                        "confiance": "indisponible"
+                      },
+                      {
+                        "id": "devis_a_signer",
+                        "libelle": "Devis à signer",
+                        "nombre": 1,
+                        "montant_centimes": 520000,
+                        "texte": "Devis à signer : 1 devis sans réponse depuis 7 jours ou plus, 5 200 €",
+                        "source": "devis envoyés sans réponse, lus le 2026-11-03",
+                        "date": "2026-11-03",
+                        "confiance": "mesure"
+                      },
+                      {
+                        "id": "demandes_sans_reponse",
+                        "libelle": "Demandes sans réponse",
+                        "nombre": 1,
+                        "montant_centimes": null,
+                        "texte": "Demandes sans réponse : 1",
+                        "source": "demandes en attente de réponse, lues le 2026-11-03",
+                        "date": "2026-11-03",
+                        "confiance": "mesure"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "priorites",
+                    "titre": "Vos trois priorités",
+                    "priorites": [
+                      {
+                        "cle": "devis:00000000-0000-4000-8000-000000000821",
+                        "objet": "devis:00000000-0000-4000-8000-000000000821",
+                        "famille": "devis",
+                        "montant": 5200,
+                        "href": "/devis/00000000-0000-4000-8000-000000000821",
+                        "texte": "Relancer ce client : 5 200 € en attente",
+                        "detail": "Exemple. D-101 · sans réponse depuis 14 jours"
+                      },
+                      {
+                        "cle": "demande:00000000-0000-4000-8000-000000000831",
+                        "objet": "lead:00000000-0000-4000-8000-000000000831",
+                        "famille": "demande",
+                        "montant": null,
+                        "href": "/messages",
+                        "texte": "Répondre à une nouvelle demande",
+                        "detail": "Demande urgente"
+                      }
+                    ],
+                    "autres": 0
+                  },
+                  {
+                    "type": "cartes",
+                    "titre": "À valider",
+                    "cartes": [],
+                    "nombre": 0,
+                    "non_montrees": 0,
+                    "texte": "Rien à valider"
+                  }
+                ],
+                "dernier_bloc": "cartes",
+                "rien_a_signaler": false
+              }
+            },
+            "effets_prevus": [
+              {
+                "effet": "deposer_page",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "pm:2026-11-03",
+                "destination": "centre_de_commande",
+                "jour": "2026-11-03"
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "page_du_matin_prete",
+                "cle": "pm:2026-11-03",
+                "faits": {
+                  "priorites": 2,
+                  "cartes": 0
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "page_du_matin",
+                "agent": "presti-dep-direction",
+                "objet_ref": "pm:2026-11-03",
+                "decision": "2 priorité(s), 0 carte(s), l’argent d’abord, fin sur les cartes",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler presti-dep-direction (3)": [
+        [
+          {
+            "contrat": "presti-dep-direction@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:lundi",
+            "simulation": true,
+            "resultat": {
+              "genre": "lundi",
+              "periode": {
+                "du": "2026-10-26",
+                "au": "2026-11-01"
+              },
+              "indicateurs": [
+                {
+                  "id": "encaisse",
+                  "libelle": "Encaissé",
+                  "valeur": 450000,
+                  "unite": "eur",
+                  "nombre": 2,
+                  "source": "paiements enregistrés du 26 octobre 2026 au 1er novembre 2026, lus le 2 novembre 2026",
+                  "date": "2026-11-02",
+                  "confiance": "mesure"
+                },
+                {
+                  "id": "devis_signes",
+                  "libelle": "Devis signés",
+                  "valeur": 850000,
+                  "unite": "eur",
+                  "nombre": 3,
+                  "source": "devis signés du 26 octobre 2026 au 1er novembre 2026, lus le 2 novembre 2026",
+                  "date": "2026-11-02",
+                  "confiance": "mesure"
+                },
+                {
+                  "id": "signes_apres_relance",
+                  "libelle": "Devis signés après une relance antérieure",
+                  "valeur": 480000,
+                  "unite": "eur",
+                  "nombre": 1,
+                  "source": "devis signés du 26 octobre 2026 au 1er novembre 2026 dont une relance précède la signature, lus le 2 novembre 2026",
+                  "date": "2026-11-02",
+                  "confiance": "mesure"
+                },
+                {
+                  "id": "impayes_en_cours",
+                  "libelle": "Impayés en cours",
+                  "valeur": 246050,
+                  "unite": "eur",
+                  "nombre": 2,
+                  "source": "factures émises non payées, lues le 2 novembre 2026",
+                  "date": "2026-11-02",
+                  "confiance": "mesure"
+                }
+              ],
+              "lignes": [
+                "Rapport de la semaine du 26 octobre 2026 au 1er novembre 2026",
+                "Encaissé : 4 500 € (2, paiements enregistrés du 26 octobre 2026 au 1er novembre 2026, lus le 2 novembre 2026)",
+                "Devis signés : 8 500 € (3, devis signés du 26 octobre 2026 au 1er novembre 2026, lus le 2 novembre 2026)",
+                "Devis signés après une relance antérieure : 4 800 € (1, devis signés du 26 octobre 2026 au 1er novembre 2026 dont une relance précède la signature, lus le 2 novembre 2026)",
+                "Impayés en cours : 2 460,50 € (2, factures émises non payées, lues le 2 novembre 2026)"
+              ],
+              "demande_rapport": {
+                "contrat": "lib-rapport-hebdo@1",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "simulation": true,
+                "cle_idempotence": "rl:2026-10-26:2026-11-01",
+                "trace": {
+                  "execution_parent": "presti-dep-direction:rl:2026-10-26:2026-11-01",
+                  "declencheur": "presti-dep-direction",
+                  "tentative": 0
+                },
+                "config": {
+                  "periode": "semaine",
+                  "kpis": [
+                    "actions_preparees",
+                    "relances_preparees",
+                    "fait_seul",
+                    "en_attente",
+                    "echecs"
+                  ],
+                  "bases_de_depart": {
+                    "relances_preparees": {
+                      "valeur": 2,
+                      "source": "Exemple. fiche de découverte, dit par le titulaire",
+                      "date": "2026-10-01",
+                      "confiance": "declare"
+                    }
+                  }
+                },
+                "donnees": {
+                  "du": "2026-10-26",
+                  "au": "2026-11-01",
+                  "actions": [
+                    {
+                      "type_action": "relance_facture",
+                      "etat": "fait_seul",
+                      "le": "2026-10-27T09:00:00.000+01:00"
+                    },
+                    {
+                      "type_action": "relance_facture",
+                      "etat": "fait_seul",
+                      "le": "2026-10-28T09:00:00.000+01:00"
+                    },
+                    {
+                      "type_action": "reponse_prospect",
+                      "etat": "fait_seul",
+                      "le": "2026-10-29T10:00:00.000+01:00"
+                    },
+                    {
+                      "type_action": "relance_devis",
+                      "etat": "en_attente",
+                      "le": "2026-10-29T11:00:00.000+01:00"
+                    },
+                    {
+                      "type_action": "relance_devis",
+                      "etat": "en_attente",
+                      "le": "2026-10-30T09:00:00.000+01:00"
+                    },
+                    {
+                      "type_action": "relance_facture",
+                      "etat": "echec",
+                      "le": "2026-10-31T10:00:00.000+01:00"
+                    },
+                    {
+                      "type_action": "relance_devis",
+                      "etat": "fait_seul",
+                      "le": "2026-11-02T09:00:00.000+01:00"
+                    }
+                  ]
+                }
+              }
+            },
+            "effets_prevus": [
+              {
+                "effet": "appeler",
+                "contrat": "lib-rapport-hebdo@1",
+                "cle": "rl:2026-10-26:2026-11-01",
+                "raison": "les comptes d’actions viennent de la liste fermée de lib-rapport-hebdo"
+              },
+              {
+                "effet": "deposer_rapport",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "rl:2026-10-26:2026-11-01",
+                "destination": "centre_de_commande"
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "rapport_du_lundi",
+                "agent": "presti-dep-direction",
+                "objet_ref": "rl:2026-10-26:2026-11-01",
+                "decision": "4 chiffre(s), chacun sourcé et daté, aucun chiffre de gain",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler presti-dep-direction (4)": [
+        [
+          {
+            "contrat": "presti-dep-direction@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:diagnostic-vide",
+            "simulation": true,
+            "resultat": {
+              "genre": "diagnostic",
+              "pas_de_donnees": true,
+              "titre": "Où perdez-vous de l’argent ?",
+              "texte": "Pas encore de données : le diagnostic se calcule dès que vos premières demandes et vos premiers devis sont enregistrés.",
+              "constats": [],
+              "etages": [],
+              "non_disponible": []
+            },
+            "effets_prevus": [
+              {
+                "effet": "deposer_diagnostic",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "dg:2026-11-03",
+                "destination": "centre_de_commande",
+                "pas_de_donnees": true
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "diagnostic",
+                "agent": "presti-dep-direction",
+                "objet_ref": "dg:2026-11-03",
+                "decision": "pas encore de données : aucun chiffre affiché, rien d’estimé",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler presti-dep-direction (5)": [
+        [
+          {
+            "contrat": "presti-dep-direction@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:diagnostic",
+            "simulation": true,
+            "resultat": {
+              "genre": "diagnostic",
+              "pas_de_donnees": false,
+              "titre": "Où perdez-vous de l’argent ?",
+              "constats": [
+                {
+                  "id": "devis_non_signes",
+                  "libelle": "Devis envoyés et non signés",
+                  "nombre": 5,
+                  "montant_centimes": 1830000,
+                  "unite": "eur",
+                  "source": "devis envoyés sur les 30 derniers jours, lus le 2026-11-03",
+                  "date": "2026-11-03",
+                  "confiance": "mesure"
+                },
+                {
+                  "id": "demandes_sans_reponse",
+                  "libelle": "Demandes sans réponse",
+                  "nombre": 3,
+                  "sur": 14,
+                  "montant_centimes": null,
+                  "unite": "nombre",
+                  "source": "demandes reçues sur les 30 derniers jours, lus le 2026-11-03",
+                  "date": "2026-11-03",
+                  "confiance": "mesure"
+                }
+              ],
+              "etages": [
+                {
+                  "etage": "vente",
+                  "texte": "9 devis envoyés, 4 signés, 5 non signés pour 18 300 €"
+                },
+                {
+                  "etage": "demande",
+                  "texte": "14 demandes reçues, dont 3 sans réponse"
+                }
+              ],
+              "non_disponible": [],
+              "peu_de_donnees": false,
+              "texte": "Constats calculés sur vos données, rien n’est estimé."
+            },
+            "effets_prevus": [
+              {
+                "effet": "deposer_diagnostic",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "dg:2026-11-03",
+                "destination": "centre_de_commande",
+                "pas_de_donnees": false
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "diagnostic",
+                "agent": "presti-dep-direction",
+                "objet_ref": "dg:2026-11-03",
+                "decision": "2 constat(s) lu(s), rien d’estimé",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler lib-alerte-liste (6)": [
+        [
+          {
+            "contrat": "lib-alerte-liste@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:alertes-jour",
+            "simulation": true,
+            "resultat": {
+              "liste_fermee": [
+                "demande_de_prix_ferme",
+                "client_mecontent",
+                "litige",
+                "message_urgent_tard",
+                "impaye_au_dessus_du_seuil",
+                "workflow_en_panne",
+                "cout_qui_derive"
+              ],
+              "alertes": [
+                {
+                  "type": "workflow_en_panne",
+                  "cle": "workflow_en_panne:e8",
+                  "responsable": "benj",
+                  "canal": "lib-alerter",
+                  "texte": "workflow_en_panne",
+                  "lien": null
+                },
+                {
+                  "type": "impaye_au_dessus_du_seuil",
+                  "cle": "impaye_au_dessus_du_seuil:e6",
+                  "responsable": "artisan",
+                  "canal": "push",
+                  "texte": "Un impayé dépasse votre seuil",
+                  "lien": "/factures"
+                },
+                {
+                  "type": "demande_de_prix_ferme",
+                  "cle": "demande_de_prix_ferme:e1",
+                  "responsable": "artisan",
+                  "canal": "push",
+                  "texte": "Un client demande un prix ferme",
+                  "lien": "/messages"
+                }
+              ],
+              "reportees_au_matin": [],
+              "ignorees": {
+                "hors_liste": 1,
+                "hors_condition": 2,
+                "deja_alertee": 1
+              },
+              "types_hors_liste": [
+                "nouvelle_demande"
+              ],
+              "heures_calmes": false
+            },
+            "effets_prevus": [
+              {
+                "effet": "alerter",
+                "contrat": "lib-alerter@1",
+                "donnees": {
+                  "categorie": "workflow_en_panne",
+                  "workflow": "presti-boite",
+                  "lien_execution": null,
+                  "destinataire_role": "benj",
+                  "survenue_le": "2026-11-03T09:00:00.000Z"
+                }
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "alerte_prevue",
+                "cle": "al:workflow_en_panne:e8",
+                "faits": {
+                  "type": "workflow_en_panne",
+                  "responsable": "benj"
+                }
+              },
+              {
+                "effet": "envoyer_push",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "al:impaye_au_dessus_du_seuil:e6",
+                "via": "lib/push.ts:105 envoyerPushArtisan",
+                "charge": {
+                  "titre": "Un impayé dépasse votre seuil",
+                  "corps": "Un impayé dépasse 1 000 €. Ouvrez la page du jour.",
+                  "lien": "/factures"
+                }
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "alerte_prevue",
+                "cle": "al:impaye_au_dessus_du_seuil:e6",
+                "faits": {
+                  "type": "impaye_au_dessus_du_seuil",
+                  "responsable": "artisan"
+                }
+              },
+              {
+                "effet": "envoyer_push",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "al:demande_de_prix_ferme:e1",
+                "via": "lib/push.ts:105 envoyerPushArtisan",
+                "charge": {
+                  "titre": "Un client demande un prix ferme",
+                  "corps": "Ouvrez la page du jour : une carte vous attend.",
+                  "lien": "/messages"
+                }
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "alerte_prevue",
+                "cle": "al:demande_de_prix_ferme:e1",
+                "faits": {
+                  "type": "demande_de_prix_ferme",
+                  "responsable": "artisan"
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "alerte_bilan",
+                "agent": "lib-alerte-liste",
+                "objet_ref": null,
+                "decision": "3 alerte(s), 0 reportée(s) à la page du matin, 1 hors de la liste fermée",
+                "simulation": true
+              },
+              {
+                "evenement": "alerte",
+                "agent": "lib-alerte-liste",
+                "objet_ref": "workflow_en_panne:e8",
+                "decision": "workflow_en_panne → benj",
+                "simulation": true
+              },
+              {
+                "evenement": "alerte",
+                "agent": "lib-alerte-liste",
+                "objet_ref": "impaye_au_dessus_du_seuil:e6",
+                "decision": "impaye_au_dessus_du_seuil → artisan",
+                "simulation": true
+              },
+              {
+                "evenement": "alerte",
+                "agent": "lib-alerte-liste",
+                "objet_ref": "demande_de_prix_ferme:e1",
+                "decision": "demande_de_prix_ferme → artisan",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler lib-cout-ia (7)": [
+        [
+          {
+            "contrat": "lib-cout-ia@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:cout-derive",
+            "simulation": true,
+            "resultat": {
+              "jour": "2026-11-03",
+              "source": "couts_ia_jour et couts_ia_appels, jour de Paris 2026-11-03",
+              "total_centimes": 62,
+              "externe_centimes": 62,
+              "local_centimes": 0,
+              "part_externe_pct": 100,
+              "appels": 10,
+              "appels_externes": 9,
+              "appels_nouveaux": 4,
+              "appels_sans_tarif": 1,
+              "doublons_ignores": 1,
+              "par_departement": {
+                "accueil": 62,
+                "direction": 0
+              },
+              "par_modele": {
+                "claude-haiku-5-5": 62,
+                "qwen3-8b": 0
+              },
+              "plafond_jour_centimes": 100,
+              "plafond_atteint": false,
+              "reste_centimes": 38,
+              "base_centimes": 20,
+              "base_insuffisante": false,
+              "derive": {
+                "total_centimes": 62,
+                "base_centimes": 20,
+                "pourcent": 210,
+                "jours_de_base": 4
+              },
+              "evenements_alerte": [
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "type": "cout_qui_derive",
+                  "cle": "derive:2026-11-03",
+                  "survenu_le": "2026-11-03T18:00:00.000Z",
+                  "faits": {
+                    "total_centimes": 62,
+                    "base_centimes": 20,
+                    "workflow": "lib-cout-ia"
+                  }
+                }
+              ],
+              "lignes": [
+                "Coût IA du 2026-11-03 : 0,62 € pour 10 appels, dont 0,62 € vers un modèle externe (9 appels)",
+                "Plafond du jour : 1 € — il reste 0,38 €",
+                "1 appel sans tarif daté : compté, coût inconnu (jamais inventé)"
+              ]
+            },
+            "effets_prevus": [
+              {
+                "effet": "ecrire_appel_cout",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "table": "couts_ia_appels",
+                "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+                "entetes": {
+                  "Prefer": "resolution=ignore-duplicates,return=minimal"
+                },
+                "corps": {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1001:n1",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_millicentimes": 210,
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                "cout_connu": true
+              },
+              {
+                "effet": "ecrire_appel_cout",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "table": "couts_ia_appels",
+                "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+                "entetes": {
+                  "Prefer": "resolution=ignore-duplicates,return=minimal"
+                },
+                "corps": {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1001:n2",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 2000,
+                  "jetons_sortie": 300,
+                  "cout_millicentimes": 340,
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                "cout_connu": true
+              },
+              {
+                "effet": "ecrire_appel_cout",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "table": "couts_ia_appels",
+                "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+                "entetes": {
+                  "Prefer": "resolution=ignore-duplicates,return=minimal"
+                },
+                "corps": {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1002:n1",
+                  "departement": "direction",
+                  "modele": "qwen3-8b",
+                  "externe": false,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_millicentimes": 0,
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                "cout_connu": true
+              },
+              {
+                "effet": "ecrire_appel_cout",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "table": "couts_ia_appels",
+                "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+                "entetes": {
+                  "Prefer": "resolution=ignore-duplicates,return=minimal"
+                },
+                "corps": {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1003:n1",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_millicentimes": 0,
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                "cout_connu": false
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "cout_ia",
+                "agent": "lib-cout-ia",
+                "objet_ref": "cout:2026-11-03",
+                "decision": "0,62 €, 4 appel(s) nouveau(x), plafond non atteint, dérive",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler presti-dep-direction (8)": [
+        [
+          {
+            "contrat": "presti-dep-direction@1",
+            "statut": "rien_a_faire",
+            "cle_idempotence": "exemple:banc:coupe",
+            "simulation": true,
+            "resultat": {
+              "etat": "interrupteur_coupe",
+              "genre": "matin"
+            },
+            "effets_prevus": [],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "direction_saute",
+                "agent": "presti-dep-direction",
+                "objet_ref": null,
+                "decision": "aucun travail : interrupteur_coupe",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler lib-cout-ia (9)": [
+        [
+          {
+            "contrat": "lib-cout-ia@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:plafond",
+            "simulation": true,
+            "resultat": {
+              "jour": "2026-11-03",
+              "source": "couts_ia_jour et couts_ia_appels, jour de Paris 2026-11-03",
+              "total_centimes": 62,
+              "externe_centimes": 62,
+              "local_centimes": 0,
+              "part_externe_pct": 100,
+              "appels": 7,
+              "appels_externes": 7,
+              "appels_nouveaux": 1,
+              "appels_sans_tarif": 0,
+              "doublons_ignores": 0,
+              "par_departement": {
+                "accueil": 62
+              },
+              "par_modele": {
+                "claude-haiku-5-5": 62
+              },
+              "plafond_jour_centimes": 60,
+              "plafond_atteint": true,
+              "reste_centimes": 0,
+              "base_centimes": null,
+              "base_insuffisante": true,
+              "derive": null,
+              "evenements_alerte": [
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "type": "cout_qui_derive",
+                  "cle": "plafond:2026-11-03",
+                  "survenu_le": "2026-11-03T18:00:00.000Z",
+                  "faits": {
+                    "total_centimes": 62,
+                    "workflow": "lib-cout-ia"
+                  }
+                }
+              ],
+              "lignes": [
+                "Coût IA du 2026-11-03 : 0,62 € pour 7 appels, dont 0,62 € vers un modèle externe (7 appels)",
+                "Plafond du jour : 0,60 € — atteint : les actions qui appellent un modèle s’arrêtent jusqu’à demain"
+              ]
+            },
+            "effets_prevus": [
+              {
+                "effet": "ecrire_appel_cout",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "table": "couts_ia_appels",
+                "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+                "entetes": {
+                  "Prefer": "resolution=ignore-duplicates,return=minimal"
+                },
+                "corps": {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-2001:n1",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_millicentimes": 210,
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                "cout_connu": true
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "plafond_cout_atteint",
+                "cle": "pc:2026-11-03",
+                "faits": {
+                  "total_centimes": 62,
+                  "plafond_centimes": 60
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "cout_ia",
+                "agent": "lib-cout-ia",
+                "objet_ref": "cout:2026-11-03",
+                "decision": "0,62 €, 1 appel(s) nouveau(x), plafond atteint",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler lib-alerte-liste (10)": [
+        [
+          {
+            "contrat": "lib-alerte-liste@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:alertes-nuit",
+            "simulation": true,
+            "resultat": {
+              "liste_fermee": [
+                "demande_de_prix_ferme",
+                "client_mecontent",
+                "litige",
+                "message_urgent_tard",
+                "impaye_au_dessus_du_seuil",
+                "workflow_en_panne",
+                "cout_qui_derive"
+              ],
+              "alertes": [
+                {
+                  "type": "message_urgent_tard",
+                  "cle": "message_urgent_tard:n3",
+                  "responsable": "artisan",
+                  "canal": "push",
+                  "texte": "Un message urgent est arrivé tard",
+                  "lien": "/messages"
+                }
+              ],
+              "reportees_au_matin": [
+                {
+                  "type": "impaye_au_dessus_du_seuil",
+                  "cle": "impaye_au_dessus_du_seuil:n10",
+                  "motif": "heures_calmes"
+                },
+                {
+                  "type": "client_mecontent",
+                  "cle": "client_mecontent:n2",
+                  "motif": "heures_calmes"
+                }
+              ],
+              "ignorees": {
+                "hors_liste": 0,
+                "hors_condition": 0,
+                "deja_alertee": 0
+              },
+              "types_hors_liste": [],
+              "heures_calmes": true
+            },
+            "effets_prevus": [
+              {
+                "effet": "envoyer_push",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "al:message_urgent_tard:n3",
+                "via": "lib/push.ts:105 envoyerPushArtisan",
+                "charge": {
+                  "titre": "Un message urgent est arrivé tard",
+                  "corps": "Ouvrez la page du jour : une carte vous attend.",
+                  "lien": "/messages"
+                }
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "alerte_prevue",
+                "cle": "al:message_urgent_tard:n3",
+                "faits": {
+                  "type": "message_urgent_tard",
+                  "responsable": "artisan"
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "alerte_bilan",
+                "agent": "lib-alerte-liste",
+                "objet_ref": null,
+                "decision": "1 alerte(s), 2 reportée(s) à la page du matin, 0 hors de la liste fermée",
+                "simulation": true
+              },
+              {
+                "evenement": "alerte",
+                "agent": "lib-alerte-liste",
+                "objet_ref": "message_urgent_tard:n3",
+                "decision": "message_urgent_tard → artisan",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "presti-dep-direction",
+    "execution": "565",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Appelé par le Cerveau",
+      "Appeler lib-alerte-liste"
+    ],
+    "entrees_epinglees": {
+      "Appelé par le Cerveau": [
+        {
+          "contrat": "presti-dep-direction@1",
+          "organisation_id": "00000000-0000-4000-8000-000000000801",
+          "simulation": true,
+          "cle_idempotence": "exemple:essai:chef-alerte",
+          "trace": {
+            "execution_parent": "Exemple. essai : direction",
+            "declencheur": "essai",
+            "tentative": 0
+          },
+          "config": {
+            "offre": "signature",
+            "interrupteur_general": true,
+            "interrupteur_departement": true,
+            "seuil_impaye_centimes": 100000,
+            "plafond_alertes_jour": 5,
+            "plafond_cout_jour_centimes": 100,
+            "seuil_derive_pct": 50,
+            "jours_base_min": 3,
+            "plancher_derive_centimes": 50
+          },
+          "donnees": {
+            "evenements": [],
+            "genre": "alerte",
+            "maintenant": "2026-11-03T06:30:00.000Z",
+            "alerte": {
+              "evenements": [
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "type": "demande_de_prix_ferme",
+                  "cle": "e1",
+                  "survenu_le": "2026-11-03T11:00:00.000Z",
+                  "faits": {
+                    "prix_ferme": true
+                  }
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "type": "nouvelle_demande",
+                  "cle": "e5",
+                  "survenu_le": "2026-11-03T11:05:00.000Z",
+                  "faits": {}
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "type": "impaye_au_dessus_du_seuil",
+                  "cle": "e6",
+                  "survenu_le": "2026-11-03T10:00:00.000Z",
+                  "faits": {
+                    "montant_centimes": 184050
+                  }
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "type": "impaye_au_dessus_du_seuil",
+                  "cle": "e7",
+                  "survenu_le": "2026-11-03T10:10:00.000Z",
+                  "faits": {
+                    "montant_centimes": 50000
+                  }
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "type": "workflow_en_panne",
+                  "cle": "e8",
+                  "survenu_le": "2026-11-03T09:00:00.000Z",
+                  "faits": {
+                    "workflow": "presti-boite"
+                  }
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "type": "litige",
+                  "cle": "e9",
+                  "survenu_le": "2026-11-03T08:00:00.000Z",
+                  "faits": {
+                    "litige": true
+                  }
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "type": "message_urgent_tard",
+                  "cle": "e4",
+                  "survenu_le": "2026-11-03T11:00:00.000Z",
+                  "faits": {
+                    "urgent": true
+                  }
+                }
+              ],
+              "cles_deja_alertees": [
+                "litige:e9"
+              ],
+              "alertes_envoyees_aujourdhui": 0
+            }
+          }
+        }
+      ],
+      "Appeler lib-alerte-liste": [
+        {
+          "contrat": "lib-alerte-liste@1",
+          "statut": "ok",
+          "cle_idempotence": "alerte:exemple:essai:chef-alerte",
+          "simulation": true,
+          "resultat": {
+            "liste_fermee": [
+              "demande_de_prix_ferme",
+              "client_mecontent",
+              "litige",
+              "message_urgent_tard",
+              "impaye_au_dessus_du_seuil",
+              "workflow_en_panne",
+              "cout_qui_derive"
+            ],
+            "alertes": [
+              {
+                "type": "workflow_en_panne",
+                "cle": "workflow_en_panne:e8",
+                "responsable": "benj",
+                "canal": "lib-alerter",
+                "texte": "workflow_en_panne",
+                "lien": null
+              },
+              {
+                "type": "impaye_au_dessus_du_seuil",
+                "cle": "impaye_au_dessus_du_seuil:e6",
+                "responsable": "artisan",
+                "canal": "push",
+                "texte": "Un impayé dépasse votre seuil",
+                "lien": "/factures"
+              },
+              {
+                "type": "demande_de_prix_ferme",
+                "cle": "demande_de_prix_ferme:e1",
+                "responsable": "artisan",
+                "canal": "push",
+                "texte": "Un client demande un prix ferme",
+                "lien": "/messages"
+              }
+            ],
+            "reportees_au_matin": [],
+            "ignorees": {
+              "hors_liste": 1,
+              "hors_condition": 2,
+              "deja_alertee": 1
+            },
+            "types_hors_liste": [
+              "nouvelle_demande"
+            ],
+            "heures_calmes": false
+          },
+          "effets_prevus": [
+            {
+              "effet": "alerter",
+              "contrat": "lib-alerter@1",
+              "donnees": {
+                "categorie": "workflow_en_panne",
+                "workflow": "presti-boite",
+                "lien_execution": null,
+                "destinataire_role": "benj",
+                "survenue_le": "2026-11-03T09:00:00.000Z"
+              }
+            },
+            {
+              "effet": "noter_evenement",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "type": "alerte_prevue",
+              "cle": "al:workflow_en_panne:e8",
+              "faits": {
+                "type": "workflow_en_panne",
+                "responsable": "benj"
+              }
+            },
+            {
+              "effet": "envoyer_push",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "cle": "al:impaye_au_dessus_du_seuil:e6",
+              "via": "lib/push.ts:105 envoyerPushArtisan",
+              "charge": {
+                "titre": "Un impayé dépasse votre seuil",
+                "corps": "Un impayé dépasse 1 000 €. Ouvrez la page du jour.",
+                "lien": "/factures"
+              }
+            },
+            {
+              "effet": "noter_evenement",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "type": "alerte_prevue",
+              "cle": "al:impaye_au_dessus_du_seuil:e6",
+              "faits": {
+                "type": "impaye_au_dessus_du_seuil",
+                "responsable": "artisan"
+              }
+            },
+            {
+              "effet": "envoyer_push",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "cle": "al:demande_de_prix_ferme:e1",
+              "via": "lib/push.ts:105 envoyerPushArtisan",
+              "charge": {
+                "titre": "Un client demande un prix ferme",
+                "corps": "Ouvrez la page du jour : une carte vous attend.",
+                "lien": "/messages"
+              }
+            },
+            {
+              "effet": "noter_evenement",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "type": "alerte_prevue",
+              "cle": "al:demande_de_prix_ferme:e1",
+              "faits": {
+                "type": "demande_de_prix_ferme",
+                "responsable": "artisan"
+              }
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "alerte_bilan",
+              "agent": "lib-alerte-liste",
+              "objet_ref": null,
+              "decision": "3 alerte(s), 0 reportée(s) à la page du matin, 1 hors de la liste fermée",
+              "simulation": true
+            },
+            {
+              "evenement": "alerte",
+              "agent": "lib-alerte-liste",
+              "objet_ref": "workflow_en_panne:e8",
+              "decision": "workflow_en_panne → benj",
+              "simulation": true
+            },
+            {
+              "evenement": "alerte",
+              "agent": "lib-alerte-liste",
+              "objet_ref": "impaye_au_dessus_du_seuil:e6",
+              "decision": "impaye_au_dessus_du_seuil → artisan",
+              "simulation": true
+            },
+            {
+              "evenement": "alerte",
+              "agent": "lib-alerte-liste",
+              "objet_ref": "demande_de_prix_ferme:e1",
+              "decision": "demande_de_prix_ferme → artisan",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ]
+    },
+    "sorties": {
+      "Contrat de sortie": [
+        [
+          {
+            "contrat": "presti-dep-direction@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:essai:chef-alerte",
+            "simulation": true,
+            "resultat": {
+              "genre": "alerte",
+              "alerte": {
+                "liste_fermee": [
+                  "demande_de_prix_ferme",
+                  "client_mecontent",
+                  "litige",
+                  "message_urgent_tard",
+                  "impaye_au_dessus_du_seuil",
+                  "workflow_en_panne",
+                  "cout_qui_derive"
+                ],
+                "alertes": [
+                  {
+                    "type": "workflow_en_panne",
+                    "cle": "workflow_en_panne:e8",
+                    "responsable": "benj",
+                    "canal": "lib-alerter",
+                    "texte": "workflow_en_panne",
+                    "lien": null
+                  },
+                  {
+                    "type": "impaye_au_dessus_du_seuil",
+                    "cle": "impaye_au_dessus_du_seuil:e6",
+                    "responsable": "artisan",
+                    "canal": "push",
+                    "texte": "Un impayé dépasse votre seuil",
+                    "lien": "/factures"
+                  },
+                  {
+                    "type": "demande_de_prix_ferme",
+                    "cle": "demande_de_prix_ferme:e1",
+                    "responsable": "artisan",
+                    "canal": "push",
+                    "texte": "Un client demande un prix ferme",
+                    "lien": "/messages"
+                  }
+                ],
+                "reportees_au_matin": [],
+                "ignorees": {
+                  "hors_liste": 1,
+                  "hors_condition": 2,
+                  "deja_alertee": 1
+                },
+                "types_hors_liste": [
+                  "nouvelle_demande"
+                ],
+                "heures_calmes": false
+              }
+            },
+            "effets_prevus": [
+              {
+                "effet": "alerter",
+                "contrat": "lib-alerter@1",
+                "donnees": {
+                  "categorie": "workflow_en_panne",
+                  "workflow": "presti-boite",
+                  "lien_execution": null,
+                  "destinataire_role": "benj",
+                  "survenue_le": "2026-11-03T09:00:00.000Z"
+                }
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "alerte_prevue",
+                "cle": "al:workflow_en_panne:e8",
+                "faits": {
+                  "type": "workflow_en_panne",
+                  "responsable": "benj"
+                }
+              },
+              {
+                "effet": "envoyer_push",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "al:impaye_au_dessus_du_seuil:e6",
+                "via": "lib/push.ts:105 envoyerPushArtisan",
+                "charge": {
+                  "titre": "Un impayé dépasse votre seuil",
+                  "corps": "Un impayé dépasse 1 000 €. Ouvrez la page du jour.",
+                  "lien": "/factures"
+                }
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "alerte_prevue",
+                "cle": "al:impaye_au_dessus_du_seuil:e6",
+                "faits": {
+                  "type": "impaye_au_dessus_du_seuil",
+                  "responsable": "artisan"
+                }
+              },
+              {
+                "effet": "envoyer_push",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "al:demande_de_prix_ferme:e1",
+                "via": "lib/push.ts:105 envoyerPushArtisan",
+                "charge": {
+                  "titre": "Un client demande un prix ferme",
+                  "corps": "Ouvrez la page du jour : une carte vous attend.",
+                  "lien": "/messages"
+                }
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "alerte_prevue",
+                "cle": "al:demande_de_prix_ferme:e1",
+                "faits": {
+                  "type": "demande_de_prix_ferme",
+                  "responsable": "artisan"
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "alerte_bilan",
+                "agent": "lib-alerte-liste",
+                "objet_ref": null,
+                "decision": "3 alerte(s), 0 reportée(s) à la page du matin, 1 hors de la liste fermée",
+                "simulation": true
+              },
+              {
+                "evenement": "alerte",
+                "agent": "lib-alerte-liste",
+                "objet_ref": "workflow_en_panne:e8",
+                "decision": "workflow_en_panne → benj",
+                "simulation": true
+              },
+              {
+                "evenement": "alerte",
+                "agent": "lib-alerte-liste",
+                "objet_ref": "impaye_au_dessus_du_seuil:e6",
+                "decision": "impaye_au_dessus_du_seuil → artisan",
+                "simulation": true
+              },
+              {
+                "evenement": "alerte",
+                "agent": "lib-alerte-liste",
+                "objet_ref": "demande_de_prix_ferme:e1",
+                "decision": "demande_de_prix_ferme → artisan",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "presti-dep-direction",
+    "execution": "573",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Appelé par le Cerveau",
+      "Appeler lib-cout-ia",
+      "Appeler lib-alerte-liste (coût)"
+    ],
+    "entrees_epinglees": {
+      "Appelé par le Cerveau": [
+        {
+          "contrat": "presti-dep-direction@1",
+          "organisation_id": "00000000-0000-4000-8000-000000000801",
+          "simulation": true,
+          "cle_idempotence": "exemple:essai:chef-cout",
+          "trace": {
+            "execution_parent": "Exemple. essai : direction",
+            "declencheur": "essai",
+            "tentative": 0
+          },
+          "config": {
+            "offre": "signature",
+            "interrupteur_general": true,
+            "interrupteur_departement": true,
+            "seuil_impaye_centimes": 100000,
+            "plafond_alertes_jour": 5,
+            "plafond_cout_jour_centimes": 100,
+            "seuil_derive_pct": 50,
+            "jours_base_min": 3,
+            "plancher_derive_centimes": 50
+          },
+          "donnees": {
+            "evenements": [],
+            "genre": "cout",
+            "maintenant": "2026-11-03T06:30:00.000Z",
+            "cout": {
+              "jour": "2026-11-03",
+              "appels": [
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1001:n1",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_eur": 0.0021,
+                  "source_tarif": "Exemple. tarif du modèle, relevé du 2026-11-01",
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1001:n2",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 2000,
+                  "jetons_sortie": 300,
+                  "cout_eur": 0.0034,
+                  "source_tarif": "Exemple. tarif du modèle, relevé du 2026-11-01",
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1002:n1",
+                  "departement": "direction",
+                  "modele": "qwen3-8b",
+                  "externe": false,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_eur": 0,
+                  "source_tarif": "Exemple. Oracle, aucun coût par appel, relevé du 2026-11-01",
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1003:n1",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_eur": null,
+                  "source_tarif": null,
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-0999:n1",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_eur": 0.0021,
+                  "source_tarif": "Exemple. tarif du modèle, relevé du 2026-11-01",
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                }
+              ],
+              "cumul_du_jour": [
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "jour": "2026-11-03",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "appels": 6,
+                  "cout_millicentimes": 61000
+                }
+              ],
+              "jours_precedents": [
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "jour": "2026-10-30",
+                  "cout_millicentimes": 20000
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "jour": "2026-10-31",
+                  "cout_millicentimes": 20000
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "jour": "2026-11-01",
+                  "cout_millicentimes": 20000
+                },
+                {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "jour": "2026-11-02",
+                  "cout_millicentimes": 20000
+                }
+              ],
+              "cles_connues": [
+                "exec-0999:n1"
+              ]
+            }
+          }
+        }
+      ],
+      "Appeler lib-cout-ia": [
+        {
+          "contrat": "lib-cout-ia@1",
+          "statut": "ok",
+          "cle_idempotence": "cout:exemple:essai:chef-cout",
+          "simulation": true,
+          "resultat": {
+            "jour": "2026-11-03",
+            "source": "couts_ia_jour et couts_ia_appels, jour de Paris 2026-11-03",
+            "total_centimes": 62,
+            "externe_centimes": 62,
+            "local_centimes": 0,
+            "part_externe_pct": 100,
+            "appels": 10,
+            "appels_externes": 9,
+            "appels_nouveaux": 4,
+            "appels_sans_tarif": 1,
+            "doublons_ignores": 1,
+            "par_departement": {
+              "accueil": 62,
+              "direction": 0
+            },
+            "par_modele": {
+              "claude-haiku-5-5": 62,
+              "qwen3-8b": 0
+            },
+            "plafond_jour_centimes": 100,
+            "plafond_atteint": false,
+            "reste_centimes": 38,
+            "base_centimes": 20,
+            "base_insuffisante": false,
+            "derive": {
+              "total_centimes": 62,
+              "base_centimes": 20,
+              "pourcent": 210,
+              "jours_de_base": 4
+            },
+            "evenements_alerte": [
+              {
+                "artisan_id": "00000000-0000-4000-8000-000000000801",
+                "type": "cout_qui_derive",
+                "cle": "derive:2026-11-03",
+                "survenu_le": "2026-11-03T06:30:00.000Z",
+                "faits": {
+                  "total_centimes": 62,
+                  "base_centimes": 20,
+                  "workflow": "lib-cout-ia"
+                }
+              }
+            ],
+            "lignes": [
+              "Coût IA du 2026-11-03 : 0,62 € pour 10 appels, dont 0,62 € vers un modèle externe (9 appels)",
+              "Plafond du jour : 1 € — il reste 0,38 €",
+              "1 appel sans tarif daté : compté, coût inconnu (jamais inventé)"
+            ]
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_appel_cout",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "table": "couts_ia_appels",
+              "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=minimal"
+              },
+              "corps": {
+                "artisan_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "exec-1001:n1",
+                "departement": "accueil",
+                "modele": "claude-haiku-5-5",
+                "externe": true,
+                "jetons_entree": 1200,
+                "jetons_sortie": 300,
+                "cout_millicentimes": 210,
+                "survenu_le": "2026-11-03T08:00:00.000Z"
+              },
+              "cout_connu": true
+            },
+            {
+              "effet": "ecrire_appel_cout",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "table": "couts_ia_appels",
+              "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=minimal"
+              },
+              "corps": {
+                "artisan_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "exec-1001:n2",
+                "departement": "accueil",
+                "modele": "claude-haiku-5-5",
+                "externe": true,
+                "jetons_entree": 2000,
+                "jetons_sortie": 300,
+                "cout_millicentimes": 340,
+                "survenu_le": "2026-11-03T08:00:00.000Z"
+              },
+              "cout_connu": true
+            },
+            {
+              "effet": "ecrire_appel_cout",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "table": "couts_ia_appels",
+              "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=minimal"
+              },
+              "corps": {
+                "artisan_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "exec-1002:n1",
+                "departement": "direction",
+                "modele": "qwen3-8b",
+                "externe": false,
+                "jetons_entree": 1200,
+                "jetons_sortie": 300,
+                "cout_millicentimes": 0,
+                "survenu_le": "2026-11-03T08:00:00.000Z"
+              },
+              "cout_connu": true
+            },
+            {
+              "effet": "ecrire_appel_cout",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "table": "couts_ia_appels",
+              "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=minimal"
+              },
+              "corps": {
+                "artisan_id": "00000000-0000-4000-8000-000000000801",
+                "cle": "exec-1003:n1",
+                "departement": "accueil",
+                "modele": "claude-haiku-5-5",
+                "externe": true,
+                "jetons_entree": 1200,
+                "jetons_sortie": 300,
+                "cout_millicentimes": 0,
+                "survenu_le": "2026-11-03T08:00:00.000Z"
+              },
+              "cout_connu": false
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "cout_ia",
+              "agent": "lib-cout-ia",
+              "objet_ref": "cout:2026-11-03",
+              "decision": "0,62 €, 4 appel(s) nouveau(x), plafond non atteint, dérive",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ],
+      "Appeler lib-alerte-liste (coût)": [
+        {
+          "contrat": "lib-alerte-liste@1",
+          "statut": "ok",
+          "cle_idempotence": "cout-alerte:exemple:essai:chef-cout",
+          "simulation": true,
+          "resultat": {
+            "liste_fermee": [
+              "demande_de_prix_ferme",
+              "client_mecontent",
+              "litige",
+              "message_urgent_tard",
+              "impaye_au_dessus_du_seuil",
+              "workflow_en_panne",
+              "cout_qui_derive"
+            ],
+            "alertes": [
+              {
+                "type": "cout_qui_derive",
+                "cle": "cout_qui_derive:derive:2026-11-03",
+                "responsable": "benj",
+                "canal": "lib-alerter",
+                "texte": "cout_qui_derive",
+                "lien": null
+              }
+            ],
+            "reportees_au_matin": [],
+            "ignorees": {
+              "hors_liste": 0,
+              "hors_condition": 0,
+              "deja_alertee": 0
+            },
+            "types_hors_liste": [],
+            "heures_calmes": false
+          },
+          "effets_prevus": [
+            {
+              "effet": "alerter",
+              "contrat": "lib-alerter@1",
+              "donnees": {
+                "categorie": "cout_qui_derive",
+                "workflow": "lib-cout-ia",
+                "lien_execution": null,
+                "destinataire_role": "benj",
+                "survenue_le": "2026-11-03T06:30:00.000Z"
+              }
+            },
+            {
+              "effet": "noter_evenement",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "type": "alerte_prevue",
+              "cle": "al:cout_qui_derive:derive:2026-11-03",
+              "faits": {
+                "type": "cout_qui_derive",
+                "responsable": "benj"
+              }
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "alerte_bilan",
+              "agent": "lib-alerte-liste",
+              "objet_ref": null,
+              "decision": "1 alerte(s), 0 reportée(s) à la page du matin, 0 hors de la liste fermée",
+              "simulation": true
+            },
+            {
+              "evenement": "alerte",
+              "agent": "lib-alerte-liste",
+              "objet_ref": "cout_qui_derive:derive:2026-11-03",
+              "decision": "cout_qui_derive → benj",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ]
+    },
+    "sorties": {
+      "Évaluer la dérive": [
+        [
+          {
+            "a_alerter": true,
+            "alerte_enveloppe": {
+              "contrat": "lib-alerte-liste@1",
+              "organisation_id": "00000000-0000-4000-8000-000000000801",
+              "simulation": true,
+              "cle_idempotence": "cout-alerte:exemple:essai:chef-cout",
+              "trace": {
+                "execution_parent": "presti-dep-direction:exemple:essai:chef-cout",
+                "declencheur": "presti-dep-direction",
+                "tentative": 0
+              },
+              "config": {
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "seuil_impaye_centimes": 0,
+                "plafond_alertes_jour": 5
+              },
+              "donnees": {
+                "evenements": [
+                  {
+                    "artisan_id": "00000000-0000-4000-8000-000000000801",
+                    "type": "cout_qui_derive",
+                    "cle": "derive:2026-11-03",
+                    "survenu_le": "2026-11-03T06:30:00.000Z",
+                    "faits": {
+                      "total_centimes": 62,
+                      "base_centimes": 20,
+                      "workflow": "lib-cout-ia"
+                    }
+                  }
+                ],
+                "cles_deja_alertees": [],
+                "alertes_envoyees_aujourdhui": 0,
+                "maintenant": "2026-11-03T06:30:00.000Z"
+              }
+            }
+          }
+        ]
+      ],
+      "Contrat de sortie": [
+        [
+          {
+            "contrat": "presti-dep-direction@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:essai:chef-cout",
+            "simulation": true,
+            "resultat": {
+              "genre": "cout",
+              "cout": {
+                "jour": "2026-11-03",
+                "source": "couts_ia_jour et couts_ia_appels, jour de Paris 2026-11-03",
+                "total_centimes": 62,
+                "externe_centimes": 62,
+                "local_centimes": 0,
+                "part_externe_pct": 100,
+                "appels": 10,
+                "appels_externes": 9,
+                "appels_nouveaux": 4,
+                "appels_sans_tarif": 1,
+                "doublons_ignores": 1,
+                "par_departement": {
+                  "accueil": 62,
+                  "direction": 0
+                },
+                "par_modele": {
+                  "claude-haiku-5-5": 62,
+                  "qwen3-8b": 0
+                },
+                "plafond_jour_centimes": 100,
+                "plafond_atteint": false,
+                "reste_centimes": 38,
+                "base_centimes": 20,
+                "base_insuffisante": false,
+                "derive": {
+                  "total_centimes": 62,
+                  "base_centimes": 20,
+                  "pourcent": 210,
+                  "jours_de_base": 4
+                },
+                "evenements_alerte": [
+                  {
+                    "artisan_id": "00000000-0000-4000-8000-000000000801",
+                    "type": "cout_qui_derive",
+                    "cle": "derive:2026-11-03",
+                    "survenu_le": "2026-11-03T06:30:00.000Z",
+                    "faits": {
+                      "total_centimes": 62,
+                      "base_centimes": 20,
+                      "workflow": "lib-cout-ia"
+                    }
+                  }
+                ],
+                "lignes": [
+                  "Coût IA du 2026-11-03 : 0,62 € pour 10 appels, dont 0,62 € vers un modèle externe (9 appels)",
+                  "Plafond du jour : 1 € — il reste 0,38 €",
+                  "1 appel sans tarif daté : compté, coût inconnu (jamais inventé)"
+                ]
+              },
+              "alerte": {
+                "liste_fermee": [
+                  "demande_de_prix_ferme",
+                  "client_mecontent",
+                  "litige",
+                  "message_urgent_tard",
+                  "impaye_au_dessus_du_seuil",
+                  "workflow_en_panne",
+                  "cout_qui_derive"
+                ],
+                "alertes": [
+                  {
+                    "type": "cout_qui_derive",
+                    "cle": "cout_qui_derive:derive:2026-11-03",
+                    "responsable": "benj",
+                    "canal": "lib-alerter",
+                    "texte": "cout_qui_derive",
+                    "lien": null
+                  }
+                ],
+                "reportees_au_matin": [],
+                "ignorees": {
+                  "hors_liste": 0,
+                  "hors_condition": 0,
+                  "deja_alertee": 0
+                },
+                "types_hors_liste": [],
+                "heures_calmes": false
+              }
+            },
+            "effets_prevus": [
+              {
+                "effet": "ecrire_appel_cout",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "table": "couts_ia_appels",
+                "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+                "entetes": {
+                  "Prefer": "resolution=ignore-duplicates,return=minimal"
+                },
+                "corps": {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1001:n1",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_millicentimes": 210,
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                "cout_connu": true
+              },
+              {
+                "effet": "ecrire_appel_cout",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "table": "couts_ia_appels",
+                "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+                "entetes": {
+                  "Prefer": "resolution=ignore-duplicates,return=minimal"
+                },
+                "corps": {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1001:n2",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 2000,
+                  "jetons_sortie": 300,
+                  "cout_millicentimes": 340,
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                "cout_connu": true
+              },
+              {
+                "effet": "ecrire_appel_cout",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "table": "couts_ia_appels",
+                "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+                "entetes": {
+                  "Prefer": "resolution=ignore-duplicates,return=minimal"
+                },
+                "corps": {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1002:n1",
+                  "departement": "direction",
+                  "modele": "qwen3-8b",
+                  "externe": false,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_millicentimes": 0,
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                "cout_connu": true
+              },
+              {
+                "effet": "ecrire_appel_cout",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "table": "couts_ia_appels",
+                "requete": "POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle",
+                "entetes": {
+                  "Prefer": "resolution=ignore-duplicates,return=minimal"
+                },
+                "corps": {
+                  "artisan_id": "00000000-0000-4000-8000-000000000801",
+                  "cle": "exec-1003:n1",
+                  "departement": "accueil",
+                  "modele": "claude-haiku-5-5",
+                  "externe": true,
+                  "jetons_entree": 1200,
+                  "jetons_sortie": 300,
+                  "cout_millicentimes": 0,
+                  "survenu_le": "2026-11-03T08:00:00.000Z"
+                },
+                "cout_connu": false
+              },
+              {
+                "effet": "alerter",
+                "contrat": "lib-alerter@1",
+                "donnees": {
+                  "categorie": "cout_qui_derive",
+                  "workflow": "lib-cout-ia",
+                  "lien_execution": null,
+                  "destinataire_role": "benj",
+                  "survenue_le": "2026-11-03T06:30:00.000Z"
+                }
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000801",
+                "type": "alerte_prevue",
+                "cle": "al:cout_qui_derive:derive:2026-11-03",
+                "faits": {
+                  "type": "cout_qui_derive",
+                  "responsable": "benj"
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "cout_ia",
+                "agent": "lib-cout-ia",
+                "objet_ref": "cout:2026-11-03",
+                "decision": "0,62 €, 4 appel(s) nouveau(x), plafond non atteint, dérive",
+                "simulation": true
+              },
+              {
+                "evenement": "alerte_bilan",
+                "agent": "lib-alerte-liste",
+                "objet_ref": null,
+                "decision": "1 alerte(s), 0 reportée(s) à la page du matin, 0 hors de la liste fermée",
+                "simulation": true
+              },
+              {
+                "evenement": "alerte",
+                "agent": "lib-alerte-liste",
+                "objet_ref": "cout_qui_derive:derive:2026-11-03",
+                "decision": "cout_qui_derive → benj",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ]
+    }
+  }
+]

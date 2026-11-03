@@ -1,0 +1,13 @@
+{
+ "468": "lib-trier-demande : 8 demandes du banc, triées par règles (urgence, spam, peut attendre), escalades lues comme le pilote",
+ "469": "lib-lire-photo : une photo décrite (modèle épinglé), une description CHIFFRÉE par le modèle refusée à la revalidation",
+ "470": "presti-dep-accueil : deux comptes, quatre demandes ; Studio = 2 cartes, Signature = 1 ligne du pilote et 1 carte « à la main » (dégât des eaux)",
+ "471": "presti-dep-accueil hors simulation : arrêt « Hors simulation » avant tout appel",
+ "472": "presti-dep-devis (squelette) : un seul retour, « non_branche »",
+ "477": "presti-cerveau de bout en bout : 3 comptes, doublon, événement d'un autre compte et type inconnu rejetés, compte en palier « ombre » sauté, 0 effet fait",
+ "478": "presti-cerveau, interrupteur général coupé : rien n'est lu ni appelé",
+ "479": "presti-banc-cerveau sans épinglage : l'Accueil tourne pour de vrai, ses appels aux lib-* existants sont refusés par leur politique d'appel ; statut « erreur », aucune carte (fail-closed)",
+ "487": "presti-dep-accueil, une demande (spam), le trieur NON épinglé : appel réel accueil → lib-trier-demande accepté par sa politique d'appel ; classé spam, aucune carte",
+ "499": "SONDE presti-cerveau → presti-dep-accueil réel (trois étages) : n8n refuse l'appel du petit-enfant lib-trier-demande (non publié) ; l'Accueil finit « erreur », 0 effet (fail-closed)",
+ "501": "SONDE identique avec presti-cerveau ajouté aux callerIds du trieur : toujours refusé, aucune exécution du trieur créée ; la politique d'appel n'est pas en cause"
+}

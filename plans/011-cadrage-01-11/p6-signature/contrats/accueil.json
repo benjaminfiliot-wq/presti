@@ -1,0 +1,661 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "tache": "036-001",
+  "source": "plans/011-cadrage-01-11/p6-signature/premiere-reponse.md, ligne 036-001 et § 3",
+  "regle": "Hors contrat = rejet (statut « rejete »), une ligne de journal, rien ne part. Toute requête filtre sur artisan_id (« Supabase account » passe outre la RLS).",
+  "titre": "presti-dep-accueil@1 — le département Accueil et réponse",
+  "entree": {
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nom_artisan",
+        "offre",
+        "mode_reponse",
+        "capacites",
+        "pilote",
+        "parties_depuis_24h",
+        "interrupteur_general",
+        "interrupteur_departement",
+        "mots_escalade_artisan",
+        "fournisseurs",
+        "horaires",
+        "plafond_jour",
+        "qualification"
+      ],
+      "properties": {
+        "nom_artisan": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 70
+        },
+        "offre": {
+          "enum": [
+            "studio",
+            "signature",
+            "essentiel",
+            "essai"
+          ]
+        },
+        "mode_reponse": {
+          "enum": [
+            "manuelle",
+            "assistee",
+            "auto"
+          ]
+        },
+        "capacites": {
+          "type": "array",
+          "maxItems": 60,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z_.]{2,40}$"
+          }
+        },
+        "pilote": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "drapeau",
+            "actif",
+            "types"
+          ],
+          "properties": {
+            "drapeau": {
+              "type": "boolean"
+            },
+            "actif": {
+              "type": "boolean"
+            },
+            "types": {
+              "type": "object"
+            }
+          }
+        },
+        "parties_depuis_24h": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "interrupteur_general": {
+          "type": "boolean"
+        },
+        "interrupteur_departement": {
+          "type": "boolean"
+        },
+        "mots_escalade_artisan": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "string",
+            "maxLength": 60
+          }
+        },
+        "fournisseurs": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "string",
+            "maxLength": 60
+          }
+        },
+        "horaires": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "jours_permis",
+            "heures_permises"
+          ],
+          "properties": {
+            "jours_permis": {
+              "type": "array",
+              "maxItems": 7,
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              }
+            },
+            "heures_permises": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "debut",
+                "fin"
+              ],
+              "properties": {
+                "debut": {
+                  "type": "string",
+                  "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                },
+                "fin": {
+                  "type": "string",
+                  "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                }
+              }
+            }
+          }
+        },
+        "plafond_jour": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "qualification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "grille",
+            "seuils",
+            "delais_cibles_min"
+          ],
+          "properties": {
+            "grille": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "critere",
+                  "poids"
+                ],
+                "properties": {
+                  "critere": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 84
+                  },
+                  "poids": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                }
+              }
+            },
+            "seuils": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "haute",
+                "normale"
+              ],
+              "properties": {
+                "haute": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "normale": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              }
+            },
+            "delais_cibles_min": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "haute",
+                "normale",
+                "a_revoir"
+              ],
+              "properties": {
+                "haute": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10080
+                },
+                "normale": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10080
+                },
+                "a_revoir": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10080
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "donnees": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "demandes",
+        "empreintes_connues",
+        "cles_existantes",
+        "maintenant"
+      ],
+      "properties": {
+        "demandes": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "canal",
+              "recu_le",
+              "message",
+              "champs",
+              "empreinte_contact",
+              "client_existant",
+              "honeypot",
+              "photo",
+              "proposition",
+              "destinataire"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "canal": {
+                "enum": [
+                  "page_p",
+                  "email",
+                  "telegram"
+                ]
+              },
+              "recu_le": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "message": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 4000
+              },
+              "champs": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "canal": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "pattern": "^[a-z_]+$"
+                  },
+                  "origine": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "pattern": "^[a-z0-9_]+$"
+                  },
+                  "urgence": {
+                    "enum": [
+                      "urgent",
+                      "normal"
+                    ]
+                  },
+                  "type_chantier": {
+                    "type": "string",
+                    "maxLength": 60,
+                    "pattern": "^[^/@:]+$"
+                  },
+                  "taille": {
+                    "enum": [
+                      "1",
+                      "2 à 5",
+                      "6 à 20",
+                      "plus de 20"
+                    ]
+                  },
+                  "activite": {
+                    "enum": [
+                      "Artisan",
+                      "Entreprise du bâtiment",
+                      "Architecte",
+                      "Autre"
+                    ]
+                  },
+                  "budget_tranche": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "pattern": "^[^/@:]+$"
+                  },
+                  "delai_souhaite": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "pattern": "^[^/@:]+$"
+                  },
+                  "surface_m2": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  "photo_jointe": {
+                    "type": "boolean"
+                  },
+                  "dans_zone": {
+                    "type": "boolean"
+                  },
+                  "recu_hors_horaires": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "empreinte_contact": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "client_existant": {
+                "type": "boolean"
+              },
+              "honeypot": {
+                "type": "boolean"
+              },
+              "photo": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": false,
+                "required": [
+                  "ref",
+                  "type_mime"
+                ],
+                "properties": {
+                  "ref": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9._-]{1,80}$"
+                  },
+                  "type_mime": {
+                    "enum": [
+                      "image/jpeg",
+                      "image/png",
+                      "image/webp",
+                      "image/heic"
+                    ]
+                  }
+                }
+              },
+              "proposition": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": false,
+                "required": [
+                  "canal",
+                  "objet",
+                  "texte",
+                  "outil"
+                ],
+                "properties": {
+                  "canal": {
+                    "enum": [
+                      "email",
+                      "sms"
+                    ]
+                  },
+                  "objet": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 120
+                  },
+                  "texte": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1700
+                  },
+                  "outil": {
+                    "type": "string",
+                    "pattern": "^[a-z_]{2,60}$"
+                  }
+                }
+              },
+              "destinataire": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "opposition",
+                  "consentement_sms"
+                ],
+                "properties": {
+                  "opposition": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "consentement_sms": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "empreintes_connues": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "empreinte",
+              "lead_id"
+            ],
+            "properties": {
+              "empreinte": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "lead_id": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        },
+        "cles_existantes": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "type": "string",
+            "maxLength": 80
+          }
+        },
+        "maintenant": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "specialistes": {
+    "lib-trier-demande@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "mots_escalade_artisan"
+        ],
+        "properties": {
+          "mots_escalade_artisan": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "string",
+              "maxLength": 60
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "demande_id",
+          "texte",
+          "liens",
+          "honeypot",
+          "client_existant",
+          "urgence_declaree"
+        ],
+        "properties": {
+          "demande_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "texte": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 4000
+          },
+          "liens": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "honeypot": {
+            "type": "boolean"
+          },
+          "client_existant": {
+            "type": "boolean"
+          },
+          "urgence_declaree": {
+            "type": "boolean"
+          }
+        }
+      },
+      "classes": [
+        "urgence",
+        "peut_attendre",
+        "curieux",
+        "spam",
+        "client_existant"
+      ]
+    },
+    "lib-lire-photo@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {}
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "demande_id",
+          "photo"
+        ],
+        "properties": {
+          "demande_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "photo": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "ref",
+              "type_mime"
+            ],
+            "properties": {
+              "ref": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._-]{1,80}$"
+              },
+              "type_mime": {
+                "enum": [
+                  "image/jpeg",
+                  "image/png",
+                  "image/webp",
+                  "image/heic"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "sortie_modele": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "description",
+          "elements",
+          "confiance",
+          "chiffrage"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          },
+          "elements": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "string",
+              "maxLength": 60
+            }
+          },
+          "confiance": {
+            "type": "string",
+            "enum": [
+              "faible",
+              "moyenne",
+              "bonne"
+            ]
+          },
+          "chiffrage": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  },
+  "sortie": {
+    "statut": [
+      "ok",
+      "rien_a_faire",
+      "rejete",
+      "erreur"
+    ],
+    "resultat": [
+      "demandes_recues",
+      "classes",
+      "spam",
+      "escalades",
+      "questions",
+      "decisions",
+      "cartes",
+      "pilote",
+      "brouillons_demandes",
+      "refus_porte",
+      "deja_faits",
+      "photos"
+    ]
+  },
+  "studio_signature": {
+    "studio": "carte (À valider) ; brouillon demandé à 036-003 si aucune proposition",
+    "signature": "file du pilote reponse_prospect seulement si mode « auto » servi (capacité plateforme.ia.auto), pilote actif et type activé ; sinon carte",
+    "escalade": "carte « à traiter à la main », rien ne part chez le client",
+    "spam": "journal seulement"
+  }
+}

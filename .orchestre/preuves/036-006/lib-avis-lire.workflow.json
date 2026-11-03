@@ -1,0 +1,270 @@
+{
+  "id": "ScpXQIH54wmmuuel",
+  "name": "lib-avis-lire",
+  "active": false,
+  "isArchived": false,
+  "versionId": "e635cbda-ddc6-40cf-aaa2-31f21e346ab3",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 8,
+  "createdAt": "2026-11-03T11:18:45.520Z",
+  "updatedAt": "2026-11-03T11:22:29.546Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "L3GOS7euxi60jCZN,Dl8vjXWu71r7q0Fs",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "lib-avis-lire (036-006) : lecteur d'avis, classe négatif/positif, signale les avis suspects ; épinglé, jamais de réponse. Inactif, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par presti-dep-apres": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Classer les avis",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classer les avis": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "bfed4613-7c4f-40b6-8795-510bb6073b30",
+      "name": "Appelé par presti-dep-apres",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "b04feb7b-a2bb-44ec-8463-0334af9bf889",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de lib-avis-lire@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'lib-avis-lire@1';\nconst SCHEMA = {\"sans_contact\":true,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"interrupteur_general\",\"interrupteur_departement\",\"mots_escalade_artisan\"],\"properties\":{\"interrupteur_general\":{\"type\":\"boolean\"},\"interrupteur_departement\":{\"type\":\"boolean\"},\"mots_escalade_artisan\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"string\",\"maxLength\":60}}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"avis\",\"deja_vus\",\"maintenant\"],\"properties\":{\"avis\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"ref\",\"artisan_id\",\"source\",\"auteur\",\"note\",\"texte\",\"date\",\"client_connu\"],\"properties\":{\"ref\":{\"type\":\"string\",\"pattern\":\"^[A-Za-z0-9._:-]{1,64}$\"},\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"source\":{\"enum\":[\"colle\",\"google\"]},\"auteur\":{\"type\":[\"string\",\"null\"],\"maxLength\":70},\"note\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":5},\"texte\":{\"type\":\"string\",\"maxLength\":2000},\"date\":{\"type\":[\"string\",\"null\"],\"format\":\"date-time\"},\"client_connu\":{\"type\":[\"boolean\",\"null\"]}}}},\"deja_vus\":{\"type\":\"array\",\"maxItems\":5000,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"cle\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"cle\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80,\"pattern\":\"^[A-Za-z0-9_:.-]+$\"}}}},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: lib-avis-lire@1"
+    },
+    {
+      "id": "880aa1bb-a915-4784-9e5c-c24fda718e25",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-conforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "72dea8fa-85e6-431b-8817-b45aad370c42",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "45f8568c-b13c-4b58-900d-1fda5bd52641",
+      "name": "Classer les avis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// lib-avis-lire (036-006 ; A18, décision 3) : le lecteur d'avis. Mode A : l'avis est COLLÉ (ou transféré) par l'artisan, ou serait lu sur la fiche\n// Google quand l'accès à l'API sera accordé (nœud Google Business Profile, review : getAll — décrit dans connecteurs/fiche-google.md, JAMAIS posé ici).\n// Il CLASSE, il ne répond pas : négatif (note de 3 ou moins, mot de litige) ou positif ; il SIGNALE un avis suspect (client inconnu, texte copié,\n// rafale) sans jamais l'accuser ; chaque avis n'entre qu'UNE fois (clé de compte). Aucun modèle, aucun secret, aucune donnée de contact.\n// Copie figée d'une partie de MOTS_ESCALADE_TOUJOURS (lib/pilote/regles.ts), comparée au code par scripts/apres-reputation-n8n-qa.mjs.\nconst MOTS_LITIGE = [\"litige\",\"avocat\",\"plainte\",\"tribunal\",\"arnaque\",\"escroc\",\"mise en demeure\",\"rembours\",\"malfaçon\",\"vice caché\",\"dgccrf\",\"justice\",\"huissier\",\"menaç\",\"préjudice\",\"dédommag\",\"indemni\",\"conteste\"];\nconst sansAccents = (s) => String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');\nconst enMots = (s) => ' ' + sansAccents(s).replace(/[^a-z0-9]+/g, ' ').trim() + ' ';\nconst LITIGE = MOTS_LITIGE.map((m) => [m, enMots(m).trim()]);\nfunction litigeDe(texte, motsArtisan) {\n  const mots = enMots(texte);\n  for (const [m, k] of LITIGE) if (k && mots.includes(' ' + k)) return m;\n  const nu = sansAccents(texte);\n  for (const m of Array.isArray(motsArtisan) ? motsArtisan : []) { const k = sansAccents(m).trim(); if (typeof m === 'string' && k && nu.includes(k)) return m; }\n  return null;\n}\nconst DEUX_HEURES = 2 * 3600000;\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, c = e.config, org = e.organisation_id, sim = e.simulation === true;\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: 'lib-avis-lire', objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    if (d.avis.some((a) => a.artisan_id !== org) || d.deja_vus.some((x) => x.artisan_id !== org)) {\n      return { ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: ['autre_compte : un avis ou une ligne lue n’est pas celle de ce compte'],\n        journal: [ligne('lecture_refusee', null, 'autre_compte : rien n’est classé')] };\n    }\n    if (!(c.interrupteur_general === true && c.interrupteur_departement === true)) {\n      return { ...j, statut: 'rien_a_faire', resultat: { avis: [], a_repondre: false, silence: true, ignores: { deja_vu: 0, doublon: 0 }, negatifs: 0, suspects: 0 }, effets_prevus: [], journal: [ligne('lecture_silencieuse', null, 'interrupteur coupé : le département se tait')] };\n    }\n    const vus = new Set(d.deja_vus.map((x) => x.cle));\n    const ignores = { deja_vu: 0, doublon: 0 };\n    const retenus = [], dans = new Set();\n    for (const a of d.avis) {\n      const cle = 'av:' + a.source.slice(0, 3) + ':' + a.ref;\n      if (vus.has(cle)) { ignores.deja_vu++; continue; }\n      if (dans.has(cle)) { ignores.doublon++; continue; }\n      dans.add(cle);\n      retenus.push({ a: a, cle: cle });\n    }\n    const normalises = retenus.map((x) => enMots(x.a.texte).trim());\n    const classes = [], effets = [], journal = [];\n    retenus.forEach((x, i) => {\n      const a = x.a;\n      const ligneAvis = { cle: x.cle, ref: a.ref, source: a.source, auteur: a.auteur, note: a.note, texte: a.texte, date: a.date };\n      const litige = litigeDe(a.texte, c.mots_escalade_artisan); const negatif = a.note <= 3 || litige !== null;\n      const motifs = [];\n      if (a.note <= 3) motifs.push('note_basse');\n      if (litige !== null) motifs.push('litige:' + litige);\n      const motifsSuspicion = [];\n      if (a.client_connu === false) motifsSuspicion.push('client_inconnu');\n      if (normalises[i].length >= 15 && normalises.some((t, k) => k !== i && t === normalises[i])) motifsSuspicion.push('doublon_texte');\n      if (a.date && retenus.filter((y) => y.a.date && y.a.note === a.note && Math.abs(Date.parse(y.a.date) - Date.parse(a.date)) <= DEUX_HEURES).length >= 3) motifsSuspicion.push('rafale');\n      const suspect = motifsSuspicion.length > 0;\n      classes.push({ cle: ligneAvis.cle, ref: ligneAvis.ref, source: ligneAvis.source, auteur: ligneAvis.auteur, note: ligneAvis.note, sentiment: negatif ? 'negatif' : 'positif', motifs: motifs, suspect: suspect, motifs_suspicion: motifsSuspicion, texte: ligneAvis.texte, date: ligneAvis.date });\n      effets.push({ effet: 'noter_evenement', organisation_id: org, type: 'avis_recu', cle: x.cle, faits: { source: a.source, note: a.note, sentiment: negatif ? 'negatif' : 'positif', suspect: suspect } });\n      journal.push(ligne('avis_classe', x.cle, (negatif ? 'négatif' : 'positif') + (suspect ? ', suspect (' + motifsSuspicion.join(', ') + ')' : '') + ' : rien n’est publié'));\n    });\n    classes.sort((p, q) => (q.sentiment === 'negatif') - (p.sentiment === 'negatif'));\n    const negatifs = classes.filter((x) => x.sentiment === 'negatif').length, suspects = classes.filter((x) => x.suspect).length;\n    journal.unshift(ligne('lecture_avis', null, classes.length + ' avis classé(s), ' + negatifs + ' négatif(s), ' + suspects + ' suspect(s), ' + ignores.deja_vu + ' déjà vu(s)'));\n    return { ...j, statut: classes.length ? 'ok' : 'rien_a_faire', resultat: { avis: classes, a_repondre: classes.length > 0, silence: false, ignores: ignores, negatifs: negatifs, suspects: suspects }, effets_prevus: effets, journal: journal.slice(0, 200) };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, erreurs: ['lecture des avis : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "a2c35c60-a71f-482e-8dd2-270dc93961a9",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de lib-avis-lire@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-avis-lire@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "21ff4a29-ecdf-48a5-9400-2fb8b747c7c4",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        120
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 036-006). Rien n'a été écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (cartes, base) n'est pas branché. Il le sera au « go » de Benj, derrière cette même porte."
+    },
+    {
+      "id": "4a1e08cd-4b35-4379-9cb7-a45763f981c8",
+      "name": "Sticky Note 338a2776",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## lib-avis-lire (036-006)\nLecteur d'avis (A18) : l'avis est collé par l'artisan (ou lu sur la fiche Google quand l'accès sera accordé). Il classe négatif ou positif (note de 3 ou moins, mots de litige), signale un avis suspect (client inconnu, texte copié, rafale) sans l'accuser, et ne laisse entrer chaque avis qu'une fois. Il ne répond à rien.\nContrat lib-avis-lire@1 (enveloppe@1, gabarit « Contrat » de 035-003, contrat sans contact). Appelé par presti-dep-apres et par presti-banc-apres.\nINACTIF, jamais publié, en simulation (mode A) : aucun identifiant, aucun nœud réseau ; les écritures partent dans effets_prevus.\nJuge : scripts/apres-reputation-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 400
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-006), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

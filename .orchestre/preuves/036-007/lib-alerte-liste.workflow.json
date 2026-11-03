@@ -1,0 +1,270 @@
+{
+  "id": "v2wfT9qB5e0LHtFI",
+  "name": "lib-alerte-liste",
+  "active": false,
+  "isArchived": false,
+  "versionId": "cc8f62cb-ab1a-4918-9113-9f85ce5424dd",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 8,
+  "createdAt": "2026-11-03T11:22:08.982Z",
+  "updatedAt": "2026-11-03T11:27:03.835Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "availableInMCP": true,
+    "callerIds": "oHGOyqsZGoUooxa6,K7lsk0lRJtH5xEOJ"
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "lib-alerte-liste (036-007) : agent Alerte à liste fermée (sept types, chacun avec son responsable) ; push prévu, jamais fait ; INACTIF, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par presti-dep-direction": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Évaluer la liste fermée",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Évaluer la liste fermée": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "7eeae638-ca92-495c-b596-49d353b9b7d9",
+      "name": "Appelé par presti-dep-direction",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "9b5dfa54-2590-4779-a747-0bb9a56ade16",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de lib-alerte-liste@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'lib-alerte-liste@1';\nconst SCHEMA = {\"sans_contact\":true,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"interrupteur_general\",\"interrupteur_departement\",\"seuil_impaye_centimes\",\"plafond_alertes_jour\"],\"properties\":{\"interrupteur_general\":{\"type\":\"boolean\"},\"interrupteur_departement\":{\"type\":\"boolean\"},\"seuil_impaye_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000000},\"plafond_alertes_jour\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":10}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"evenements\",\"cles_deja_alertees\",\"alertes_envoyees_aujourdhui\",\"maintenant\"],\"properties\":{\"evenements\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"type\",\"cle\",\"survenu_le\",\"faits\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"type\":{\"type\":\"string\",\"maxLength\":40,\"pattern\":\"^[a-z_]+$\"},\"cle\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40,\"pattern\":\"^[A-Za-z0-9_:.-]+$\"},\"survenu_le\":{\"type\":\"string\",\"format\":\"date-time\"},\"faits\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[],\"properties\":{\"prix_ferme\":{\"type\":\"boolean\"},\"mecontent\":{\"type\":\"boolean\"},\"litige\":{\"type\":\"boolean\"},\"urgent\":{\"type\":\"boolean\"},\"montant_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000000},\"workflow\":{\"type\":\"string\",\"maxLength\":80,\"pattern\":\"^[A-Za-z0-9_-]+$\"},\"total_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000000000},\"base_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000000000}}}}}},\"cles_deja_alertees\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"maxLength\":80}},\"alertes_envoyees_aujourdhui\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: lib-alerte-liste@1"
+    },
+    {
+      "id": "feaf3714-d03b-4549-bbf6-c6d97212f572",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-conforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "38a099ed-eadf-4d05-aa1f-8656773f92c1",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "896fd055-ed84-4e33-8ff5-987bdc2b4052",
+      "name": "Évaluer la liste fermée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const AGENT = 'lib-alerte-liste';\nconst eurC = (c) => { const n = Math.round(c), a = Math.abs(n), ent = Math.floor(a / 100), ct = a % 100; return (n < 0 ? '-' : '') + String(ent).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + (ct ? ',' + String(ct).padStart(2, '0') : '') + ' €'; };\nconst eurosCourt = (n) => String(Math.round(n)).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + ' €';\nconst parisJour = (iso) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(Date.parse(iso)));\nconst parisHeure = (iso) => Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', hourCycle: 'h23' }).format(new Date(Date.parse(iso))));\nconst joursEntre = (de, a) => Math.floor((Date.parse(a + 'T00:00:00Z') - Date.parse(String(de).slice(0, 10) + 'T00:00:00Z')) / 86400000);\nconst refuse = (j, sim, evenement, raison) => ({ ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: [raison], journal: [{ evenement: evenement, agent: AGENT, objet_ref: null, decision: raison.slice(0, 200), simulation: sim }] });\n// lib-alerte-liste (036-007 ; A8, p6:110, reel du 25/09) : l'agent Alerte à LISTE FERMÉE. Sept types seulement peuvent réveiller quelqu'un, chacun avec son responsable ;\n// tout autre type est IGNORÉ et compté, jamais transmis. L'artisan n'est réveillé que par ce dont il est le responsable, jamais dans les heures calmes (21 h-7 h, Paris)\n// sauf un message urgent reçu tard, dans la limite du plafond du jour ; le reste est reporté à la page du matin. Une alerte déjà envoyée (clé) ne repart pas.\n// Le texte d'une alerte est fixe : aucun nom, aucune phrase de client. Envoi prévu par push (lib/push.ts:105, envoyerPushArtisan), JAMAIS fait ; Benj par lib-alerter@1.\nconst LISTE = {\n  demande_de_prix_ferme: { responsable: 'artisan', titre: 'Un client demande un prix ferme', lien: '/messages' },\n  client_mecontent: { responsable: 'artisan', titre: 'Un client est mécontent', lien: '/messages' },\n  litige: { responsable: 'artisan', titre: 'Un litige est ouvert', lien: '/messages' },\n  message_urgent_tard: { responsable: 'artisan', titre: 'Un message urgent est arrivé tard', lien: '/messages' },\n  impaye_au_dessus_du_seuil: { responsable: 'artisan', titre: 'Un impayé dépasse votre seuil', lien: '/factures' },\n  workflow_en_panne: { responsable: 'benj', categorie: 'workflow_en_panne' },\n  cout_qui_derive: { responsable: 'benj', categorie: 'cout_qui_derive' },\n};\nfunction verifie(ev, c) {\n  const f = ev.faits;\n  switch (ev.type) {\n    case 'demande_de_prix_ferme': return f.prix_ferme === true;\n    case 'client_mecontent': return f.mecontent === true;\n    case 'litige': return f.litige === true;\n    case 'message_urgent_tard': { const h = parisHeure(ev.survenu_le); return f.urgent === true && (h >= 20 || h < 8); }\n    case 'impaye_au_dessus_du_seuil': return c.seuil_impaye_centimes > 0 && Number.isInteger(f.montant_centimes) && f.montant_centimes >= c.seuil_impaye_centimes;\n    case 'workflow_en_panne': return typeof f.workflow === 'string';\n    case 'cout_qui_derive': return Number.isInteger(f.total_centimes);\n    default: return false;\n  }\n}\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, c = e.config, org = e.organisation_id, sim = e.simulation === true;\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: AGENT, objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    if (d.evenements.some((x) => x.artisan_id !== org)) return refuse(j, sim, 'alerte_refusee', 'autre_compte : un événement lu n’est pas celui de ce compte');\n    if (!(c.interrupteur_general === true && c.interrupteur_departement === true)) return { ...j, statut: 'rien_a_faire', resultat: { etat: 'interrupteur_coupe', alertes: [], reportees_au_matin: [] }, effets_prevus: [], journal: [ligne('alerte_saute', null, 'interrupteur coupé : personne n’est réveillé')] };\n    const calmes = (() => { const h = parisHeure(d.maintenant); return h >= 21 || h < 7; })();\n    const ignorees = { hors_liste: 0, hors_condition: 0, deja_alertee: 0 };\n    const horsListe = [], alertes = [], reportees = [], effets = [], journal = [], vus = new Set(), connues = new Set(d.cles_deja_alertees);\n    let prevus = d.alertes_envoyees_aujourdhui;\n    const evs = d.evenements.slice().sort((a, b) => (a.survenu_le < b.survenu_le ? -1 : a.survenu_le > b.survenu_le ? 1 : (a.cle < b.cle ? -1 : 1)));\n    for (const ev of evs) {\n      if (!Object.prototype.hasOwnProperty.call(LISTE, ev.type)) { ignorees.hors_liste++; if (horsListe.length < 10 && !horsListe.includes(ev.type)) horsListe.push(ev.type); continue; }\n      const regle = LISTE[ev.type];\n      if (!verifie(ev, c)) { ignorees.hors_condition++; continue; }\n      const cle = (ev.type + ':' + ev.cle).slice(0, 80);\n      if (connues.has(cle) || vus.has(cle)) { ignorees.deja_alertee++; continue; }\n      vus.add(cle);\n      if (regle.responsable === 'artisan') {\n        if (calmes && ev.type !== 'message_urgent_tard') { reportees.push({ type: ev.type, cle: cle, motif: 'heures_calmes' }); continue; }\n        if (prevus >= c.plafond_alertes_jour) { reportees.push({ type: ev.type, cle: cle, motif: 'plafond_du_jour' }); continue; }\n        prevus++;\n        const corps = ev.type === 'impaye_au_dessus_du_seuil' ? 'Un impayé dépasse ' + eurC(c.seuil_impaye_centimes) + '. Ouvrez la page du jour.' : 'Ouvrez la page du jour : une carte vous attend.';\n        alertes.push({ type: ev.type, cle: cle, responsable: 'artisan', canal: 'push', texte: regle.titre, lien: regle.lien });\n        effets.push({ effet: 'envoyer_push', organisation_id: org, cle: 'al:' + cle, via: 'lib/push.ts:105 envoyerPushArtisan', charge: { titre: regle.titre, corps: corps, lien: regle.lien } });\n      } else {\n        alertes.push({ type: ev.type, cle: cle, responsable: 'benj', canal: 'lib-alerter', texte: ev.type, lien: null });\n        effets.push({ effet: 'alerter', contrat: 'lib-alerter@1', donnees: { categorie: regle.categorie, workflow: ev.faits.workflow || (ev.type === 'cout_qui_derive' ? 'lib-cout-ia' : 'presti-dep-direction'), lien_execution: null, destinataire_role: 'benj', survenue_le: ev.survenu_le } });\n      }\n      effets.push({ effet: 'noter_evenement', organisation_id: org, type: 'alerte_prevue', cle: 'al:' + cle, faits: { type: ev.type, responsable: regle.responsable } });\n      journal.push(ligne('alerte', cle, ev.type + ' → ' + regle.responsable));\n    }\n    journal.unshift(ligne('alerte_bilan', null, alertes.length + ' alerte(s), ' + reportees.length + ' reportée(s) à la page du matin, ' + ignorees.hors_liste + ' hors de la liste fermée'));\n    return { ...j, statut: alertes.length ? 'ok' : 'rien_a_faire', resultat: { liste_fermee: Object.keys(LISTE), alertes: alertes, reportees_au_matin: reportees, ignorees: ignorees, types_hors_liste: horsListe, heures_calmes: calmes }, effets_prevus: effets, journal: journal.slice(0, 200) };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['alerte : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "51a40947-4071-4bcc-aeef-03db0770af12",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de lib-alerte-liste@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-alerte-liste@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "f6943eaa-5b66-45b7-a255-4125d3c592f3",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        120
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 036-007). Rien n'a été écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (push, base, rapport) n'est pas branché. Il le sera au « go » de Benj, derrière cette même porte."
+    },
+    {
+      "id": "69ff45dc-b807-441a-a174-f7a20eb386b9",
+      "name": "Sticky Note c32e04f9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## lib-alerte-liste (036-007)\nL'agent Alerte (A8) à LISTE FERMÉE : sept types seulement peuvent réveiller quelqu'un, chacun avec son responsable (artisan ou Benj). Tout autre type est ignoré et compté. Heures calmes, plafond du jour, clé d'idempotence ; texte fixe sans donnée de client. Envoi prévu par push (lib/push.ts:105), jamais fait.\nContrat lib-alerte-liste@1 (enveloppe@1, gabarit « Contrat » de 035-003). Appelé par presti-dep-direction et par presti-banc-direction.\nINACTIF, jamais publié, en simulation (mode A) : les lectures sont passées par l'appelant, les écritures partent dans effets_prevus. Aucun identifiant.\nJuge : scripts/direction-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 400
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-007), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

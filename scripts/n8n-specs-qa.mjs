@@ -92,6 +92,9 @@ const TYPES_PERMIS = new Set([
 // (AI Agent 3.x, Claude, parseur structuré). Un autre fournisseur de modèle s'ajoute ici en connaissance de cause.
 const SOUS_TRIGGER = 'n8n-nodes-base.executeWorkflowTrigger'
 const SOUS_APPEL = 'n8n-nodes-base.executeWorkflow'
+// 03/11 (prompt 6, § 1.4) : le Cerveau `presti-cerveau` appelle ses chefs `presti-dep-*`, qui sont des sous-workflows. Cette famille du
+// chantier 4 garde R1 à R7 (lecture seule comprise) et gagne la liste blanche de la bibliothèque `lib-*` (sous-workflows, routeur, arrêt).
+const P6_ORCHESTRE = /^presti-(cerveau$|dep-|banc-|boite$)/ // le banc d'essai et la relève de la boîte (036-003) appellent aussi des sous-workflows
 const AGENT = '@n8n/n8n-nodes-langchain.agent'
 const PARSEUR = '@n8n/n8n-nodes-langchain.outputParserStructured'
 const CODE = 'n8n-nodes-base.code'
@@ -168,7 +171,8 @@ function verifier(brut, registre = {}) {
   const noms = new Set(wf.nodes.map((n) => n.name))
   for (const n of wf.nodes) {
     // R5 : types (liste blanche de la famille)
-    if (!(neuf ? TYPES_PERMIS_NEUFS : TYPES_PERMIS).has(n.type)) ko('R5', `${n.name} : type de nœud hors liste blanche (${n.type})`)
+    const orchestreP6 = !neuf && P6_ORCHESTRE.test(String(wf.name ?? ''))
+    if (!(neuf ? TYPES_PERMIS_NEUFS : TYPES_PERMIS).has(n.type) && !(orchestreP6 && TYPES_PERMIS_NEUFS.has(n.type))) ko('R5', `${n.name} : type de nœud hors liste blanche (${n.type})`)
     // R6 : identifiants
     for (const [genre, c] of Object.entries(n.credentials ?? {})) {
       const nom = c && typeof c === 'object' ? c.name : null

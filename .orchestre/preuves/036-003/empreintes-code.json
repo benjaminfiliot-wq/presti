@@ -1,0 +1,32 @@
+{
+  "lib-boite-brouillon": {
+    "Contrat d'entrée": "d6be48f3630de3a0c0a9e8e5d5ab8c0b844345a3cf597f38977e4c681df89697",
+    "Préparer le brouillon": "06a1cf0f2139c6caa90cb46422a33d76d52ab5012d14bb09c05753b3d7c7780f",
+    "Contrat de sortie": "19300ee7af95e51088b4a5c47a949f52a2a87a85c10fb503608350fc3ca5fa24"
+  },
+  "lib-boite-envoyer": {
+    "Contrat d'entrée": "cd67bfb7cd8abceeaa983514ede7a4f976da35ee3b93b03bb2ae16034e049562",
+    "Préparer l'envoi": "16487f17db00d29811fd3075871d1d2899dad173acdedf9b1738df29bf938ab2",
+    "Contrat de sortie": "d3e90185a21e8ba19319646d8e886d439b26f2996d9d59652824e319a432a8c4"
+  },
+  "lib-boite-lire": {
+    "Contrat d'entrée": "0fc22ea3f53ac1a8629d6a88f23c6f6bea6de1c89cf785ffb86a959cc090f3cf",
+    "Lire la boîte épinglée et la ranger": "af1a1622d74859def953dd97f9156fd553a047c81d61be68e3e1722dbb60d4dc",
+    "Contrat de sortie": "57667c6f41e1bd9833ae3af9fdac4bdb234b934cbe0d69147a31c181fc5b3632"
+  },
+  "presti-banc-boite": {
+    "Cas : relève mêlée": "09f425c8d866b5abccc67cb22b9d57e863622b61912ed53afa19c601092cfdbc",
+    "Bilan du banc": "cf76a91d7459b33a5ef6e1a942f8e3be54d6a152a7a238cb4eba4d6ecaf64250",
+    "Cas : autorisation expirée": "ef0dd99fe2459be2e60740e6fe35ed8102c3a933abd4228e09dcbe8d07df7adc",
+    "Cas : brouillon de Studio": "db871a0efc26626ce09a44628febd1fdcd0890daf9a3da3da08c64f7152f75fb",
+    "Cas : envoi de Signature": "42f39fd63f381d7b556efd309eddce4ee97c273d4f93976028ede270c2d241a7",
+    "Cas : envoi refusé en Studio": "2440484c8152e78221f00d7a7c486b29eb3bb8ac202b4cf8ffed81b81aa99f1b"
+  },
+  "presti-boite": {
+    "Classer le travail dû": "20bf06c728df4eeadad8663d542c9368f425f484048e498ca3f69e4a983460fc",
+    "Préparer la relève": "c8cd6f6a4f6384acb8cfe543eb6eaa040965c5c2cc31367010c283d106a7b66a",
+    "Préparer le brouillon": "fee2cee942c2feda051d6cc0050eb0eb38064ba81a3e95ce11e88f57ebb14e82",
+    "Préparer l'envoi": "4cdd707402b8dc39ba372ec80acc10a838a9dc5a9db2e56a727bce34beb610dc",
+    "Bilan du passage": "b6adf1cd01f9e3c91fcf95d4b0696530e1db0a1f94a0777a5417922e9d71df23"
+  }
+}

@@ -1,0 +1,1449 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "tache": "036-007",
+  "source": "plans/011-cadrage-01-11/p6-signature/premiere-reponse.md, ligne 036-007 du § 4 ; lib/assistant/briefing.ts ; supabase/migrations/0193_systeme_agents.sql (couts_ia_appels, couts_ia_jour, competences)",
+  "regle": "Hors contrat = rejet (statut « rejete »), une ligne de journal, rien ne part. Toute ligne lue porte artisan_id et doit être celle du compte (« Supabase account » passe outre la RLS). Les écritures ne sont jamais faites ici : elles partent dans effets_prevus.",
+  "titre": "presti-dep-direction@1 — le département Direction (page du matin, rapport du lundi, diagnostic, alerte à liste fermée, coût IA)",
+  "chef": {
+    "workflow": "presti-dep-direction",
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "offre": {
+          "enum": [
+            "studio",
+            "signature",
+            "essentiel",
+            "essai"
+          ]
+        },
+        "interrupteur_general": {
+          "type": "boolean"
+        },
+        "interrupteur_departement": {
+          "type": "boolean"
+        },
+        "seuil_impaye_centimes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000
+        },
+        "plafond_alertes_jour": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "plafond_cout_jour_centimes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000000
+        },
+        "seuil_derive_pct": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 1000
+        },
+        "jours_base_min": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 14
+        },
+        "plancher_derive_centimes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      }
+    },
+    "donnees": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evenements"
+      ],
+      "properties": {
+        "evenements": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "object"
+          }
+        },
+        "genre": {
+          "enum": [
+            "matin",
+            "lundi",
+            "diagnostic",
+            "alerte",
+            "cout"
+          ]
+        },
+        "maintenant": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "matin": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sources",
+            "impayes",
+            "devis",
+            "demandes",
+            "cartes"
+          ],
+          "properties": {
+            "sources": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "impayes",
+                "devis",
+                "demandes",
+                "cartes"
+              ],
+              "properties": {
+                "impayes": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "lue",
+                    "le"
+                  ],
+                  "properties": {
+                    "lue": {
+                      "type": "boolean"
+                    },
+                    "le": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  }
+                },
+                "devis": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "lue",
+                    "le"
+                  ],
+                  "properties": {
+                    "lue": {
+                      "type": "boolean"
+                    },
+                    "le": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  }
+                },
+                "demandes": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "lue",
+                    "le"
+                  ],
+                  "properties": {
+                    "lue": {
+                      "type": "boolean"
+                    },
+                    "le": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  }
+                },
+                "cartes": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "lue",
+                    "le"
+                  ],
+                  "properties": {
+                    "lue": {
+                      "type": "boolean"
+                    },
+                    "le": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    }
+                  }
+                }
+              }
+            },
+            "impayes": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "id",
+                  "numero",
+                  "total_ttc",
+                  "date_echeance"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "numero": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 40
+                  },
+                  "total_ttc": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10000000
+                  },
+                  "date_echeance": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  }
+                }
+              }
+            },
+            "devis": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "id",
+                  "numero",
+                  "total_ttc",
+                  "envoye_le"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "numero": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 40
+                  },
+                  "total_ttc": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10000000
+                  },
+                  "envoye_le": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "demandes": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "id",
+                  "urgent"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "urgent": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "stock": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "id",
+                  "article",
+                  "reste"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "article": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 80
+                  },
+                  "reste": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "exclus": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "string",
+                "maxLength": 60
+              }
+            },
+            "cartes": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "cle",
+                  "type_action",
+                  "objet",
+                  "titre",
+                  "apercu",
+                  "montant_centimes",
+                  "preparee_le"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "cle": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "type_action": {
+                    "type": "string",
+                    "pattern": "^[a-z_]{2,60}$"
+                  },
+                  "objet": {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "titre": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "apercu": {
+                    "type": "string",
+                    "maxLength": 300
+                  },
+                  "montant_centimes": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 10000000000
+                  },
+                  "preparee_le": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "cles_existantes": {
+              "type": "array",
+              "maxItems": 1000,
+              "items": {
+                "type": "string",
+                "maxLength": 80
+              }
+            }
+          }
+        },
+        "lundi": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "du",
+            "au",
+            "lu_le",
+            "kpis",
+            "bases_de_depart",
+            "actions",
+            "devis_signes",
+            "relances",
+            "encaissements",
+            "impayes_en_cours",
+            "lues"
+          ],
+          "properties": {
+            "du": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "au": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "lu_le": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "kpis": {
+              "type": "array",
+              "maxItems": 20,
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z_]{2,60}$"
+              }
+            },
+            "bases_de_depart": {
+              "type": "object"
+            },
+            "actions": {
+              "type": "array",
+              "maxItems": 5000,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "type_action",
+                  "etat",
+                  "le"
+                ],
+                "properties": {
+                  "type_action": {
+                    "type": "string",
+                    "pattern": "^[a-z_]{2,60}$"
+                  },
+                  "etat": {
+                    "enum": [
+                      "fait_seul",
+                      "en_attente",
+                      "echec",
+                      "refuse_porte",
+                      "deja_traite"
+                    ]
+                  },
+                  "le": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "devis_signes": {
+              "type": "array",
+              "maxItems": 500,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "id",
+                  "montant_centimes",
+                  "signe_le"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "montant_centimes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10000000000
+                  },
+                  "signe_le": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "relances": {
+              "type": "array",
+              "maxItems": 2000,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "devis_id",
+                  "le"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "devis_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "le": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "encaissements": {
+              "type": "array",
+              "maxItems": 2000,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "id",
+                  "montant_centimes",
+                  "paye_le"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "montant_centimes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10000000000
+                  },
+                  "paye_le": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "impayes_en_cours": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "lue",
+                "nombre",
+                "montant_centimes"
+              ],
+              "properties": {
+                "lue": {
+                  "type": "boolean"
+                },
+                "nombre": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "montant_centimes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100000000000
+                }
+              }
+            },
+            "lues": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "encaissements",
+                "devis_signes",
+                "relances",
+                "journal"
+              ],
+              "properties": {
+                "encaissements": {
+                  "type": "boolean"
+                },
+                "devis_signes": {
+                  "type": "boolean"
+                },
+                "relances": {
+                  "type": "boolean"
+                },
+                "journal": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "diagnostic": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lu_le",
+            "periode_jours",
+            "depuis",
+            "demandes",
+            "devis"
+          ],
+          "properties": {
+            "lu_le": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "periode_jours": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 365
+            },
+            "depuis": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "demandes": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "required": [
+                "recues",
+                "sans_reponse",
+                "delai_median_min"
+              ],
+              "properties": {
+                "recues": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "sans_reponse": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "delai_median_min": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 1000000
+                }
+              }
+            },
+            "devis": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "required": [
+                "envoyes",
+                "signes",
+                "non_signes_nombre",
+                "non_signes_centimes"
+              ],
+              "properties": {
+                "envoyes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "signes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "non_signes_nombre": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "non_signes_centimes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100000000000
+                }
+              }
+            }
+          }
+        },
+        "alerte": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "evenements",
+            "cles_deja_alertees",
+            "alertes_envoyees_aujourdhui"
+          ],
+          "properties": {
+            "evenements": {
+              "type": "array",
+              "maxItems": 100,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "type",
+                  "cle",
+                  "survenu_le",
+                  "faits"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "type": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^[a-z_]+$"
+                  },
+                  "cle": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40,
+                    "pattern": "^[A-Za-z0-9_:.-]+$"
+                  },
+                  "survenu_le": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "faits": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [],
+                    "properties": {
+                      "prix_ferme": {
+                        "type": "boolean"
+                      },
+                      "mecontent": {
+                        "type": "boolean"
+                      },
+                      "litige": {
+                        "type": "boolean"
+                      },
+                      "urgent": {
+                        "type": "boolean"
+                      },
+                      "montant_centimes": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1000000000
+                      },
+                      "workflow": {
+                        "type": "string",
+                        "maxLength": 80,
+                        "pattern": "^[A-Za-z0-9_-]+$"
+                      },
+                      "total_centimes": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100000000000
+                      },
+                      "base_centimes": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100000000000
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "cles_deja_alertees": {
+              "type": "array",
+              "maxItems": 1000,
+              "items": {
+                "type": "string",
+                "maxLength": 80
+              }
+            },
+            "alertes_envoyees_aujourdhui": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000
+            }
+          }
+        },
+        "cout": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "jour",
+            "appels",
+            "cumul_du_jour",
+            "jours_precedents",
+            "cles_connues"
+          ],
+          "properties": {
+            "jour": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "appels": {
+              "type": "array",
+              "maxItems": 500,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "cle",
+                  "departement",
+                  "modele",
+                  "externe",
+                  "jetons_entree",
+                  "jetons_sortie",
+                  "cout_eur",
+                  "source_tarif",
+                  "survenu_le"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "cle": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 120,
+                    "pattern": "^[A-Za-z0-9_:.-]+$"
+                  },
+                  "departement": {
+                    "enum": [
+                      "tous",
+                      "accueil",
+                      "devis",
+                      "suivi",
+                      "facturation",
+                      "apres",
+                      "operations",
+                      "direction"
+                    ]
+                  },
+                  "modele": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9._-]{1,79}$"
+                  },
+                  "externe": {
+                    "type": "boolean"
+                  },
+                  "jetons_entree": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10000000
+                  },
+                  "jetons_sortie": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10000000
+                  },
+                  "cout_eur": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 100000
+                  },
+                  "source_tarif": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 120
+                  },
+                  "survenu_le": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "cumul_du_jour": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "jour",
+                  "departement",
+                  "modele",
+                  "externe",
+                  "appels",
+                  "cout_millicentimes"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "jour": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "departement": {
+                    "enum": [
+                      "tous",
+                      "accueil",
+                      "devis",
+                      "suivi",
+                      "facturation",
+                      "apres",
+                      "operations",
+                      "direction"
+                    ]
+                  },
+                  "modele": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9._-]{1,79}$"
+                  },
+                  "externe": {
+                    "type": "boolean"
+                  },
+                  "appels": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10000000
+                  },
+                  "cout_millicentimes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000000000
+                  }
+                }
+              }
+            },
+            "jours_precedents": {
+              "type": "array",
+              "maxItems": 100,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artisan_id",
+                  "jour",
+                  "cout_millicentimes"
+                ],
+                "properties": {
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "jour": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "cout_millicentimes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000000000
+                  }
+                }
+              }
+            },
+            "cles_connues": {
+              "type": "array",
+              "maxItems": 5000,
+              "items": {
+                "type": "string",
+                "maxLength": 120
+              }
+            },
+            "cles_deja_alertees": {
+              "type": "array",
+              "maxItems": 1000,
+              "items": {
+                "type": "string",
+                "maxLength": 80
+              }
+            }
+          }
+        }
+      }
+    },
+    "effets_prevus": [
+      "deposer_page",
+      "deposer_rapport",
+      "deposer_diagnostic",
+      "appeler",
+      "noter_evenement",
+      "(effets de lib-alerte-liste)",
+      "(effets de lib-cout-ia)"
+    ],
+    "genres": {
+      "matin": "page du matin : l’argent d’abord (impayés, devis à signer, demandes sans réponse), trois priorités, et elle se TERMINE par des cartes à valider",
+      "lundi": "rapport du lundi : chaque chiffre avec sa source et sa date ; une relance n’est créditée que si elle précède la signature (A10) ; aucun chiffre de gain",
+      "diagnostic": "« où perdez-vous de l’argent ? » : calculé sur les données, sinon « pas encore de données », jamais estimé (A16)",
+      "alerte": "aiguille vers lib-alerte-liste (liste fermée A8)",
+      "cout": "aiguille vers lib-cout-ia, puis vers lib-alerte-liste si le coût dérive ou atteint le plafond"
+    },
+    "declencheurs_voulus": {
+      "matin": "événement page_du_matin, 7 h 30 Paris (route déjà connue du Cerveau)",
+      "lundi": "événement rapport_du_lundi, 8 h Paris (route à ajouter au Cerveau)",
+      "diagnostic": "événement diagnostic_a_faire, premier écran d’un nouveau compte (route à ajouter)",
+      "alerte": "événement d’interruption alerte_a_evaluer (route à ajouter)",
+      "cout": "événement cout_ia_du_jour (route à ajouter)"
+    }
+  },
+  "enfants": {
+    "lib-alerte-liste@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "interrupteur_general",
+          "interrupteur_departement",
+          "seuil_impaye_centimes",
+          "plafond_alertes_jour"
+        ],
+        "properties": {
+          "interrupteur_general": {
+            "type": "boolean"
+          },
+          "interrupteur_departement": {
+            "type": "boolean"
+          },
+          "seuil_impaye_centimes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "plafond_alertes_jour": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evenements",
+          "cles_deja_alertees",
+          "alertes_envoyees_aujourdhui",
+          "maintenant"
+        ],
+        "properties": {
+          "evenements": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "type",
+                "cle",
+                "survenu_le",
+                "faits"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "type": {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^[a-z_]+$"
+                },
+                "cle": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 40,
+                  "pattern": "^[A-Za-z0-9_:.-]+$"
+                },
+                "survenu_le": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "faits": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [],
+                  "properties": {
+                    "prix_ferme": {
+                      "type": "boolean"
+                    },
+                    "mecontent": {
+                      "type": "boolean"
+                    },
+                    "litige": {
+                      "type": "boolean"
+                    },
+                    "urgent": {
+                      "type": "boolean"
+                    },
+                    "montant_centimes": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000000000
+                    },
+                    "workflow": {
+                      "type": "string",
+                      "maxLength": 80,
+                      "pattern": "^[A-Za-z0-9_-]+$"
+                    },
+                    "total_centimes": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000000000
+                    },
+                    "base_centimes": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000000000
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "cles_deja_alertees": {
+            "type": "array",
+            "maxItems": 1000,
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
+          "alertes_envoyees_aujourdhui": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "effets_prevus": [
+        "envoyer_push",
+        "alerter",
+        "noter_evenement"
+      ]
+    },
+    "lib-cout-ia@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "interrupteur_general",
+          "interrupteur_departement",
+          "plafond_jour_centimes",
+          "seuil_derive_pct",
+          "jours_base_min",
+          "plancher_derive_centimes"
+        ],
+        "properties": {
+          "interrupteur_general": {
+            "type": "boolean"
+          },
+          "interrupteur_departement": {
+            "type": "boolean"
+          },
+          "plafond_jour_centimes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100000000
+          },
+          "seuil_derive_pct": {
+            "type": "integer",
+            "minimum": 10,
+            "maximum": 1000
+          },
+          "jours_base_min": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 14
+          },
+          "plancher_derive_centimes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "jour",
+          "maintenant",
+          "appels",
+          "cumul_du_jour",
+          "jours_precedents",
+          "cles_connues"
+        ],
+        "properties": {
+          "jour": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "appels": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "cle",
+                "departement",
+                "modele",
+                "externe",
+                "jetons_entree",
+                "jetons_sortie",
+                "cout_eur",
+                "source_tarif",
+                "survenu_le"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "cle": {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 120,
+                  "pattern": "^[A-Za-z0-9_:.-]+$"
+                },
+                "departement": {
+                  "enum": [
+                    "tous",
+                    "accueil",
+                    "devis",
+                    "suivi",
+                    "facturation",
+                    "apres",
+                    "operations",
+                    "direction"
+                  ]
+                },
+                "modele": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9._-]{1,79}$"
+                },
+                "externe": {
+                  "type": "boolean"
+                },
+                "jetons_entree": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10000000
+                },
+                "jetons_sortie": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10000000
+                },
+                "cout_eur": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100000
+                },
+                "source_tarif": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 120
+                },
+                "survenu_le": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "cumul_du_jour": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "jour",
+                "departement",
+                "modele",
+                "externe",
+                "appels",
+                "cout_millicentimes"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "jour": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "departement": {
+                  "enum": [
+                    "tous",
+                    "accueil",
+                    "devis",
+                    "suivi",
+                    "facturation",
+                    "apres",
+                    "operations",
+                    "direction"
+                  ]
+                },
+                "modele": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9._-]{1,79}$"
+                },
+                "externe": {
+                  "type": "boolean"
+                },
+                "appels": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10000000
+                },
+                "cout_millicentimes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100000000000
+                }
+              }
+            }
+          },
+          "jours_precedents": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "jour",
+                "cout_millicentimes"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "jour": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "cout_millicentimes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100000000000
+                }
+              }
+            }
+          },
+          "cles_connues": {
+            "type": "array",
+            "maxItems": 5000,
+            "items": {
+              "type": "string",
+              "maxLength": 120
+            }
+          }
+        }
+      },
+      "effets_prevus": [
+        "ecrire_appel_cout",
+        "noter_evenement"
+      ]
+    }
+  },
+  "liste_fermee_alertes": {
+    "regle": "Seuls ces types peuvent réveiller quelqu’un ; tout autre type est ignoré et compté. Un artisan n’est réveillé que par un type dont il est le responsable, hors des heures calmes (21 h-7 h Paris) sauf message urgent tard, dans la limite du plafond du jour ; le reste va à la page du matin.",
+    "types": {
+      "demande_de_prix_ferme": "artisan",
+      "client_mecontent": "artisan",
+      "litige": "artisan",
+      "message_urgent_tard": "artisan",
+      "impaye_au_dessus_du_seuil": "artisan",
+      "workflow_en_panne": "benj",
+      "cout_qui_derive": "benj"
+    },
+    "canaux": {
+      "artisan": "push (lib/push.ts:105, envoyerPushArtisan) — prévu, jamais fait",
+      "benj": "lib-alerter@1 (categorie workflow_en_panne ou cout_qui_derive)"
+    }
+  },
+  "cout_ia": {
+    "tables": "couts_ia_appels (une ligne par appel, clé unique) et couts_ia_jour (cumul par compte, jour de Paris, département, modèle) — migration 0193, écrite et non appliquée",
+    "regle": "Le coût est calculé par le code (jetons × tarif daté, en millièmes de centime) ; un appel sans tarif daté est compté mais son coût reste inconnu (jamais zéro inventé) ; la part envoyée à un modèle externe est comptée à part."
+  },
+  "lectures_reelles_prevues": {
+    "regle": "Au « go » de Benj, derrière la porte « simulation », select= limité, filtre artisan_id sur chaque requête, jamais un nom, un e-mail ni un texte de client (R7).",
+    "requetes": {
+      "impayes": "GET /rest/v1/factures?select=id,artisan_id,numero,total_ttc,date_echeance,statut&artisan_id=eq.<compte>",
+      "devis": "GET /rest/v1/devis?select=id,artisan_id,numero,total_ttc,envoye_le,statut&artisan_id=eq.<compte>&statut=eq.envoye",
+      "demandes": "GET /rest/v1/leads?select=id,artisan_id,statut,urgence&artisan_id=eq.<compte>",
+      "cartes": "GET /rest/v1/opportunites?select=… (0185)&organisation_id=eq.<compte>",
+      "cout": "GET /rest/v1/couts_ia_jour?select=…&artisan_id=eq.<compte>&jour=eq.<jour>"
+    }
+  }
+}

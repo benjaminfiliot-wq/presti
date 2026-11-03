@@ -1,0 +1,2455 @@
+[
+  {
+    "workflow": "presti-dep-devis",
+    "execution": "539",
+    "statut_n8n": "success",
+    "entrees": [
+      {
+        "contrat": "presti-dep-devis@1",
+        "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+        "simulation": true,
+        "cle_idempotence": "dep:devis:0000000000b2:2026-11-09T1000",
+        "trace": {
+          "execution_parent": "presti-banc-argent:2026-11-09T1000",
+          "declencheur": "presti-banc-argent",
+          "tentative": 0
+        },
+        "config": {
+          "lectures_simulees": {
+            "configuration": [
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "nom_artisan": "Exemple. Menuiserie Berthier-Démo",
+                "ton": "professionnel et courtois",
+                "signature": "Exemple. L’équipe",
+                "offre": "signature",
+                "capacites": [
+                  "canaux.email",
+                  "relances",
+                  "factures.relances",
+                  "assistant",
+                  "plateforme.ia.auto",
+                  "relances.auto",
+                  "factures.relances.auto",
+                  "crm",
+                  "assistant.pilote"
+                ],
+                "pilote": {
+                  "drapeau": true,
+                  "actif": true,
+                  "types": {
+                    "envoi_devis": true,
+                    "envoi_facture": true,
+                    "relance_impaye": true
+                  }
+                },
+                "parties_depuis_24h": 3,
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "mots_escalade_artisan": [
+                  "Exemple. mot sensible"
+                ],
+                "horaires": {
+                  "jours_permis": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "heures_permises": {
+                    "debut": "08:00",
+                    "fin": "19:00"
+                  }
+                },
+                "plafond_jour": 20,
+                "relances_impayes": {
+                  "actif": true,
+                  "jours": [
+                    3,
+                    10,
+                    21
+                  ]
+                },
+                "cles_existantes": [],
+                "maintenant": "2026-11-09T10:00:00.000+01:00"
+              }
+            ],
+            "devis": [
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "devis_id": "00000000-0000-4000-8000-b20000000005",
+                "lead_id": "00000000-0000-4000-8000-b10000000005",
+                "numero": "DEV-EX-0005",
+                "statut": "brouillon",
+                "total_ttc_centimes": 120000,
+                "total_ttc_affiche": "1 200,00 € TTC"
+              },
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "devis_id": "00000000-0000-4000-8000-b20000000006",
+                "lead_id": "00000000-0000-4000-8000-b10000000006",
+                "numero": "DEV-EX-0006",
+                "statut": "brouillon",
+                "total_ttc_centimes": 150000,
+                "total_ttc_affiche": "1 500,00 € TTC"
+              }
+            ],
+            "lignes": [
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "devis_id": "00000000-0000-4000-8000-b20000000005",
+                "rang": 1,
+                "designation": "Exemple. Porte d’entrée chêne",
+                "quantite": 1,
+                "prix_unitaire_ht_centimes": 70000,
+                "prix_affiche": "700,00 € HT",
+                "source_prix": "vos tarifs · Exemple. Pose carrelage",
+                "repere_affiche": null,
+                "repere_chantier_le": null
+              },
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "devis_id": "00000000-0000-4000-8000-b20000000005",
+                "rang": 2,
+                "designation": "Exemple. Pose",
+                "quantite": 1,
+                "prix_unitaire_ht_centimes": 30000,
+                "prix_affiche": "300,00 € HT",
+                "source_prix": "prix donné par l’artisan",
+                "repere_affiche": null,
+                "repere_chantier_le": null
+              },
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "devis_id": "00000000-0000-4000-8000-b20000000006",
+                "rang": 1,
+                "designation": "Exemple. Dressing sur mesure",
+                "quantite": 1,
+                "prix_unitaire_ht_centimes": 90000,
+                "prix_affiche": "900,00 € HT",
+                "source_prix": "vos tarifs · Exemple. Pose carrelage",
+                "repere_affiche": null,
+                "repere_chantier_le": null
+              },
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "devis_id": "00000000-0000-4000-8000-b20000000006",
+                "rang": 2,
+                "designation": "Exemple. Pose et réglages",
+                "quantite": 1,
+                "prix_unitaire_ht_centimes": 35000,
+                "prix_affiche": "350,00 € HT",
+                "source_prix": null,
+                "repere_affiche": "420,00 € HT",
+                "repere_chantier_le": "2026-02-02"
+              }
+            ]
+          }
+        },
+        "donnees": {
+          "evenements": [
+            {
+              "id": "00000000-0000-4000-8000-b30000000005",
+              "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+              "type": "devis_a_preparer",
+              "cle": "exemple-devis_a_preparer-5",
+              "donnees": {
+                "lead_id": "00000000-0000-4000-8000-b10000000005",
+                "devis_id": "00000000-0000-4000-8000-b20000000005",
+                "qualifiee": true,
+                "escalade": false
+              }
+            },
+            {
+              "id": "00000000-0000-4000-8000-b30000000006",
+              "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+              "type": "devis_a_preparer",
+              "cle": "exemple-devis_a_preparer-6",
+              "donnees": {
+                "lead_id": "00000000-0000-4000-8000-b10000000006",
+                "devis_id": "00000000-0000-4000-8000-b20000000006",
+                "qualifiee": true,
+                "escalade": false
+              }
+            },
+            {
+              "id": "00000000-0000-4000-8000-b30000000009",
+              "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+              "type": "devis_a_preparer",
+              "cle": "exemple-devis_a_preparer-9",
+              "donnees": {
+                "lead_id": "00000000-0000-4000-8000-b10000000009",
+                "devis_id": null,
+                "qualifiee": true,
+                "escalade": false
+              }
+            },
+            {
+              "id": "00000000-0000-4000-8000-a30000000011",
+              "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+              "type": "devis_a_preparer",
+              "cle": "exemple-etranger",
+              "donnees": {
+                "lead_id": "00000000-0000-4000-8000-a10000000002",
+                "devis_id": null,
+                "qualifiee": true,
+                "escalade": false
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "epingles": {
+      "Appeler lib-decider": [
+        {
+          "contrat": "lib-decider@1",
+          "statut": "ok",
+          "cle_idempotence": "d:00000000-0000-4000-8000-b30000000005",
+          "simulation": true,
+          "resultat": {
+            "action": "carte",
+            "type_action": "devis_pret",
+            "niveau": 2,
+            "motif": "type_non_pilotable",
+            "cle_idempotence": "h:decision:77296de0bafe54119f4cc708630667ffe9a56cbe13c5c779",
+            "montant_centimes": null,
+            "objet_id": "00000000-0000-4000-8000-b20000000005"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:77296de0bafe54119f4cc708630667ffe9a56cbe13c5c779",
+              "objet_type": "devis",
+              "objet_id": "00000000-0000-4000-8000-b20000000005",
+              "type_action": "devis_pret",
+              "outil": "devis_pret",
+              "montant_centimes": null
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "decision",
+              "agent": "lib-decider",
+              "objet_ref": "00000000-0000-4000-8000-b20000000005",
+              "decision": "carte (niveau 2) : outil hors de la liste fermée du pilote",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-decider@1",
+          "statut": "ok",
+          "cle_idempotence": "d:00000000-0000-4000-8000-b30000000006",
+          "simulation": true,
+          "resultat": {
+            "action": "carte",
+            "type_action": "devis_pret",
+            "niveau": 2,
+            "motif": "type_non_pilotable",
+            "cle_idempotence": "h:decision:83f2bc8018850bd517715918bf41a186b5a1e0d9569c1650",
+            "montant_centimes": null,
+            "objet_id": "00000000-0000-4000-8000-b20000000006"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:83f2bc8018850bd517715918bf41a186b5a1e0d9569c1650",
+              "objet_type": "devis",
+              "objet_id": "00000000-0000-4000-8000-b20000000006",
+              "type_action": "devis_pret",
+              "outil": "devis_pret",
+              "montant_centimes": null
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "decision",
+              "agent": "lib-decider",
+              "objet_ref": "00000000-0000-4000-8000-b20000000006",
+              "decision": "carte (niveau 2) : outil hors de la liste fermée du pilote",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-decider@1",
+          "statut": "ok",
+          "cle_idempotence": "d:00000000-0000-4000-8000-b30000000009",
+          "simulation": true,
+          "resultat": {
+            "action": "carte",
+            "type_action": "creer_devis",
+            "niveau": 2,
+            "motif": "type_non_pilotable",
+            "cle_idempotence": "h:decision:fd5d1d9eb615cde635d3014ab78560f2bab478fc94380281",
+            "montant_centimes": null,
+            "objet_id": "00000000-0000-4000-8000-b10000000009"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:fd5d1d9eb615cde635d3014ab78560f2bab478fc94380281",
+              "objet_type": "demande",
+              "objet_id": "00000000-0000-4000-8000-b10000000009",
+              "type_action": "creer_devis",
+              "outil": "creer_devis",
+              "montant_centimes": null
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "decision",
+              "agent": "lib-decider",
+              "objet_ref": "00000000-0000-4000-8000-b10000000009",
+              "decision": "carte (niveau 2) : outil hors de la liste fermée du pilote",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ],
+      "Appeler lib-porte-conformite": [
+        {
+          "contrat": "lib-porte-conformite@1",
+          "statut": "ok",
+          "cle_idempotence": "p:00000000-0000-4000-8000-b30000000005",
+          "simulation": true,
+          "resultat": {
+            "verdict": "passe",
+            "motifs": [],
+            "cible": "carte",
+            "repli": null
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "conformite",
+              "agent": "lib-porte-conformite",
+              "objet_ref": null,
+              "decision": "passe (carte)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-porte-conformite@1",
+          "statut": "ok",
+          "cle_idempotence": "p:00000000-0000-4000-8000-b30000000006",
+          "simulation": true,
+          "resultat": {
+            "verdict": "passe",
+            "motifs": [],
+            "cible": "carte",
+            "repli": null
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "conformite",
+              "agent": "lib-porte-conformite",
+              "objet_ref": null,
+              "decision": "passe (carte)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-porte-conformite@1",
+          "statut": "ok",
+          "cle_idempotence": "p:00000000-0000-4000-8000-b30000000009",
+          "simulation": true,
+          "resultat": {
+            "verdict": "passe",
+            "motifs": [],
+            "cible": "carte",
+            "repli": null
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "conformite",
+              "agent": "lib-porte-conformite",
+              "objet_ref": null,
+              "decision": "passe (carte)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ],
+      "Appeler lib-executer": [
+        {
+          "contrat": "lib-executer@1",
+          "statut": "ok",
+          "cle_idempotence": "h:decision:77296de0bafe54119f4cc708630667ffe9a56cbe13c5c779",
+          "simulation": true,
+          "resultat": {
+            "ecrit": false,
+            "deja_fait": false,
+            "ref_id": null,
+            "prevu": "ecrire_carte",
+            "motif": "prevu"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "table": "opportunites",
+              "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:77296de0bafe54119f4cc708630667ffe9a56cbe13c5c779",
+                "type_action": "devis_pret",
+                "objet_type": "devis",
+                "objet_id": "00000000-0000-4000-8000-b20000000005"
+              }
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "execution",
+              "agent": "lib-executer",
+              "objet_ref": "00000000-0000-4000-8000-b20000000005",
+              "decision": "ecrire_carte prévu (simulation)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-executer@1",
+          "statut": "ok",
+          "cle_idempotence": "h:decision:83f2bc8018850bd517715918bf41a186b5a1e0d9569c1650",
+          "simulation": true,
+          "resultat": {
+            "ecrit": false,
+            "deja_fait": false,
+            "ref_id": null,
+            "prevu": "ecrire_carte",
+            "motif": "prevu"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "table": "opportunites",
+              "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:83f2bc8018850bd517715918bf41a186b5a1e0d9569c1650",
+                "type_action": "devis_pret",
+                "objet_type": "devis",
+                "objet_id": "00000000-0000-4000-8000-b20000000006"
+              }
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "execution",
+              "agent": "lib-executer",
+              "objet_ref": "00000000-0000-4000-8000-b20000000006",
+              "decision": "ecrire_carte prévu (simulation)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-executer@1",
+          "statut": "ok",
+          "cle_idempotence": "h:decision:fd5d1d9eb615cde635d3014ab78560f2bab478fc94380281",
+          "simulation": true,
+          "resultat": {
+            "ecrit": false,
+            "deja_fait": false,
+            "ref_id": null,
+            "prevu": "ecrire_carte",
+            "motif": "prevu"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "table": "opportunites",
+              "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:fd5d1d9eb615cde635d3014ab78560f2bab478fc94380281",
+                "type_action": "creer_devis",
+                "objet_type": "demande",
+                "objet_id": "00000000-0000-4000-8000-b10000000009"
+              }
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "execution",
+              "agent": "lib-executer",
+              "objet_ref": "00000000-0000-4000-8000-b10000000009",
+              "decision": "ecrire_carte prévu (simulation)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ],
+      "Appeler lib-journaliser": [
+        {
+          "contrat": "lib-journaliser@1",
+          "statut": "ok",
+          "cle_idempotence": "j:dep:devis:0000000000b2:2026-11-09T1000",
+          "simulation": true,
+          "resultat": {
+            "ecrites": 10
+          },
+          "effets_prevus": [
+            {
+              "effet": "inserer_journal",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "lignes": 10,
+              "cles": [
+                "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:0",
+                "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:1",
+                "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:2",
+                "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:3",
+                "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:4",
+                "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:5",
+                "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:6",
+                "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:7",
+                "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:8",
+                "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:9"
+              ]
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:0",
+              "evenement": "evenement_rejete",
+              "agent": "presti-dep-devis",
+              "objet_ref": "00000000-0000-4000-8000-a30000000011",
+              "decision": "[simulation] aurait été fait : autre_compte",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:1",
+              "evenement": "decision",
+              "agent": "presti-dep-devis",
+              "objet_ref": "00000000-0000-4000-8000-b30000000005",
+              "decision": "[simulation] aurait été fait : carte (type_non_pilotable), tous les prix sourcés",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:2",
+              "evenement": "porte_passe",
+              "agent": "presti-dep-devis",
+              "objet_ref": "00000000-0000-4000-8000-b30000000005",
+              "decision": "[simulation] aurait été fait : passe",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:3",
+              "evenement": "action_prevue",
+              "agent": "presti-dep-devis",
+              "objet_ref": "00000000-0000-4000-8000-b30000000005",
+              "decision": "[simulation] aurait été fait : prevu",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:4",
+              "evenement": "decision",
+              "agent": "presti-dep-devis",
+              "objet_ref": "00000000-0000-4000-8000-b30000000006",
+              "decision": "[simulation] aurait été fait : carte (type_non_pilotable), au moins un prix estimé",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:5",
+              "evenement": "porte_passe",
+              "agent": "presti-dep-devis",
+              "objet_ref": "00000000-0000-4000-8000-b30000000006",
+              "decision": "[simulation] aurait été fait : passe",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:6",
+              "evenement": "action_prevue",
+              "agent": "presti-dep-devis",
+              "objet_ref": "00000000-0000-4000-8000-b30000000006",
+              "decision": "[simulation] aurait été fait : prevu",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:7",
+              "evenement": "decision",
+              "agent": "presti-dep-devis",
+              "objet_ref": "00000000-0000-4000-8000-b30000000009",
+              "decision": "[simulation] aurait été fait : carte (type_non_pilotable)",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:8",
+              "evenement": "porte_passe",
+              "agent": "presti-dep-devis",
+              "objet_ref": "00000000-0000-4000-8000-b30000000009",
+              "decision": "[simulation] aurait été fait : passe",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:9",
+              "evenement": "action_prevue",
+              "agent": "presti-dep-devis",
+              "objet_ref": "00000000-0000-4000-8000-b30000000009",
+              "decision": "[simulation] aurait été fait : prevu",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ]
+    },
+    "sorties": [
+      {
+        "contrat": "presti-dep-devis@1",
+        "statut": "ok",
+        "cle_idempotence": "dep:devis:0000000000b2:2026-11-09T1000",
+        "simulation": true,
+        "resultat": {
+          "evenements_recus": 4,
+          "rejets": [
+            {
+              "id": "00000000-0000-4000-8000-a30000000011",
+              "motif": "autre_compte"
+            }
+          ],
+          "non_traites": [],
+          "a_preparer": [
+            {
+              "cle": "h:decision:fd5d1d9eb615cde635d3014ab78560f2bab478fc94380281",
+              "lead_id": "00000000-0000-4000-8000-b10000000009",
+              "cible": "carte",
+              "geste": "creer_devis au clic de l artisan (lib/devisAuto.ts)"
+            }
+          ],
+          "devis_prets": [
+            {
+              "cle": "h:decision:77296de0bafe54119f4cc708630667ffe9a56cbe13c5c779",
+              "devis_id": "00000000-0000-4000-8000-b20000000005",
+              "numero": "DEV-EX-0005",
+              "total_ttc_affiche": "1 200,00 € TTC",
+              "cible": "carte",
+              "motif_carte": "type_non_pilotable",
+              "tous_prix_sources": true,
+              "a_estimer": 0,
+              "envoi": "au clic de l artisan",
+              "lignes": [
+                {
+                  "rang": 1,
+                  "designation": "Exemple. Porte d’entrée chêne",
+                  "prix_affiche": "700,00 € HT",
+                  "statut_prix": "source",
+                  "source": "vos tarifs · Exemple. Pose carrelage",
+                  "repere": null
+                },
+                {
+                  "rang": 2,
+                  "designation": "Exemple. Pose",
+                  "prix_affiche": "300,00 € HT",
+                  "statut_prix": "source",
+                  "source": "prix donné par l’artisan",
+                  "repere": null
+                }
+              ]
+            },
+            {
+              "cle": "h:decision:83f2bc8018850bd517715918bf41a186b5a1e0d9569c1650",
+              "devis_id": "00000000-0000-4000-8000-b20000000006",
+              "numero": "DEV-EX-0006",
+              "total_ttc_affiche": "1 500,00 € TTC",
+              "cible": "carte",
+              "motif_carte": "type_non_pilotable",
+              "tous_prix_sources": false,
+              "a_estimer": 1,
+              "envoi": "au clic de l artisan",
+              "lignes": [
+                {
+                  "rang": 1,
+                  "designation": "Exemple. Dressing sur mesure",
+                  "prix_affiche": "900,00 € HT",
+                  "statut_prix": "source",
+                  "source": "vos tarifs · Exemple. Pose carrelage",
+                  "repere": null
+                },
+                {
+                  "rang": 2,
+                  "designation": "Exemple. Pose et réglages",
+                  "prix_affiche": "350,00 € HT",
+                  "statut_prix": "estime",
+                  "source": null,
+                  "repere": {
+                    "affiche": "420,00 € HT",
+                    "chantier_le": "2026-02-02"
+                  }
+                }
+              ]
+            }
+          ],
+          "cartes": [
+            "h:decision:77296de0bafe54119f4cc708630667ffe9a56cbe13c5c779",
+            "h:decision:83f2bc8018850bd517715918bf41a186b5a1e0d9569c1650",
+            "h:decision:fd5d1d9eb615cde635d3014ab78560f2bab478fc94380281"
+          ],
+          "pilote": [],
+          "refus_porte": [],
+          "deja_faits": [],
+          "sorties_vers_un_modele": 0
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "table": "opportunites",
+            "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+            "entetes": {
+              "Prefer": "resolution=ignore-duplicates,return=representation"
+            },
+            "corps": {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:77296de0bafe54119f4cc708630667ffe9a56cbe13c5c779",
+              "type_action": "devis_pret",
+              "objet_type": "devis",
+              "objet_id": "00000000-0000-4000-8000-b20000000005"
+            }
+          },
+          {
+            "effet": "ecrire_carte",
+            "table": "opportunites",
+            "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+            "entetes": {
+              "Prefer": "resolution=ignore-duplicates,return=representation"
+            },
+            "corps": {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:83f2bc8018850bd517715918bf41a186b5a1e0d9569c1650",
+              "type_action": "devis_pret",
+              "objet_type": "devis",
+              "objet_id": "00000000-0000-4000-8000-b20000000006"
+            }
+          },
+          {
+            "effet": "ecrire_carte",
+            "table": "opportunites",
+            "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+            "entetes": {
+              "Prefer": "resolution=ignore-duplicates,return=representation"
+            },
+            "corps": {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:fd5d1d9eb615cde635d3014ab78560f2bab478fc94380281",
+              "type_action": "creer_devis",
+              "objet_type": "demande",
+              "objet_id": "00000000-0000-4000-8000-b10000000009"
+            }
+          },
+          {
+            "effet": "inserer_journal",
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "lignes": 10,
+            "cles": [
+              "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:0",
+              "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:1",
+              "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:2",
+              "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:3",
+              "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:4",
+              "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:5",
+              "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:6",
+              "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:7",
+              "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:8",
+              "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:9"
+            ]
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:0",
+            "evenement": "evenement_rejete",
+            "agent": "presti-dep-devis",
+            "objet_ref": "00000000-0000-4000-8000-a30000000011",
+            "decision": "[simulation] aurait été fait : autre_compte",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:1",
+            "evenement": "decision",
+            "agent": "presti-dep-devis",
+            "objet_ref": "00000000-0000-4000-8000-b30000000005",
+            "decision": "[simulation] aurait été fait : carte (type_non_pilotable), tous les prix sourcés",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:2",
+            "evenement": "porte_passe",
+            "agent": "presti-dep-devis",
+            "objet_ref": "00000000-0000-4000-8000-b30000000005",
+            "decision": "[simulation] aurait été fait : passe",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:3",
+            "evenement": "action_prevue",
+            "agent": "presti-dep-devis",
+            "objet_ref": "00000000-0000-4000-8000-b30000000005",
+            "decision": "[simulation] aurait été fait : prevu",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:4",
+            "evenement": "decision",
+            "agent": "presti-dep-devis",
+            "objet_ref": "00000000-0000-4000-8000-b30000000006",
+            "decision": "[simulation] aurait été fait : carte (type_non_pilotable), au moins un prix estimé",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:5",
+            "evenement": "porte_passe",
+            "agent": "presti-dep-devis",
+            "objet_ref": "00000000-0000-4000-8000-b30000000006",
+            "decision": "[simulation] aurait été fait : passe",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:6",
+            "evenement": "action_prevue",
+            "agent": "presti-dep-devis",
+            "objet_ref": "00000000-0000-4000-8000-b30000000006",
+            "decision": "[simulation] aurait été fait : prevu",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:7",
+            "evenement": "decision",
+            "agent": "presti-dep-devis",
+            "objet_ref": "00000000-0000-4000-8000-b30000000009",
+            "decision": "[simulation] aurait été fait : carte (type_non_pilotable)",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:8",
+            "evenement": "porte_passe",
+            "agent": "presti-dep-devis",
+            "objet_ref": "00000000-0000-4000-8000-b30000000009",
+            "decision": "[simulation] aurait été fait : passe",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:fc46a6cd9ab97b8d8b032ac2d0fccaba4a6a0b964dc12234:9",
+            "evenement": "action_prevue",
+            "agent": "presti-dep-devis",
+            "objet_ref": "00000000-0000-4000-8000-b30000000009",
+            "decision": "[simulation] aurait été fait : prevu",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ],
+    "sorties_noeuds": [
+      "Appelé par le Cerveau",
+      "Contrat d'entrée",
+      "Entrée conforme ?",
+      "Porte simulation",
+      "Lire la configuration du compte (simulation : épinglé)",
+      "Lire les devis préparés par l’application (simulation : épinglé)",
+      "Lire les lignes de ces devis (simulation : épinglé)",
+      "Constituer les dossiers",
+      "Préparer la décision",
+      "Rien à décider ?",
+      "Appeler lib-decider",
+      "Préparer la porte",
+      "Rien à contrôler ?",
+      "Appeler lib-porte-conformite",
+      "Préparer l'exécution",
+      "Rien à exécuter ?",
+      "Appeler lib-executer",
+      "Préparer le journal",
+      "Appeler lib-journaliser",
+      "Assembler",
+      "Contrat de sortie"
+    ]
+  },
+  {
+    "workflow": "presti-dep-facturation",
+    "execution": "550",
+    "statut_n8n": "success",
+    "entrees": [
+      {
+        "contrat": "presti-dep-facturation@1",
+        "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+        "simulation": true,
+        "cle_idempotence": "dep:facturation:0000000000b2:2026-11-09T1000",
+        "trace": {
+          "execution_parent": "presti-banc-argent:2026-11-09T1000",
+          "declencheur": "presti-banc-argent",
+          "tentative": 0
+        },
+        "config": {
+          "lectures_simulees": {
+            "configuration": [
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "nom_artisan": "Exemple. Menuiserie Berthier-Démo",
+                "ton": "professionnel et courtois",
+                "signature": "Exemple. L’équipe",
+                "offre": "signature",
+                "capacites": [
+                  "canaux.email",
+                  "relances",
+                  "factures.relances",
+                  "assistant",
+                  "plateforme.ia.auto",
+                  "relances.auto",
+                  "factures.relances.auto",
+                  "crm",
+                  "assistant.pilote"
+                ],
+                "pilote": {
+                  "drapeau": true,
+                  "actif": true,
+                  "types": {
+                    "envoi_devis": true,
+                    "envoi_facture": true,
+                    "relance_impaye": true
+                  }
+                },
+                "parties_depuis_24h": 3,
+                "interrupteur_general": true,
+                "interrupteur_departement": true,
+                "mots_escalade_artisan": [
+                  "Exemple. mot sensible"
+                ],
+                "horaires": {
+                  "jours_permis": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "heures_permises": {
+                    "debut": "08:00",
+                    "fin": "19:00"
+                  }
+                },
+                "plafond_jour": 20,
+                "relances_impayes": {
+                  "actif": true,
+                  "jours": [
+                    3,
+                    10,
+                    21
+                  ]
+                },
+                "cles_existantes": [],
+                "maintenant": "2026-11-09T10:00:00.000+01:00"
+              }
+            ],
+            "apercus": [
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "devis_id": "00000000-0000-4000-8000-b20000000031",
+                "chantier_termine": true,
+                "deja_facturee": false,
+                "apercu_ok": true,
+                "apercu_erreur": null,
+                "apercu_type": "solde",
+                "apercu_total_ttc_centimes": 120000,
+                "apercu_total_ttc_affiche": "1 200,00 € TTC",
+                "apercu_nb_deduites": 1,
+                "apercu_le": "2026-11-09"
+              }
+            ],
+            "factures": [
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "facture_id": "00000000-0000-4000-8000-b40000000034",
+                "numero": "FAC-EX-0034",
+                "objet": "Exemple. Travaux de rénovation",
+                "statut": "emise",
+                "avoir_de": null,
+                "regime_tva": "tva",
+                "date_echeance": "2026-10-15",
+                "total_ttc_centimes": 180000,
+                "total_ttc_affiche": "1 800,00 € TTC",
+                "contestation": false,
+                "paliers_envoyes": [
+                  1,
+                  2
+                ],
+                "historique": {
+                  "ok": true,
+                  "traces": []
+                }
+              },
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "facture_id": "00000000-0000-4000-8000-b40000000035",
+                "numero": "FAC-EX-0035",
+                "objet": "Exemple. Travaux de rénovation",
+                "statut": "emise",
+                "avoir_de": null,
+                "regime_tva": "tva",
+                "date_echeance": "2026-11-05",
+                "total_ttc_centimes": 180000,
+                "total_ttc_affiche": "1 800,00 € TTC",
+                "contestation": false,
+                "paliers_envoyes": [],
+                "historique": {
+                  "ok": true,
+                  "traces": []
+                }
+              },
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "facture_id": "00000000-0000-4000-8000-b40000000036",
+                "numero": "FAC-EX-0036",
+                "objet": "Exemple. Travaux de rénovation",
+                "statut": "emise",
+                "avoir_de": null,
+                "regime_tva": "tva",
+                "date_echeance": "2026-11-05",
+                "total_ttc_centimes": 180000,
+                "total_ttc_affiche": "1 800,00 € TTC",
+                "contestation": true,
+                "paliers_envoyes": [],
+                "historique": {
+                  "ok": true,
+                  "traces": []
+                }
+              }
+            ],
+            "arrets": [
+              {
+                "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+                "facture_id": "00000000-0000-4000-8000-b40000000035",
+                "raison": "reponse_client",
+                "le": "2026-11-07T09:00:00.000Z",
+                "reprise_le": null,
+                "motif": "dit_avoir_paye"
+              }
+            ]
+          }
+        },
+        "donnees": {
+          "evenements": [
+            {
+              "id": "00000000-0000-4000-8000-b30000000031",
+              "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+              "type": "facture_a_emettre",
+              "cle": "exemple-facture_a_emettre-31",
+              "donnees": {
+                "devis_id": "00000000-0000-4000-8000-b20000000031"
+              }
+            },
+            {
+              "id": "00000000-0000-4000-8000-b30000000034",
+              "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+              "type": "impaye_echu",
+              "cle": "exemple-impaye_echu-34",
+              "donnees": {
+                "facture_id": "00000000-0000-4000-8000-b40000000034"
+              }
+            },
+            {
+              "id": "00000000-0000-4000-8000-b30000000035",
+              "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+              "type": "impaye_echu",
+              "cle": "exemple-impaye_echu-35",
+              "donnees": {
+                "facture_id": "00000000-0000-4000-8000-b40000000035"
+              }
+            },
+            {
+              "id": "00000000-0000-4000-8000-b30000000036",
+              "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+              "type": "impaye_echu",
+              "cle": "exemple-impaye_echu-36",
+              "donnees": {
+                "facture_id": "00000000-0000-4000-8000-b40000000036"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "epingles": {
+      "Appeler lib-relancer": [
+        {
+          "contrat": "lib-relancer@1",
+          "statut": "ok",
+          "cle_idempotence": "r:00000000-0000-4000-8000-b30000000034",
+          "simulation": true,
+          "resultat": {
+            "a_relancer": true,
+            "palier": 3,
+            "motif": "palier_atteint",
+            "objet_type": "facture",
+            "objet_id": "00000000-0000-4000-8000-b40000000034",
+            "jours_depuis": 25,
+            "cle_idempotence": "h:relance:c4af4e1ae6bcb7b840f5ab3bcd3a78ae61f315fdf593ee3a",
+            "derniere_relance": null
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "relance",
+              "agent": "lib-relancer",
+              "objet_ref": "00000000-0000-4000-8000-b40000000034",
+              "decision": "à relancer, palier 3 (J+25)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-relancer@1",
+          "statut": "rien_a_faire",
+          "cle_idempotence": "r:00000000-0000-4000-8000-b30000000036",
+          "simulation": true,
+          "resultat": {
+            "a_relancer": false,
+            "palier": 1,
+            "motif": "litige_ou_escalade",
+            "objet_type": "facture",
+            "objet_id": "00000000-0000-4000-8000-b40000000036",
+            "jours_depuis": 4,
+            "cle_idempotence": null,
+            "derniere_relance": null
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "relance",
+              "agent": "lib-relancer",
+              "objet_ref": "00000000-0000-4000-8000-b40000000036",
+              "decision": "pas de relance : litige_ou_escalade (J+4)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ],
+      "Appeler lib-decider": [
+        {
+          "contrat": "lib-decider@1",
+          "statut": "ok",
+          "cle_idempotence": "d:00000000-0000-4000-8000-b30000000031",
+          "simulation": true,
+          "resultat": {
+            "action": "carte",
+            "type_action": "creer_facture",
+            "niveau": 2,
+            "motif": "jamais_auto",
+            "cle_idempotence": "h:decision:c74802e3008c0b5db5d31523294f93dbfa3c8d4c36198d03",
+            "montant_centimes": null,
+            "objet_id": "00000000-0000-4000-8000-b20000000031"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:c74802e3008c0b5db5d31523294f93dbfa3c8d4c36198d03",
+              "objet_type": "devis",
+              "objet_id": "00000000-0000-4000-8000-b20000000031",
+              "type_action": "creer_facture",
+              "outil": "creer_facture",
+              "montant_centimes": null
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "decision",
+              "agent": "lib-decider",
+              "objet_ref": "00000000-0000-4000-8000-b20000000031",
+              "decision": "carte (niveau 2) : geste jamais automatique (liste du code)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-decider@1",
+          "statut": "ok",
+          "cle_idempotence": "d:00000000-0000-4000-8000-b30000000034",
+          "simulation": true,
+          "resultat": {
+            "action": "pilote",
+            "type_action": "relance_impaye",
+            "niveau": 3,
+            "motif": "pilote",
+            "cle_idempotence": "h:decision:e45280ed570f6bcf43ebcf9872da03d23411190cb8e1d2cf",
+            "montant_centimes": null,
+            "objet_id": "00000000-0000-4000-8000-b40000000034"
+          },
+          "effets_prevus": [
+            {
+              "effet": "mettre_en_file_pilote",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:e45280ed570f6bcf43ebcf9872da03d23411190cb8e1d2cf",
+              "objet_type": "facture",
+              "objet_id": "00000000-0000-4000-8000-b40000000034",
+              "type": "relance_impaye",
+              "outil": "relancer_facture",
+              "montant_centimes": null,
+              "annulable_min": 10
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "decision",
+              "agent": "lib-decider",
+              "objet_ref": "00000000-0000-4000-8000-b40000000034",
+              "decision": "pilote (niveau 3) : part seul après 10 min pour annuler",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-decider@1",
+          "statut": "ok",
+          "cle_idempotence": "d:00000000-0000-4000-8000-b30000000035",
+          "simulation": true,
+          "resultat": {
+            "action": "carte",
+            "type_action": "verifier_paiement",
+            "niveau": 2,
+            "motif": "type_non_pilotable",
+            "cle_idempotence": "h:decision:a67ce8539cab06f87afa6b647de96e8b037c16f1b6b0ea73",
+            "montant_centimes": null,
+            "objet_id": "00000000-0000-4000-8000-b40000000035"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:a67ce8539cab06f87afa6b647de96e8b037c16f1b6b0ea73",
+              "objet_type": "facture",
+              "objet_id": "00000000-0000-4000-8000-b40000000035",
+              "type_action": "verifier_paiement",
+              "outil": "verifier_paiement",
+              "montant_centimes": null
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "decision",
+              "agent": "lib-decider",
+              "objet_ref": "00000000-0000-4000-8000-b40000000035",
+              "decision": "carte (niveau 2) : outil hors de la liste fermée du pilote",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-decider@1",
+          "statut": "ok",
+          "cle_idempotence": "d:00000000-0000-4000-8000-b30000000036",
+          "simulation": true,
+          "resultat": {
+            "action": "carte",
+            "type_action": "relance_impaye",
+            "niveau": 2,
+            "motif": "escalade",
+            "cle_idempotence": "h:decision:05a8e7ddfe5bc3531203f2e9a99eed300eb0e026a9490bd9",
+            "montant_centimes": null,
+            "objet_id": "00000000-0000-4000-8000-b40000000036"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:05a8e7ddfe5bc3531203f2e9a99eed300eb0e026a9490bd9",
+              "objet_type": "facture",
+              "objet_id": "00000000-0000-4000-8000-b40000000036",
+              "type_action": "relance_impaye",
+              "outil": "relancer_facture",
+              "montant_centimes": null
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "decision",
+              "agent": "lib-decider",
+              "objet_ref": "00000000-0000-4000-8000-b40000000036",
+              "decision": "carte (niveau 2) : sujet d’escalade : à la main",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ],
+      "Appeler lib-rediger-message": [
+        {
+          "contrat": "lib-rediger-message@1",
+          "statut": "ok",
+          "cle_idempotence": "m:00000000-0000-4000-8000-b30000000034",
+          "simulation": true,
+          "resultat": {
+            "action_cle": "h:decision:e45280ed570f6bcf43ebcf9872da03d23411190cb8e1d2cf",
+            "objet": "Exemple. Rappel : facture FAC-EX-0034",
+            "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-EX-0034 (Exemple. Travaux de rénovation), d'un montant de 1 800,00 € TTC, arrivée à échéance le 15 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Menuiserie Berthier-Démo.",
+            "faits_cites": [
+              "numero",
+              "montant",
+              "echeance"
+            ],
+            "champs_inconnus": [],
+            "canal": "email",
+            "mention": true,
+            "modele": "claude-haiku-5-5",
+            "epingle": true,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cle_idempotence": "h:redaction:5bb575897347dd68815c64f37f718dfa74a8d72452593e1e"
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "redaction",
+              "agent": "lib-rediger-message",
+              "objet_ref": null,
+              "decision": "brouillon email, mention d’IA ajoutée",
+              "modele": "claude-haiku-5-5",
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-rediger-message@1",
+          "statut": "ok",
+          "cle_idempotence": "m:00000000-0000-4000-8000-b30000000036",
+          "simulation": true,
+          "resultat": {
+            "action_cle": "h:decision:05a8e7ddfe5bc3531203f2e9a99eed300eb0e026a9490bd9",
+            "objet": "Exemple. Rappel : facture FAC-EX-0036",
+            "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-EX-0036 (Exemple. Travaux de rénovation), d'un montant de 1 800,00 € TTC, arrivée à échéance le 5 novembre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe",
+            "faits_cites": [
+              "numero",
+              "montant",
+              "echeance"
+            ],
+            "champs_inconnus": [],
+            "canal": "email",
+            "mention": false,
+            "modele": "claude-haiku-5-5",
+            "epingle": true,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cle_idempotence": "h:redaction:2c37f3227b38b34da1e4e5c8be447ebc6d8fcee782e76cf9"
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "redaction",
+              "agent": "lib-rediger-message",
+              "objet_ref": null,
+              "decision": "brouillon email, à relire",
+              "modele": "claude-haiku-5-5",
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ],
+      "Appeler lib-porte-conformite": [
+        {
+          "contrat": "lib-porte-conformite@1",
+          "statut": "ok",
+          "cle_idempotence": "p:00000000-0000-4000-8000-b30000000031",
+          "simulation": true,
+          "resultat": {
+            "verdict": "passe",
+            "motifs": [],
+            "cible": "carte",
+            "repli": null
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "conformite",
+              "agent": "lib-porte-conformite",
+              "objet_ref": null,
+              "decision": "passe (carte)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-porte-conformite@1",
+          "statut": "ok",
+          "cle_idempotence": "p:00000000-0000-4000-8000-b30000000034",
+          "simulation": true,
+          "resultat": {
+            "verdict": "passe",
+            "motifs": [],
+            "cible": "pilote",
+            "repli": null
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "conformite",
+              "agent": "lib-porte-conformite",
+              "objet_ref": null,
+              "decision": "passe (pilote)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-porte-conformite@1",
+          "statut": "ok",
+          "cle_idempotence": "p:00000000-0000-4000-8000-b30000000035",
+          "simulation": true,
+          "resultat": {
+            "verdict": "passe",
+            "motifs": [],
+            "cible": "carte",
+            "repli": null
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "conformite",
+              "agent": "lib-porte-conformite",
+              "objet_ref": null,
+              "decision": "passe (carte)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-porte-conformite@1",
+          "statut": "ok",
+          "cle_idempotence": "p:00000000-0000-4000-8000-b30000000036",
+          "simulation": true,
+          "resultat": {
+            "verdict": "passe",
+            "motifs": [],
+            "cible": "carte",
+            "repli": null
+          },
+          "effets_prevus": [],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "conformite",
+              "agent": "lib-porte-conformite",
+              "objet_ref": null,
+              "decision": "passe (carte)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ],
+      "Appeler lib-executer": [
+        {
+          "contrat": "lib-executer@1",
+          "statut": "ok",
+          "cle_idempotence": "h:decision:c74802e3008c0b5db5d31523294f93dbfa3c8d4c36198d03",
+          "simulation": true,
+          "resultat": {
+            "ecrit": false,
+            "deja_fait": false,
+            "ref_id": null,
+            "prevu": "ecrire_carte",
+            "motif": "prevu"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "table": "opportunites",
+              "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:c74802e3008c0b5db5d31523294f93dbfa3c8d4c36198d03",
+                "type_action": "creer_facture",
+                "objet_type": "devis",
+                "objet_id": "00000000-0000-4000-8000-b20000000031"
+              }
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "execution",
+              "agent": "lib-executer",
+              "objet_ref": "00000000-0000-4000-8000-b20000000031",
+              "decision": "ecrire_carte prévu (simulation)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-executer@1",
+          "statut": "ok",
+          "cle_idempotence": "h:decision:e45280ed570f6bcf43ebcf9872da03d23411190cb8e1d2cf",
+          "simulation": true,
+          "resultat": {
+            "ecrit": false,
+            "deja_fait": false,
+            "ref_id": null,
+            "prevu": "mettre_en_file_pilote",
+            "motif": "prevu"
+          },
+          "effets_prevus": [
+            {
+              "effet": "mettre_en_file_pilote",
+              "table": "pilote_file",
+              "requete": "POST /rest/v1/pilote_file?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:e45280ed570f6bcf43ebcf9872da03d23411190cb8e1d2cf",
+                "type_action": "relance_impaye",
+                "objet_type": "facture",
+                "objet_id": "00000000-0000-4000-8000-b40000000034",
+                "palier": 3,
+                "canal": "email",
+                "brouillon": {
+                  "objet": "Exemple. Rappel : facture FAC-EX-0034",
+                  "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-EX-0034 (Exemple. Travaux de rénovation), d'un montant de 1 800,00 € TTC, arrivée à échéance le 15 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Menuiserie Berthier-Démo."
+                }
+              }
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "execution",
+              "agent": "lib-executer",
+              "objet_ref": "00000000-0000-4000-8000-b40000000034",
+              "decision": "mettre_en_file_pilote prévu (simulation)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-executer@1",
+          "statut": "ok",
+          "cle_idempotence": "h:decision:a67ce8539cab06f87afa6b647de96e8b037c16f1b6b0ea73",
+          "simulation": true,
+          "resultat": {
+            "ecrit": false,
+            "deja_fait": false,
+            "ref_id": null,
+            "prevu": "ecrire_carte",
+            "motif": "prevu"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "table": "opportunites",
+              "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:a67ce8539cab06f87afa6b647de96e8b037c16f1b6b0ea73",
+                "type_action": "verifier_paiement",
+                "objet_type": "facture",
+                "objet_id": "00000000-0000-4000-8000-b40000000035"
+              }
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "execution",
+              "agent": "lib-executer",
+              "objet_ref": "00000000-0000-4000-8000-b40000000035",
+              "decision": "ecrire_carte prévu (simulation)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        },
+        {
+          "contrat": "lib-executer@1",
+          "statut": "ok",
+          "cle_idempotence": "h:decision:05a8e7ddfe5bc3531203f2e9a99eed300eb0e026a9490bd9",
+          "simulation": true,
+          "resultat": {
+            "ecrit": false,
+            "deja_fait": false,
+            "ref_id": null,
+            "prevu": "ecrire_carte",
+            "motif": "prevu"
+          },
+          "effets_prevus": [
+            {
+              "effet": "ecrire_carte",
+              "table": "opportunites",
+              "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+              "entetes": {
+                "Prefer": "resolution=ignore-duplicates,return=representation"
+              },
+              "corps": {
+                "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+                "cle": "h:decision:05a8e7ddfe5bc3531203f2e9a99eed300eb0e026a9490bd9",
+                "type_action": "relance_impaye",
+                "objet_type": "facture",
+                "objet_id": "00000000-0000-4000-8000-b40000000036",
+                "palier": 1,
+                "canal": "email",
+                "brouillon": {
+                  "objet": "Exemple. Rappel : facture FAC-EX-0036",
+                  "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-EX-0036 (Exemple. Travaux de rénovation), d'un montant de 1 800,00 € TTC, arrivée à échéance le 5 novembre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe"
+                }
+              }
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "evenement": "execution",
+              "agent": "lib-executer",
+              "objet_ref": "00000000-0000-4000-8000-b40000000036",
+              "decision": "ecrire_carte prévu (simulation)",
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ],
+      "Appeler lib-journaliser": [
+        {
+          "contrat": "lib-journaliser@1",
+          "statut": "ok",
+          "cle_idempotence": "j:dep:facturation:0000000000b2:2026-11-09T1000",
+          "simulation": true,
+          "resultat": {
+            "ecrites": 13
+          },
+          "effets_prevus": [
+            {
+              "effet": "inserer_journal",
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "lignes": 13,
+              "cles": [
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:0",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:1",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:2",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:3",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:4",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:5",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:6",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:7",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:8",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:9",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:10",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:11",
+                "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:12"
+              ]
+            }
+          ],
+          "effets_faits": [],
+          "journal": [
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:0",
+              "evenement": "decision",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000031",
+              "decision": "[simulation] aurait été fait : creer_facture : carte (jamais_auto)",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:1",
+              "evenement": "porte_passe",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000031",
+              "decision": "[simulation] aurait été fait : passe",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:2",
+              "evenement": "action_prevue",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000031",
+              "decision": "[simulation] aurait été fait : prevu",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:3",
+              "evenement": "decision",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000034",
+              "decision": "[simulation] aurait été fait : relance_impaye : pilote (pilote)",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:4",
+              "evenement": "porte_passe",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000034",
+              "decision": "[simulation] aurait été fait : passe",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:5",
+              "evenement": "action_prevue",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000034",
+              "decision": "[simulation] aurait été fait : prevu",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:6",
+              "evenement": "relance_arretee_motif",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000035",
+              "decision": "[simulation] aurait été fait : arrêt motivé (dit_avoir_paye) : plus de relance, une carte pour l artisan",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:7",
+              "evenement": "decision",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000035",
+              "decision": "[simulation] aurait été fait : verifier_paiement : carte (type_non_pilotable)",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:8",
+              "evenement": "porte_passe",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000035",
+              "decision": "[simulation] aurait été fait : passe",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:9",
+              "evenement": "action_prevue",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000035",
+              "decision": "[simulation] aurait été fait : prevu",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:10",
+              "evenement": "decision",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000036",
+              "decision": "[simulation] aurait été fait : relance_impaye : carte (escalade)",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:11",
+              "evenement": "porte_passe",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000036",
+              "decision": "[simulation] aurait été fait : passe",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            },
+            {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:12",
+              "evenement": "action_prevue",
+              "agent": "presti-dep-facturation",
+              "objet_ref": "00000000-0000-4000-8000-b30000000036",
+              "decision": "[simulation] aurait été fait : prevu",
+              "modele": null,
+              "jetons_entree": null,
+              "jetons_sortie": null,
+              "cout_eur": null,
+              "source_tarif": null,
+              "simulation": true
+            }
+          ],
+          "erreurs": []
+        }
+      ]
+    },
+    "sorties": [
+      {
+        "contrat": "presti-dep-facturation@1",
+        "statut": "ok",
+        "cle_idempotence": "dep:facturation:0000000000b2:2026-11-09T1000",
+        "simulation": true,
+        "resultat": {
+          "evenements_recus": 4,
+          "rejets": [],
+          "non_traites": [],
+          "factures_a_emettre": [
+            {
+              "cle": "h:decision:c74802e3008c0b5db5d31523294f93dbfa3c8d4c36198d03",
+              "devis_id": "00000000-0000-4000-8000-b20000000031",
+              "question": "Émettre cette facture ?",
+              "type": "solde",
+              "total_ttc_affiche": "1 200,00 € TTC",
+              "nb_deduites": 1,
+              "apercu_le": "2026-11-09",
+              "cible": "carte",
+              "emission": "au clic de l artisan"
+            }
+          ],
+          "relances": [
+            {
+              "cle": "h:decision:e45280ed570f6bcf43ebcf9872da03d23411190cb8e1d2cf",
+              "facture_id": "00000000-0000-4000-8000-b40000000034",
+              "numero": "FAC-EX-0034",
+              "palier": 3,
+              "total_ttc_affiche": "1 800,00 € TTC",
+              "cible": "pilote",
+              "part_seul": true,
+              "a_relire": false,
+              "brouillon": {
+                "objet": "Exemple. Rappel : facture FAC-EX-0034",
+                "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-EX-0034 (Exemple. Travaux de rénovation), d'un montant de 1 800,00 € TTC, arrivée à échéance le 15 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Menuiserie Berthier-Démo."
+              }
+            },
+            {
+              "cle": "h:decision:05a8e7ddfe5bc3531203f2e9a99eed300eb0e026a9490bd9",
+              "facture_id": "00000000-0000-4000-8000-b40000000036",
+              "numero": "FAC-EX-0036",
+              "palier": 1,
+              "total_ttc_affiche": "1 800,00 € TTC",
+              "cible": "carte",
+              "part_seul": false,
+              "a_relire": true,
+              "brouillon": {
+                "objet": "Exemple. Rappel : facture FAC-EX-0036",
+                "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-EX-0036 (Exemple. Travaux de rénovation), d'un montant de 1 800,00 € TTC, arrivée à échéance le 5 novembre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe"
+              }
+            }
+          ],
+          "relances_arretees": [
+            {
+              "facture_id": "00000000-0000-4000-8000-b40000000035",
+              "raison": "motif_dit_avoir_paye"
+            }
+          ],
+          "cartes_motif": [
+            {
+              "cle": "h:decision:a67ce8539cab06f87afa6b647de96e8b037c16f1b6b0ea73",
+              "facture_id": "00000000-0000-4000-8000-b40000000035",
+              "motif": "dit_avoir_paye",
+              "geste": "verifier_paiement"
+            }
+          ],
+          "cartes": [
+            "h:decision:c74802e3008c0b5db5d31523294f93dbfa3c8d4c36198d03",
+            "h:decision:a67ce8539cab06f87afa6b647de96e8b037c16f1b6b0ea73",
+            "h:decision:05a8e7ddfe5bc3531203f2e9a99eed300eb0e026a9490bd9"
+          ],
+          "pilote": [
+            "h:decision:e45280ed570f6bcf43ebcf9872da03d23411190cb8e1d2cf"
+          ],
+          "refus_porte": [],
+          "deja_faits": [],
+          "sorties_vers_un_modele": 0
+        },
+        "effets_prevus": [
+          {
+            "effet": "ecrire_carte",
+            "table": "opportunites",
+            "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+            "entetes": {
+              "Prefer": "resolution=ignore-duplicates,return=representation"
+            },
+            "corps": {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:c74802e3008c0b5db5d31523294f93dbfa3c8d4c36198d03",
+              "type_action": "creer_facture",
+              "objet_type": "devis",
+              "objet_id": "00000000-0000-4000-8000-b20000000031"
+            }
+          },
+          {
+            "effet": "mettre_en_file_pilote",
+            "table": "pilote_file",
+            "requete": "POST /rest/v1/pilote_file?on_conflict=organisation_id,cle",
+            "entetes": {
+              "Prefer": "resolution=ignore-duplicates,return=representation"
+            },
+            "corps": {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:e45280ed570f6bcf43ebcf9872da03d23411190cb8e1d2cf",
+              "type_action": "relance_impaye",
+              "objet_type": "facture",
+              "objet_id": "00000000-0000-4000-8000-b40000000034",
+              "palier": 3,
+              "canal": "email",
+              "brouillon": {
+                "objet": "Exemple. Rappel : facture FAC-EX-0034",
+                "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-EX-0034 (Exemple. Travaux de rénovation), d'un montant de 1 800,00 € TTC, arrivée à échéance le 15 octobre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Menuiserie Berthier-Démo."
+              }
+            }
+          },
+          {
+            "effet": "ecrire_carte",
+            "table": "opportunites",
+            "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+            "entetes": {
+              "Prefer": "resolution=ignore-duplicates,return=representation"
+            },
+            "corps": {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:a67ce8539cab06f87afa6b647de96e8b037c16f1b6b0ea73",
+              "type_action": "verifier_paiement",
+              "objet_type": "facture",
+              "objet_id": "00000000-0000-4000-8000-b40000000035"
+            }
+          },
+          {
+            "effet": "ecrire_carte",
+            "table": "opportunites",
+            "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+            "entetes": {
+              "Prefer": "resolution=ignore-duplicates,return=representation"
+            },
+            "corps": {
+              "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+              "cle": "h:decision:05a8e7ddfe5bc3531203f2e9a99eed300eb0e026a9490bd9",
+              "type_action": "relance_impaye",
+              "objet_type": "facture",
+              "objet_id": "00000000-0000-4000-8000-b40000000036",
+              "palier": 1,
+              "canal": "email",
+              "brouillon": {
+                "objet": "Exemple. Rappel : facture FAC-EX-0036",
+                "texte": "{{salutation}}\n\nNous nous permettons de revenir vers vous au sujet de la facture FAC-EX-0036 (Exemple. Travaux de rénovation), d'un montant de 1 800,00 € TTC, arrivée à échéance le 5 novembre 2026. Si le règlement est déjà parti, merci de ne pas tenir compte de ce message ; s'il y a une difficulté, il vous suffit de nous répondre.\n\nBien cordialement,\nExemple. L’équipe"
+              }
+            }
+          },
+          {
+            "effet": "inserer_journal",
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "lignes": 13,
+            "cles": [
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:0",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:1",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:2",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:3",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:4",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:5",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:6",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:7",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:8",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:9",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:10",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:11",
+              "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:12"
+            ]
+          }
+        ],
+        "effets_faits": [],
+        "journal": [
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:0",
+            "evenement": "decision",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000031",
+            "decision": "[simulation] aurait été fait : creer_facture : carte (jamais_auto)",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:1",
+            "evenement": "porte_passe",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000031",
+            "decision": "[simulation] aurait été fait : passe",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:2",
+            "evenement": "action_prevue",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000031",
+            "decision": "[simulation] aurait été fait : prevu",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:3",
+            "evenement": "decision",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000034",
+            "decision": "[simulation] aurait été fait : relance_impaye : pilote (pilote)",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:4",
+            "evenement": "porte_passe",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000034",
+            "decision": "[simulation] aurait été fait : passe",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:5",
+            "evenement": "action_prevue",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000034",
+            "decision": "[simulation] aurait été fait : prevu",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:6",
+            "evenement": "relance_arretee_motif",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000035",
+            "decision": "[simulation] aurait été fait : arrêt motivé (dit_avoir_paye) : plus de relance, une carte pour l artisan",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:7",
+            "evenement": "decision",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000035",
+            "decision": "[simulation] aurait été fait : verifier_paiement : carte (type_non_pilotable)",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:8",
+            "evenement": "porte_passe",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000035",
+            "decision": "[simulation] aurait été fait : passe",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:9",
+            "evenement": "action_prevue",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000035",
+            "decision": "[simulation] aurait été fait : prevu",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:10",
+            "evenement": "decision",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000036",
+            "decision": "[simulation] aurait été fait : relance_impaye : carte (escalade)",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:11",
+            "evenement": "porte_passe",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000036",
+            "decision": "[simulation] aurait été fait : passe",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          },
+          {
+            "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+            "cle": "j:c42f360948e01847bb364995074fc1c8279be6fb1b8c937f:12",
+            "evenement": "action_prevue",
+            "agent": "presti-dep-facturation",
+            "objet_ref": "00000000-0000-4000-8000-b30000000036",
+            "decision": "[simulation] aurait été fait : prevu",
+            "modele": null,
+            "jetons_entree": null,
+            "jetons_sortie": null,
+            "cout_eur": null,
+            "source_tarif": null,
+            "simulation": true
+          }
+        ],
+        "erreurs": []
+      }
+    ],
+    "sorties_noeuds": [
+      "Appelé par le Cerveau",
+      "Contrat d'entrée",
+      "Entrée conforme ?",
+      "Porte simulation",
+      "Lire la configuration du compte (simulation : épinglé)",
+      "Lire les aperçus de facture de l’application (simulation : épinglé)",
+      "Lire les factures (simulation : épinglé)",
+      "Lire les arrêts de relance (simulation : épinglé)",
+      "Constituer les dossiers",
+      "Préparer la relance",
+      "Aucune relance à décider ?",
+      "Appeler lib-relancer",
+      "Préparer la décision",
+      "Rien à décider ?",
+      "Appeler lib-decider",
+      "Préparer la rédaction",
+      "Rien à rédiger ?",
+      "Appeler lib-rediger-message",
+      "Préparer la porte",
+      "Rien à contrôler ?",
+      "Appeler lib-porte-conformite",
+      "Préparer l'exécution",
+      "Rien à exécuter ?",
+      "Appeler lib-executer",
+      "Préparer le journal",
+      "Appeler lib-journaliser",
+      "Assembler",
+      "Contrat de sortie"
+    ]
+  },
+  {
+    "workflow": "presti-banc-argent",
+    "execution": "568",
+    "statut_n8n": "success",
+    "sonde": true,
+    "entrees": [
+      {}
+    ],
+    "epingles": {},
+    "sorties": [
+      {
+        "devis": [
+          {
+            "erreurs": 0,
+            "cartes": null,
+            "pilote": null
+          }
+        ],
+        "facturation": [
+          {
+            "erreurs": 0,
+            "cartes": null,
+            "pilote": null
+          }
+        ]
+      }
+    ],
+    "sorties_noeuds": [
+      "Banc (jamais planifié : inactif)",
+      "Cas fictifs : devis (deux comptes)",
+      "Appeler presti-dep-devis",
+      "Cas fictifs : facturation (deux comptes)",
+      "Appeler presti-dep-facturation",
+      "Bilan du banc"
+    ]
+  }
+]

@@ -1,0 +1,387 @@
+{
+  "id": "UWjCdC5kv3CXt6jm",
+  "name": "lib-lire-photo",
+  "active": false,
+  "isArchived": false,
+  "versionId": "12721dd0-9e29-4284-9e9d-facda40dffef",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 12,
+  "createdAt": "2026-11-03T10:15:53.370Z",
+  "updatedAt": "2026-11-03T10:27:50.788Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "Ls0oFcQzzAk0rWcP",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "connections": {
+    "Appelé par un chef": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Préparer la demande au modèle",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la demande au modèle": {
+      "main": [
+        [
+          {
+            "node": "Décrire la photo (modèle épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Décrire la photo (modèle épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Revalider la sortie du modèle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Haiku 5.5 (sans identifiant)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Décrire la photo (modèle épinglé)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sortie structurée (JSON Schema)": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Décrire la photo (modèle épinglé)",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revalider la sortie du modèle": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "8f1b30f3-901e-41a5-bde8-0bfd09f00b8f",
+      "name": "Appelé par un chef",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        272
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "a7ca9981-1c60-474d-91a2-53b60e01a6a1",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        272
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de lib-lire-photo@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'lib-lire-photo@1';\nconst SCHEMA = {\"sans_contact\":true,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[],\"properties\":{}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"demande_id\",\"photo\"],\"properties\":{\"demande_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"photo\":{\"type\":[\"object\",\"null\"],\"additionalProperties\":false,\"required\":[\"ref\",\"type_mime\"],\"properties\":{\"ref\":{\"type\":\"string\",\"pattern\":\"^[A-Za-z0-9._-]{1,80}$\"},\"type_mime\":{\"enum\":[\"image/jpeg\",\"image/png\",\"image/webp\",\"image/heic\"]}}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: lib-lire-photo@1"
+    },
+    {
+      "id": "9388dc8f-080a-4937-b8b5-7b0d3d4d1d9b",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        272
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "entreconforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "564f0584-fb4a-4f30-a075-0b0e475830a7",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        208
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "portesimulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché dans ce lot."
+    },
+    {
+      "id": "7eecef03-a023-470b-98e2-fb0840844312",
+      "name": "Préparer la demande au modèle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        112
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// lib-lire-photo : une demande au modèle par photo (la référence seule, jamais le nom du client ni son message).\nreturn $input.all().map((item) => { const e = item.json.enveloppe; return { json: { enveloppe: e, action_cle: e.cle_idempotence, demande: 'Décris la photo jointe à la demande (référence ' + e.donnees.photo.ref + ', ' + e.donnees.photo.type_mime + ').' } }; });"
+      }
+    },
+    {
+      "id": "48f5d201-fc5c-46c2-aae0-aa7c87141fe8",
+      "name": "Décrire la photo (modèle épinglé)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1120,
+        112
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.demande }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Tu décris, pour un artisan du bâtiment, la photo qu'un client a jointe à sa demande. Tu dis ce qu'on voit (pièce, matériau, état, élément concerné), en une ou deux phrases sobres. Tu ne chiffres JAMAIS rien : aucun prix, aucun montant, aucun coût, aucune durée de travaux, aucune quantité à commander. Si la photo est floue ou hors sujet, dis-le et mets la confiance à « faible ». Réponds uniquement dans le format demandé ; « chiffrage » vaut toujours null.",
+          "maxIterations": 1,
+          "passthroughBinaryImages": false
+        }
+      },
+      "notes": "modele: epingle\nÉpinglé jusqu'à la mesure : chaque essai porte la sortie du modèle en données épinglées. Aucun outil. Prompt écrit par Claude Code (036-001)."
+    },
+    {
+      "id": "c136cc1d-f212-4b0a-a277-134f50641c63",
+      "name": "Claude Haiku 5.5 (sans identifiant)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.6,
+      "position": [
+        1136,
+        336
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-haiku-5-5"
+        },
+        "options": {
+          "maxTokensToSample": 300,
+          "temperature": 0
+        }
+      },
+      "notes": "Le palier Standard du produit (lib/models.ts). AUCUN identifiant : il sera posé par Benj après la mesure. D'ici là, « Décrire la photo » est épinglé et ce modèle n'est jamais appelé."
+    },
+    {
+      "id": "892c8a1b-0300-4299-b62f-b4fdfd821282",
+      "name": "Sortie structurée (JSON Schema)",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1264,
+        336
+      ],
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"required\": [\n    \"description\",\n    \"elements\",\n    \"confiance\",\n    \"chiffrage\"\n  ],\n  \"properties\": {\n    \"description\": {\n      \"type\": \"string\",\n      \"minLength\": 1,\n      \"maxLength\": 400\n    },\n    \"elements\": {\n      \"type\": \"array\",\n      \"maxItems\": 8,\n      \"items\": {\n        \"type\": \"string\",\n        \"maxLength\": 60\n      }\n    },\n    \"confiance\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"faible\",\n        \"moyenne\",\n        \"bonne\"\n      ]\n    },\n    \"chiffrage\": {\n      \"type\": \"null\"\n    }\n  }\n}",
+        "autoFix": false
+      }
+    },
+    {
+      "id": "3a688599-5959-40a8-b51a-b658e21a00b7",
+      "name": "Revalider la sortie du modèle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        112
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// lib-lire-photo, revalidation (FM:312-313) : la sortie du modèle est revalidée ICI contre son schéma ; hors schéma, ou si elle CHIFFRE\n// quoi que ce soit (prix, montant, coût, durée, quantité), rien ne sort : statut « erreur », aucune description. Le modèle reste épinglé.\nconst MODELE = \"claude-haiku-5-5\";\nconst SCHEMA = {\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"description\",\"elements\",\"confiance\",\"chiffrage\"],\"properties\":{\"description\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"elements\":{\"type\":\"array\",\"maxItems\":8,\"items\":{\"type\":\"string\",\"maxLength\":60}},\"confiance\":{\"type\":\"string\",\"enum\":[\"faible\",\"moyenne\",\"bonne\"]},\"chiffrage\":{\"type\":\"null\"}}};\nconst CHIFFRE = /\\d[\\d\\s.,]*\\s?(€|eur\\b|euros?\\b|ht\\b|ttc\\b|h\\b|heures?\\b|jours?\\b|semaines?\\b|m2\\b|m²|metres?\\b|mètres?\\b)|\\b(prix|tarifs?|co[uû]ts?|co[uû]tera|devis|chiffrage|estimation|budget|montant)\\b/i;\nconst PREPARES = $('Préparer la demande au modèle').all().map((x) => x.json);\nfunction horsSchema(o) {\n  if (!o || typeof o !== 'object' || Array.isArray(o)) return 'sortie absente';\n  for (const k of Object.keys(o)) if (!SCHEMA.properties[k]) return 'champ hors schéma : ' + k;\n  for (const k of SCHEMA.required) if (!(k in o)) return 'champ manquant : ' + k;\n  if (typeof o.description !== 'string' || !o.description.trim() || o.description.length > 400) return 'description invalide';\n  if (!Array.isArray(o.elements) || o.elements.length > 8 || o.elements.some((x) => typeof x !== 'string' || x.length > 60)) return 'éléments invalides';\n  if (!SCHEMA.properties.confiance.enum.includes(o.confiance)) return 'confiance hors liste';\n  if (o.chiffrage !== null) return 'chiffrage interdit';\n  if ([o.description].concat(o.elements).some((t) => CHIFFRE.test(t))) return 'la photo est chiffrée : interdit';\n  return null;\n}\nreturn $input.all().map((item, i) => {\n  const p = PREPARES[i] || {}, e = p.enveloppe || {}, o = item.json && item.json.output;\n  const faute = horsSchema(o);\n  const base = { conforme: true, enveloppe: e };\n  if (faute) return { json: { ...base, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['photo : ' + faute],\n    journal: [{ evenement: 'photo_rejetee', agent: 'lib-lire-photo', objet_ref: e.donnees ? e.donnees.demande_id : null, decision: ('sortie du modèle refusée : ' + faute).slice(0, 200), modele: MODELE, jetons_entree: null, jetons_sortie: null, cout_eur: null, simulation: e.simulation !== false }] } };\n  return { json: { ...base, statut: 'ok', resultat: { demande_id: e.donnees.demande_id, description: o.description.trim(), elements: o.elements, confiance: o.confiance, modele: MODELE, epingle: true }, effets_prevus: [],\n    journal: [{ evenement: 'photo_decrite', agent: 'lib-lire-photo', objet_ref: e.donnees.demande_id, decision: 'photo décrite (confiance ' + o.confiance + '), jamais chiffrée ; modèle épinglé', modele: MODELE, jetons_entree: null, jetons_sortie: null, cout_eur: null, simulation: e.simulation !== false }] } };\n});"
+      }
+    },
+    {
+      "id": "45515a22-967b-4e0e-88ca-7379f0f66f66",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1696,
+        272
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de lib-lire-photo@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-lire-photo@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "7af42130-3f99-4f4a-a094-9b49d1e3006e",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        896,
+        304
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (tâche 036-001). Rien n'a été lu, écrit ni envoyé."
+      },
+      "notes": "Simulation : aucun effet réel n'est branché. Hors simulation, le travail s'arrête ici, avant tout appel."
+    },
+    {
+      "id": "af4366a8-e786-45dd-8418-2ccf4618df51",
+      "name": "Sticky Note d1a36fb6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        176
+      ],
+      "parameters": {
+        "content": "## lib-lire-photo (036-001)\nLecteur de photo de l'Accueil (A13) : la photo jointe est DÉCRITE, jamais chiffrée. Modèle ÉPINGLÉ (aucun identifiant ; jamais appelé avant la mesure) ; sortie revalidée, tout chiffre refusé.\nContrat lib-lire-photo@1 (enveloppe@1, gabarit « Contrat » de 035-003). Appelé par presti-dep-accueil.\nINACTIF, jamais publié, en simulation. Juge : scripts/cerveau-accueil-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T10:28:17.667Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-001), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

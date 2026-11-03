@@ -1,0 +1,40 @@
+{
+  "lib-alerte-liste": {
+    "Contrat d'entrée": "292b27e355f45b1d999ce9a74c3fefa5c96204b6c129f66941f3fa640e57234c",
+    "Évaluer la liste fermée": "29c3265145892dd6541121e1e17bb8c067f7d843fae95d5d38d9f955499e545c",
+    "Contrat de sortie": "c1da94d9413f98ec5d7aaa2d958bbe449069a4433321418804eead8a2464cec5"
+  },
+  "lib-cout-ia": {
+    "Contrat d'entrée": "d441252645f022055a1e9c68648e9455370bfa8024c9f5cb63004b6c24adaa93",
+    "Compter le coût du jour": "827f55565d92a8bbb09ad67884626320a1790cb6d8253702c83624d2fa8e4672",
+    "Contrat de sortie": "9f72d603a224b0cafaf06070f33e59a7a96e4ec7e30a99381dae9e4c60750214"
+  },
+  "presti-banc-direction": {
+    "Cas : page du matin": "4d80eb53c2aba70c57776853d3496a4a690f8cf3a5f679590f2216f60a78163a",
+    "Bilan du banc": "cf76a91d7459b33a5ef6e1a942f8e3be54d6a152a7a238cb4eba4d6ecaf64250",
+    "Cas : page sans lecture": "6cc1c0e904bb6727ee4ab73fe8489a21309b22c5da419be5431577e90d81d13a",
+    "Cas : rapport du lundi": "a88b2e56292aa4836ccae55b427acf6417b9e769da33ad0b0c8d7701976de75d",
+    "Cas : diagnostic sans données": "1dbacf62d6d73b281f32d864c922f5af6a827268123f0b55bd5c6f429c1933c8",
+    "Cas : diagnostic avec données": "d5deffe71b3ec81a9074d43a4d1c58a79eb51d2f5b0e035581912a1bc8a3fdb8",
+    "Cas : alertes du jour": "b7aa402df622c1b50c5d2a7b7cf54717dc5a9827c742cf7f6a3535200860b518",
+    "Cas : coût qui dérive": "2b45ca377dd62b74589ee64e58cced13e0a8df5388263c941b158873939891ec",
+    "Cas : interrupteur coupé": "df07c18db9ba493d7f5cd454fdfbad1cc2ede3cedabe1dc5005ffcc8d0d4878e",
+    "Cas : plafond atteint": "f5514c7c4a0bd6d9e3f7e6da9b9a85d5988a8d740e314bb3b2b6acb8ec2a48f9",
+    "Cas : alertes de nuit": "4388f25ec6f4f5fb08c19ac97e75508d0fb5649953f914fb69b598feeebbdd4a"
+  },
+  "presti-dep-direction": {
+    "Contrat d'entrée": "ace16c73367bcc477823cb9f793b577a7c0b46d5e6970ab2565edb2f43060c68",
+    "Contrat de sortie": "cb6f52b65a6a3f797d98db303852f109860ae387d0ada9490810380966ccd63f",
+    "Aiguiller": "2841719a53665adca3524071bd594d563b95c899442fab4e0a81d4bf57a3e40e",
+    "Rien à faire": "c60aa5d7d0a9fa8e8b401c31821fda426ee216df446e6b738239b1f79b4a1ec0",
+    "Page du matin": "88e0939fd9436be7917da6993b0e2d7227505808066204da382debc4ab944d74",
+    "Rapport du lundi": "9caf566fc919d7f8484f541234aba9f00439ae44b19a94346b0010b0a18944ce",
+    "Diagnostic": "500fa19f5cb549587501794ae782b53e7955819b26b7f4863827c7b0975996d5",
+    "Préparer l'alerte": "eb8a4f78bc3a88e8af60f0f1f3194d6d4ba4da901504aea4ad5be93a73a06b7d",
+    "Habiller l'alerte": "6accd4c6c8fd655777cd05f9286f3ed108e7d2244039b1292720315f46ea3ee2",
+    "Préparer le coût": "ec93154b3764956b2ee746b4b8e971ed8540c5a2066d7e77f10f102bebae034a",
+    "Évaluer la dérive": "22086077ff7c4fe413411690a87dea90912500e62fdbe180aaefd512515de385",
+    "Envelopper l'alerte de coût": "52d5ca2c49fc47195cbefbe1969ad4cd92f824a5dc3e293531154254c66202ff",
+    "Habiller le coût": "c480a750fb6d2d7bd315b7a464ab7f75a7eb4f2e0b1070bd9eb14f824d1fea1d"
+  }
+}

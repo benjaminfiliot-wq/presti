@@ -1,0 +1,28 @@
+{
+  "lib-avis-lire": {
+    "Contrat d'entrée": "8746cb7196f5129c467e98074e78ce52eb76898ab108875526fef02468ba0b62",
+    "Classer les avis": "527f8febeb0b587d825b931cb82c3ee0dcb5f91f3545542ef5f1906fe921e175",
+    "Contrat de sortie": "4fbc42e9621d690f5e6ed4e8e6ff9cf1f0f1113356bff415f428945d7d8e3793"
+  },
+  "lib-avis-repondre": {
+    "Contrat d'entrée": "d5ecbfa19565a0ed17ec80a6c0dbe701ba537f6efd3202996be13edc5781df2b",
+    "Préparer la carte de réponse": "a458cca0e3266f693fdee3f706fb94eb910751c4a6246f61dad2722c60b0c9d3",
+    "Contrat de sortie": "3110e92c28243c08f0a8cd19c5ba22cc3c6ebd151d0973e3f2f1eb2db886ca8c"
+  },
+  "presti-banc-apres": {
+    "Cas : sept avis mêlés": "efb4828307d4339b2eca8e6a2134ed70082ef0bff71150c68d8ed64fa84033d4",
+    "Bilan du banc": "cf76a91d7459b33a5ef6e1a942f8e3be54d6a152a7a238cb4eba4d6ecaf64250",
+    "Cas : avis négatif en Signature": "c63d5d4bc7e89f46d55e788b0355a763716ffe278feb6c3a41b5a01e184c58c8",
+    "Cas : avis positif en Studio": "6841fc5ae1b517d38e3e357cc35861e700d31c7ec68f47896ce9f7a91202fafb",
+    "Cas : département complet (Signature)": "3289a59ebf7acb4ec5c749f7bbd97877cc118f4a673437cc2fb1ab5da5fb4715",
+    "Cas : interrupteur du département coupé": "0bb0a46005584705ef2ddd5f70befc1e041af039500e4d74d33bd4d8651c3829"
+  },
+  "presti-dep-apres": {
+    "Contrat d'entrée": "4cf1e8100073e69edee68ad876c58f877b04714488440efd714332c99041b794",
+    "Contrat de sortie": "8f2aaaa53ba09ffc9f9bf103403f67227284f4729a81f62061028d58d9afd9bb",
+    "Demandes d'avis et rappels d'entretien": "d405167bd85a0c1a35e22081f2753c2234347ea2fff478d310eecc055b45a8ea",
+    "Préparer la lecture des avis": "4bac9cf0108a5e4f7cd28aded95adc9af3b70480dbf68f67826dabb73119da59",
+    "Préparer les réponses aux avis": "ac0ff5ce6655311361b8a2ac584c8e220afa4a6fc79205c3bdae3ff5f82e3393",
+    "Assembler le département": "0f9306a099a8dfc43421d4934e354198f5721c54ba175f351b2331d6e0c3cb07"
+  }
+}

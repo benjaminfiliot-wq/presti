@@ -1,0 +1,67 @@
+{
+  "lib-lire-photo": {
+    "Contrat d'entrée": "871081f457c379ebc90f378e3abebe5a5e6af20011e567896c338fb5a36909cd",
+    "Préparer la demande au modèle": "bae25725b9582da6c780159dfb12e126cf98d68599ecf7406952e5d15be683ed",
+    "Revalider la sortie du modèle": "b4e30d5a1f3108e0116ed846ee3900e96c5cdb96a020a5e5c0cb847f7407d15d",
+    "Contrat de sortie": "8e7e759f9d919adb7bd011168028b56f7479e8949021dcbba3f83b9a0853d2eb"
+  },
+  "lib-trier-demande": {
+    "Contrat d'entrée": "8e272c59ff2d0ca8980286df59b1fcd816fa1782b3973858f07feccf9c50d8d8",
+    "Trier par règles": "5482e6e037e33578c15475ed4ee95acd7ba697a813147ed7695695c2891003ad",
+    "Contrat de sortie": "3ed046a2173297010a024f7fd0129e810e6037a95bbf6b48c953563db07186c5"
+  },
+  "presti-banc-cerveau": {
+    "Cas fictifs : compte Studio (20 demandes)": "2220deca4eeb0423be68ee7aa2fb0ce8b02bcf70a97abcc564425017573b77d5",
+    "Cas fictifs : compte Signature (20 demandes)": "2a14f1d533a622ec488693c5586ae4cf3b3e4a86cd94747f5ee117dd7d2f22c8",
+    "Bilan du banc": "7eafb4c6d2203c9bc7ff79c2ddd19bdf1d9889f0e6c64eeb8f52ed3ca4ac924c"
+  },
+  "presti-cerveau": {
+    "Aiguiller": "d9373989f9f6a60e41899ef4fdbb607b87f13cfd5fc45b64d0bd8412db0eab48",
+    "Journal : rejeté ou sauté": "7fe8eac8901fcc0101ff46f0001411371b8c6cf979907dc11f6f324ee260f739",
+    "Bilan du passage": "2ab1744d42f53bfae6a0a4eb19538d40be8cb15981c169c62ff41e62ee1dab7d",
+    "Préparer le journal": "b4574e84faea0871fc641425d606ad30b4573843508a1609d7092c35a5880e26",
+    "Préparer le battement": "9c01fc74f1e54765cd8b4301e1f9ec11e16eb510b2474417128b1c63d7e2238f"
+  },
+  "presti-dep-accueil": {
+    "Contrat d'entrée": "f0496a9bc90e254a5a1f0d32a52d0a455df981a3fe1fc0ea8732f79c93c7c5ad",
+    "Préparer le tri": "a0753cdf400d6774a8fb0a346f3a888b88c1d9ff63d7df43aee04a040ca577b5",
+    "Préparer le journal": "3ff248cfd0f2517aa2b0cda73e4dd8a4e37e4ef513ea309e354b1b52276a354a",
+    "Préparer la lecture des photos": "2874404e84c4dac5675e0a33ab979992183c376cd9cbf0d9745acced0d155d98",
+    "Préparer la qualification": "3e2fd78fea3fcf5f09a1a576c0a5372fc8a29c69ea5e775dffdd50211b0fe726",
+    "Préparer la décision": "50057b75c7930c00b3e0ef75e90d6801ae755a73c3ea2fcb0e384424e5b05670",
+    "Préparer la porte": "2f18fdccb36ed78641c78e6b985a246103d89f70864fd4bc5d72cc933c0a4710",
+    "Préparer l'exécution": "162f5336a068848dfb800a6dd190bdd70157a581f6ae87edf4e8d1af6a8af1ff",
+    "Contrat de sortie": "a84118f1047b08db3603328163d5407cf638876284b242c1d92895875db513fc",
+    "Assembler": "76bf036ad5e11abf44b46dd07a28bd31c3db6a54fa900397b5e6bb00bf7ffaf3"
+  },
+  "presti-dep-apres": {
+    "Contrat d'entrée": "0d6b1c55bf87044c0085ef8fcd41881f14797e3d730e40cab1ad594f39b00b9b",
+    "Non branché": "54b3c35f7c76cc88df5ff7381607a898ffc5acd842fa67beed3b97fdb1f9ac5e",
+    "Contrat de sortie": "8f2aaaa53ba09ffc9f9bf103403f67227284f4729a81f62061028d58d9afd9bb"
+  },
+  "presti-dep-devis": {
+    "Contrat d'entrée": "859098bd57f419fe3fbf3ab099847a7576ab4781836e26695da4c9cebe4f1c30",
+    "Non branché": "96a660a6430f9c3c30ab4d9fa242b869f2045793896b2c863647fef7cfa1e3f5",
+    "Contrat de sortie": "ed1318081ba4f0c7299f8331b82f04c001e92c0dce5ece4a26f7c91ea2fc3b3e"
+  },
+  "presti-dep-direction": {
+    "Contrat d'entrée": "5db7458f4553bdb9c7823bbcc8797ce9cb3e1ed19f53412e62305d435ac4d964",
+    "Non branché": "52f135e14f9b8ae584a19d6ed3e4476322581181d632d0cf178064b971515dae",
+    "Contrat de sortie": "cb6f52b65a6a3f797d98db303852f109860ae387d0ada9490810380966ccd63f"
+  },
+  "presti-dep-facturation": {
+    "Contrat d'entrée": "1180dc15284f3967c35af39194b422e5005496f724e6833af04d7ea1689681ac",
+    "Non branché": "b5a48b6de0fb9f334582f1f9b0a6fd4b7c8d6c1509f5e706599436140a6dfeb0",
+    "Contrat de sortie": "4f5e5c9064a5304bd34b93a72626b25b30e5370edf479f44408e65f0e4b428d0"
+  },
+  "presti-dep-operations": {
+    "Contrat d'entrée": "963ee4c5a31e25b6b7aaeb5548123038e616738b9b46e9f1a4bb3bbc95c0bcc2",
+    "Non branché": "cb46e1b383c2d9662cda6a57a8683aa70bf8b53ff6fcac2799eac9ca169395ff",
+    "Contrat de sortie": "da8beabe2d324244084b166e42af5b6c2eb829c6bb8d9d0a2eab2affde06750b"
+  },
+  "presti-dep-suivi": {
+    "Contrat d'entrée": "3fff8c47e359b9747ac2f14c946b400942c909483bee11c8e3728aaaed4bfe54",
+    "Non branché": "55ecc0b2afb397dae3e1368fcf8aa399d1342870c550634e9f211fe85faa2b96",
+    "Contrat de sortie": "c8e953d5434cc8ad1b076f924524ef02174b985ea64c1a71a03447f7c24926ed"
+  }
+}

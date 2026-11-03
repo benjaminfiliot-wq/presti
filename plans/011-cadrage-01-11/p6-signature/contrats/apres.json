@@ -1,0 +1,835 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "tache": "036-006",
+  "source": "plans/011-cadrage-01-11/p6-signature/premiere-reponse.md, ligne 036-006 du § 4 et décisions 3 et 4 du § 5 ; lib/apresChantier.ts ; lib/apresChantierTour.ts ; lib/pilote/regles.ts ; lib/sms/",
+  "regle": "Hors contrat = rejet (statut « rejete »), une ligne de journal, rien ne part. Contrats « sans contact » : aucune adresse e-mail ni aucun numéro n’entre dans ces workflows (le canal est un drapeau ; le lien sms: est assemblé par l’application). Toute ligne lue porte artisan_id et doit être celle du compte (« Supabase account » passe outre la RLS).",
+  "titre": "presti-dep-apres@1 — le département Après-chantier et réputation",
+  "chef": {
+    "workflow": "presti-dep-apres",
+    "id_n8n": "L3GOS7euxi60jCZN",
+    "appele_par": "presti-cerveau (événement chantier_termine, 036-001) ; presti-banc-apres",
+    "entree": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {
+          "offre": {
+            "enum": [
+              "studio",
+              "signature",
+              "essentiel",
+              "essai"
+            ]
+          },
+          "capacites": {
+            "type": "array",
+            "maxItems": 60,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_.]{2,40}$"
+            }
+          },
+          "interrupteur_general": {
+            "type": "boolean"
+          },
+          "interrupteur_departement": {
+            "type": "boolean"
+          },
+          "artisan": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "nom"
+            ],
+            "properties": {
+              "nom": {
+                "type": "string",
+                "maxLength": 70
+              }
+            }
+          },
+          "reglages": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "avis",
+              "entretien",
+              "actif_depuis",
+              "texte_avis",
+              "texte_entretien"
+            ],
+            "properties": {
+              "avis": {
+                "type": "boolean"
+              },
+              "entretien": {
+                "type": "boolean"
+              },
+              "actif_depuis": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "texte_avis": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 1500
+              },
+              "texte_entretien": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 1500
+              }
+            }
+          },
+          "mots_escalade_artisan": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "string",
+              "maxLength": 60
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evenements"
+        ],
+        "properties": {
+          "evenements": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "object"
+            }
+          },
+          "chantiers": {
+            "type": "array",
+            "maxItems": 300,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "artisan_id",
+                "titre",
+                "statut",
+                "date_fin_reelle",
+                "client_nom",
+                "textes",
+                "contact"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "titre": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 120
+                },
+                "statut": {
+                  "type": "string",
+                  "maxLength": 20
+                },
+                "date_fin_reelle": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "client_nom": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 70
+                },
+                "textes": {
+                  "type": "array",
+                  "maxItems": 10,
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 200
+                  }
+                },
+                "contact": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "email_connu",
+                    "sms_consenti",
+                    "opposition",
+                    "stop",
+                    "litige_en_cours",
+                    "a_ecrit_depuis_fin",
+                    "ecrit_aujourdhui"
+                  ],
+                  "properties": {
+                    "email_connu": {
+                      "type": "boolean"
+                    },
+                    "sms_consenti": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "opposition": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "stop": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "litige_en_cours": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "a_ecrit_depuis_fin": {
+                      "type": "boolean"
+                    },
+                    "ecrit_aujourdhui": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "cles_existantes": {
+            "type": "array",
+            "maxItems": 3000,
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
+          "deja_demandes_aujourdhui": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "jour": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "avis": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ref",
+                "artisan_id",
+                "source",
+                "auteur",
+                "note",
+                "texte",
+                "date",
+                "client_connu"
+              ],
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9._:-]{1,64}$"
+                },
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "source": {
+                  "enum": [
+                    "colle",
+                    "google"
+                  ]
+                },
+                "auteur": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 70
+                },
+                "note": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "texte": {
+                  "type": "string",
+                  "maxLength": 2000
+                },
+                "date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "client_connu": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "avis_deja_vus": {
+            "type": "array",
+            "maxItems": 5000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "cle"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "cle": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "pattern": "^[A-Za-z0-9_:.-]+$"
+                }
+              }
+            }
+          },
+          "brouillons_avis": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ref",
+                "texte",
+                "modele"
+              ],
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9._:-]{1,64}$"
+                },
+                "texte": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1700
+                },
+                "modele": {
+                  "enum": [
+                    "claude-haiku-5-5"
+                  ]
+                }
+              }
+            }
+          },
+          "conformites_avis": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ref",
+                "verdict"
+              ],
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9._:-]{1,64}$"
+                },
+                "verdict": {
+                  "enum": [
+                    "accepte",
+                    "refuse",
+                    "illisible"
+                  ]
+                }
+              }
+            }
+          },
+          "cartes_avis_existantes": {
+            "type": "array",
+            "maxItems": 5000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "cle"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "cle": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "pattern": "^[A-Za-z0-9_:.-]+$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ce_que_le_cerveau_doit_ajouter": "Le Cerveau (036-001) n’envoie aujourd’hui que { evenements } et une config vide : le chef se tait (motif config_absente). Au lot 036-012, ses constructeurs CONFIG.apres et DONNEES.apres doivent lire (vues étroites, filtre artisan_id) : offre, capacités, interrupteurs, réglages de crm_apres_chantier, chantiers terminés (sans coordonnées : seulement les drapeaux de consentement), clés des rappels déjà posés, avis collés ou lus.",
+    "sortie": {
+      "statut": [
+        "ok",
+        "rien_a_faire",
+        "rejete",
+        "refuse",
+        "erreur"
+      ],
+      "resultat": [
+        "departement",
+        "demandes_avis",
+        "entretiens",
+        "avis",
+        "cartes",
+        "parti_seul",
+        "propositions"
+      ]
+    },
+    "effets_prevus": [
+      "preparer_carte_lot",
+      "preparer_carte",
+      "noter_evenement"
+    ],
+    "effets_interdits": [
+      "tout envoi",
+      "toute publication",
+      "tout paiement",
+      "toute écriture sur la fiche Google"
+    ],
+    "exclusions_de_lot": [
+      "oppose",
+      "stop",
+      "consentement_illisible",
+      "litige",
+      "litige_illisible",
+      "deja_ecrit_aujourdhui",
+      "aucun_canal_consenti",
+      "texte_refuse"
+    ],
+    "consentement": {
+      "email": "canal consenti si l’adresse est connue du client (drapeau email_connu) et sans opposition ni STOP",
+      "sms_lien": "seulement si sms_consenti est vrai (décision 4) ; lien sms: ouvert d’un geste par l’artisan (lib/sms/lien.ts:10)",
+      "illisible": "une opposition ou un STOP illisible (null) vaut exclusion"
+    }
+  },
+  "enfants": {
+    "lib-avis-lire@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "interrupteur_general",
+          "interrupteur_departement",
+          "mots_escalade_artisan"
+        ],
+        "properties": {
+          "interrupteur_general": {
+            "type": "boolean"
+          },
+          "interrupteur_departement": {
+            "type": "boolean"
+          },
+          "mots_escalade_artisan": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "string",
+              "maxLength": 60
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "avis",
+          "deja_vus",
+          "maintenant"
+        ],
+        "properties": {
+          "avis": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ref",
+                "artisan_id",
+                "source",
+                "auteur",
+                "note",
+                "texte",
+                "date",
+                "client_connu"
+              ],
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9._:-]{1,64}$"
+                },
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "source": {
+                  "enum": [
+                    "colle",
+                    "google"
+                  ]
+                },
+                "auteur": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 70
+                },
+                "note": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "texte": {
+                  "type": "string",
+                  "maxLength": 2000
+                },
+                "date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "client_connu": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "deja_vus": {
+            "type": "array",
+            "maxItems": 5000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "cle"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "cle": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "pattern": "^[A-Za-z0-9_:.-]+$"
+                }
+              }
+            }
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "effets_prevus": [
+        "noter_evenement"
+      ]
+    },
+    "lib-avis-repondre@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "offre",
+          "interrupteur_general",
+          "interrupteur_departement",
+          "artisan"
+        ],
+        "properties": {
+          "offre": {
+            "enum": [
+              "studio",
+              "signature",
+              "essentiel",
+              "essai"
+            ]
+          },
+          "interrupteur_general": {
+            "type": "boolean"
+          },
+          "interrupteur_departement": {
+            "type": "boolean"
+          },
+          "artisan": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "nom"
+            ],
+            "properties": {
+              "nom": {
+                "type": "string",
+                "maxLength": 70
+              }
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "avis",
+          "artisan_id",
+          "brouillon",
+          "conformite",
+          "deja_cartes",
+          "maintenant"
+        ],
+        "properties": {
+          "avis": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cle",
+              "ref",
+              "source",
+              "auteur",
+              "note",
+              "sentiment",
+              "motifs",
+              "suspect",
+              "motifs_suspicion",
+              "texte",
+              "date"
+            ],
+            "properties": {
+              "cle": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80,
+                "pattern": "^[A-Za-z0-9_:.-]+$"
+              },
+              "ref": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._:-]{1,64}$"
+              },
+              "source": {
+                "enum": [
+                  "colle",
+                  "google"
+                ]
+              },
+              "auteur": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 70
+              },
+              "note": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "sentiment": {
+                "enum": [
+                  "negatif",
+                  "positif"
+                ]
+              },
+              "motifs": {
+                "type": "array",
+                "maxItems": 6,
+                "items": {
+                  "type": "string",
+                  "maxLength": 60
+                }
+              },
+              "suspect": {
+                "type": "boolean"
+              },
+              "motifs_suspicion": {
+                "type": "array",
+                "maxItems": 4,
+                "items": {
+                  "enum": [
+                    "client_inconnu",
+                    "doublon_texte",
+                    "rafale"
+                  ]
+                }
+              },
+              "texte": {
+                "type": "string",
+                "maxLength": 2000
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          },
+          "artisan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "brouillon": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "texte",
+              "modele"
+            ],
+            "properties": {
+              "texte": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1700
+              },
+              "modele": {
+                "enum": [
+                  "claude-haiku-5-5"
+                ]
+              }
+            }
+          },
+          "conformite": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "verdict"
+            ],
+            "properties": {
+              "verdict": {
+                "enum": [
+                  "accepte",
+                  "refuse",
+                  "illisible"
+                ]
+              }
+            }
+          },
+          "deja_cartes": {
+            "type": "array",
+            "maxItems": 5000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "cle"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "cle": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "pattern": "^[A-Za-z0-9_:.-]+$"
+                }
+              }
+            }
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "effets_prevus": [
+        "preparer_carte",
+        "noter_evenement"
+      ]
+    }
+  },
+  "sentiment": {
+    "negatif": "note de 3 ou moins, OU un mot de litige (copie figée d’une partie de MOTS_ESCALADE_TOUJOURS, comparée au code), OU un mot de l’artisan",
+    "positif": "le reste"
+  },
+  "faux_avis": {
+    "signaux": [
+      "client_inconnu",
+      "doublon_texte",
+      "rafale"
+    ],
+    "regle": "Un avis suspect est SIGNALÉ à l’artisan, jamais accusé : carte « avis suspect », pas de brouillon, l’artisan décide de le signaler à Google lui-même."
+  },
+  "avis_et_publication": {
+    "negatif": "toujours une carte, quelle que soit l’offre, le mode ou le pilote",
+    "positif": "une carte aussi, tant que Benj n’a pas accepté le type (hors de la liste fermée OUTIL_TYPE)",
+    "publication": "apres_clic_artisan, toujours"
+  },
+  "studio_signature": {
+    "studio": "carte de lot et cartes de réponse (À valider)",
+    "signature": "identique : demander_avis n’est pas exécutable par le pilote (lib/pilote/regles.ts:70) ; aucune réponse à un avis ne part seule"
+  }
+}

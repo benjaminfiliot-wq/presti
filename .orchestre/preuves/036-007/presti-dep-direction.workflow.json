@@ -1,0 +1,954 @@
+{
+  "id": "oHGOyqsZGoUooxa6",
+  "name": "presti-dep-direction",
+  "active": false,
+  "isArchived": false,
+  "versionId": "a5ebbf16-d4ea-4134-a515-c4933458388a",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 27,
+  "createdAt": "2026-11-03T10:18:08.515Z",
+  "updatedAt": "2026-11-03T11:36:30.684Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 180,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "596OC5mL2aMBq6SD,K7lsk0lRJtH5xEOJ",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "presti-dep-direction (036-007) : page du matin (l'argent d'abord, fin sur des cartes), rapport du lundi, diagnostic, aiguillage de l'alerte (liste fermée) et du coût IA. Inactif, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par le Cerveau": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Aiguiller",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aiguiller": {
+      "main": [
+        [
+          {
+            "node": "Page du matin ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page du matin ?": {
+      "main": [
+        [
+          {
+            "node": "Page du matin",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rapport du lundi ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rapport du lundi ?": {
+      "main": [
+        [
+          {
+            "node": "Rapport du lundi",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Diagnostic ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diagnostic ?": {
+      "main": [
+        [
+          {
+            "node": "Diagnostic",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerte ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alerte ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer l'alerte",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Coût IA ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coût IA ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le coût",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rien à faire",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer l'alerte": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-alerte-liste",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-alerte-liste": {
+      "main": [
+        [
+          {
+            "node": "Habiller l'alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le coût": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-cout-ia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-cout-ia": {
+      "main": [
+        [
+          {
+            "node": "Évaluer la dérive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Évaluer la dérive": {
+      "main": [
+        [
+          {
+            "node": "Une alerte de coût à évaluer ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Une alerte de coût à évaluer ?": {
+      "main": [
+        [
+          {
+            "node": "Envelopper l'alerte de coût",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Habiller le coût",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envelopper l'alerte de coût": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-alerte-liste (coût)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-alerte-liste (coût)": {
+      "main": [
+        [
+          {
+            "node": "Habiller le coût",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page du matin": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rapport du lundi": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diagnostic": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Habiller l'alerte": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Habiller le coût": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à faire": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "0e9b9874-3dc1-47ae-b50a-261b3ac05c7f",
+      "name": "Appelé par le Cerveau",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        80
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "1c8ea560-bceb-460f-9b7a-ac73af60bcf4",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de presti-dep-direction@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'presti-dep-direction@1';\nconst SCHEMA = {\"sans_contact\":false,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[],\"properties\":{\"offre\":{\"enum\":[\"studio\",\"signature\",\"essentiel\",\"essai\"]},\"interrupteur_general\":{\"type\":\"boolean\"},\"interrupteur_departement\":{\"type\":\"boolean\"},\"seuil_impaye_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000000},\"plafond_alertes_jour\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":10},\"plafond_cout_jour_centimes\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100000000},\"seuil_derive_pct\":{\"type\":\"integer\",\"minimum\":10,\"maximum\":1000},\"jours_base_min\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":14},\"plancher_derive_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"evenements\"],\"properties\":{\"evenements\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\"}},\"genre\":{\"enum\":[\"matin\",\"lundi\",\"diagnostic\",\"alerte\",\"cout\"]},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"},\"matin\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"sources\",\"impayes\",\"devis\",\"demandes\",\"cartes\"],\"properties\":{\"sources\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"impayes\",\"devis\",\"demandes\",\"cartes\"],\"properties\":{\"impayes\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"lue\",\"le\"],\"properties\":{\"lue\":{\"type\":\"boolean\"},\"le\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}},\"devis\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"lue\",\"le\"],\"properties\":{\"lue\":{\"type\":\"boolean\"},\"le\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}},\"demandes\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"lue\",\"le\"],\"properties\":{\"lue\":{\"type\":\"boolean\"},\"le\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}},\"cartes\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"lue\",\"le\"],\"properties\":{\"lue\":{\"type\":\"boolean\"},\"le\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}}}},\"impayes\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"id\",\"numero\",\"total_ttc\",\"date_echeance\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"numero\":{\"type\":[\"string\",\"null\"],\"maxLength\":40},\"total_ttc\":{\"type\":\"number\",\"minimum\":0,\"maximum\":10000000},\"date_echeance\":{\"type\":[\"string\",\"null\"],\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"}}}},\"devis\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"id\",\"numero\",\"total_ttc\",\"envoye_le\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"numero\":{\"type\":[\"string\",\"null\"],\"maxLength\":40},\"total_ttc\":{\"type\":\"number\",\"minimum\":0,\"maximum\":10000000},\"envoye_le\":{\"type\":[\"string\",\"null\"],\"format\":\"date-time\"}}}},\"demandes\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"id\",\"urgent\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"urgent\":{\"type\":\"boolean\"}}}},\"stock\":{\"type\":\"array\",\"maxItems\":50,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"id\",\"article\",\"reste\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"article\":{\"type\":[\"string\",\"null\"],\"maxLength\":80},\"reste\":{\"type\":[\"number\",\"null\"]}}}},\"exclus\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"string\",\"maxLength\":60}},\"cartes\":{\"type\":\"array\",\"maxItems\":50,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"cle\",\"type_action\",\"objet\",\"titre\",\"apercu\",\"montant_centimes\",\"preparee_le\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"cle\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80},\"type_action\":{\"type\":\"string\",\"pattern\":\"^[a-z_]{2,60}$\"},\"objet\":{\"type\":\"string\",\"maxLength\":60},\"titre\":{\"type\":\"string\",\"maxLength\":120},\"apercu\":{\"type\":\"string\",\"maxLength\":300},\"montant_centimes\":{\"type\":[\"integer\",\"null\"],\"minimum\":0,\"maximum\":10000000000},\"preparee_le\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"cles_existantes\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"maxLength\":80}}}},\"lundi\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"du\",\"au\",\"lu_le\",\"kpis\",\"bases_de_depart\",\"actions\",\"devis_signes\",\"relances\",\"encaissements\",\"impayes_en_cours\",\"lues\"],\"properties\":{\"du\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"au\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"lu_le\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"kpis\":{\"type\":\"array\",\"maxItems\":20,\"items\":{\"type\":\"string\",\"pattern\":\"^[a-z_]{2,60}$\"}},\"bases_de_depart\":{\"type\":\"object\"},\"actions\":{\"type\":\"array\",\"maxItems\":5000,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"type_action\",\"etat\",\"le\"],\"properties\":{\"type_action\":{\"type\":\"string\",\"pattern\":\"^[a-z_]{2,60}$\"},\"etat\":{\"enum\":[\"fait_seul\",\"en_attente\",\"echec\",\"refuse_porte\",\"deja_traite\"]},\"le\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"devis_signes\":{\"type\":\"array\",\"maxItems\":500,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"id\",\"montant_centimes\",\"signe_le\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"montant_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10000000000},\"signe_le\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"relances\":{\"type\":\"array\",\"maxItems\":2000,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"devis_id\",\"le\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"devis_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"le\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"encaissements\":{\"type\":\"array\",\"maxItems\":2000,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"id\",\"montant_centimes\",\"paye_le\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"montant_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10000000000},\"paye_le\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"impayes_en_cours\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"lue\",\"nombre\",\"montant_centimes\"],\"properties\":{\"lue\":{\"type\":\"boolean\"},\"nombre\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000},\"montant_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000000000}}},\"lues\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"encaissements\",\"devis_signes\",\"relances\",\"journal\"],\"properties\":{\"encaissements\":{\"type\":\"boolean\"},\"devis_signes\":{\"type\":\"boolean\"},\"relances\":{\"type\":\"boolean\"},\"journal\":{\"type\":\"boolean\"}}}}},\"diagnostic\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"lu_le\",\"periode_jours\",\"depuis\",\"demandes\",\"devis\"],\"properties\":{\"lu_le\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"periode_jours\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":365},\"depuis\":{\"type\":[\"string\",\"null\"],\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"demandes\":{\"type\":[\"object\",\"null\"],\"additionalProperties\":false,\"required\":[\"recues\",\"sans_reponse\",\"delai_median_min\"],\"properties\":{\"recues\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000},\"sans_reponse\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000},\"delai_median_min\":{\"type\":[\"integer\",\"null\"],\"minimum\":0,\"maximum\":1000000}}},\"devis\":{\"type\":[\"object\",\"null\"],\"additionalProperties\":false,\"required\":[\"envoyes\",\"signes\",\"non_signes_nombre\",\"non_signes_centimes\"],\"properties\":{\"envoyes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000},\"signes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000},\"non_signes_nombre\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000},\"non_signes_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000000000}}}}},\"alerte\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"evenements\",\"cles_deja_alertees\",\"alertes_envoyees_aujourdhui\"],\"properties\":{\"evenements\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"type\",\"cle\",\"survenu_le\",\"faits\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"type\":{\"type\":\"string\",\"maxLength\":40,\"pattern\":\"^[a-z_]+$\"},\"cle\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40,\"pattern\":\"^[A-Za-z0-9_:.-]+$\"},\"survenu_le\":{\"type\":\"string\",\"format\":\"date-time\"},\"faits\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[],\"properties\":{\"prix_ferme\":{\"type\":\"boolean\"},\"mecontent\":{\"type\":\"boolean\"},\"litige\":{\"type\":\"boolean\"},\"urgent\":{\"type\":\"boolean\"},\"montant_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000000},\"workflow\":{\"type\":\"string\",\"maxLength\":80,\"pattern\":\"^[A-Za-z0-9_-]+$\"},\"total_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000000000},\"base_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000000000}}}}}},\"cles_deja_alertees\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"maxLength\":80}},\"alertes_envoyees_aujourdhui\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000}}},\"cout\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"jour\",\"appels\",\"cumul_du_jour\",\"jours_precedents\",\"cles_connues\"],\"properties\":{\"jour\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"appels\":{\"type\":\"array\",\"maxItems\":500,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"cle\",\"departement\",\"modele\",\"externe\",\"jetons_entree\",\"jetons_sortie\",\"cout_eur\",\"source_tarif\",\"survenu_le\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"cle\":{\"type\":\"string\",\"minLength\":3,\"maxLength\":120,\"pattern\":\"^[A-Za-z0-9_:.-]+$\"},\"departement\":{\"enum\":[\"tous\",\"accueil\",\"devis\",\"suivi\",\"facturation\",\"apres\",\"operations\",\"direction\"]},\"modele\":{\"type\":\"string\",\"pattern\":\"^[a-z0-9][a-z0-9._-]{1,79}$\"},\"externe\":{\"type\":\"boolean\"},\"jetons_entree\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10000000},\"jetons_sortie\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10000000},\"cout_eur\":{\"type\":[\"number\",\"null\"],\"minimum\":0,\"maximum\":100000},\"source_tarif\":{\"type\":[\"string\",\"null\"],\"maxLength\":120},\"survenu_le\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"cumul_du_jour\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"jour\",\"departement\",\"modele\",\"externe\",\"appels\",\"cout_millicentimes\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"jour\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"departement\":{\"enum\":[\"tous\",\"accueil\",\"devis\",\"suivi\",\"facturation\",\"apres\",\"operations\",\"direction\"]},\"modele\":{\"type\":\"string\",\"pattern\":\"^[a-z0-9][a-z0-9._-]{1,79}$\"},\"externe\":{\"type\":\"boolean\"},\"appels\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10000000},\"cout_millicentimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000000000}}}},\"jours_precedents\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"jour\",\"cout_millicentimes\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"jour\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"cout_millicentimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000000000}}}},\"cles_connues\":{\"type\":\"array\",\"maxItems\":5000,\"items\":{\"type\":\"string\",\"maxLength\":120}},\"cles_deja_alertees\":{\"type\":\"array\",\"maxItems\":1000,\"items\":{\"type\":\"string\",\"maxLength\":80}}}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: presti-dep-direction@1"
+    },
+    {
+      "id": "c4e814d4-e1d2-4803-94b0-0a3e6cc5a75b",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "entreconforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "a7f74520-adb3-4ab2-8d29-11ae255d9419",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de presti-dep-direction@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'presti-dep-direction@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "fbccaf2d-5927-4f2a-9f96-57994113a348",
+      "name": "Sticky Note 8db1680e",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -16
+      ],
+      "parameters": {
+        "content": "## presti-dep-direction (036-007)\nLe département Direction : page du matin (l'argent d'abord, elle se termine par des cartes), rapport du lundi (chaque chiffre sourcé et daté, aucun gain), diagnostic « où perdez-vous de l'argent ? » (jamais estimé), et l'aiguillage de l'alerte (liste fermée) et du coût IA. Le code compte, le modèle ne compte rien.\nINACTIF, jamais publié, en simulation (mode A) : les lectures sont passées par l'appelant, les écritures partent dans effets_prevus. Aucun identifiant, aucun modèle.\nDéclencheurs voulus (Cerveau) : 7 h 30 chaque jour, lundi 8 h, événement d'interruption.\nJuge : scripts/direction-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 224
+      }
+    },
+    {
+      "id": "4047cfa4-87c6-4600-811a-3e1b9e92e119",
+      "name": "Aiguiller",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-direction · Aiguiller (036-007) : ne calcule rien. Il choisit UNE route parmi les cinq genres (matin, lundi, diagnostic, alerte, cout) ;\n// interrupteur général ou de département coupé (absent = coupé : fail-closed), genre absent ou inconnu, plafond de coût absent : « stop », rien n'est appelé.\n// Un événement page_du_matin sans genre explicite vaut « matin » (la seule route que le Cerveau de 036-001 connaît déjà).\nconst GENRES = ['matin', 'lundi', 'diagnostic', 'alerte', 'cout'];\nreturn $input.all().map((item) => {\n  const j = item.json;\n  const e = j.enveloppe, c = e.config, d = e.donnees;\n  const genre = typeof d.genre === 'string' ? d.genre : (d.evenements.some((x) => x && x.type === 'page_du_matin') ? 'matin' : null);\n  let route = 'stop', raison = null;\n  if (!(c.interrupteur_general === true && c.interrupteur_departement === true)) raison = 'interrupteur_coupe';\n  else if (!GENRES.includes(genre)) raison = genre === null ? 'genre_absent' : 'genre_inconnu';\n  else if (genre === 'cout' && !Number.isInteger(c.plafond_cout_jour_centimes)) raison = 'plafond_absent';\n  else route = genre;\n  return { json: { ...j, route: route, raison: raison, genre: genre, est_matin: route === 'matin', est_lundi: route === 'lundi', est_diagnostic: route === 'diagnostic', est_alerte: route === 'alerte', est_cout: route === 'cout' } };\n});"
+      }
+    },
+    {
+      "id": "b18e74f3-6674-4e47-9719-ceaa3d990efa",
+      "name": "Page du matin ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_matin",
+              "leftValue": "={{ $json.est_matin }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "9551076e-05bf-45fa-946e-fbbf7d2fbee6",
+      "name": "Rapport du lundi ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_lundi",
+              "leftValue": "={{ $json.est_lundi }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "88742eea-ffd0-4ab3-8f1f-a0c9f660bdcf",
+      "name": "Diagnostic ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        240
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_diagnostic",
+              "leftValue": "={{ $json.est_diagnostic }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "80948e49-8417-4d06-8d41-9aa041dfd102",
+      "name": "Alerte ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        360
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_alerte",
+              "leftValue": "={{ $json.est_alerte }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "fc5e9338-5b78-4ac8-8ed6-8c43f80dfa0d",
+      "name": "Coût IA ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        480
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-est_cout",
+              "leftValue": "={{ $json.est_cout }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "f639883c-8d12-4c71-8f33-408da32524cc",
+      "name": "Rien à faire",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        600
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-direction · Rien à faire (036-007) : la route « stop ». Aucun effet, une ligne de journal qui dit pourquoi.\nreturn $input.all().map((item) => {\n  const j = item.json, e = j.enveloppe;\n  return { json: { ...j, statut: 'rien_a_faire', resultat: { etat: j.raison || 'rien', genre: j.genre || null }, effets_prevus: [],\n    journal: [{ evenement: 'direction_saute', agent: 'presti-dep-direction', objet_ref: null, decision: ('aucun travail : ' + (j.raison || 'rien')).slice(0, 200), simulation: e.simulation }] } };\n});"
+      }
+    },
+    {
+      "id": "8600394b-f9ea-434c-9be3-cac650e1fd7e",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2300,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "3e6f6085-0413-4dbd-ae90-192f5c6fc4c1",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2540,
+        160
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 036-007). Rien n'a été écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (push, base, rapport) n'est pas branché. Il le sera au « go » de Benj, derrière cette même porte."
+    },
+    {
+      "id": "c752c543-285c-4f83-b106-fc51f7e7e9dc",
+      "name": "Page du matin",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const AGENT = 'presti-dep-direction';\nconst eurC = (c) => { const n = Math.round(c), a = Math.abs(n), ent = Math.floor(a / 100), ct = a % 100; return (n < 0 ? '-' : '') + String(ent).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + (ct ? ',' + String(ct).padStart(2, '0') : '') + ' €'; };\nconst eurosCourt = (n) => String(Math.round(n)).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + ' €';\nconst parisJour = (iso) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(Date.parse(iso)));\nconst parisHeure = (iso) => Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', hourCycle: 'h23' }).format(new Date(Date.parse(iso))));\nconst joursEntre = (de, a) => Math.floor((Date.parse(a + 'T00:00:00Z') - Date.parse(String(de).slice(0, 10) + 'T00:00:00Z')) / 86400000);\nconst refuse = (j, sim, evenement, raison) => ({ ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: [raison], journal: [{ evenement: evenement, agent: AGENT, objet_ref: null, decision: raison.slice(0, 200), simulation: sim }] });\n// presti-dep-direction · Page du matin (036-007 ; A7, p6:109) : UNE page, l'argent d'abord (impayés, devis à signer, demandes sans réponse), trois priorités\n// (lib/assistant/briefing.ts:111-152, copie figée de composerPriorites comparée au code par le juge), et elle SE TERMINE PAR DES CARTES à valider :\n// jamais par une action. Le code compte, le modèle ne compte rien. Aucun nom de client (R7) : les textes sont ceux du code avec un client absent.\n// Chaque chiffre porte sa source et sa date ; une lecture en erreur n'est jamais remplacée par un zéro. Écritures : effets_prevus seulement.\nconst NB_PRIORITES = 3;\nconst DEVIS_SANS_REPONSE_JOURS = 7;\nconst MAX_CARTES = 10;\nfunction priorites(e, exclus) {\n  const argent = [\n    ...e.impayes.map((i) => ({ cle: 'impaye:' + i.id, objet: 'facture:' + i.id, famille: 'impaye', montant: i.montant, href: '/factures', texte: (i.client ?? 'Un client') + ' vous doit ' + eurosCourt(i.montant),\n      detail: (i.numero ?? 'Facture') + ' · ' + i.jours_de_retard + ' jour' + (i.jours_de_retard > 1 ? 's' : '') + ' de retard' })),\n    ...e.devis.map((d) => ({ cle: 'devis:' + d.id, objet: 'devis:' + d.id, famille: 'devis', montant: d.montant, href: '/devis/' + d.id, texte: 'Relancer ' + (d.client ?? 'ce client') + ' : ' + eurosCourt(d.montant) + ' en attente',\n      detail: (d.numero ?? 'Devis') + ' · sans réponse depuis ' + d.jours + ' jours' })),\n  ].sort((a, b) => (b.montant ?? 0) - (a.montant ?? 0) || (a.cle < b.cle ? -1 : 1));\n  const demandes = [...e.demandes].sort((a, b) => Number(!!b.urgent) - Number(!!a.urgent) || (a.id < b.id ? -1 : 1))\n    .map((l) => ({ cle: 'demande:' + l.id, objet: 'lead:' + l.id, famille: 'demande', montant: null, href: '/messages', texte: 'Répondre à ' + (l.nom ?? 'une nouvelle demande'), detail: l.urgent ? 'Demande urgente' : 'Demande en attente' }));\n  const stock = (e.stock || []).map((a) => ({ cle: 'stock:' + a.id, objet: 'article:' + a.id, famille: 'stock', montant: null, href: '/inventaire', texte: (a.article ?? 'Un article') + ' : plus que ' + (a.reste ?? '?') + ' en stock', detail: 'Sous le seuil d’alerte' }));\n  const toutes = [...argent, ...demandes, ...stock].filter((p) => !exclus.has(p.objet));\n  return { priorites: toutes.slice(0, NB_PRIORITES), autres: Math.max(0, toutes.length - NB_PRIORITES) };\n}\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, org = e.organisation_id, sim = e.simulation === true;\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: AGENT, objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    const m = d.matin;\n    if (!m || typeof d.maintenant !== 'string') return { ...j, statut: 'rien_a_faire', resultat: { etat: 'lecture_absente', genre: 'matin' }, effets_prevus: [], journal: [ligne('page_saute', null, 'lecture du point du jour absente : rien n’est affirmé')] };\n    const lignes = [].concat(m.impayes, m.devis, m.demandes, m.stock || [], m.cartes);\n    if (lignes.some((x) => x.artisan_id !== org)) return refuse(j, sim, 'page_refusee', 'autre_compte : une ligne lue n’est pas celle de ce compte');\n    const jour = parisJour(d.maintenant), cle = 'pm:' + jour, src = m.sources;\n    if ((m.cles_existantes || []).includes(cle)) return { ...j, statut: 'rien_a_faire', resultat: { etat: 'deja_deposee', genre: 'matin', jour: jour }, effets_prevus: [], journal: [ligne('page_saute', cle, 'page déjà déposée ce jour : rien à refaire')] };\n    const impayes = src.impayes.lue ? m.impayes.filter((i) => i.date_echeance).map((i) => ({ id: i.id, numero: i.numero, montant: i.total_ttc, jours_de_retard: joursEntre(i.date_echeance, jour) })).filter((i) => i.jours_de_retard > 0) : [];\n    const devis = src.devis.lue ? m.devis.filter((x) => x.envoye_le).map((x) => ({ id: x.id, numero: x.numero, montant: x.total_ttc, jours: joursEntre(x.envoye_le, jour) })).filter((x) => x.jours >= DEVIS_SANS_REPONSE_JOURS) : [];\n    const demandes = src.demandes.lue ? m.demandes.map((l) => ({ id: l.id, urgent: l.urgent })) : [];\n    const p = priorites({ impayes: impayes, devis: devis, demandes: demandes, stock: m.stock || [] }, new Set(m.exclus || []));\n    const centimes = (liste) => liste.reduce((s, x) => s + Math.round(x.montant * 100), 0);\n    const pluriel = (n, mot) => n + ' ' + mot + (n > 1 ? 's' : '');\n    const indispo = (id, libelle, nom) => ({ id: id, libelle: libelle, nombre: null, montant_centimes: null, texte: libelle + ' : non lus (lecture en erreur), rien n’est affirmé', source: nom + ' : lecture en erreur', date: jour, confiance: 'indisponible' });\n    const cImp = centimes(impayes), cDev = centimes(devis);\n    const argent = [\n      src.impayes.lue ? { id: 'impayes', libelle: 'Impayés', nombre: impayes.length, montant_centimes: cImp, texte: impayes.length ? 'Impayés : ' + pluriel(impayes.length, 'facture') + ' échue' + (impayes.length > 1 ? 's' : '') + ', ' + eurC(cImp) : 'Impayés : aucune facture échue',\n        source: 'factures émises et échues non payées, lues le ' + src.impayes.le, date: src.impayes.le, confiance: 'mesure' } : indispo('impayes', 'Impayés', 'factures'),\n      src.devis.lue ? { id: 'devis_a_signer', libelle: 'Devis à signer', nombre: devis.length, montant_centimes: cDev, texte: devis.length ? 'Devis à signer : ' + devis.length + ' devis sans réponse depuis ' + DEVIS_SANS_REPONSE_JOURS + ' jours ou plus, ' + eurC(cDev) : 'Devis à signer : aucun sans réponse depuis ' + DEVIS_SANS_REPONSE_JOURS + ' jours',\n        source: 'devis envoyés sans réponse, lus le ' + src.devis.le, date: src.devis.le, confiance: 'mesure' } : indispo('devis_a_signer', 'Devis à signer', 'devis'),\n      src.demandes.lue ? { id: 'demandes_sans_reponse', libelle: 'Demandes sans réponse', nombre: demandes.length, montant_centimes: null, texte: demandes.length ? 'Demandes sans réponse : ' + demandes.length : 'Demandes sans réponse : aucune',\n        source: 'demandes en attente de réponse, lues le ' + src.demandes.le, date: src.demandes.le, confiance: 'mesure' } : indispo('demandes_sans_reponse', 'Demandes sans réponse', 'demandes'),\n    ];\n    const cartes = src.cartes.lue ? m.cartes.slice(0, MAX_CARTES).map((k) => ({ cle: k.cle, type_action: k.type_action, objet: k.objet, titre: k.titre, apercu: k.apercu, montant_centimes: k.montant_centimes, preparee_le: k.preparee_le, statut: 'a_valider' })) : [];\n    const blocs = [\n      { type: 'argent', titre: 'L’argent d’abord', lignes: argent },\n      { type: 'priorites', titre: 'Vos trois priorités', priorites: p.priorites, autres: p.autres },\n      { type: 'cartes', titre: 'À valider', cartes: cartes, nombre: cartes.length, non_montrees: src.cartes.lue ? Math.max(0, m.cartes.length - MAX_CARTES) : 0,\n        texte: !src.cartes.lue ? 'Cartes non lues (lecture en erreur) : rien n’est affirmé' : cartes.length ? pluriel(cartes.length, 'carte') + ' à valider d’un geste' : 'Rien à valider' },\n    ];\n    const rien = impayes.length === 0 && devis.length === 0 && demandes.length === 0 && cartes.length === 0 && Object.values(src).every((x) => x.lue);\n    const page = { date: jour, titre: 'Votre point du jour', blocs: blocs, dernier_bloc: 'cartes', rien_a_signaler: rien };\n    return { ...j, statut: 'ok', resultat: { genre: 'matin', jour: jour, page: page },\n      effets_prevus: [\n        { effet: 'deposer_page', organisation_id: org, cle: cle, destination: 'centre_de_commande', jour: jour },\n        { effet: 'noter_evenement', organisation_id: org, type: 'page_du_matin_prete', cle: cle, faits: { priorites: p.priorites.length, cartes: cartes.length } },\n      ],\n      journal: [ligne('page_du_matin', cle, p.priorites.length + ' priorité(s), ' + cartes.length + ' carte(s), l’argent d’abord, fin sur les cartes')] };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['page : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "de4d6cb0-5a18-49f3-b49d-ffdd3d5cb89b",
+      "name": "Rapport du lundi",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const AGENT = 'presti-dep-direction';\nconst eurC = (c) => { const n = Math.round(c), a = Math.abs(n), ent = Math.floor(a / 100), ct = a % 100; return (n < 0 ? '-' : '') + String(ent).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + (ct ? ',' + String(ct).padStart(2, '0') : '') + ' €'; };\nconst eurosCourt = (n) => String(Math.round(n)).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + ' €';\nconst parisJour = (iso) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(Date.parse(iso)));\nconst parisHeure = (iso) => Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', hourCycle: 'h23' }).format(new Date(Date.parse(iso))));\nconst joursEntre = (de, a) => Math.floor((Date.parse(a + 'T00:00:00Z') - Date.parse(String(de).slice(0, 10) + 'T00:00:00Z')) / 86400000);\nconst refuse = (j, sim, evenement, raison) => ({ ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: [raison], journal: [{ evenement: evenement, agent: AGENT, objet_ref: null, decision: raison.slice(0, 200), simulation: sim }] });\n// presti-dep-direction · Rapport du lundi (036-007 ; A9, A10, A17) : mesurer l'argent, pas l'activité. Chaque chiffre porte sa source, sa date et sa confiance.\n// Une relance n'est créditée que si elle PRÉCÈDE la signature du devis (A10) : une relance faite après la signature ne compte pas. Aucun chiffre de « gain » :\n// les comptes d'actions passent par lib-rapport-hebdo (liste fermée, 035-005), dont la demande est préparée ici ; le chef ne calcule que des euros encaissés,\n// signés et en cours, à partir des lignes lues. Un mot de gain dans une source ou une base fait REFUSER le rapport. Écritures : effets_prevus seulement.\nconst KPI = ['actions_preparees', 'relances_preparees', 'fait_seul', 'en_attente', 'echecs', 'refus_porte'];\nconst GAIN = /(gain|économi|gagn|rentab|bénéfic|retour sur invest)/i;\nconst MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];\nconst jourLong = (iso) => { const [a, m, d] = iso.split('-').map(Number); return (d === 1 ? '1er' : String(d)) + ' ' + MOIS[m - 1] + ' ' + a; };\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, org = e.organisation_id, sim = e.simulation === true;\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: AGENT, objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    const l = d.lundi;\n    if (!l) return { ...j, statut: 'rien_a_faire', resultat: { etat: 'lecture_absente', genre: 'lundi' }, effets_prevus: [], journal: [ligne('rapport_saute', null, 'lecture du rapport absente : rien n’est affirmé')] };\n    if ([].concat(l.devis_signes, l.relances, l.encaissements).some((x) => x.artisan_id !== org)) return refuse(j, sim, 'rapport_refuse', 'autre_compte : une ligne lue n’est pas celle de ce compte');\n    const refus = [];\n    if (l.du > l.au) refus.push('période incohérente');\n    for (const k of l.kpis) if (!KPI.includes(k)) refus.push('indicateur hors de la liste fermée (aucun chiffre de gain) : ' + k.slice(0, 40));\n    for (const [k, b] of Object.entries(l.bases_de_depart)) {\n      if (!KPI.includes(k)) refus.push('base de départ d’un indicateur hors liste : ' + k.slice(0, 40));\n      if (!b || typeof b.source !== 'string' || !b.source.trim() || typeof b.date !== 'string' || !b.date.trim()) refus.push('chiffre sans source ou sans date : ' + k.slice(0, 40));\n      else if (GAIN.test(b.source)) refus.push('chiffre de gain refusé : ' + k.slice(0, 40));\n    }\n    if (refus.length) return { ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: refus.slice(0, 20), journal: [ligne('rapport_refuse', null, 'rapport refusé : ' + refus[0])] };\n    const cle = 'rl:' + l.du + ':' + l.au;\n    const dans = (iso) => { const x = parisJour(iso); return x >= l.du && x <= l.au; };\n    const periode = 'du ' + jourLong(l.du) + ' au ' + jourLong(l.au);\n    const somme = (liste) => liste.reduce((s, x) => s + x.montant_centimes, 0);\n    const indisponible = (id, libelle, nom) => ({ id: id, libelle: libelle, valeur: null, unite: 'eur', source: nom + ' : lecture en erreur', date: l.lu_le, confiance: 'indisponible' });\n    const encaisses = l.encaissements.filter((x) => dans(x.paye_le));\n    const signes = l.devis_signes.filter((x) => dans(x.signe_le));\n    const apresRelance = signes.filter((x) => l.relances.some((r) => r.devis_id === x.id && Date.parse(r.le) < Date.parse(x.signe_le)));\n    const indicateurs = [\n      l.lues.encaissements ? { id: 'encaisse', libelle: 'Encaissé', valeur: somme(encaisses), unite: 'eur', nombre: encaisses.length, source: 'paiements enregistrés ' + periode + ', lus le ' + jourLong(l.lu_le), date: l.lu_le, confiance: 'mesure' } : indisponible('encaisse', 'Encaissé', 'paiements'),\n      l.lues.devis_signes ? { id: 'devis_signes', libelle: 'Devis signés', valeur: somme(signes), unite: 'eur', nombre: signes.length, source: 'devis signés ' + periode + ', lus le ' + jourLong(l.lu_le), date: l.lu_le, confiance: 'mesure' } : indisponible('devis_signes', 'Devis signés', 'devis'),\n      l.lues.devis_signes && l.lues.relances ? { id: 'signes_apres_relance', libelle: 'Devis signés après une relance antérieure', valeur: somme(apresRelance), unite: 'eur', nombre: apresRelance.length, source: 'devis signés ' + periode + ' dont une relance précède la signature, lus le ' + jourLong(l.lu_le), date: l.lu_le, confiance: 'mesure' } : indisponible('signes_apres_relance', 'Devis signés après une relance antérieure', 'relances'),\n      l.impayes_en_cours.lue ? { id: 'impayes_en_cours', libelle: 'Impayés en cours', valeur: l.impayes_en_cours.montant_centimes, unite: 'eur', nombre: l.impayes_en_cours.nombre, source: 'factures émises non payées, lues le ' + jourLong(l.lu_le), date: l.lu_le, confiance: 'mesure' } : indisponible('impayes_en_cours', 'Impayés en cours', 'factures'),\n    ];\n    const lignes = ['Rapport de la semaine ' + periode].concat(indicateurs.map((x) => x.valeur === null ? x.libelle + ' : non lu (lecture en erreur), rien n’est affirmé'\n      : x.libelle + ' : ' + eurC(x.valeur) + ' (' + x.nombre + ', ' + x.source + ')'));\n    if (lignes.some((t) => GAIN.test(t))) return { ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: ['chiffre de gain refusé'], journal: [ligne('rapport_refuse', null, 'chiffre de gain refusé')] };\n    const demande = { contrat: 'lib-rapport-hebdo@1', organisation_id: org, simulation: sim, cle_idempotence: cle, trace: { execution_parent: 'presti-dep-direction:' + cle, declencheur: 'presti-dep-direction', tentative: 0 },\n      config: { periode: 'semaine', kpis: l.kpis, bases_de_depart: l.bases_de_depart }, donnees: { du: l.du, au: l.au, actions: l.actions } };\n    return { ...j, statut: 'ok', resultat: { genre: 'lundi', periode: { du: l.du, au: l.au }, indicateurs: indicateurs, lignes: lignes, demande_rapport: demande },\n      effets_prevus: [\n        { effet: 'appeler', contrat: 'lib-rapport-hebdo@1', cle: cle, raison: 'les comptes d’actions viennent de la liste fermée de lib-rapport-hebdo' },\n        { effet: 'deposer_rapport', organisation_id: org, cle: cle, destination: 'centre_de_commande' },\n      ],\n      journal: [ligne('rapport_du_lundi', cle, indicateurs.length + ' chiffre(s), chacun sourcé et daté, aucun chiffre de gain')] };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['rapport : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "618cfdc1-82e0-431d-acd8-a8e599b65b8e",
+      "name": "Diagnostic",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        -20
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const AGENT = 'presti-dep-direction';\nconst eurC = (c) => { const n = Math.round(c), a = Math.abs(n), ent = Math.floor(a / 100), ct = a % 100; return (n < 0 ? '-' : '') + String(ent).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + (ct ? ',' + String(ct).padStart(2, '0') : '') + ' €'; };\nconst eurosCourt = (n) => String(Math.round(n)).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + ' €';\nconst parisJour = (iso) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(Date.parse(iso)));\nconst parisHeure = (iso) => Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', hourCycle: 'h23' }).format(new Date(Date.parse(iso))));\nconst joursEntre = (de, a) => Math.floor((Date.parse(a + 'T00:00:00Z') - Date.parse(String(de).slice(0, 10) + 'T00:00:00Z')) / 86400000);\nconst refuse = (j, sim, evenement, raison) => ({ ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: [raison], journal: [{ evenement: evenement, agent: AGENT, objet_ref: null, decision: raison.slice(0, 200), simulation: sim }] });\n// presti-dep-direction · Diagnostic (036-007 ; A16, p6:118) : « où perdez-vous de l'argent ? » — demandes sans réponse, devis non signés — calculé sur les\n// données DU COMPTE, deux étages (la demande, puis la vente), sinon « pas encore de données ». JAMAIS estimé : aucun seuil inventé, aucun chiffre qui ne soit pas lu.\n// Un bloc non lu (null) n'est pas remplacé par un zéro : il est dit « non disponible ». Écritures : effets_prevus seulement.\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, org = e.organisation_id, sim = e.simulation === true;\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: AGENT, objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    const g = d.diagnostic;\n    if (!g) return { ...j, statut: 'rien_a_faire', resultat: { etat: 'lecture_absente', genre: 'diagnostic' }, effets_prevus: [], journal: [ligne('diagnostic_saute', null, 'lecture du diagnostic absente : rien n’est affirmé')] };\n    const avecDemandes = g.demandes !== null && g.demandes.recues > 0;\n    const avecDevis = g.devis !== null && g.devis.envoyes > 0;\n    const cle = 'dg:' + g.lu_le;\n    if (!avecDemandes && !avecDevis) {\n      return { ...j, statut: 'ok', resultat: { genre: 'diagnostic', pas_de_donnees: true, titre: 'Où perdez-vous de l’argent ?', texte: 'Pas encore de données : le diagnostic se calcule dès que vos premières demandes et vos premiers devis sont enregistrés.', constats: [], etages: [], non_disponible: [] },\n        effets_prevus: [{ effet: 'deposer_diagnostic', organisation_id: org, cle: cle, destination: 'centre_de_commande', pas_de_donnees: true }], journal: [ligne('diagnostic', cle, 'pas encore de données : aucun chiffre affiché, rien d’estimé')] };\n    }\n    const periode = 'les ' + g.periode_jours + ' derniers jours, lus le ' + g.lu_le;\n    const constats = [], etages = [], nonDispo = [];\n    if (g.devis !== null) {\n      constats.push({ id: 'devis_non_signes', libelle: 'Devis envoyés et non signés', nombre: g.devis.non_signes_nombre, montant_centimes: g.devis.non_signes_centimes, unite: 'eur', source: 'devis envoyés sur ' + periode, date: g.lu_le, confiance: 'mesure' });\n      etages.push({ etage: 'vente', texte: g.devis.envoyes + ' devis envoyé' + (g.devis.envoyes > 1 ? 's' : '') + ', ' + g.devis.signes + ' signé' + (g.devis.signes > 1 ? 's' : '') + ', ' + g.devis.non_signes_nombre + ' non signé' + (g.devis.non_signes_nombre > 1 ? 's' : '') + ' pour ' + eurC(g.devis.non_signes_centimes) });\n    } else nonDispo.push('devis');\n    if (g.demandes !== null) {\n      constats.push({ id: 'demandes_sans_reponse', libelle: 'Demandes sans réponse', nombre: g.demandes.sans_reponse, sur: g.demandes.recues, montant_centimes: null, unite: 'nombre', source: 'demandes reçues sur ' + periode, date: g.lu_le, confiance: 'mesure' });\n      etages.push({ etage: 'demande', texte: g.demandes.recues + ' demande' + (g.demandes.recues > 1 ? 's' : '') + ' reçue' + (g.demandes.recues > 1 ? 's' : '') + ', dont ' + g.demandes.sans_reponse + ' sans réponse' });\n    } else nonDispo.push('demandes');\n    const peu = (g.demandes ? g.demandes.recues : 0) + (g.devis ? g.devis.envoyes : 0) < 5;\n    return { ...j, statut: 'ok', resultat: { genre: 'diagnostic', pas_de_donnees: false, titre: 'Où perdez-vous de l’argent ?', constats: constats, etages: etages, non_disponible: nonDispo, peu_de_donnees: peu,\n      texte: peu ? 'Calculé sur très peu de données : ces chiffres sont des constats, pas une tendance.' : 'Constats calculés sur vos données, rien n’est estimé.' },\n      effets_prevus: [{ effet: 'deposer_diagnostic', organisation_id: org, cle: cle, destination: 'centre_de_commande', pas_de_donnees: false }], journal: [ligne('diagnostic', cle, constats.length + ' constat(s) lu(s), rien d’estimé')] };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['diagnostic : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "763aaf13-b035-493b-881f-87b07b6168ea",
+      "name": "Préparer l'alerte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        220
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-direction · Préparer l'alerte (036-007) : l'enveloppe de lib-alerte-liste@1, rien d'autre. Seuil d'impayé absent = 0 = pas d'alerte d'impayé.\nreturn $input.all().map((item) => {\n  const e = item.json.enveloppe, c = e.config, d = e.donnees;\n  const a = d.alerte || { evenements: [], cles_deja_alertees: [], alertes_envoyees_aujourdhui: 0 };\n  return { json: { contrat: 'lib-alerte-liste@1', organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: ('alerte:' + e.cle_idempotence).slice(0, 80),\n    trace: { execution_parent: ('presti-dep-direction:' + e.cle_idempotence).slice(0, 80), declencheur: 'presti-dep-direction', tentative: 0 },\n    config: { interrupteur_general: c.interrupteur_general === true, interrupteur_departement: c.interrupteur_departement === true, seuil_impaye_centimes: Number.isInteger(c.seuil_impaye_centimes) ? c.seuil_impaye_centimes : 0, plafond_alertes_jour: Number.isInteger(c.plafond_alertes_jour) ? c.plafond_alertes_jour : 5 },\n    donnees: { evenements: a.evenements, cles_deja_alertees: a.cles_deja_alertees, alertes_envoyees_aujourdhui: a.alertes_envoyees_aujourdhui, maintenant: d.maintenant } } };\n});"
+      }
+    },
+    {
+      "id": "35e3fc2b-dd28-48bc-8118-2d156caa4355",
+      "name": "Appeler lib-alerte-liste",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        220
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "v2wfT9qB5e0LHtFI"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "L'agent Alerte, liste fermée (036-007). Un échec ne fait pas échouer le passage.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "e409cbbe-cd1b-4410-a10f-b0254b4f2a81",
+      "name": "Habiller l'alerte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        220
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-direction · Habiller l'alerte (036-007) : la sortie de lib-alerte-liste devient la sortie du chef. L'enveloppe d'origine garde la clé et la simulation.\nconst orig = $('Aiguiller').first().json.enveloppe;\nconst s = $input.first().json || {};\nconst ok = typeof s.contrat === 'string';\nreturn [{ json: { enveloppe: { contrat: 'presti-dep-direction@1', simulation: orig.simulation, cle_idempotence: orig.cle_idempotence },\n  statut: ok ? s.statut : 'erreur', resultat: ok && s.resultat ? { genre: 'alerte', alerte: s.resultat } : null,\n  effets_prevus: ok && Array.isArray(s.effets_prevus) ? s.effets_prevus : [], journal: ok && Array.isArray(s.journal) ? s.journal : [],\n  erreurs: ok && Array.isArray(s.erreurs) && s.erreurs.length ? s.erreurs : ok ? [] : ['l’enfant lib-alerte-liste n’a pas répondu'] } }];"
+      }
+    },
+    {
+      "id": "8db0e79c-9f8b-49f3-b834-c312f4822c63",
+      "name": "Préparer le coût",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        400
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-direction · Préparer le coût (036-007) : l'enveloppe de lib-cout-ia@1. Le plafond du jour est exigé par l'aiguilleur (« plafond_absent » sinon stop) :\n// il n'est jamais inventé. Les autres réglages ont une valeur par défaut écrite ici : dérive à +50 %, trois jours de base au moins, plancher d'un euro.\nreturn $input.all().map((item) => {\n  const e = item.json.enveloppe, c = e.config, d = e.donnees;\n  const k = d.cout || { jour: String(d.maintenant || '').slice(0, 10), appels: [], cumul_du_jour: [], jours_precedents: [], cles_connues: [] };\n  return { json: { contrat: 'lib-cout-ia@1', organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: ('cout:' + e.cle_idempotence).slice(0, 80),\n    trace: { execution_parent: ('presti-dep-direction:' + e.cle_idempotence).slice(0, 80), declencheur: 'presti-dep-direction', tentative: 0 },\n    config: { interrupteur_general: c.interrupteur_general === true, interrupteur_departement: c.interrupteur_departement === true, plafond_jour_centimes: c.plafond_cout_jour_centimes,\n      seuil_derive_pct: Number.isInteger(c.seuil_derive_pct) ? c.seuil_derive_pct : 50, jours_base_min: Number.isInteger(c.jours_base_min) ? c.jours_base_min : 3, plancher_derive_centimes: Number.isInteger(c.plancher_derive_centimes) ? c.plancher_derive_centimes : 100 },\n    donnees: { jour: k.jour, maintenant: d.maintenant, appels: k.appels, cumul_du_jour: k.cumul_du_jour, jours_precedents: k.jours_precedents, cles_connues: k.cles_connues } } };\n});"
+      }
+    },
+    {
+      "id": "4c8935a8-fe70-404b-b4d9-42b02bcfbb58",
+      "name": "Appeler lib-cout-ia",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        400
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "JtGOKOG1ssFP5z1u"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le compteur de coût IA (036-007). Un échec ne fait pas échouer le passage.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "a92bcab5-7d17-4f90-826a-0931307f6834",
+      "name": "Évaluer la dérive",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        400
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-direction · Évaluer la dérive (036-007) : lib-cout-ia a compté ; s'il a levé une dérive ou le plafond, ses événements d'alerte sont envoyés à\n// lib-alerte-liste (la LISTE FERMÉE : aucune alerte ne part ailleurs). Sinon rien n'est à alerter.\nconst orig = $('Aiguiller').first().json.enveloppe;\nconst s = $input.first().json || {};\nconst evs = s.resultat && Array.isArray(s.resultat.evenements_alerte) ? s.resultat.evenements_alerte : [];\nif (s.contrat === 'lib-cout-ia@1' && s.statut === 'ok' && evs.length) {\n  const c = orig.config, k = orig.donnees.cout || {};\n  return [{ json: { a_alerter: true, alerte_enveloppe: { contrat: 'lib-alerte-liste@1', organisation_id: orig.organisation_id, simulation: orig.simulation, cle_idempotence: ('cout-alerte:' + orig.cle_idempotence).slice(0, 80),\n    trace: { execution_parent: ('presti-dep-direction:' + orig.cle_idempotence).slice(0, 80), declencheur: 'presti-dep-direction', tentative: 0 },\n    config: { interrupteur_general: c.interrupteur_general === true, interrupteur_departement: c.interrupteur_departement === true, seuil_impaye_centimes: 0, plafond_alertes_jour: Number.isInteger(c.plafond_alertes_jour) ? c.plafond_alertes_jour : 5 },\n    donnees: { evenements: evs, cles_deja_alertees: k.cles_deja_alertees || [], alertes_envoyees_aujourdhui: 0, maintenant: orig.donnees.maintenant } } } }];\n}\nreturn [{ json: { a_alerter: false, alerte_enveloppe: null } }];"
+      }
+    },
+    {
+      "id": "d2ae2bbc-c557-4015-8895-27564c40b2a6",
+      "name": "Une alerte de coût à évaluer ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2400,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-a_alerter",
+              "leftValue": "={{ $json.a_alerter }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "f2d48778-bf85-4988-9eac-d4639969378b",
+      "name": "Envelopper l'alerte de coût",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        340
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-direction · Envelopper l'alerte de coût (036-007) : l'enveloppe de lib-alerte-liste@1 devient l'entrée de l'appel, telle quelle.\nreturn [{ json: $input.first().json.alerte_enveloppe }];"
+      }
+    },
+    {
+      "id": "510cf252-5284-4282-b371-3e16f04b9fb7",
+      "name": "Appeler lib-alerte-liste (coût)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        340
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "v2wfT9qB5e0LHtFI"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le coût qui dérive passe par la même liste fermée (036-007).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "45a2f93a-7167-4e7d-bbb3-e6605038c109",
+      "name": "Habiller le coût",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        400
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-dep-direction · Habiller le coût (036-007) : la sortie de lib-cout-ia, plus celle de lib-alerte-liste quand une alerte a été évaluée.\nconst orig = $('Aiguiller').first().json.enveloppe;\nconst co = $('Appeler lib-cout-ia').first().json || {};\nconst s = $input.first().json || {};\nconst al = s.contrat === 'lib-alerte-liste@1' ? s : null;\nconst ok = typeof co.contrat === 'string';\nconst liste = (x) => (Array.isArray(x) ? x : []);\nreturn [{ json: { enveloppe: { contrat: 'presti-dep-direction@1', simulation: orig.simulation, cle_idempotence: orig.cle_idempotence },\n  statut: ok ? co.statut : 'erreur', resultat: ok && co.resultat ? { genre: 'cout', cout: co.resultat, alerte: al ? al.resultat : null } : null,\n  effets_prevus: ok ? liste(co.effets_prevus).concat(al ? liste(al.effets_prevus) : []) : [], journal: ok ? liste(co.journal).concat(al ? liste(al.journal) : []).slice(0, 200) : [],\n  erreurs: ok ? liste(co.erreurs) : ['l’enfant lib-cout-ia n’a pas répondu'] } }];"
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T11:36:34.593Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-007), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

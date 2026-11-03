@@ -1,0 +1,91 @@
+apres-reputation-n8n-qa : exports lus dans .orchestre/preuves/036-006 (4/4), 2 essai(s) n8n
+Comparaison à lib/apresChantier.ts (propositions), cas par cas :
+| cas | lib/apresChantier.ts | presti-dep-apres | verdict |
+|---|---|---|---|
+| toutes les fixtures, avis et entretien | 10 proposition(s) | 10 proposition(s) | identique |
+| rappels déjà posés par le passage quotidien | 8 proposition(s) | 8 proposition(s) | identique |
+| avis seulement | 8 proposition(s) | 8 proposition(s) | identique |
+| entretien seulement | 2 proposition(s) | 2 proposition(s) | identique |
+| tout désactivé (défaut) | 0 proposition(s) | 0 proposition(s) | identique |
+| activation le jour même (pas de rattrapage) | 10 proposition(s) | 10 proposition(s) | identique |
+| chaudière ancienne : le prochain anniversaire à venir | 1 proposition(s) | 1 proposition(s) | identique |
+| pompe à chaleur : tous les deux ans | 1 proposition(s) | 1 proposition(s) | identique |
+| ramonage fini un 29 février : fin de mois | 1 proposition(s) | 1 proposition(s) | identique |
+| chantier non terminé | 0 proposition(s) | 0 proposition(s) | identique |
+| chantier fini demain (futur) | 0 proposition(s) | 0 proposition(s) | identique |
+| équipement de plus de trois ans | 0 proposition(s) | 0 proposition(s) | identique |
+✓ S, C, L, R, K, D, P, N : structure, contrat, lecture des avis, cartes de réponse, code de référence, consentement, rejeux et essais n8n tenus
+  ✓ mutant « un avis négatif publié (la publication devient automatique) » fait rougir le juge
+      → R1 négatif, Signature, pilote et mode auto : la publication doit attendre le clic de l'artisan (automatique)
+  ✓ mutant « un avis négatif publié (un effet de publication Google ajouté) » fait rougir le juge
+      → R1 négatif, Signature, pilote et mode auto : effet interdit publier_reponse_google — aucune publication n'existe
+  ✓ mutant « un avis négatif traité comme un positif (seuil de note abaissé) » fait rougir le juge
+      → L1 avis a2 : positif/sûr, attendu negatif,false
+  ✓ mutant « les mots de litige ignorés (un 5 étoiles avec menace de plainte reste positif) » fait rougir le juge
+      → L1 avis a3 : positif/sûr, attendu negatif,false
+  ✓ mutant « une demande d'avis sans consentement (aucun canal : accepté par e-mail) » fait rougir le juge
+      → D2 destinataires {"10":"email","11":"sms_lien","15":"email"} (10 par e-mail et 11 par lien sms: attendus)
+  ✓ mutant « un STOP ignoré » fait rougir le juge
+      → D2 destinataires {"10":"email","11":"sms_lien","13":"email"} (10 par e-mail et 11 par lien sms: attendus)
+  ✓ mutant « une opposition ignorée » fait rougir le juge
+      → D2 destinataires {"10":"email","11":"sms_lien","12":"email"} (10 par e-mail et 11 par lien sms: attendus)
+  ✓ mutant « un litige en cours ignoré » fait rougir le juge
+      → D2 destinataires {"10":"email","11":"sms_lien","14":"email"} (10 par e-mail et 11 par lien sms: attendus)
+  ✓ mutant « une opposition illisible acceptée (la lecture en erreur ne vaut plus refus) » fait rougir le juge
+      → D2 destinataires {"10":"email","11":"sms_lien","19":"email"} (10 par e-mail et 11 par lien sms: attendus)
+  ✓ mutant « un faux avis non signalé (client inconnu ignoré) » fait rougir le juge
+      → L5 un avis d'un client inconnu doit être signalé (client_inconnu)
+  ✓ mutant « un faux avis non signalé (la suspicion n'est plus retenue) » fait rougir le juge
+      → L1 avis a4 : negatif/sûr, attendu negatif,true
+  ✓ mutant « « Presti » dans la réponse (le contrôle de la marque ôté) » fait rougir le juge
+      → R3 brouillon avec « Presti » nommé : doit être refusé (marque), obtenu ok
+  ✓ mutant « le nom du client cité dans la réponse » fait rougir le juge
+      → R3 brouillon avec le nom du client : doit être refusé (nom_du_client), obtenu ok
+  ✓ mutant « une promesse de remboursement acceptée » fait rougir le juge
+      → R3 brouillon avec une promesse de remboursement : doit être refusé (promesse), obtenu ok
+  ✓ mutant « la porte de conformité ignorée » fait rougir le juge
+      → R3 porte de conformité « refuse » : le brouillon doit être écarté
+  ✓ mutant « un avis d'un autre compte lu (l'isolation du lecteur ôtée) » fait rougir le juge
+      → L4 un avis d'un autre compte : lu et classé (statut ok, 1 effet(s))
+  ✓ mutant « un avis d'un autre compte répondu (l'isolation du rédacteur ôtée) » fait rougir le juge
+      → R4 un avis d'un autre compte : traité (statut ok, 2 effet(s))
+  ✓ mutant « un chantier d'un autre compte traité (l'isolation du chef ôtée) » fait rougir le juge
+      → D8 un chantier d'un autre compte : traité (statut ok, 22 effet(s))
+  ✓ mutant « un avis traité deux fois (la clé de déjà-vu ôtée) » fait rougir le juge
+      → L2 un avis déjà vu est classé de nouveau (7 avis, 7 effet(s))
+  ✓ mutant « le plafond de 10 par jour oublié » fait rougir le juge
+      → D4 12 chantiers : 12 destinataire(s) et 0 reporté(s) (10 et 2 attendus)
+  ✓ mutant « le CRM non exigé (Studio reçoit la demande d'avis) » fait rougir le juge
+      → D6 sans la capacité crm : ni demande d'avis ni rappel d'entretien (comme le passage quotidien)
+  ✓ mutant « un rappel d'entretien qui part seul » fait rougir le juge
+      → D5 un rappel d'entretien ne part jamais seul
+  ✓ mutant « un effet d'envoi dans le chef » fait rougir le juge
+      → D3 le cas complet doit préparer une carte de lot (statut refuse, erreurs effet interdit : seules des cartes à valider sont permises)
+  ✓ mutant « le SMS sans STOP » fait rougir le juge
+      → D2 destinataires {"10":"email"} (10 par e-mail et 11 par lien sms: attendus)
+  ✓ mutant « l'interrupteur du département ignoré » fait rougir le juge
+      → D7 interrupteur général coupé : le département doit se taire (statut ok, 2 effet(s))
+  ✓ mutant « la garde finale du chef élargie à un effet d'envoi, que le chef émet » fait rougir le juge
+      → D9 effet hors de la liste fermée : envoyer_email
+  ✓ mutant « le travail repris sans tenir compte des rappels déjà posés » fait rougir le juge
+      → D1 « rappels déjà posés par le passage quotidien » : le chef propose [{"cle":"avis:00000000-0000-4000-8000-000000000810","type":"demande_avis","echeance":"2026-11-03"},{"
+  ✓ mutant « le workflow publié (actif) » fait rougir le juge
+      → S1 presti-dep-apres : doit être inactif et sans version publiée
+  ✓ mutant « un identifiant ajouté » fait rougir le juge
+      → S2 lib-avis-repondre : aucun identifiant n'est permis (mode A)
+  ✓ mutant « un nœud Google Business Profile ajouté (le « Reply Poster ») » fait rougir le juge
+      → S4 lib-avis-repondre : nœud réseau, d'envoi ou Google Business Profile interdit (Répondre à l'avis, n8n-nodes-base.googleBusinessProfile) — le « Reply Poster » n'existe p
+  ✓ mutant « un nœud d'envoi ajouté au chef » fait rougir le juge
+      → S4 presti-dep-apres : nœud réseau, d'envoi ou Google Business Profile interdit (Envoyer, n8n-nodes-base.emailSend) — le « Reply Poster » n'existe pas
+  ✓ mutant « un enfant appelable par n'importe quel workflow » fait rougir le juge
+      → S5 lib-avis-lire : appelants any/L3GOS7euxi60jCZN,Dl8vjXWu71r7q0Fs (presti-dep-apres et presti-banc-apres seuls attendus)
+  ✓ mutant « le gabarit « Contrat d'entrée » affaibli » fait rougir le juge
+      → S7 lib-avis-repondre : le corps du gabarit « Contrat d'entrée » n'est plus celui de 035-003
+  ✓ mutant « le gabarit « Contrat de sortie » affaibli (un effet FAIT en simulation) » fait rougir le juge
+      → S7 presti-dep-apres : le corps du gabarit « Contrat de sortie » n'est plus celui de 035-003
+  ✓ mutant « la sortie « faux » de la porte détournée » fait rougir le juge
+      → S9 lib-avis-lire : la sortie « faux » de la porte doit mener à l'arrêt « hors simulation »
+  ✓ mutant « un octet changé dans un nœud Code » (égalité à construire.mjs)
+      → S8 lib-avis-lire : « Classer les avis » différent de construire.mjs
+apres-reputation-n8n-qa : 36 mutants
+OK

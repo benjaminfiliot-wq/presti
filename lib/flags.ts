@@ -321,6 +321,16 @@ export const FLAGS = {
    *  écriture dans `demandes_demo` par `/api/contact`, liste dans `/controle`. Baissé : `/api/contact` garde son seul e-mail à Benj.
    *  Ordre : migration appliquée et contrôlée, PUIS lever (jamais l'inverse). */
   demandesDemo: false,
+  /** 03/11/2026 — prompt 6, prompt 1, lot 036-002 (plans/011-cadrage-01-11/p6-signature/premiere-reponse.md § 4). LE SYSTÈME D'AGENTS
+   *  de l'artisan dans l'interface : centre de commande, « Ce que vos assistants ont fait » (coût IA du jour), « Mes départements »
+   *  (palier, interrupteur, plafonds). Il lit les tables de la migration 0193 (departements_reglages, competences, couts_ia_jour,
+   *  evenements_metier.traite_le). Baissé : rien dans le DOM, les routes répondent 404. On colle 0193, PUIS on lève (jamais l'inverse :
+   *  levé sans les tables, le chemin refuse tout et l'artisan tombe sur un écran mort). Ordre de pose : 0185, 0192, puis 0193. */
+  systemeAgents: false,
+  /** 03/11/2026 — prompt 6, prompt 1, lots 036-002 et 036-009. L'écran « Connexions » et les routes « Connecter » (OAuth sur Presti,
+   *  jamais sur n8n) : la table `connexions` de 0193, deux secrets chiffrés au format v1 de lib/secretBox.ts, jamais lisibles par le
+   *  navigateur. Baissé : route 404, rien à l'écran, aucun jeton stocké. On colle 0193, PUIS on lève, après le juge de 036-009 vert. */
+  connexions: false,
 } as const
 
 export type Flag = keyof typeof FLAGS

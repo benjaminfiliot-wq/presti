@@ -1,0 +1,1183 @@
+[
+  {
+    "workflow": "presti-banc-boite",
+    "execution": "519",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Banc (jamais publié)"
+    ],
+    "entrees_epinglees": {
+      "Banc (jamais publié)": [
+        {}
+      ]
+    },
+    "sorties": {
+      "Appeler lib-boite-lire (1)": [
+        [
+          {
+            "contrat": "lib-boite-lire@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:lire-meles",
+            "simulation": true,
+            "resultat": {
+              "canal_id": "00000000-0000-4000-8000-000000000711",
+              "importes": 3,
+              "ignores": {
+                "sans_expediteur": 0,
+                "soi_meme": 1,
+                "automatique": 1,
+                "trop_court": 1,
+                "indesirable": 1,
+                "doublon": 0,
+                "hors_fenetre": 0,
+                "sans_message_id": 0,
+                "laisse_au_code": 1
+              },
+              "restants": 0,
+              "silence": false,
+              "etat_connexion": "active",
+              "erreur": null,
+              "motif_erreur": null,
+              "rangs": [
+                {
+                  "cle": "bm:7563dfdae5c82f528611e2fe67cb11e8506c44578ea1bb65",
+                  "conversation": "nouvelle"
+                },
+                {
+                  "cle": "bm:8983b107685c88cda86f78643574921bc64283debaebcf5f",
+                  "conversation": "existante"
+                },
+                {
+                  "cle": "bm:79f13d5417696eacaddadc7c1be2585f0a0573c2aaf41aeb",
+                  "conversation": "nouvelle"
+                }
+              ]
+            },
+            "effets_prevus": [
+              {
+                "effet": "creer_conversation",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "cle_conversation": "cv:44a8b678e084f7f2eabead5cbced49ef521f1602e6b3c60a",
+                "canal": "email",
+                "nom_prospect": "Exemple. Marie",
+                "contact": "marie.exemple@client-a.invalid",
+                "message": "Fuite sous l’évier\n\nBonjour, j’ai une fuite sous mon évier depuis ce matin, pouvez-vous passer ?",
+                "statut": "nouveau",
+                "a_calculer_par_le_code": [
+                  "type_chantier",
+                  "ville"
+                ]
+              },
+              {
+                "effet": "deposer_message",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "cle": "bm:7563dfdae5c82f528611e2fe67cb11e8506c44578ea1bb65",
+                "canal_id": "00000000-0000-4000-8000-000000000711",
+                "canal_origine": "email",
+                "conversation": {
+                  "cle_conversation": "cv:44a8b678e084f7f2eabead5cbced49ef521f1602e6b3c60a"
+                },
+                "sens": "in",
+                "type": "email",
+                "externe_id": "<m1@client-a.invalid>",
+                "contenu": "Fuite sous l’évier\n\nBonjour, j’ai une fuite sous mon évier depuis ce matin, pouvez-vous passer ?",
+                "sent_at": "2026-11-03T09:58:00.000Z"
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "type": "demande_recue",
+                "cle": "bm:7563dfdae5c82f528611e2fe67cb11e8506c44578ea1bb65",
+                "faits": {
+                  "canal": "email",
+                  "client_existant": false,
+                  "lead_id": null
+                }
+              },
+              {
+                "effet": "deposer_message",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "cle": "bm:8983b107685c88cda86f78643574921bc64283debaebcf5f",
+                "canal_id": "00000000-0000-4000-8000-000000000711",
+                "canal_origine": "email",
+                "conversation": {
+                  "cle_conversation": "cv:44a8b678e084f7f2eabead5cbced49ef521f1602e6b3c60a"
+                },
+                "sens": "in",
+                "type": "email",
+                "externe_id": "<m2@client-a.invalid>",
+                "contenu": "Re: Fuite sous l’évier\n\nJ’ajoute que le robinet goutte aussi, merci de me rappeler.",
+                "sent_at": "2026-11-03T09:58:00.000Z"
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "type": "demande_recue",
+                "cle": "bm:8983b107685c88cda86f78643574921bc64283debaebcf5f",
+                "faits": {
+                  "canal": "email",
+                  "client_existant": true,
+                  "lead_id": null
+                }
+              },
+              {
+                "effet": "creer_conversation",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "cle_conversation": "cv:ce643293d961018707c83f060691c6fd4eb616e57cec1305",
+                "canal": "email",
+                "nom_prospect": "Exemple. Luc",
+                "contact": "luc.exemple@client-c.invalid",
+                "message": "Devis salle de bains\n\nBonjour, je voudrais un devis pour refaire ma salle de bains complète.",
+                "statut": "nouveau",
+                "a_calculer_par_le_code": [
+                  "type_chantier",
+                  "ville"
+                ]
+              },
+              {
+                "effet": "deposer_message",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "cle": "bm:79f13d5417696eacaddadc7c1be2585f0a0573c2aaf41aeb",
+                "canal_id": "00000000-0000-4000-8000-000000000711",
+                "canal_origine": "email",
+                "conversation": {
+                  "cle_conversation": "cv:ce643293d961018707c83f060691c6fd4eb616e57cec1305"
+                },
+                "sens": "in",
+                "type": "email",
+                "externe_id": "<m7@client-c.invalid>",
+                "contenu": "Devis salle de bains\n\nBonjour, je voudrais un devis pour refaire ma salle de bains complète.",
+                "sent_at": "2026-11-03T09:58:00.000Z"
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "type": "demande_recue",
+                "cle": "bm:79f13d5417696eacaddadc7c1be2585f0a0573c2aaf41aeb",
+                "faits": {
+                  "canal": "email",
+                  "client_existant": false,
+                  "lead_id": null
+                }
+              },
+              {
+                "effet": "maj_canal",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "canal_id": "00000000-0000-4000-8000-000000000711",
+                "derniere_releve": "2026-11-03T10:05:00.000Z",
+                "derniere_erreur": null
+              },
+              {
+                "effet": "maj_connexion",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "connexion_id": "00000000-0000-4000-8000-000000000721",
+                "derniere_synchro": "2026-11-03T10:05:00.000Z"
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "releve_boite",
+                "agent": "lib-boite-lire",
+                "objet_ref": "00000000-0000-4000-8000-000000000711",
+                "decision": "3 importé(s), 5 ignoré(s), 0 reporté(s) au passage suivant",
+                "simulation": true
+              },
+              {
+                "evenement": "message_range",
+                "agent": "lib-boite-lire",
+                "objet_ref": "bm:7563dfdae5c82f528611e2fe67cb11e8506c44578ea1bb65",
+                "decision": "nouvelle conversation prévue",
+                "simulation": true
+              },
+              {
+                "evenement": "message_range",
+                "agent": "lib-boite-lire",
+                "objet_ref": "bm:8983b107685c88cda86f78643574921bc64283debaebcf5f",
+                "decision": "rangé dans la conversation ouverte",
+                "simulation": true
+              },
+              {
+                "evenement": "message_range",
+                "agent": "lib-boite-lire",
+                "objet_ref": "bm:79f13d5417696eacaddadc7c1be2585f0a0573c2aaf41aeb",
+                "decision": "nouvelle conversation prévue",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler lib-boite-lire (2)": [
+        [
+          {
+            "contrat": "lib-boite-lire@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:banc:lire-expire",
+            "simulation": true,
+            "resultat": {
+              "canal_id": "00000000-0000-4000-8000-000000000711",
+              "importes": 0,
+              "silence": false,
+              "etat_connexion": "erreur",
+              "erreur": "Autorisation expirée — reconnectez la boîte.",
+              "motif_erreur": "autorisation_expiree"
+            },
+            "effets_prevus": [
+              {
+                "effet": "maj_canal",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "canal_id": "00000000-0000-4000-8000-000000000711",
+                "derniere_erreur": "Autorisation expirée — reconnectez la boîte."
+              },
+              {
+                "effet": "maj_connexion",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "connexion_id": "00000000-0000-4000-8000-000000000721",
+                "etat": "erreur",
+                "motif_erreur": "autorisation_expiree"
+              },
+              {
+                "effet": "alerter",
+                "contrat": "lib-alerter@1",
+                "donnees": {
+                  "categorie": "workflow_en_panne",
+                  "workflow": "lib-boite-lire",
+                  "lien_execution": null,
+                  "destinataire_role": "titulaire",
+                  "survenue_le": "2026-11-03T10:05:00.000Z"
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "releve_echec",
+                "agent": "lib-boite-lire",
+                "objet_ref": "00000000-0000-4000-8000-000000000711",
+                "decision": "échec durable (autorisation_expiree) : état « erreur » prévu pour Connexions, alerte prévue, le département se tait",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler lib-boite-brouillon (3)": [
+        [
+          {
+            "contrat": "lib-boite-brouillon@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:essai:brouillon",
+            "simulation": true,
+            "resultat": {
+              "ecrit": false,
+              "envoye": false,
+              "mode": "brouillon",
+              "offre": "studio",
+              "cle": "br:cc9ed15b8277416abaf5951b004cbfbd6bcafb1ca6a015e0",
+              "dossier": "Brouillons"
+            },
+            "effets_prevus": [
+              {
+                "effet": "ajouter_brouillon_imap",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "connexion_id": "00000000-0000-4000-8000-000000000721",
+                "cle": "br:cc9ed15b8277416abaf5951b004cbfbd6bcafb1ca6a015e0",
+                "dossier": {
+                  "usage_special": "\\Drafts",
+                  "repli": [
+                    "Brouillons",
+                    "Drafts",
+                    "[Gmail]/Brouillons",
+                    "[Gmail]/Drafts",
+                    "INBOX.Drafts"
+                  ]
+                },
+                "drapeaux": [
+                  "\\Draft"
+                ],
+                "conversation_id": "00000000-0000-4000-8000-000000000741",
+                "message_brut": "From: =?UTF-8?B?RXhlbXBsZS4gQsOidGktRMOpbW8=?= <atelier@boite-exemple.invalid>\r\nTo: marie.exemple@client-a.invalid\r\nSubject: =?UTF-8?B?UmU6IEZ1aXRlIHNvdXMgbOKAmcOpdmllcg==?=\r\nDate: Tue, 03 Nov 2026 10:05:00 +0000\r\nIn-Reply-To: <m1@client-a.invalid>\r\nReferences: <m1@client-a.invalid>\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\nQm9uam91ciwNCk1lcmNpIHBvdXIgdm90cmUgbWVzc2FnZSwgamUgcGFzc2UgamV1ZGkgbWF0aW4g\r\ndm9pciBsYSBmdWl0ZS4gw4AgdHLDqHMgdml0ZS4="
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "type": "brouillon_ecrit",
+                "cle": "br:cc9ed15b8277416abaf5951b004cbfbd6bcafb1ca6a015e0",
+                "objet_type": "lead",
+                "objet_id": "00000000-0000-4000-8000-000000000741",
+                "faits": {
+                  "canal": "email",
+                  "proposition_id": "00000000-0000-4000-8000-000000000731"
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "brouillon_prepare",
+                "agent": "lib-boite-brouillon",
+                "objet_ref": "br:cc9ed15b8277416abaf5951b004cbfbd6bcafb1ca6a015e0",
+                "decision": "brouillon prévu dans le dossier Brouillons de l’artisan : jamais envoyé",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler lib-boite-envoyer (4)": [
+        [
+          {
+            "contrat": "lib-boite-envoyer@1",
+            "statut": "ok",
+            "cle_idempotence": "exemple:essai:envoyer",
+            "simulation": true,
+            "resultat": {
+              "envoye": false,
+              "mode": "envoi",
+              "offre": "signature",
+              "cle": "sm:29cce7c6b243092ff9eda57b86c7f6c0e77b65862cf7120a"
+            },
+            "effets_prevus": [
+              {
+                "effet": "reclamer_action",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "action_id": "00000000-0000-4000-8000-000000000751",
+                "de": "a_partir",
+                "vers": "en_cours"
+              },
+              {
+                "effet": "envoyer_smtp",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "connexion_id": "00000000-0000-4000-8000-000000000721",
+                "cle": "sm:29cce7c6b243092ff9eda57b86c7f6c0e77b65862cf7120a",
+                "expediteur": "Exemple. Bâti-Démo <atelier@boite-exemple.invalid>",
+                "reply_to": "atelier@boite-exemple.invalid",
+                "destinataire": "marie.exemple@client-a.invalid",
+                "objet": "Re: Fuite sous l’évier",
+                "texte": "Bonjour,\nMerci pour votre message, je passe jeudi matin voir la fuite. À très vite.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Bâti-Démo.",
+                "pied": "mention",
+                "in_reply_to": "<m1@client-a.invalid>",
+                "references": "<m1@client-a.invalid>"
+              },
+              {
+                "effet": "marquer_action",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "action_id": "00000000-0000-4000-8000-000000000751",
+                "statut": "partie",
+                "traite_le": "2026-11-03T10:05:00.000Z"
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "type": "reponse_envoyee",
+                "cle": "sm:29cce7c6b243092ff9eda57b86c7f6c0e77b65862cf7120a",
+                "objet_type": "lead",
+                "objet_id": "00000000-0000-4000-8000-000000000741",
+                "faits": {
+                  "canal": "email",
+                  "action_id": "00000000-0000-4000-8000-000000000751"
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "envoi_prepare",
+                "agent": "lib-boite-envoyer",
+                "objet_ref": "sm:29cce7c6b243092ff9eda57b86c7f6c0e77b65862cf7120a",
+                "decision": "envoi SMTP prévu au nom de l’artisan (mention d’IA en pied) : le nœud d’envoi reste désactivé",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler lib-boite-envoyer (5)": [
+        [
+          {
+            "contrat": "lib-boite-envoyer@1",
+            "statut": "refuse",
+            "cle_idempotence": "exemple:essai:envoyer",
+            "simulation": true,
+            "resultat": {
+              "envoye": false,
+              "motif": "offre"
+            },
+            "effets_prevus": [
+              {
+                "effet": "marquer_action",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "action_id": "00000000-0000-4000-8000-000000000751",
+                "statut": "manuel",
+                "motif": "offre"
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "envoi_refuse",
+                "agent": "lib-boite-envoyer",
+                "objet_ref": "00000000-0000-4000-8000-000000000751",
+                "decision": "refus (offre) : l’action repasse en carte, rien ne part",
+                "simulation": true
+              }
+            ],
+            "erreurs": [
+              "refus : offre"
+            ]
+          }
+        ]
+      ],
+      "Bilan du banc": [
+        [
+          {
+            "bilan": {
+              "lib-boite-lire@1": {
+                "ok": 1
+              }
+            },
+            "defauts": 0
+          }
+        ],
+        [
+          {
+            "bilan": {
+              "lib-boite-lire@1": {
+                "ok": 1
+              }
+            },
+            "defauts": 0
+          }
+        ],
+        [
+          {
+            "bilan": {
+              "lib-boite-brouillon@1": {
+                "ok": 1
+              }
+            },
+            "defauts": 0
+          }
+        ],
+        [
+          {
+            "bilan": {
+              "lib-boite-envoyer@1": {
+                "ok": 1
+              }
+            },
+            "defauts": 0
+          }
+        ],
+        [
+          {
+            "bilan": {
+              "lib-boite-envoyer@1": {
+                "refuse": 1
+              }
+            },
+            "defauts": 0
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "workflow": "presti-boite",
+    "execution": "509",
+    "statut_n8n": "success",
+    "declencheur_epingle": [
+      "Toutes les 5 minutes",
+      "Lire l'interrupteur général (simulation : épinglé)",
+      "Lire le travail dû (simulation : épinglé)"
+    ],
+    "entrees_epinglees": {
+      "Toutes les 5 minutes": [
+        {}
+      ],
+      "Lire l'interrupteur général (simulation : épinglé)": [
+        {
+          "interrupteur_general": true
+        }
+      ],
+      "Lire le travail dû (simulation : épinglé)": [
+        {
+          "genre": "boite",
+          "artisan_id": "00000000-0000-4000-8000-000000000701",
+          "maintenant": "2026-11-03T10:05:00.000Z",
+          "canal": {
+            "id": "00000000-0000-4000-8000-000000000711",
+            "artisan_id": "00000000-0000-4000-8000-000000000701",
+            "adresse": "atelier@boite-exemple.invalid",
+            "derniere_releve": null
+          },
+          "connexion": {
+            "id": "00000000-0000-4000-8000-000000000721",
+            "artisan_id": "00000000-0000-4000-8000-000000000701",
+            "fournisseur": "imap",
+            "etat": "active",
+            "secret_n8n": "v1.aaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccc",
+            "verifiee_le": "2026-11-01T08:00:00.000Z"
+          },
+          "boite": {
+            "issue": "ok",
+            "messages": [
+              {
+                "uid": 1,
+                "message_id": "<m1@client-a.invalid>",
+                "de_email": "marie.exemple@client-a.invalid",
+                "de_nom": "Exemple. Marie",
+                "sujet": "Fuite sous l’évier",
+                "texte": "Bonjour, j’ai une fuite sous mon évier depuis ce matin, pouvez-vous passer ?",
+                "date": "2026-11-03T09:58:00.000Z"
+              },
+              {
+                "uid": 7,
+                "message_id": "<m7@client-c.invalid>",
+                "de_email": "luc.exemple@client-c.invalid",
+                "de_nom": "Exemple. Luc",
+                "sujet": "Devis salle de bains",
+                "texte": "Bonjour, je voudrais un devis pour refaire ma salle de bains complète.",
+                "date": "2026-11-03T09:58:00.000Z"
+              }
+            ]
+          },
+          "deja_importes": [],
+          "conversations": [],
+          "reseaux": {
+            "actifs": true,
+            "domaines": [
+              "leboncoin.fr",
+              "linkedin.com"
+            ]
+          }
+        },
+        {
+          "genre": "boite",
+          "artisan_id": "00000000-0000-4000-8000-000000000701",
+          "maintenant": "2026-11-03T10:05:00.000Z",
+          "canal": {
+            "id": "00000000-0000-4000-8000-000000000712",
+            "artisan_id": "00000000-0000-4000-8000-000000000701",
+            "adresse": "bureau@boite-exemple.invalid",
+            "derniere_releve": null
+          },
+          "connexion": {
+            "id": "00000000-0000-4000-8000-000000000722",
+            "artisan_id": "00000000-0000-4000-8000-000000000701",
+            "fournisseur": "imap",
+            "etat": "active",
+            "secret_n8n": "v1.aaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccc",
+            "verifiee_le": "2026-11-01T08:00:00.000Z"
+          },
+          "boite": {
+            "issue": "ok",
+            "messages": [
+              {
+                "uid": 1,
+                "message_id": "<m1@client-a.invalid>",
+                "de_email": "marie.exemple@client-a.invalid",
+                "de_nom": "Exemple. Marie",
+                "sujet": "Fuite sous l’évier",
+                "texte": "Bonjour, j’ai une fuite sous mon évier depuis ce matin, pouvez-vous passer ?",
+                "date": "2026-11-03T09:58:00.000Z"
+              },
+              {
+                "uid": 2,
+                "message_id": "<m9@client-a.invalid>",
+                "de_email": "marie.exemple@client-a.invalid",
+                "de_nom": "Exemple. Marie",
+                "sujet": "Re: Fuite sous l’évier",
+                "texte": "Je viens d’écrire sur l’autre adresse : la fuite continue, merci de passer vite.",
+                "date": "2026-11-03T09:58:00.000Z"
+              }
+            ]
+          },
+          "deja_importes": [],
+          "conversations": [],
+          "reseaux": {
+            "actifs": true,
+            "domaines": [
+              "leboncoin.fr",
+              "linkedin.com"
+            ]
+          }
+        },
+        {
+          "genre": "brouillon",
+          "artisan_id": "00000000-0000-4000-8000-000000000701",
+          "maintenant": "2026-11-03T10:05:00.000Z",
+          "config": {
+            "offre": "studio",
+            "interrupteur_general": true,
+            "interrupteur_departement": true,
+            "artisan": {
+              "nom": "Exemple. Bâti-Démo",
+              "adresse": "atelier@boite-exemple.invalid"
+            }
+          },
+          "donnees": {
+            "proposition": {
+              "id": "00000000-0000-4000-8000-000000000731",
+              "conversation_id": "00000000-0000-4000-8000-000000000741",
+              "canal": "email",
+              "objet": null,
+              "texte": "Bonjour,\nMerci pour votre message, je passe jeudi matin voir la fuite. À très vite.",
+              "outil": "repondre_client"
+            },
+            "destinataire": {
+              "email": "marie.exemple@client-a.invalid",
+              "opposition": null
+            },
+            "origine": {
+              "message_id": "<m1@client-a.invalid>",
+              "references": [],
+              "sujet": "Fuite sous l’évier"
+            },
+            "conformite": {
+              "verdict": "accepte"
+            },
+            "connexion": {
+              "id": "00000000-0000-4000-8000-000000000721",
+              "artisan_id": "00000000-0000-4000-8000-000000000701",
+              "fournisseur": "imap",
+              "etat": "active",
+              "secret_n8n": "v1.aaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccc",
+              "verifiee_le": "2026-11-01T08:00:00.000Z"
+            },
+            "deja_ecrits": [],
+            "maintenant": "2026-11-03T10:05:00.000Z"
+          }
+        },
+        {
+          "genre": "envoi",
+          "artisan_id": "00000000-0000-4000-8000-000000000701",
+          "maintenant": "2026-11-03T10:05:00.000Z",
+          "config": {
+            "offre": "signature",
+            "capacites": [
+              "plateforme.ia.auto",
+              "assistant.pilote",
+              "relances.auto"
+            ],
+            "mode_reponse": "auto",
+            "pilote": {
+              "drapeau": true,
+              "actif": true,
+              "types": {
+                "reponse_prospect": true
+              }
+            },
+            "parties_depuis_24h": 3,
+            "plafond_jour": 20,
+            "interrupteur_general": true,
+            "interrupteur_departement": true,
+            "artisan": {
+              "nom": "Exemple. Bâti-Démo",
+              "adresse": "atelier@boite-exemple.invalid"
+            }
+          },
+          "donnees": {
+            "action": {
+              "id": "00000000-0000-4000-8000-000000000751",
+              "type": "reponse_prospect",
+              "statut": "a_partir",
+              "prete_le": "2026-11-03T09:50:00.000Z",
+              "part_le": "2026-11-03T10:00:00.000Z",
+              "lead_id": "00000000-0000-4000-8000-000000000741"
+            },
+            "proposition": {
+              "id": "00000000-0000-4000-8000-000000000731",
+              "conversation_id": "00000000-0000-4000-8000-000000000741",
+              "canal": "email",
+              "objet": null,
+              "texte": "Bonjour,\nMerci pour votre message, je passe jeudi matin voir la fuite. À très vite.",
+              "outil": "repondre_client"
+            },
+            "destinataire": {
+              "email": "marie.exemple@client-a.invalid",
+              "opposition": null
+            },
+            "origine": {
+              "message_id": "<m1@client-a.invalid>",
+              "references": [],
+              "sujet": "Fuite sous l’évier"
+            },
+            "conformite": {
+              "verdict": "accepte"
+            },
+            "connexion": {
+              "id": "00000000-0000-4000-8000-000000000721",
+              "artisan_id": "00000000-0000-4000-8000-000000000701",
+              "fournisseur": "imap",
+              "etat": "active",
+              "secret_n8n": "v1.aaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccc",
+              "verifiee_le": "2026-11-01T08:00:00.000Z"
+            },
+            "maintenant": "2026-11-03T10:05:00.000Z"
+          }
+        },
+        {
+          "genre": "envoi",
+          "artisan_id": "00000000-0000-4000-8000-000000000701",
+          "maintenant": "2026-11-03T10:05:00.000Z",
+          "config": {},
+          "donnees": {}
+        }
+      ]
+    },
+    "sorties": {
+      "Appeler lib-boite-lire": [
+        [
+          {
+            "contrat": "lib-boite-lire@1",
+            "statut": "ok",
+            "cle_idempotence": "relever:00000000-0000-4000-8000-000000000711:2026-11-03T1005",
+            "simulation": true,
+            "resultat": {
+              "canal_id": "00000000-0000-4000-8000-000000000711",
+              "importes": 2,
+              "ignores": {
+                "sans_expediteur": 0,
+                "soi_meme": 0,
+                "automatique": 0,
+                "trop_court": 0,
+                "indesirable": 0,
+                "doublon": 0,
+                "hors_fenetre": 0,
+                "sans_message_id": 0,
+                "laisse_au_code": 0
+              },
+              "restants": 0,
+              "silence": false,
+              "etat_connexion": "active",
+              "erreur": null,
+              "motif_erreur": null,
+              "rangs": [
+                {
+                  "cle": "bm:7563dfdae5c82f528611e2fe67cb11e8506c44578ea1bb65",
+                  "conversation": "nouvelle"
+                },
+                {
+                  "cle": "bm:79f13d5417696eacaddadc7c1be2585f0a0573c2aaf41aeb",
+                  "conversation": "nouvelle"
+                }
+              ]
+            },
+            "effets_prevus": [
+              {
+                "effet": "creer_conversation",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "cle_conversation": "cv:44a8b678e084f7f2eabead5cbced49ef521f1602e6b3c60a",
+                "canal": "email",
+                "nom_prospect": "Exemple. Marie",
+                "contact": "marie.exemple@client-a.invalid",
+                "message": "Fuite sous l’évier\n\nBonjour, j’ai une fuite sous mon évier depuis ce matin, pouvez-vous passer ?",
+                "statut": "nouveau",
+                "a_calculer_par_le_code": [
+                  "type_chantier",
+                  "ville"
+                ]
+              },
+              {
+                "effet": "deposer_message",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "cle": "bm:7563dfdae5c82f528611e2fe67cb11e8506c44578ea1bb65",
+                "canal_id": "00000000-0000-4000-8000-000000000711",
+                "canal_origine": "email",
+                "conversation": {
+                  "cle_conversation": "cv:44a8b678e084f7f2eabead5cbced49ef521f1602e6b3c60a"
+                },
+                "sens": "in",
+                "type": "email",
+                "externe_id": "<m1@client-a.invalid>",
+                "contenu": "Fuite sous l’évier\n\nBonjour, j’ai une fuite sous mon évier depuis ce matin, pouvez-vous passer ?",
+                "sent_at": "2026-11-03T09:58:00.000Z"
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "type": "demande_recue",
+                "cle": "bm:7563dfdae5c82f528611e2fe67cb11e8506c44578ea1bb65",
+                "faits": {
+                  "canal": "email",
+                  "client_existant": false,
+                  "lead_id": null
+                }
+              },
+              {
+                "effet": "creer_conversation",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "cle_conversation": "cv:ce643293d961018707c83f060691c6fd4eb616e57cec1305",
+                "canal": "email",
+                "nom_prospect": "Exemple. Luc",
+                "contact": "luc.exemple@client-c.invalid",
+                "message": "Devis salle de bains\n\nBonjour, je voudrais un devis pour refaire ma salle de bains complète.",
+                "statut": "nouveau",
+                "a_calculer_par_le_code": [
+                  "type_chantier",
+                  "ville"
+                ]
+              },
+              {
+                "effet": "deposer_message",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "cle": "bm:79f13d5417696eacaddadc7c1be2585f0a0573c2aaf41aeb",
+                "canal_id": "00000000-0000-4000-8000-000000000711",
+                "canal_origine": "email",
+                "conversation": {
+                  "cle_conversation": "cv:ce643293d961018707c83f060691c6fd4eb616e57cec1305"
+                },
+                "sens": "in",
+                "type": "email",
+                "externe_id": "<m7@client-c.invalid>",
+                "contenu": "Devis salle de bains\n\nBonjour, je voudrais un devis pour refaire ma salle de bains complète.",
+                "sent_at": "2026-11-03T09:58:00.000Z"
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "type": "demande_recue",
+                "cle": "bm:79f13d5417696eacaddadc7c1be2585f0a0573c2aaf41aeb",
+                "faits": {
+                  "canal": "email",
+                  "client_existant": false,
+                  "lead_id": null
+                }
+              },
+              {
+                "effet": "maj_canal",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "canal_id": "00000000-0000-4000-8000-000000000711",
+                "derniere_releve": "2026-11-03T10:05:00.000Z",
+                "derniere_erreur": null
+              },
+              {
+                "effet": "maj_connexion",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "connexion_id": "00000000-0000-4000-8000-000000000721",
+                "derniere_synchro": "2026-11-03T10:05:00.000Z"
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "releve_boite",
+                "agent": "lib-boite-lire",
+                "objet_ref": "00000000-0000-4000-8000-000000000711",
+                "decision": "2 importé(s), 0 ignoré(s), 0 reporté(s) au passage suivant",
+                "simulation": true
+              },
+              {
+                "evenement": "message_range",
+                "agent": "lib-boite-lire",
+                "objet_ref": "bm:7563dfdae5c82f528611e2fe67cb11e8506c44578ea1bb65",
+                "decision": "nouvelle conversation prévue",
+                "simulation": true
+              },
+              {
+                "evenement": "message_range",
+                "agent": "lib-boite-lire",
+                "objet_ref": "bm:79f13d5417696eacaddadc7c1be2585f0a0573c2aaf41aeb",
+                "decision": "nouvelle conversation prévue",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          },
+          {
+            "contrat": "lib-boite-lire@1",
+            "statut": "ok",
+            "cle_idempotence": "relever:00000000-0000-4000-8000-000000000712:2026-11-03T1005",
+            "simulation": true,
+            "resultat": {
+              "canal_id": "00000000-0000-4000-8000-000000000712",
+              "importes": 1,
+              "ignores": {
+                "sans_expediteur": 0,
+                "soi_meme": 0,
+                "automatique": 0,
+                "trop_court": 0,
+                "indesirable": 0,
+                "doublon": 1,
+                "hors_fenetre": 0,
+                "sans_message_id": 0,
+                "laisse_au_code": 0
+              },
+              "restants": 0,
+              "silence": false,
+              "etat_connexion": "active",
+              "erreur": null,
+              "motif_erreur": null,
+              "rangs": [
+                {
+                  "cle": "bm:afa76cb95d1227f2c28e4a1a062b2aeba3db148947b68f79",
+                  "conversation": "existante"
+                }
+              ]
+            },
+            "effets_prevus": [
+              {
+                "effet": "deposer_message",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "cle": "bm:afa76cb95d1227f2c28e4a1a062b2aeba3db148947b68f79",
+                "canal_id": "00000000-0000-4000-8000-000000000712",
+                "canal_origine": "email",
+                "conversation": {
+                  "cle_conversation": "cv:44a8b678e084f7f2eabead5cbced49ef521f1602e6b3c60a"
+                },
+                "sens": "in",
+                "type": "email",
+                "externe_id": "<m9@client-a.invalid>",
+                "contenu": "Re: Fuite sous l’évier\n\nJe viens d’écrire sur l’autre adresse : la fuite continue, merci de passer vite.",
+                "sent_at": "2026-11-03T09:58:00.000Z"
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "type": "demande_recue",
+                "cle": "bm:afa76cb95d1227f2c28e4a1a062b2aeba3db148947b68f79",
+                "faits": {
+                  "canal": "email",
+                  "client_existant": true,
+                  "lead_id": null
+                }
+              },
+              {
+                "effet": "maj_canal",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "canal_id": "00000000-0000-4000-8000-000000000712",
+                "derniere_releve": "2026-11-03T10:05:00.000Z",
+                "derniere_erreur": null
+              },
+              {
+                "effet": "maj_connexion",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "connexion_id": "00000000-0000-4000-8000-000000000722",
+                "derniere_synchro": "2026-11-03T10:05:00.000Z"
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "releve_boite",
+                "agent": "lib-boite-lire",
+                "objet_ref": "00000000-0000-4000-8000-000000000712",
+                "decision": "1 importé(s), 1 ignoré(s), 0 reporté(s) au passage suivant",
+                "simulation": true
+              },
+              {
+                "evenement": "message_range",
+                "agent": "lib-boite-lire",
+                "objet_ref": "bm:afa76cb95d1227f2c28e4a1a062b2aeba3db148947b68f79",
+                "decision": "rangé dans la conversation ouverte",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler lib-boite-brouillon": [
+        [
+          {
+            "contrat": "lib-boite-brouillon@1",
+            "statut": "ok",
+            "cle_idempotence": "brouillon:00000000-0000-4000-8000-000000000731",
+            "simulation": true,
+            "resultat": {
+              "ecrit": false,
+              "envoye": false,
+              "mode": "brouillon",
+              "offre": "studio",
+              "cle": "br:cc9ed15b8277416abaf5951b004cbfbd6bcafb1ca6a015e0",
+              "dossier": "Brouillons"
+            },
+            "effets_prevus": [
+              {
+                "effet": "ajouter_brouillon_imap",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "connexion_id": "00000000-0000-4000-8000-000000000721",
+                "cle": "br:cc9ed15b8277416abaf5951b004cbfbd6bcafb1ca6a015e0",
+                "dossier": {
+                  "usage_special": "\\Drafts",
+                  "repli": [
+                    "Brouillons",
+                    "Drafts",
+                    "[Gmail]/Brouillons",
+                    "[Gmail]/Drafts",
+                    "INBOX.Drafts"
+                  ]
+                },
+                "drapeaux": [
+                  "\\Draft"
+                ],
+                "conversation_id": "00000000-0000-4000-8000-000000000741",
+                "message_brut": "From: =?UTF-8?B?RXhlbXBsZS4gQsOidGktRMOpbW8=?= <atelier@boite-exemple.invalid>\r\nTo: marie.exemple@client-a.invalid\r\nSubject: =?UTF-8?B?UmU6IEZ1aXRlIHNvdXMgbOKAmcOpdmllcg==?=\r\nDate: Tue, 03 Nov 2026 10:05:00 +0000\r\nIn-Reply-To: <m1@client-a.invalid>\r\nReferences: <m1@client-a.invalid>\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\nQm9uam91ciwNCk1lcmNpIHBvdXIgdm90cmUgbWVzc2FnZSwgamUgcGFzc2UgamV1ZGkgbWF0aW4g\r\ndm9pciBsYSBmdWl0ZS4gw4AgdHLDqHMgdml0ZS4="
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "type": "brouillon_ecrit",
+                "cle": "br:cc9ed15b8277416abaf5951b004cbfbd6bcafb1ca6a015e0",
+                "objet_type": "lead",
+                "objet_id": "00000000-0000-4000-8000-000000000741",
+                "faits": {
+                  "canal": "email",
+                  "proposition_id": "00000000-0000-4000-8000-000000000731"
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "brouillon_prepare",
+                "agent": "lib-boite-brouillon",
+                "objet_ref": "br:cc9ed15b8277416abaf5951b004cbfbd6bcafb1ca6a015e0",
+                "decision": "brouillon prévu dans le dossier Brouillons de l’artisan : jamais envoyé",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          }
+        ]
+      ],
+      "Appeler lib-boite-envoyer": [
+        [
+          {
+            "contrat": "lib-boite-envoyer@1",
+            "statut": "ok",
+            "cle_idempotence": "envoyer:00000000-0000-4000-8000-000000000751",
+            "simulation": true,
+            "resultat": {
+              "envoye": false,
+              "mode": "envoi",
+              "offre": "signature",
+              "cle": "sm:29cce7c6b243092ff9eda57b86c7f6c0e77b65862cf7120a"
+            },
+            "effets_prevus": [
+              {
+                "effet": "reclamer_action",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "action_id": "00000000-0000-4000-8000-000000000751",
+                "de": "a_partir",
+                "vers": "en_cours"
+              },
+              {
+                "effet": "envoyer_smtp",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "connexion_id": "00000000-0000-4000-8000-000000000721",
+                "cle": "sm:29cce7c6b243092ff9eda57b86c7f6c0e77b65862cf7120a",
+                "expediteur": "Exemple. Bâti-Démo <atelier@boite-exemple.invalid>",
+                "reply_to": "atelier@boite-exemple.invalid",
+                "destinataire": "marie.exemple@client-a.invalid",
+                "objet": "Re: Fuite sous l’évier",
+                "texte": "Bonjour,\nMerci pour votre message, je passe jeudi matin voir la fuite. À très vite.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Bâti-Démo.",
+                "pied": "mention",
+                "in_reply_to": "<m1@client-a.invalid>",
+                "references": "<m1@client-a.invalid>"
+              },
+              {
+                "effet": "marquer_action",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "action_id": "00000000-0000-4000-8000-000000000751",
+                "statut": "partie",
+                "traite_le": "2026-11-03T10:05:00.000Z"
+              },
+              {
+                "effet": "noter_evenement",
+                "organisation_id": "00000000-0000-4000-8000-000000000701",
+                "type": "reponse_envoyee",
+                "cle": "sm:29cce7c6b243092ff9eda57b86c7f6c0e77b65862cf7120a",
+                "objet_type": "lead",
+                "objet_id": "00000000-0000-4000-8000-000000000741",
+                "faits": {
+                  "canal": "email",
+                  "action_id": "00000000-0000-4000-8000-000000000751"
+                }
+              }
+            ],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "envoi_prepare",
+                "agent": "lib-boite-envoyer",
+                "objet_ref": "sm:29cce7c6b243092ff9eda57b86c7f6c0e77b65862cf7120a",
+                "decision": "envoi SMTP prévu au nom de l’artisan (mention d’IA en pied) : le nœud d’envoi reste désactivé",
+                "simulation": true
+              }
+            ],
+            "erreurs": []
+          },
+          {
+            "contrat": "lib-boite-envoyer@1",
+            "statut": "rejete",
+            "cle_idempotence": "envoyer:inconnu",
+            "simulation": true,
+            "resultat": null,
+            "effets_prevus": [],
+            "effets_faits": [],
+            "journal": [
+              {
+                "evenement": "contrat_rejete",
+                "agent": "lib-boite-envoyer@1",
+                "objet_ref": null,
+                "decision": "entrée hors contrat : aucun effet",
+                "simulation": true
+              }
+            ],
+            "erreurs": [
+              "entrée.config.offre : manquant",
+              "entrée.config.capacites : manquant",
+              "entrée.config.mode_reponse : manquant",
+              "entrée.config.pilote : manquant",
+              "entrée.config.parties_depuis_24h : manquant",
+              "entrée.config.plafond_jour : manquant",
+              "entrée.config.interrupteur_general : manquant",
+              "entrée.config.interrupteur_departement : manquant",
+              "entrée.config.artisan : manquant",
+              "entrée.donnees.action : manquant",
+              "entrée.donnees.proposition : manquant",
+              "entrée.donnees.destinataire : manquant",
+              "entrée.donnees.origine : manquant",
+              "entrée.donnees.conformite : manquant",
+              "entrée.donnees.connexion : manquant",
+              "entrée.donnees.maintenant : manquant"
+            ]
+          }
+        ]
+      ],
+      "Bilan du passage": [
+        [
+          {
+            "simulation": true,
+            "arret": null,
+            "bilan": {
+              "lib-boite-lire@1": {
+                "ok": 2
+              },
+              "lib-boite-brouillon@1": {
+                "ok": 1
+              },
+              "lib-boite-envoyer@1": {
+                "ok": 1,
+                "rejete": 1
+              }
+            },
+            "importes": 3,
+            "deposes": 3,
+            "brouillons": 1,
+            "envois_prevus": 1,
+            "effets_faits": 0,
+            "defauts": 0
+          }
+        ]
+      ]
+    }
+  }
+]

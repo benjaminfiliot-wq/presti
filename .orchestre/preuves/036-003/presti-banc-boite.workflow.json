@@ -1,0 +1,424 @@
+{
+  "id": "tNEvzy2enkNF41z2",
+  "name": "presti-banc-boite",
+  "active": false,
+  "isArchived": false,
+  "versionId": "12c682cf-4a76-49aa-8d37-93084e873f37",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 13,
+  "createdAt": "2026-11-03T10:39:59.709Z",
+  "updatedAt": "2026-11-03T10:53:24.658Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "presti-banc-boite : banc d'essai de la boîte, cinq cas fictifs, jamais publié (036-003). Inactif.",
+  "canExecute": true,
+  "connections": {
+    "Banc (jamais publié)": {
+      "main": [
+        [
+          {
+            "node": "Cas : relève mêlée",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : autorisation expirée",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : brouillon de Studio",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : envoi de Signature",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : envoi refusé en Studio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : relève mêlée": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-boite-lire (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-boite-lire (1)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : autorisation expirée": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-boite-lire (2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-boite-lire (2)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : brouillon de Studio": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-boite-brouillon (3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-boite-brouillon (3)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : envoi de Signature": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-boite-envoyer (4)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-boite-envoyer (4)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : envoi refusé en Studio": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-boite-envoyer (5)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-boite-envoyer (5)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "aca45e01-67a4-4e1b-abba-79c4bc7ba154",
+      "name": "Banc (jamais publié)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "93eb8652-d8bb-4989-bd39-e9819afd504a",
+      "name": "Cas : relève mêlée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Huit messages fictifs : deux du même client, un robot, un envoi à soi-même, un trop court, une newsletter, un client sûr, un réseau.\nconst cas = {\"contrat\":\"lib-boite-lire@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000701\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:lire-meles\",\"trace\":{\"execution_parent\":\"Exemple. essai : boîte\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"lot_max\":40,\"fenetre_jours\":7,\"reseaux\":{\"actifs\":true,\"domaines\":[\"leboncoin.fr\",\"linkedin.com\"]}},\"donnees\":{\"canal\":{\"id\":\"00000000-0000-4000-8000-000000000711\",\"artisan_id\":\"00000000-0000-4000-8000-000000000701\",\"adresse\":\"atelier¤boite-exemple.invalid\",\"derniere_releve\":null},\"connexion\":{\"id\":\"00000000-0000-4000-8000-000000000721\",\"artisan_id\":\"00000000-0000-4000-8000-000000000701\",\"fournisseur\":\"imap\",\"etat\":\"active\",\"secret_n8n\":\"v1.aaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccc\",\"verifiee_le\":\"2026-11-01T08:00:00.000Z\"},\"boite\":{\"issue\":\"ok\",\"messages\":[{\"uid\":1,\"message_id\":\"<m1¤client-a.invalid>\",\"de_email\":\"marie.exemple¤client-a.invalid\",\"de_nom\":\"Exemple. Marie\",\"sujet\":\"Fuite sous l’évier\",\"texte\":\"Bonjour, j’ai une fuite sous mon évier depuis ce matin, pouvez-vous passer ?\",\"date\":\"2026-11-03T09:58:00.000Z\"},{\"uid\":2,\"message_id\":\"<m2¤client-a.invalid>\",\"de_email\":\"marie.exemple¤client-a.invalid\",\"de_nom\":\"Exemple. Marie\",\"sujet\":\"Re: Fuite sous l’évier\",\"texte\":\"J’ajoute que le robinet goutte aussi, merci de me rappeler.\",\"date\":\"2026-11-03T09:58:00.000Z\"},{\"uid\":3,\"message_id\":\"<m3¤robot.invalid>\",\"de_email\":\"noreply¤robot.invalid\",\"de_nom\":null,\"sujet\":\"Votre facture\",\"texte\":\"Ceci est un message automatique envoyé par un robot, ne pas répondre.\",\"date\":\"2026-11-03T09:58:00.000Z\"},{\"uid\":4,\"message_id\":\"<m4¤boite.invalid>\",\"de_email\":\"atelier¤boite-exemple.invalid\",\"de_nom\":null,\"sujet\":\"Note pour moi\",\"texte\":\"Penser à commander les joints pour la semaine prochaine.\",\"date\":\"2026-11-03T09:58:00.000Z\"},{\"uid\":5,\"message_id\":\"<m5¤client-b.invalid>\",\"de_email\":\"paul.exemple¤client-b.invalid\",\"de_nom\":null,\"sujet\":\"Salut\",\"texte\":\"ok merci\",\"date\":\"2026-11-03T09:58:00.000Z\"},{\"uid\":6,\"message_id\":\"<m6¤promo.invalid>\",\"de_email\":\"promo¤boutique.invalid\",\"de_nom\":null,\"sujet\":\"Newsletter de novembre\",\"texte\":\"Découvrez nos offres du mois, se désinscrire en bas de page.\",\"date\":\"2026-11-03T09:58:00.000Z\"},{\"uid\":7,\"message_id\":\"<m7¤client-c.invalid>\",\"de_email\":\"luc.exemple¤client-c.invalid\",\"de_nom\":\"Exemple. Luc\",\"sujet\":\"Devis salle de bains\",\"texte\":\"Bonjour, je voudrais un devis pour refaire ma salle de bains complète.\",\"date\":\"2026-11-03T09:58:00.000Z\"},{\"uid\":8,\"message_id\":\"<m8¤leboncoin.fr>\",\"de_email\":\"alerte¤leboncoin.fr\",\"de_nom\":null,\"sujet\":\"Nouveau message\",\"texte\":\"Vous avez reçu un nouveau message sur votre annonce, répondez depuis l’application.\",\"date\":\"2026-11-03T09:58:00.000Z\"}]},\"deja_importes\":[],\"conversations\":[],\"maintenant\":\"2026-11-03T10:05:00.000Z\"}};\nreturn [JSON.parse(JSON.stringify(cas).split(\"¤\").join(String.fromCharCode(64)))].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "ee37e15e-3893-4732-bdb2-e53f60224bd8",
+      "name": "Appeler lib-boite-lire (1)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -320
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "cQqfkVseZU2Ax0xQ"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "900b551b-c0fc-4650-9fb9-9dc58652793d",
+      "name": "Bilan du banc",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Bilan agrégé, sans donnée : par contrat, le nombre de sorties par statut. Un effet fait en simulation, ou un appel en erreur, compte en défaut.\nconst bilan = {};\nlet defauts = 0;\nfor (const { json: s } of $input.all()) {\n  const c = typeof s.contrat === 'string' ? s.contrat : 'appel en erreur';\n  bilan[c] = bilan[c] || {};\n  const st = typeof s.statut === 'string' ? s.statut : 'erreur';\n  bilan[c][st] = (bilan[c][st] || 0) + 1;\n  if (!s.contrat || (s.simulation === true && Array.isArray(s.effets_faits) && s.effets_faits.length)) defauts++;\n}\nreturn [{ json: { bilan: bilan, defauts: defauts } }];"
+      }
+    },
+    {
+      "id": "38b9ebb3-424b-4d0e-9f99-9acee4c9833f",
+      "name": "Cas : autorisation expirée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Le jeton est refusé : le département se tait, l'état « erreur » est prévu, l'alerte part par lib-alerter (épinglé).\nconst cas = {\"contrat\":\"lib-boite-lire@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000701\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:lire-expire\",\"trace\":{\"execution_parent\":\"Exemple. essai : boîte\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"lot_max\":40,\"fenetre_jours\":7,\"reseaux\":{\"actifs\":true,\"domaines\":[\"leboncoin.fr\",\"linkedin.com\"]}},\"donnees\":{\"canal\":{\"id\":\"00000000-0000-4000-8000-000000000711\",\"artisan_id\":\"00000000-0000-4000-8000-000000000701\",\"adresse\":\"atelier¤boite-exemple.invalid\",\"derniere_releve\":null},\"connexion\":{\"id\":\"00000000-0000-4000-8000-000000000721\",\"artisan_id\":\"00000000-0000-4000-8000-000000000701\",\"fournisseur\":\"imap\",\"etat\":\"active\",\"secret_n8n\":\"v1.aaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccc\",\"verifiee_le\":\"2026-11-01T08:00:00.000Z\"},\"boite\":{\"issue\":\"jeton_expire\",\"messages\":[]},\"deja_importes\":[],\"conversations\":[],\"maintenant\":\"2026-11-03T10:05:00.000Z\"}};\nreturn [JSON.parse(JSON.stringify(cas).split(\"¤\").join(String.fromCharCode(64)))].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "96683208-ef3f-444f-82f0-ffe501f952a3",
+      "name": "Appeler lib-boite-lire (2)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "cQqfkVseZU2Ax0xQ"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "546487dc-934f-4488-812a-e4b53d72eb79",
+      "name": "Cas : brouillon de Studio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Studio : la réponse préparée devient un brouillon, jamais envoyée.\nconst cas = {\"contrat\":\"lib-boite-brouillon@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000701\",\"simulation\":true,\"cle_idempotence\":\"exemple:essai:brouillon\",\"trace\":{\"execution_parent\":\"Exemple. essai : boîte\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"studio\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"artisan\":{\"nom\":\"Exemple. Bâti-Démo\",\"adresse\":\"atelier¤boite-exemple.invalid\"}},\"donnees\":{\"proposition\":{\"id\":\"00000000-0000-4000-8000-000000000731\",\"conversation_id\":\"00000000-0000-4000-8000-000000000741\",\"canal\":\"email\",\"objet\":null,\"texte\":\"Bonjour,\\nMerci pour votre message, je passe jeudi matin voir la fuite. À très vite.\",\"outil\":\"repondre_client\"},\"destinataire\":{\"email\":\"marie.exemple¤client-a.invalid\",\"opposition\":null},\"origine\":{\"message_id\":\"<m1¤client-a.invalid>\",\"references\":[],\"sujet\":\"Fuite sous l’évier\"},\"conformite\":{\"verdict\":\"accepte\"},\"connexion\":{\"id\":\"00000000-0000-4000-8000-000000000721\",\"artisan_id\":\"00000000-0000-4000-8000-000000000701\",\"fournisseur\":\"imap\",\"etat\":\"active\",\"secret_n8n\":\"v1.aaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccc\",\"verifiee_le\":\"2026-11-01T08:00:00.000Z\"},\"deja_ecrits\":[],\"maintenant\":\"2026-11-03T10:05:00.000Z\"}};\nreturn [JSON.parse(JSON.stringify(cas).split(\"¤\").join(String.fromCharCode(64)))].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "80bc1744-0549-4035-a884-1fb7bdeab181",
+      "name": "Appeler lib-boite-brouillon (3)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "zw2k0vo9wpv7lNfr"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "09294d51-f2e9-49f7-a134-796c27fe7301",
+      "name": "Cas : envoi de Signature",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Signature, tout est réuni, 10 minutes écoulées : l'envoi est prévu (nœud désactivé).\nconst cas = {\"contrat\":\"lib-boite-envoyer@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000701\",\"simulation\":true,\"cle_idempotence\":\"exemple:essai:envoyer\",\"trace\":{\"execution_parent\":\"Exemple. essai : boîte\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"capacites\":[\"plateforme.ia.auto\",\"assistant.pilote\",\"relances.auto\"],\"mode_reponse\":\"auto\",\"pilote\":{\"drapeau\":true,\"actif\":true,\"types\":{\"reponse_prospect\":true}},\"parties_depuis_24h\":3,\"plafond_jour\":20,\"interrupteur_general\":true,\"interrupteur_departement\":true,\"artisan\":{\"nom\":\"Exemple. Bâti-Démo\",\"adresse\":\"atelier¤boite-exemple.invalid\"}},\"donnees\":{\"action\":{\"id\":\"00000000-0000-4000-8000-000000000751\",\"type\":\"reponse_prospect\",\"statut\":\"a_partir\",\"prete_le\":\"2026-11-03T09:50:00.000Z\",\"part_le\":\"2026-11-03T10:00:00.000Z\",\"lead_id\":\"00000000-0000-4000-8000-000000000741\"},\"proposition\":{\"id\":\"00000000-0000-4000-8000-000000000731\",\"conversation_id\":\"00000000-0000-4000-8000-000000000741\",\"canal\":\"email\",\"objet\":null,\"texte\":\"Bonjour,\\nMerci pour votre message, je passe jeudi matin voir la fuite. À très vite.\",\"outil\":\"repondre_client\"},\"destinataire\":{\"email\":\"marie.exemple¤client-a.invalid\",\"opposition\":null},\"origine\":{\"message_id\":\"<m1¤client-a.invalid>\",\"references\":[],\"sujet\":\"Fuite sous l’évier\"},\"conformite\":{\"verdict\":\"accepte\"},\"connexion\":{\"id\":\"00000000-0000-4000-8000-000000000721\",\"artisan_id\":\"00000000-0000-4000-8000-000000000701\",\"fournisseur\":\"imap\",\"etat\":\"active\",\"secret_n8n\":\"v1.aaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccc\",\"verifiee_le\":\"2026-11-01T08:00:00.000Z\"},\"maintenant\":\"2026-11-03T10:05:00.000Z\"}};\nreturn [JSON.parse(JSON.stringify(cas).split(\"¤\").join(String.fromCharCode(64)))].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "e96bf41e-440b-4ab1-b126-b9f28cb39384",
+      "name": "Appeler lib-boite-envoyer (4)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "UkMVpSxETSIY4Mku"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "5a90713c-c2e9-40d5-b8f1-cbd6d1c297f2",
+      "name": "Cas : envoi refusé en Studio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Studio : jamais d'envoi ; l'action repasse en carte.\nconst cas = {\"contrat\":\"lib-boite-envoyer@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000701\",\"simulation\":true,\"cle_idempotence\":\"exemple:essai:envoyer\",\"trace\":{\"execution_parent\":\"Exemple. essai : boîte\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"studio\",\"capacites\":[\"plateforme.conversation\"],\"mode_reponse\":\"auto\",\"pilote\":{\"drapeau\":true,\"actif\":true,\"types\":{\"reponse_prospect\":true}},\"parties_depuis_24h\":3,\"plafond_jour\":20,\"interrupteur_general\":true,\"interrupteur_departement\":true,\"artisan\":{\"nom\":\"Exemple. Bâti-Démo\",\"adresse\":\"atelier¤boite-exemple.invalid\"}},\"donnees\":{\"action\":{\"id\":\"00000000-0000-4000-8000-000000000751\",\"type\":\"reponse_prospect\",\"statut\":\"a_partir\",\"prete_le\":\"2026-11-03T09:50:00.000Z\",\"part_le\":\"2026-11-03T10:00:00.000Z\",\"lead_id\":\"00000000-0000-4000-8000-000000000741\"},\"proposition\":{\"id\":\"00000000-0000-4000-8000-000000000731\",\"conversation_id\":\"00000000-0000-4000-8000-000000000741\",\"canal\":\"email\",\"objet\":null,\"texte\":\"Bonjour,\\nMerci pour votre message, je passe jeudi matin voir la fuite. À très vite.\",\"outil\":\"repondre_client\"},\"destinataire\":{\"email\":\"marie.exemple¤client-a.invalid\",\"opposition\":null},\"origine\":{\"message_id\":\"<m1¤client-a.invalid>\",\"references\":[],\"sujet\":\"Fuite sous l’évier\"},\"conformite\":{\"verdict\":\"accepte\"},\"connexion\":{\"id\":\"00000000-0000-4000-8000-000000000721\",\"artisan_id\":\"00000000-0000-4000-8000-000000000701\",\"fournisseur\":\"imap\",\"etat\":\"active\",\"secret_n8n\":\"v1.aaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccc\",\"verifiee_le\":\"2026-11-01T08:00:00.000Z\"},\"maintenant\":\"2026-11-03T10:05:00.000Z\"}};\nreturn [JSON.parse(JSON.stringify(cas).split(\"¤\").join(String.fromCharCode(64)))].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "53a714f2-00ee-42da-94b8-30d9bd2c56ac",
+      "name": "Appeler lib-boite-envoyer (5)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        320
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "UkMVpSxETSIY4Mku"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "75b12916-acb2-453a-85c8-b73737ac3784",
+      "name": "Sticky Note 5e0973fa",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## presti-banc-boite (036-003)\nBanc d'essai de la boîte : cinq cas fictifs (« Exemple. »), le seul appelant permis des trois enfants avec presti-boite.\nINACTIF, jamais publié, jamais planifié (son déclencheur ne se déclenche que si quelqu'un l'active). Ne lit ni n'écrit rien en base, n'envoie rien.\nJuge : scripts/boite-n8n-qa.mjs",
+        "color": 4,
+        "width": 416,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-003), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

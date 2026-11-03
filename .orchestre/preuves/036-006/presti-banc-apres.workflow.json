@@ -1,0 +1,424 @@
+{
+  "id": "Dl8vjXWu71r7q0Fs",
+  "name": "presti-banc-apres",
+  "active": false,
+  "isArchived": false,
+  "versionId": "d7bf03ec-95c6-4222-b622-a61605b68163",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 13,
+  "createdAt": "2026-11-03T11:20:38.619Z",
+  "updatedAt": "2026-11-03T11:20:38.619Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "presti-banc-apres : banc d'essai du département Après-chantier, cinq cas fictifs, jamais publié (036-006). Inactif.",
+  "canExecute": true,
+  "connections": {
+    "Banc (jamais publié)": {
+      "main": [
+        [
+          {
+            "node": "Cas : sept avis mêlés",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : avis négatif en Signature",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : avis positif en Studio",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : département complet (Signature)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cas : interrupteur du département coupé",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : sept avis mêlés": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-avis-lire (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-avis-lire (1)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : avis négatif en Signature": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-avis-repondre (2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-avis-repondre (2)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : avis positif en Studio": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-avis-repondre (3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-avis-repondre (3)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : département complet (Signature)": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-apres (4)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-apres (4)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas : interrupteur du département coupé": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-apres (5)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-apres (5)": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "1d0f74b9-d616-49c7-b927-4d3f0fbe934d",
+      "name": "Banc (jamais publié)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6f578a5a-260b-49bb-b00e-6b6b91082cca",
+      "name": "Cas : sept avis mêlés",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Sept avis fictifs collés : un positif sûr, un négatif de 2 étoiles, un 5 étoiles avec une menace de plainte, un client inconnu, deux textes identiques, un 4 étoiles.\nconst cas = {\"contrat\":\"lib-avis-lire@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:lire-meles\",\"trace\":{\"execution_parent\":\"Exemple. essai : après-chantier\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"interrupteur_general\":true,\"interrupteur_departement\":true,\"mots_escalade_artisan\":[]},\"donnees\":{\"avis\":[{\"ref\":\"a1\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Marie\",\"note\":5,\"texte\":\"Travail soigné et chantier propre, je recommande cet artisan sans hésiter.\",\"date\":\"2026-11-03T08:00:00.000Z\",\"client_connu\":true},{\"ref\":\"a2\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Paul\",\"note\":2,\"texte\":\"Le chantier a pris du retard et personne ne m’a prévenu, je suis déçu.\",\"date\":\"2026-11-03T08:00:00.000Z\",\"client_connu\":true},{\"ref\":\"a3\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Luc\",\"note\":5,\"texte\":\"Bon travail mais une vraie arnaque sur le prix final, je vais porter plainte.\",\"date\":\"2026-11-03T08:00:00.000Z\",\"client_connu\":true},{\"ref\":\"a4\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Anonyme\",\"note\":1,\"texte\":\"Nul, ne faites pas confiance à cette entreprise du tout.\",\"date\":\"2026-11-03T08:00:00.000Z\",\"client_connu\":false},{\"ref\":\"a5\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Zoé\",\"note\":5,\"texte\":\"Excellent service, rapide et efficace, merci beaucoup à toute l’équipe.\",\"date\":\"2026-11-02T09:00:00.000Z\",\"client_connu\":true},{\"ref\":\"a6\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Zack\",\"note\":5,\"texte\":\"Excellent service, rapide et efficace, merci beaucoup à toute l’équipe.\",\"date\":\"2026-11-02T18:00:00.000Z\",\"client_connu\":true},{\"ref\":\"a7\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Inès\",\"note\":4,\"texte\":\"Très bien, quelques retouches à prévoir mais l’équipe est revenue vite.\",\"date\":\"2026-11-03T08:00:00.000Z\",\"client_connu\":true}],\"deja_vus\":[],\"maintenant\":\"2026-11-03T10:05:00.000Z\"}};\nreturn [JSON.parse(JSON.stringify(cas))].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "1e3727f0-feb2-4fe5-91f0-9c604af5fffa",
+      "name": "Appeler lib-avis-lire (1)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -320
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ScpXQIH54wmmuuel"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "239fb0ad-4e76-4a15-80a9-bbd448fa801a",
+      "name": "Bilan du banc",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Bilan agrégé, sans donnée : par contrat, le nombre de sorties par statut. Un effet fait en simulation, ou un appel en erreur, compte en défaut.\nconst bilan = {};\nlet defauts = 0;\nfor (const { json: s } of $input.all()) {\n  const c = typeof s.contrat === 'string' ? s.contrat : 'appel en erreur';\n  bilan[c] = bilan[c] || {};\n  const st = typeof s.statut === 'string' ? s.statut : 'erreur';\n  bilan[c][st] = (bilan[c][st] || 0) + 1;\n  if (!s.contrat || (s.simulation === true && Array.isArray(s.effets_faits) && s.effets_faits.length)) defauts++;\n}\nreturn [{ json: { bilan: bilan, defauts: defauts } }];"
+      }
+    },
+    {
+      "id": "17361262-1e7e-41cf-af29-21436acacae8",
+      "name": "Cas : avis négatif en Signature",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        -160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Signature, 2 étoiles : même avec le pilote, c'est une carte, jamais une publication.\nconst cas = {\"contrat\":\"lib-avis-repondre@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:repondre-negatif\",\"trace\":{\"execution_parent\":\"Exemple. essai : après-chantier\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"artisan\":{\"nom\":\"Exemple. Bati-Demo\"}},\"donnees\":{\"avis\":{\"cle\":\"av:col:a2\",\"ref\":\"a2\",\"source\":\"colle\",\"auteur\":\"Exemple. Paul\",\"note\":2,\"sentiment\":\"negatif\",\"motifs\":[\"note_basse\"],\"suspect\":false,\"motifs_suspicion\":[],\"texte\":\"Le chantier a pris du retard et personne ne m’a prévenu, je suis déçu.\",\"date\":\"2026-11-03T08:00:00.000Z\"},\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"brouillon\":{\"texte\":\"Bonjour, merci d’avoir pris le temps de nous écrire. Nous sommes désolés de ce retard et de ce manque d’information. Nous restons à votre écoute pour en parler directement.\",\"modele\":\"claude-haiku-5-5\"},\"conformite\":{\"verdict\":\"accepte\"},\"deja_cartes\":[],\"maintenant\":\"2026-11-03T10:05:00.000Z\"}};\nreturn [JSON.parse(JSON.stringify(cas))].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "41c612dd-532c-4275-a956-3b8671245dd6",
+      "name": "Appeler lib-avis-repondre (2)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "OW7vXn4aPzSYoSdm"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "e21928f8-96f9-4501-b627-923af34879b3",
+      "name": "Cas : avis positif en Studio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Studio, 5 étoiles : une carte avec son brouillon, le type n’est pas accepté par Benj.\nconst cas = {\"contrat\":\"lib-avis-repondre@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:repondre-positif\",\"trace\":{\"execution_parent\":\"Exemple. essai : après-chantier\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"studio\",\"interrupteur_general\":true,\"interrupteur_departement\":true,\"artisan\":{\"nom\":\"Exemple. Bati-Demo\"}},\"donnees\":{\"avis\":{\"cle\":\"av:col:a1\",\"ref\":\"a1\",\"source\":\"colle\",\"auteur\":\"Exemple. Marie\",\"note\":5,\"sentiment\":\"positif\",\"motifs\":[],\"suspect\":false,\"motifs_suspicion\":[],\"texte\":\"Travail soigné et chantier propre, je recommande cet artisan sans hésiter.\",\"date\":\"2026-11-03T08:00:00.000Z\"},\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"brouillon\":{\"texte\":\"Merci beaucoup pour ce retour : toute l’équipe sera heureuse de le lire. À très bientôt pour un prochain chantier.\",\"modele\":\"claude-haiku-5-5\"},\"conformite\":{\"verdict\":\"accepte\"},\"deja_cartes\":[],\"maintenant\":\"2026-11-03T10:05:00.000Z\"}};\nreturn [JSON.parse(JSON.stringify(cas))].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "aebc534d-f08a-4fc3-bf48-3c2ee4bbf326",
+      "name": "Appeler lib-avis-repondre (3)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "OW7vXn4aPzSYoSdm"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "13234b6c-dad0-44f4-8220-2a8edbe33c27",
+      "name": "Cas : département complet (Signature)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        160
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Dix chantiers (e-mail, SMS consenti, opposé, STOP, litige, aucun canal, pas encore dû, entretien, entretien opposé, opposition illisible) et sept avis.\nconst cas = {\"contrat\":\"presti-dep-apres@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:chef\",\"trace\":{\"execution_parent\":\"Exemple. essai : après-chantier\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"capacites\":[\"assistant\",\"crm\",\"assistant.pilote\"],\"interrupteur_general\":true,\"interrupteur_departement\":true,\"artisan\":{\"nom\":\"Exemple. Bati-Demo\"},\"reglages\":{\"avis\":true,\"entretien\":true,\"actif_depuis\":\"2026-10-20\",\"texte_avis\":null,\"texte_entretien\":null},\"mots_escalade_artisan\":[]},\"donnees\":{\"evenements\":[],\"chantiers\":[{\"id\":\"00000000-0000-4000-8000-000000000810\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"titre\":\"Exemple. Rénovation de la salle de bains\",\"statut\":\"termine\",\"date_fin_reelle\":\"2026-10-30\",\"client_nom\":\"Exemple. Marie\",\"textes\":[],\"contact\":{\"email_connu\":true,\"sms_consenti\":false,\"opposition\":false,\"stop\":false,\"litige_en_cours\":false,\"a_ecrit_depuis_fin\":false,\"ecrit_aujourdhui\":false}},{\"id\":\"00000000-0000-4000-8000-000000000811\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"titre\":\"Exemple. Rénovation de la salle de bains\",\"statut\":\"termine\",\"date_fin_reelle\":\"2026-10-31\",\"client_nom\":\"Exemple. Luc\",\"textes\":[],\"contact\":{\"email_connu\":false,\"sms_consenti\":true,\"opposition\":false,\"stop\":false,\"litige_en_cours\":false,\"a_ecrit_depuis_fin\":false,\"ecrit_aujourdhui\":false}},{\"id\":\"00000000-0000-4000-8000-000000000812\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"titre\":\"Exemple. Rénovation de la salle de bains\",\"statut\":\"termine\",\"date_fin_reelle\":\"2026-10-29\",\"client_nom\":\"Exemple. Client 12\",\"textes\":[],\"contact\":{\"email_connu\":true,\"sms_consenti\":false,\"opposition\":true,\"stop\":false,\"litige_en_cours\":false,\"a_ecrit_depuis_fin\":false,\"ecrit_aujourdhui\":false}},{\"id\":\"00000000-0000-4000-8000-000000000813\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"titre\":\"Exemple. Rénovation de la salle de bains\",\"statut\":\"termine\",\"date_fin_reelle\":\"2026-10-28\",\"client_nom\":\"Exemple. Client 13\",\"textes\":[],\"contact\":{\"email_connu\":true,\"sms_consenti\":false,\"opposition\":false,\"stop\":true,\"litige_en_cours\":false,\"a_ecrit_depuis_fin\":false,\"ecrit_aujourdhui\":false}},{\"id\":\"00000000-0000-4000-8000-000000000814\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"titre\":\"Exemple. Rénovation de la salle de bains\",\"statut\":\"termine\",\"date_fin_reelle\":\"2026-10-27\",\"client_nom\":\"Exemple. Client 14\",\"textes\":[],\"contact\":{\"email_connu\":true,\"sms_consenti\":false,\"opposition\":false,\"stop\":false,\"litige_en_cours\":true,\"a_ecrit_depuis_fin\":false,\"ecrit_aujourdhui\":false}},{\"id\":\"00000000-0000-4000-8000-000000000815\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"titre\":\"Exemple. Rénovation de la salle de bains\",\"statut\":\"termine\",\"date_fin_reelle\":\"2026-10-26\",\"client_nom\":\"Exemple. Client 15\",\"textes\":[],\"contact\":{\"email_connu\":false,\"sms_consenti\":false,\"opposition\":false,\"stop\":false,\"litige_en_cours\":false,\"a_ecrit_depuis_fin\":false,\"ecrit_aujourdhui\":false}},{\"id\":\"00000000-0000-4000-8000-000000000816\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"titre\":\"Exemple. Rénovation de la salle de bains\",\"statut\":\"termine\",\"date_fin_reelle\":\"2026-11-02\",\"client_nom\":\"Exemple. Client 16\",\"textes\":[],\"contact\":{\"email_connu\":true,\"sms_consenti\":false,\"opposition\":false,\"stop\":false,\"litige_en_cours\":false,\"a_ecrit_depuis_fin\":false,\"ecrit_aujourdhui\":false}},{\"id\":\"00000000-0000-4000-8000-000000000817\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"titre\":\"Exemple. Remplacement de la chaudière\",\"statut\":\"termine\",\"date_fin_reelle\":\"2025-11-18\",\"client_nom\":\"Exemple. Inès\",\"textes\":[],\"contact\":{\"email_connu\":true,\"sms_consenti\":false,\"opposition\":false,\"stop\":false,\"litige_en_cours\":false,\"a_ecrit_depuis_fin\":false,\"ecrit_aujourdhui\":false}},{\"id\":\"00000000-0000-4000-8000-000000000818\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"titre\":\"Exemple. Remplacement de la chaudière\",\"statut\":\"termine\",\"date_fin_reelle\":\"2025-11-18\",\"client_nom\":\"Exemple. Client 18\",\"textes\":[],\"contact\":{\"email_connu\":true,\"sms_consenti\":false,\"opposition\":true,\"stop\":false,\"litige_en_cours\":false,\"a_ecrit_depuis_fin\":false,\"ecrit_aujourdhui\":false}},{\"id\":\"00000000-0000-4000-8000-000000000819\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"titre\":\"Exemple. Rénovation de la salle de bains\",\"statut\":\"termine\",\"date_fin_reelle\":\"2026-10-25\",\"client_nom\":\"Exemple. Client 19\",\"textes\":[],\"contact\":{\"email_connu\":true,\"sms_consenti\":false,\"opposition\":null,\"stop\":false,\"litige_en_cours\":false,\"a_ecrit_depuis_fin\":false,\"ecrit_aujourdhui\":false}}],\"cles_existantes\":[],\"deja_demandes_aujourdhui\":0,\"jour\":\"2026-11-03\",\"maintenant\":\"2026-11-03T10:05:00.000Z\",\"avis\":[{\"ref\":\"a1\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Marie\",\"note\":5,\"texte\":\"Travail soigné et chantier propre, je recommande cet artisan sans hésiter.\",\"date\":\"2026-11-03T08:00:00.000Z\",\"client_connu\":true},{\"ref\":\"a2\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Paul\",\"note\":2,\"texte\":\"Le chantier a pris du retard et personne ne m’a prévenu, je suis déçu.\",\"date\":\"2026-11-03T08:00:00.000Z\",\"client_connu\":true},{\"ref\":\"a3\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Luc\",\"note\":5,\"texte\":\"Bon travail mais une vraie arnaque sur le prix final, je vais porter plainte.\",\"date\":\"2026-11-03T08:00:00.000Z\",\"client_connu\":true},{\"ref\":\"a4\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Anonyme\",\"note\":1,\"texte\":\"Nul, ne faites pas confiance à cette entreprise du tout.\",\"date\":\"2026-11-03T08:00:00.000Z\",\"client_connu\":false},{\"ref\":\"a5\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Zoé\",\"note\":5,\"texte\":\"Excellent service, rapide et efficace, merci beaucoup à toute l’équipe.\",\"date\":\"2026-11-02T09:00:00.000Z\",\"client_connu\":true},{\"ref\":\"a6\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Zack\",\"note\":5,\"texte\":\"Excellent service, rapide et efficace, merci beaucoup à toute l’équipe.\",\"date\":\"2026-11-02T18:00:00.000Z\",\"client_connu\":true},{\"ref\":\"a7\",\"artisan_id\":\"00000000-0000-4000-8000-000000000801\",\"source\":\"colle\",\"auteur\":\"Exemple. Inès\",\"note\":4,\"texte\":\"Très bien, quelques retouches à prévoir mais l’équipe est revenue vite.\",\"date\":\"2026-11-03T08:00:00.000Z\",\"client_connu\":true}],\"avis_deja_vus\":[],\"brouillons_avis\":[{\"ref\":\"a2\",\"texte\":\"Bonjour, merci d’avoir pris le temps de nous écrire. Nous sommes désolés de ce retard et de ce manque d’information. Nous restons à votre écoute pour en parler directement.\",\"modele\":\"claude-haiku-5-5\"},{\"ref\":\"a1\",\"texte\":\"Merci beaucoup pour ce retour : toute l’équipe sera heureuse de le lire. À très bientôt pour un prochain chantier.\",\"modele\":\"claude-haiku-5-5\"}],\"conformites_avis\":[{\"ref\":\"a2\",\"verdict\":\"accepte\"},{\"ref\":\"a1\",\"verdict\":\"accepte\"}],\"cartes_avis_existantes\":[]}};\nreturn [JSON.parse(JSON.stringify(cas))].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "64b5dddc-bc25-4b80-89cf-89c4547e9619",
+      "name": "Appeler presti-dep-apres (4)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        160
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "L3GOS7euxi60jCZN"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "ae984ea9-219a-46ef-a82b-c6a89434da46",
+      "name": "Cas : interrupteur du département coupé",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        320
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Exemple. Le département est coupé : il se tait.\nconst cas = {\"contrat\":\"presti-dep-apres@1\",\"organisation_id\":\"00000000-0000-4000-8000-000000000801\",\"simulation\":true,\"cle_idempotence\":\"exemple:banc:chef-coupe\",\"trace\":{\"execution_parent\":\"Exemple. essai : après-chantier\",\"declencheur\":\"essai\",\"tentative\":0},\"config\":{\"offre\":\"signature\",\"capacites\":[\"assistant\",\"crm\",\"assistant.pilote\"],\"interrupteur_general\":true,\"interrupteur_departement\":false,\"artisan\":{\"nom\":\"Exemple. Bati-Demo\"},\"reglages\":{\"avis\":true,\"entretien\":true,\"actif_depuis\":\"2026-10-20\",\"texte_avis\":null,\"texte_entretien\":null},\"mots_escalade_artisan\":[]},\"donnees\":{\"evenements\":[],\"chantiers\":[],\"cles_existantes\":[],\"deja_demandes_aujourdhui\":0,\"jour\":\"2026-11-03\",\"maintenant\":\"2026-11-03T10:05:00.000Z\",\"avis\":[],\"avis_deja_vus\":[],\"brouillons_avis\":[],\"conformites_avis\":[],\"cartes_avis_existantes\":[]}};\nreturn [JSON.parse(JSON.stringify(cas))].map((j) => ({ json: j }));"
+      }
+    },
+    {
+      "id": "10163990-075d-47ce-80e8-2b2763321422",
+      "name": "Appeler presti-dep-apres (5)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        320
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "L3GOS7euxi60jCZN"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "1a960ea6-566b-41dc-a478-f532c219a052",
+      "name": "Sticky Note ffb23768",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## presti-banc-apres (036-006)\nBanc d'essai du département Après-chantier : cinq cas fictifs (« Exemple. »), le seul appelant permis des deux spécialistes et du chef avec le Cerveau.\nINACTIF, jamais publié, jamais planifié. Ne lit ni n'écrit rien en base, n'envoie rien, ne publie rien.\nJuge : scripts/apres-reputation-n8n-qa.mjs",
+        "color": 4,
+        "width": 416,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-006), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

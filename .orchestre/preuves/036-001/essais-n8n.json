@@ -1,0 +1,4673 @@
+[
+ {
+  "workflow": "lib-trier-demande",
+  "execution": 468,
+  "titre": "lib-trier-demande : 8 demandes du banc, triées par règles (urgence, spam, peut attendre), escalades lues comme le pilote",
+  "statut_n8n": "success",
+  "noeud": "Contrat de sortie",
+  "entrees": [
+   {
+    "contrat": "lib-trier-demande@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000001",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-dep-accueil",
+     "tentative": 0
+    },
+    "config": {
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ]
+    },
+    "donnees": {
+     "demande_id": "00000000-0000-4000-8000-a00000000001",
+     "texte": "Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne.",
+     "liens": 0,
+     "honeypot": false,
+     "client_existant": false,
+     "urgence_declaree": false
+    }
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000002",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-dep-accueil",
+     "tentative": 0
+    },
+    "config": {
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ]
+    },
+    "donnees": {
+     "demande_id": "00000000-0000-4000-8000-a00000000002",
+     "texte": "Exemple. Mon chauffe-eau fuit depuis ce matin, il y a de l’eau partout !",
+     "liens": 0,
+     "honeypot": false,
+     "client_existant": false,
+     "urgence_declaree": true
+    }
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000004",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-dep-accueil",
+     "tentative": 0
+    },
+    "config": {
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ]
+    },
+    "donnees": {
+     "demande_id": "00000000-0000-4000-8000-a00000000004",
+     "texte": "Exemple. Gagnez des clients avec notre offre exclusive de référencement naturel, cliquez ici. https://exemple.invalid/a https://exemple.invalid/b https://exemple.invalid/c",
+     "liens": 3,
+     "honeypot": false,
+     "client_existant": false,
+     "urgence_declaree": false
+    }
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000007",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-dep-accueil",
+     "tentative": 0
+    },
+    "config": {
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ]
+    },
+    "donnees": {
+     "demande_id": "00000000-0000-4000-8000-a00000000007",
+     "texte": "Exemple. Je vais porter plainte, les travaux ont été mal faits et mon avocat vous écrira.",
+     "liens": 0,
+     "honeypot": false,
+     "client_existant": false,
+     "urgence_declaree": false
+    }
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000012",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-dep-accueil",
+     "tentative": 0
+    },
+    "config": {
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ]
+    },
+    "donnees": {
+     "demande_id": "00000000-0000-4000-8000-a00000000012",
+     "texte": "Exemple. Ça sent le gaz près de la chaudière depuis hier soir.",
+     "liens": 0,
+     "honeypot": false,
+     "client_existant": false,
+     "urgence_declaree": false
+    }
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000016",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-dep-accueil",
+     "tentative": 0
+    },
+    "config": {
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ]
+    },
+    "donnees": {
+     "demande_id": "00000000-0000-4000-8000-a00000000016",
+     "texte": "Exemple. Bonjour, pas d’urgence, quand vous pouvez : changer un mitigeur.",
+     "liens": 0,
+     "honeypot": false,
+     "client_existant": false,
+     "urgence_declaree": false
+    }
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+    "simulation": true,
+    "cle_idempotence": "tri:00000000-0000-4000-8000-b00000000003",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-dep-accueil",
+     "tentative": 0
+    },
+    "config": {
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ]
+    },
+    "donnees": {
+     "demande_id": "00000000-0000-4000-8000-b00000000003",
+     "texte": "Exemple. Mon parquet est gondolé après un dégât des eaux, l’assurance demande un devis.",
+     "liens": 0,
+     "honeypot": false,
+     "client_existant": false,
+     "urgence_declaree": false
+    }
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+    "simulation": true,
+    "cle_idempotence": "tri:00000000-0000-4000-8000-b00000000005",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-dep-accueil",
+     "tentative": 0
+    },
+    "config": {
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ]
+    },
+    "donnees": {
+     "demande_id": "00000000-0000-4000-8000-b00000000005",
+     "texte": "Exemple. Crypto : doublez vos gains en une semaine, voir www.exemple.invalid https://exemple.invalid/a https://exemple.invalid/b https://exemple.invalid/c",
+     "liens": 4,
+     "honeypot": false,
+     "client_existant": false,
+     "urgence_declaree": false
+    }
+   }
+  ],
+  "epingles": {},
+  "sorties": [
+   {
+    "contrat": "lib-trier-demande@1",
+    "statut": "ok",
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000001",
+    "simulation": true,
+    "resultat": {
+     "demande_id": "00000000-0000-4000-8000-a00000000001",
+     "classe": "peut_attendre",
+     "escalade": false,
+     "mot": null,
+     "motifs": [
+      "demande_ordinaire"
+     ]
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "tri",
+      "agent": "lib-trier-demande",
+      "objet_ref": "00000000-0000-4000-8000-a00000000001",
+      "decision": "classe peut_attendre",
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "statut": "ok",
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000002",
+    "simulation": true,
+    "resultat": {
+     "demande_id": "00000000-0000-4000-8000-a00000000002",
+     "classe": "urgence",
+     "escalade": true,
+     "mot": "eau partout",
+     "motifs": [
+      "urgence_declaree",
+      "escalade"
+     ]
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "tri",
+      "agent": "lib-trier-demande",
+      "objet_ref": "00000000-0000-4000-8000-a00000000002",
+      "decision": "classe urgence, escalade (« eau partout »)",
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "statut": "ok",
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000004",
+    "simulation": true,
+    "resultat": {
+     "demande_id": "00000000-0000-4000-8000-a00000000004",
+     "classe": "spam",
+     "escalade": false,
+     "mot": null,
+     "motifs": [
+      "liens_multiples"
+     ]
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "tri",
+      "agent": "lib-trier-demande",
+      "objet_ref": "00000000-0000-4000-8000-a00000000004",
+      "decision": "classe spam",
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "statut": "ok",
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000007",
+    "simulation": true,
+    "resultat": {
+     "demande_id": "00000000-0000-4000-8000-a00000000007",
+     "classe": "peut_attendre",
+     "escalade": true,
+     "mot": "avocat",
+     "motifs": [
+      "demande_ordinaire",
+      "escalade"
+     ]
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "tri",
+      "agent": "lib-trier-demande",
+      "objet_ref": "00000000-0000-4000-8000-a00000000007",
+      "decision": "classe peut_attendre, escalade (« avocat »)",
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "statut": "ok",
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000012",
+    "simulation": true,
+    "resultat": {
+     "demande_id": "00000000-0000-4000-8000-a00000000012",
+     "classe": "urgence",
+     "escalade": true,
+     "mot": "gaz",
+     "motifs": [
+      "sujet_urgent",
+      "escalade"
+     ]
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "tri",
+      "agent": "lib-trier-demande",
+      "objet_ref": "00000000-0000-4000-8000-a00000000012",
+      "decision": "classe urgence, escalade (« gaz »)",
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "statut": "ok",
+    "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000016",
+    "simulation": true,
+    "resultat": {
+     "demande_id": "00000000-0000-4000-8000-a00000000016",
+     "classe": "peut_attendre",
+     "escalade": false,
+     "mot": null,
+     "motifs": [
+      "demande_ordinaire"
+     ]
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "tri",
+      "agent": "lib-trier-demande",
+      "objet_ref": "00000000-0000-4000-8000-a00000000016",
+      "decision": "classe peut_attendre",
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "statut": "ok",
+    "cle_idempotence": "tri:00000000-0000-4000-8000-b00000000003",
+    "simulation": true,
+    "resultat": {
+     "demande_id": "00000000-0000-4000-8000-b00000000003",
+     "classe": "urgence",
+     "escalade": true,
+     "mot": "dégât des eaux",
+     "motifs": [
+      "sujet_urgent",
+      "escalade"
+     ]
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "tri",
+      "agent": "lib-trier-demande",
+      "objet_ref": "00000000-0000-4000-8000-b00000000003",
+      "decision": "classe urgence, escalade (« dégât des eaux »)",
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   },
+   {
+    "contrat": "lib-trier-demande@1",
+    "statut": "ok",
+    "cle_idempotence": "tri:00000000-0000-4000-8000-b00000000005",
+    "simulation": true,
+    "resultat": {
+     "demande_id": "00000000-0000-4000-8000-b00000000005",
+     "classe": "spam",
+     "escalade": false,
+     "mot": null,
+     "motifs": [
+      "liens_multiples"
+     ]
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "tri",
+      "agent": "lib-trier-demande",
+      "objet_ref": "00000000-0000-4000-8000-b00000000005",
+      "decision": "classe spam",
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   }
+  ]
+ },
+ {
+  "workflow": "lib-lire-photo",
+  "execution": 469,
+  "titre": "lib-lire-photo : une photo décrite (modèle épinglé), une description CHIFFRÉE par le modèle refusée à la revalidation",
+  "statut_n8n": "success",
+  "noeud": "Contrat de sortie",
+  "entrees": [
+   {
+    "contrat": "lib-lire-photo@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "photo:00000000-0000-4000-8000-a00000000008",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-dep-accueil",
+     "tentative": 0
+    },
+    "config": {},
+    "donnees": {
+     "demande_id": "00000000-0000-4000-8000-a00000000008",
+     "photo": {
+      "ref": "exemple-wc-01.jpg",
+      "type_mime": "image/jpeg"
+     }
+    }
+   },
+   {
+    "contrat": "lib-lire-photo@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "photo:00000000-0000-4000-8000-a00000000017",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-dep-accueil",
+     "tentative": 0
+    },
+    "config": {},
+    "donnees": {
+     "demande_id": "00000000-0000-4000-8000-a00000000017",
+     "photo": {
+      "ref": "exemple-cuisine-02.jpg",
+      "type_mime": "image/jpeg"
+     }
+    }
+   }
+  ],
+  "epingles": {
+   "Décrire la photo (modèle épinglé)": [
+    {
+     "output": {
+      "description": "Exemple. Un WC au sol ancien, carrelage clair, joints noircis au pied de la cuvette.",
+      "elements": [
+       "WC au sol",
+       "carrelage",
+       "joints"
+      ],
+      "confiance": "bonne",
+      "chiffrage": null
+     }
+    },
+    {
+     "output": {
+      "description": "Exemple. Évier ancien ; le remplacement coûtera environ 450 € TTC.",
+      "elements": [
+       "évier"
+      ],
+      "confiance": "bonne",
+      "chiffrage": null
+     }
+    }
+   ]
+  },
+  "sorties": [
+   {
+    "contrat": "lib-lire-photo@1",
+    "statut": "ok",
+    "cle_idempotence": "photo:00000000-0000-4000-8000-a00000000008",
+    "simulation": true,
+    "resultat": {
+     "demande_id": "00000000-0000-4000-8000-a00000000008",
+     "description": "Exemple. Un WC au sol ancien, carrelage clair, joints noircis au pied de la cuvette.",
+     "elements": [
+      "WC au sol",
+      "carrelage",
+      "joints"
+     ],
+     "confiance": "bonne",
+     "modele": "claude-haiku-5-5",
+     "epingle": true
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "photo_decrite",
+      "agent": "lib-lire-photo",
+      "objet_ref": "00000000-0000-4000-8000-a00000000008",
+      "decision": "photo décrite (confiance bonne), jamais chiffrée ; modèle épinglé",
+      "modele": "claude-haiku-5-5",
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   },
+   {
+    "contrat": "lib-lire-photo@1",
+    "statut": "erreur",
+    "cle_idempotence": "photo:00000000-0000-4000-8000-a00000000017",
+    "simulation": true,
+    "resultat": null,
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "photo_rejetee",
+      "agent": "lib-lire-photo",
+      "objet_ref": "00000000-0000-4000-8000-a00000000017",
+      "decision": "sortie du modèle refusée : la photo est chiffrée : interdit",
+      "modele": "claude-haiku-5-5",
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "simulation": true
+     }
+    ],
+    "erreurs": [
+     "photo : la photo est chiffrée : interdit"
+    ]
+   }
+  ]
+ },
+ {
+  "workflow": "presti-dep-accueil",
+  "execution": 470,
+  "titre": "presti-dep-accueil : deux comptes, quatre demandes ; Studio = 2 cartes, Signature = 1 ligne du pilote et 1 carte « à la main » (dégât des eaux)",
+  "statut_n8n": "success",
+  "noeud": "Contrat de sortie",
+  "entrees": [
+   {
+    "contrat": "presti-dep-accueil@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "dep:accueil:0000000000a1:2026-11-07T2142",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-banc-cerveau",
+     "tentative": 0
+    },
+    "config": {
+     "nom_artisan": "Exemple. Plomberie Arnal-Démo",
+     "offre": "studio",
+     "mode_reponse": "assistee",
+     "capacites": [
+      "canaux.email",
+      "relances",
+      "factures.relances",
+      "assistant"
+     ],
+     "pilote": {
+      "drapeau": true,
+      "actif": false,
+      "types": {}
+     },
+     "parties_depuis_24h": 0,
+     "interrupteur_general": true,
+     "interrupteur_departement": true,
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ],
+     "fournisseurs": [],
+     "horaires": {
+      "jours_permis": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "heures_permises": {
+       "debut": "00:00",
+       "fin": "23:59"
+      }
+     },
+     "plafond_jour": 20,
+     "qualification": {
+      "grille": [
+       {
+        "critere": "urgence=urgent",
+        "poids": 40
+       },
+       {
+        "critere": "canal=formulaire",
+        "poids": 25
+       },
+       {
+        "critere": "canal=site",
+        "poids": 25
+       },
+       {
+        "critere": "canal=telephone",
+        "poids": 15
+       },
+       {
+        "critere": "canal=email",
+        "poids": 15
+       }
+      ],
+      "seuils": {
+       "haute": 60,
+       "normale": 30
+      },
+      "delais_cibles_min": {
+       "haute": 15,
+       "normale": 60,
+       "a_revoir": 240
+      }
+     }
+    },
+    "donnees": {
+     "demandes": [
+      {
+       "id": "00000000-0000-4000-8000-a00000000001",
+       "canal": "page_p",
+       "recu_le": "2026-11-06T10:15:00.000+01:00",
+       "message": "Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne.",
+       "champs": {
+        "canal": "formulaire",
+        "type_chantier": "Salle de bain",
+        "delai_souhaite": "dans 3 mois"
+       },
+       "empreinte_contact": "ac5f807a71f6fae9fa01ecded21a084f6c147e029d098b9da6052b57d0bddcc3",
+       "client_existant": false,
+       "honeypot": false,
+       "photo": null,
+       "proposition": {
+        "canal": "email",
+        "objet": "Exemple. Votre demande",
+        "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous.",
+        "outil": "valider_reponse_proposee"
+       },
+       "destinataire": {
+        "opposition": false,
+        "consentement_sms": null
+       }
+      },
+      {
+       "id": "00000000-0000-4000-8000-a00000000008",
+       "canal": "page_p",
+       "recu_le": "2026-11-06T10:15:00.000+01:00",
+       "message": "Exemple. Bonjour, une rénovation de WC, voici une photo.",
+       "champs": {
+        "canal": "formulaire",
+        "type_chantier": "WC",
+        "photo_jointe": true
+       },
+       "empreinte_contact": "a03df5daa0bb4bed551672ffa3e3791f8137356a24a32d6efd9bde666a429637",
+       "client_existant": false,
+       "honeypot": false,
+       "photo": {
+        "ref": "exemple-wc-01.jpg",
+        "type_mime": "image/jpeg"
+       },
+       "proposition": {
+        "canal": "email",
+        "objet": "Exemple. Votre demande",
+        "texte": "Exemple. Bonjour, merci pour votre message. Merci pour la photo, nous l’étudions. Bien à vous.",
+        "outil": "valider_reponse_proposee"
+       },
+       "destinataire": {
+        "opposition": false,
+        "consentement_sms": null
+       }
+      }
+     ],
+     "empreintes_connues": [],
+     "cles_existantes": [],
+     "maintenant": "2026-11-07T21:42:00.000+01:00"
+    }
+   },
+   {
+    "contrat": "presti-dep-accueil@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+    "simulation": true,
+    "cle_idempotence": "dep:accueil:0000000000b2:2026-11-07T2142",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-banc-cerveau",
+     "tentative": 0
+    },
+    "config": {
+     "nom_artisan": "Exemple. Menuiserie Berthier-Démo",
+     "offre": "signature",
+     "mode_reponse": "auto",
+     "capacites": [
+      "canaux.email",
+      "relances",
+      "factures.relances",
+      "assistant",
+      "plateforme.ia.auto",
+      "relances.auto",
+      "factures.relances.auto",
+      "crm",
+      "assistant.pilote"
+     ],
+     "pilote": {
+      "drapeau": true,
+      "actif": true,
+      "types": {
+       "reponse_prospect": true
+      }
+     },
+     "parties_depuis_24h": 3,
+     "interrupteur_general": true,
+     "interrupteur_departement": true,
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ],
+     "fournisseurs": [],
+     "horaires": {
+      "jours_permis": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "heures_permises": {
+       "debut": "00:00",
+       "fin": "23:59"
+      }
+     },
+     "plafond_jour": 20,
+     "qualification": {
+      "grille": [
+       {
+        "critere": "urgence=urgent",
+        "poids": 40
+       },
+       {
+        "critere": "canal=formulaire",
+        "poids": 25
+       },
+       {
+        "critere": "canal=site",
+        "poids": 25
+       },
+       {
+        "critere": "canal=telephone",
+        "poids": 15
+       },
+       {
+        "critere": "canal=email",
+        "poids": 15
+       }
+      ],
+      "seuils": {
+       "haute": 60,
+       "normale": 30
+      },
+      "delais_cibles_min": {
+       "haute": 15,
+       "normale": 60,
+       "a_revoir": 240
+      }
+     }
+    },
+    "donnees": {
+     "demandes": [
+      {
+       "id": "00000000-0000-4000-8000-b00000000001",
+       "canal": "page_p",
+       "recu_le": "2026-11-06T21:10:00.000+01:00",
+       "message": "Exemple. Bonjour, je souhaite un dressing sur mesure dans la chambre.",
+       "champs": {
+        "canal": "formulaire",
+        "type_chantier": "Dressing",
+        "delai_souhaite": "dans 2 mois",
+        "recu_hors_horaires": true
+       },
+       "empreinte_contact": "ce657021e44a15de0f7f4ea33fbf2f851de8cfb2823b917a7001b45e5e78b8cb",
+       "client_existant": false,
+       "honeypot": false,
+       "photo": null,
+       "proposition": {
+        "canal": "email",
+        "objet": "Exemple. Votre demande",
+        "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.",
+        "outil": "valider_reponse_proposee"
+       },
+       "destinataire": {
+        "opposition": false,
+        "consentement_sms": null
+       }
+      },
+      {
+       "id": "00000000-0000-4000-8000-b00000000003",
+       "canal": "page_p",
+       "recu_le": "2026-11-06T10:15:00.000+01:00",
+       "message": "Exemple. Mon parquet est gondolé après un dégât des eaux, l’assurance demande un devis.",
+       "champs": {
+        "canal": "formulaire",
+        "type_chantier": "Parquet"
+       },
+       "empreinte_contact": "1a45e10c58f8bc4a8440a6f8ad88f7ada1d8fcf9a175a72ab4f9979addd66f30",
+       "client_existant": false,
+       "honeypot": false,
+       "photo": null,
+       "proposition": {
+        "canal": "email",
+        "objet": "Exemple. Votre demande",
+        "texte": "Exemple. Bonjour, merci pour votre message. Nous regardons cela. Bien à vous.",
+        "outil": "valider_reponse_proposee"
+       },
+       "destinataire": {
+        "opposition": false,
+        "consentement_sms": null
+       }
+      }
+     ],
+     "empreintes_connues": [],
+     "cles_existantes": [],
+     "maintenant": "2026-11-07T21:42:00.000+01:00"
+    }
+   }
+  ],
+  "epingles": {
+   "Appeler lib-trier-demande": [
+    {
+     "contrat": "lib-trier-demande@1",
+     "statut": "ok",
+     "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000001",
+     "simulation": true,
+     "resultat": {
+      "demande_id": "00000000-0000-4000-8000-a00000000001",
+      "classe": "peut_attendre",
+      "escalade": false,
+      "mot": null,
+      "motifs": [
+       "demande_ordinaire"
+      ]
+     },
+     "effets_prevus": [],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "tri",
+       "agent": "lib-trier-demande",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "classe peut_attendre",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-trier-demande@1",
+     "statut": "ok",
+     "cle_idempotence": "tri:00000000-0000-4000-8000-a00000000008",
+     "simulation": true,
+     "resultat": {
+      "demande_id": "00000000-0000-4000-8000-a00000000008",
+      "classe": "peut_attendre",
+      "escalade": false,
+      "mot": null,
+      "motifs": [
+       "demande_ordinaire"
+      ]
+     },
+     "effets_prevus": [],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "tri",
+       "agent": "lib-trier-demande",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "classe peut_attendre",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-trier-demande@1",
+     "statut": "ok",
+     "cle_idempotence": "tri:00000000-0000-4000-8000-b00000000001",
+     "simulation": true,
+     "resultat": {
+      "demande_id": "00000000-0000-4000-8000-b00000000001",
+      "classe": "peut_attendre",
+      "escalade": false,
+      "mot": null,
+      "motifs": [
+       "demande_ordinaire"
+      ]
+     },
+     "effets_prevus": [],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "tri",
+       "agent": "lib-trier-demande",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "classe peut_attendre",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-trier-demande@1",
+     "statut": "ok",
+     "cle_idempotence": "tri:00000000-0000-4000-8000-b00000000003",
+     "simulation": true,
+     "resultat": {
+      "demande_id": "00000000-0000-4000-8000-b00000000003",
+      "classe": "urgence",
+      "escalade": true,
+      "mot": "dégât des eaux",
+      "motifs": [
+       "sujet_urgent",
+       "escalade"
+      ]
+     },
+     "effets_prevus": [],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "tri",
+       "agent": "lib-trier-demande",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "classe urgence, escalade (« dégât des eaux »)",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler lib-qualifier-lead": [
+    {
+     "contrat": "lib-qualifier-lead@1",
+     "statut": "ok",
+     "cle_idempotence": "q:00000000-0000-4000-8000-a00000000001",
+     "simulation": true,
+     "resultat": {
+      "note": 21,
+      "categorie": "Salle de bain",
+      "priorite": "a_revoir",
+      "delai_cible_min": 240,
+      "raison": "note 21/100 : canal=formulaire (25) ; inconnu : urgence",
+      "doublon": false,
+      "doublon_de": null,
+      "lead_id": "00000000-0000-4000-8000-a00000000001"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_note",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "lead_id": "00000000-0000-4000-8000-a00000000001",
+       "cle": "h:qualification:19f92bc86ca3203a6e1e7a8d302fc965f3097305d5282187",
+       "note": 21,
+       "priorite": "a_revoir",
+       "categorie": "Salle de bain",
+       "doublon": false
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "qualification",
+       "agent": "lib-qualifier-lead",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "priorité a_revoir, note 21/100 : canal=formulaire (25) ; inconnu : urgence",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-qualifier-lead@1",
+     "statut": "ok",
+     "cle_idempotence": "q:00000000-0000-4000-8000-a00000000008",
+     "simulation": true,
+     "resultat": {
+      "note": 21,
+      "categorie": "WC",
+      "priorite": "a_revoir",
+      "delai_cible_min": 240,
+      "raison": "note 21/100 : canal=formulaire (25) ; inconnu : urgence",
+      "doublon": false,
+      "doublon_de": null,
+      "lead_id": "00000000-0000-4000-8000-a00000000008"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_note",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "lead_id": "00000000-0000-4000-8000-a00000000008",
+       "cle": "h:qualification:3bce57a73ab38be0359ceb5fa705da18a4b93042ed79efac",
+       "note": 21,
+       "priorite": "a_revoir",
+       "categorie": "WC",
+       "doublon": false
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "qualification",
+       "agent": "lib-qualifier-lead",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "priorité a_revoir, note 21/100 : canal=formulaire (25) ; inconnu : urgence",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-qualifier-lead@1",
+     "statut": "ok",
+     "cle_idempotence": "q:00000000-0000-4000-8000-b00000000001",
+     "simulation": true,
+     "resultat": {
+      "note": 21,
+      "categorie": "Dressing",
+      "priorite": "a_revoir",
+      "delai_cible_min": 240,
+      "raison": "note 21/100 : canal=formulaire (25) ; inconnu : urgence",
+      "doublon": false,
+      "doublon_de": null,
+      "lead_id": "00000000-0000-4000-8000-b00000000001"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_note",
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "lead_id": "00000000-0000-4000-8000-b00000000001",
+       "cle": "h:qualification:4aebaaa97ea059e90006daa0f20d10e05ba945439efe1cb7",
+       "note": 21,
+       "priorite": "a_revoir",
+       "categorie": "Dressing",
+       "doublon": false
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "qualification",
+       "agent": "lib-qualifier-lead",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "priorité a_revoir, note 21/100 : canal=formulaire (25) ; inconnu : urgence",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-qualifier-lead@1",
+     "statut": "ok",
+     "cle_idempotence": "q:00000000-0000-4000-8000-b00000000003",
+     "simulation": true,
+     "resultat": {
+      "note": 21,
+      "categorie": "Parquet",
+      "priorite": "a_revoir",
+      "delai_cible_min": 240,
+      "raison": "note 21/100 : canal=formulaire (25) ; inconnu : urgence",
+      "doublon": false,
+      "doublon_de": null,
+      "lead_id": "00000000-0000-4000-8000-b00000000003"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_note",
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "lead_id": "00000000-0000-4000-8000-b00000000003",
+       "cle": "h:qualification:e4a4253adcf47ce1ee1b0b1a6d95610396cfd93e07205449",
+       "note": 21,
+       "priorite": "a_revoir",
+       "categorie": "Parquet",
+       "doublon": false
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "qualification",
+       "agent": "lib-qualifier-lead",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "priorité a_revoir, note 21/100 : canal=formulaire (25) ; inconnu : urgence",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler lib-decider": [
+    {
+     "contrat": "lib-decider@1",
+     "statut": "ok",
+     "cle_idempotence": "d:00000000-0000-4000-8000-a00000000001",
+     "simulation": true,
+     "resultat": {
+      "action": "carte",
+      "type_action": "reponse_prospect",
+      "niveau": 2,
+      "motif": "offre",
+      "cle_idempotence": "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+      "montant_centimes": null,
+      "objet_id": "00000000-0000-4000-8000-a00000000001"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_carte",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+       "objet_type": "demande",
+       "objet_id": "00000000-0000-4000-8000-a00000000001",
+       "type_action": "reponse_prospect",
+       "outil": "valider_reponse_proposee",
+       "montant_centimes": null
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "decision",
+       "agent": "lib-decider",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "carte (niveau 2) : offre sans pilote automatique",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-decider@1",
+     "statut": "ok",
+     "cle_idempotence": "d:00000000-0000-4000-8000-a00000000008",
+     "simulation": true,
+     "resultat": {
+      "action": "carte",
+      "type_action": "reponse_prospect",
+      "niveau": 2,
+      "motif": "offre",
+      "cle_idempotence": "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528",
+      "montant_centimes": null,
+      "objet_id": "00000000-0000-4000-8000-a00000000008"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_carte",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528",
+       "objet_type": "demande",
+       "objet_id": "00000000-0000-4000-8000-a00000000008",
+       "type_action": "reponse_prospect",
+       "outil": "valider_reponse_proposee",
+       "montant_centimes": null
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "decision",
+       "agent": "lib-decider",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "carte (niveau 2) : offre sans pilote automatique",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-decider@1",
+     "statut": "ok",
+     "cle_idempotence": "d:00000000-0000-4000-8000-b00000000001",
+     "simulation": true,
+     "resultat": {
+      "action": "pilote",
+      "type_action": "reponse_prospect",
+      "niveau": 3,
+      "motif": "pilote",
+      "cle_idempotence": "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c",
+      "montant_centimes": null,
+      "objet_id": "00000000-0000-4000-8000-b00000000001"
+     },
+     "effets_prevus": [
+      {
+       "effet": "mettre_en_file_pilote",
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c",
+       "objet_type": "demande",
+       "objet_id": "00000000-0000-4000-8000-b00000000001",
+       "type": "reponse_prospect",
+       "outil": "valider_reponse_proposee",
+       "montant_centimes": null,
+       "annulable_min": 10
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "decision",
+       "agent": "lib-decider",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "pilote (niveau 3) : part seul après 10 min pour annuler",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-decider@1",
+     "statut": "ok",
+     "cle_idempotence": "d:00000000-0000-4000-8000-b00000000003",
+     "simulation": true,
+     "resultat": {
+      "action": "carte",
+      "type_action": "reponse_prospect",
+      "niveau": 2,
+      "motif": "escalade",
+      "cle_idempotence": "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8",
+      "montant_centimes": null,
+      "objet_id": "00000000-0000-4000-8000-b00000000003"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_carte",
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8",
+       "objet_type": "demande",
+       "objet_id": "00000000-0000-4000-8000-b00000000003",
+       "type_action": "reponse_prospect",
+       "outil": "valider_reponse_proposee",
+       "montant_centimes": null
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "decision",
+       "agent": "lib-decider",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "carte (niveau 2) : sujet d’escalade : à la main",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler lib-porte-conformite": [
+    {
+     "contrat": "lib-porte-conformite@1",
+     "statut": "ok",
+     "cle_idempotence": "p:00000000-0000-4000-8000-a00000000001",
+     "simulation": true,
+     "resultat": {
+      "verdict": "passe",
+      "motifs": [],
+      "cible": "carte",
+      "repli": null
+     },
+     "effets_prevus": [],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "conformite",
+       "agent": "lib-porte-conformite",
+       "objet_ref": null,
+       "decision": "passe (carte)",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-porte-conformite@1",
+     "statut": "ok",
+     "cle_idempotence": "p:00000000-0000-4000-8000-a00000000008",
+     "simulation": true,
+     "resultat": {
+      "verdict": "passe",
+      "motifs": [],
+      "cible": "carte",
+      "repli": null
+     },
+     "effets_prevus": [],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "conformite",
+       "agent": "lib-porte-conformite",
+       "objet_ref": null,
+       "decision": "passe (carte)",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-porte-conformite@1",
+     "statut": "ok",
+     "cle_idempotence": "p:00000000-0000-4000-8000-b00000000001",
+     "simulation": true,
+     "resultat": {
+      "verdict": "passe",
+      "motifs": [],
+      "cible": "pilote",
+      "repli": null
+     },
+     "effets_prevus": [],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "conformite",
+       "agent": "lib-porte-conformite",
+       "objet_ref": null,
+       "decision": "passe (pilote)",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-porte-conformite@1",
+     "statut": "ok",
+     "cle_idempotence": "p:00000000-0000-4000-8000-b00000000003",
+     "simulation": true,
+     "resultat": {
+      "verdict": "passe",
+      "motifs": [],
+      "cible": "carte",
+      "repli": null
+     },
+     "effets_prevus": [],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "conformite",
+       "agent": "lib-porte-conformite",
+       "objet_ref": null,
+       "decision": "passe (carte)",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler lib-executer": [
+    {
+     "contrat": "lib-executer@1",
+     "statut": "ok",
+     "cle_idempotence": "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+     "simulation": true,
+     "resultat": {
+      "ecrit": false,
+      "deja_fait": false,
+      "ref_id": null,
+      "prevu": "ecrire_carte",
+      "motif": "prevu"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_carte",
+       "table": "opportunites",
+       "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+       "entetes": {
+        "Prefer": "resolution=ignore-duplicates,return=representation"
+       },
+       "corps": {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+        "type_action": "reponse_prospect",
+        "objet_type": "demande",
+        "objet_id": "00000000-0000-4000-8000-a00000000001",
+        "canal": "email",
+        "brouillon": {
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous."
+        }
+       }
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "execution",
+       "agent": "lib-executer",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "ecrire_carte prévu (simulation)",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-executer@1",
+     "statut": "ok",
+     "cle_idempotence": "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528",
+     "simulation": true,
+     "resultat": {
+      "ecrit": false,
+      "deja_fait": false,
+      "ref_id": null,
+      "prevu": "ecrire_carte",
+      "motif": "prevu"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_carte",
+       "table": "opportunites",
+       "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+       "entetes": {
+        "Prefer": "resolution=ignore-duplicates,return=representation"
+       },
+       "corps": {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528",
+        "type_action": "reponse_prospect",
+        "objet_type": "demande",
+        "objet_id": "00000000-0000-4000-8000-a00000000008",
+        "canal": "email",
+        "brouillon": {
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Merci pour la photo, nous l’étudions. Bien à vous."
+        }
+       }
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "execution",
+       "agent": "lib-executer",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "ecrire_carte prévu (simulation)",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-executer@1",
+     "statut": "ok",
+     "cle_idempotence": "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c",
+     "simulation": true,
+     "resultat": {
+      "ecrit": false,
+      "deja_fait": false,
+      "ref_id": null,
+      "prevu": "mettre_en_file_pilote",
+      "motif": "prevu"
+     },
+     "effets_prevus": [
+      {
+       "effet": "mettre_en_file_pilote",
+       "table": "pilote_file",
+       "requete": "POST /rest/v1/pilote_file?on_conflict=organisation_id,cle",
+       "entetes": {
+        "Prefer": "resolution=ignore-duplicates,return=representation"
+       },
+       "corps": {
+        "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+        "cle": "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c",
+        "type_action": "reponse_prospect",
+        "objet_type": "demande",
+        "objet_id": "00000000-0000-4000-8000-b00000000001",
+        "canal": "email",
+        "brouillon": {
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Menuiserie Berthier-Démo."
+        }
+       }
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "execution",
+       "agent": "lib-executer",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "mettre_en_file_pilote prévu (simulation)",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-executer@1",
+     "statut": "ok",
+     "cle_idempotence": "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8",
+     "simulation": true,
+     "resultat": {
+      "ecrit": false,
+      "deja_fait": false,
+      "ref_id": null,
+      "prevu": "ecrire_carte",
+      "motif": "prevu"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_carte",
+       "table": "opportunites",
+       "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+       "entetes": {
+        "Prefer": "resolution=ignore-duplicates,return=representation"
+       },
+       "corps": {
+        "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+        "cle": "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8",
+        "type_action": "demande_a_traiter",
+        "objet_type": "demande",
+        "objet_id": "00000000-0000-4000-8000-b00000000003"
+       }
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "execution",
+       "agent": "lib-executer",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "ecrire_carte prévu (simulation)",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler lib-lire-photo": [
+    {
+     "contrat": "lib-lire-photo@1",
+     "statut": "ok",
+     "cle_idempotence": "photo:00000000-0000-4000-8000-a00000000008",
+     "simulation": true,
+     "resultat": {
+      "demande_id": "00000000-0000-4000-8000-a00000000008",
+      "description": "Exemple. Un WC au sol ancien, carrelage clair, joints noircis au pied de la cuvette.",
+      "elements": [
+       "WC au sol",
+       "carrelage",
+       "joints"
+      ],
+      "confiance": "bonne",
+      "modele": "claude-haiku-5-5",
+      "epingle": true
+     },
+     "effets_prevus": [],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "photo_decrite",
+       "agent": "lib-lire-photo",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "photo décrite (confiance bonne), jamais chiffrée ; modèle épinglé",
+       "modele": "claude-haiku-5-5",
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler lib-journaliser": [
+    {
+     "contrat": "lib-journaliser@1",
+     "statut": "ok",
+     "cle_idempotence": "j:dep:accueil:0000000000a1:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrites": 11
+     },
+     "effets_prevus": [
+      {
+       "effet": "inserer_journal",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "lignes": 11,
+       "cles": [
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:2",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:3",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:4",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:5",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:6",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:7",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:8",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:9",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:10"
+       ]
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+       "evenement": "tri",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : classe peut_attendre",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1",
+       "evenement": "qualification",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : priorité a_revoir",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:2",
+       "evenement": "decision",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : carte (offre)",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:3",
+       "evenement": "porte_passe",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : passe",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:4",
+       "evenement": "action_prevue",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : prevu",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:5",
+       "evenement": "tri",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "[simulation] aurait été fait : classe peut_attendre",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:6",
+       "evenement": "photo_decrite",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "[simulation] aurait été fait : photo décrite, jamais chiffrée",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:7",
+       "evenement": "qualification",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "[simulation] aurait été fait : priorité a_revoir",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:8",
+       "evenement": "decision",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "[simulation] aurait été fait : carte (offre)",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:9",
+       "evenement": "porte_passe",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "[simulation] aurait été fait : passe",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:10",
+       "evenement": "action_prevue",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000008",
+       "decision": "[simulation] aurait été fait : prevu",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-journaliser@1",
+     "statut": "ok",
+     "cle_idempotence": "j:dep:accueil:0000000000b2:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrites": 10
+     },
+     "effets_prevus": [
+      {
+       "effet": "inserer_journal",
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "lignes": 10,
+       "cles": [
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:0",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:1",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:2",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:3",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:4",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:5",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:6",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:7",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:8",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:9"
+       ]
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:0",
+       "evenement": "tri",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : classe peut_attendre",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:1",
+       "evenement": "qualification",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : priorité a_revoir",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:2",
+       "evenement": "decision",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : pilote (pilote)",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:3",
+       "evenement": "porte_passe",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : passe",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:4",
+       "evenement": "action_prevue",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : prevu",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:5",
+       "evenement": "tri",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "[simulation] aurait été fait : classe urgence, escalade",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:6",
+       "evenement": "qualification",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "[simulation] aurait été fait : priorité a_revoir",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:7",
+       "evenement": "decision",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "[simulation] aurait été fait : carte (escalade)",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:8",
+       "evenement": "porte_passe",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "[simulation] aurait été fait : passe",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:9",
+       "evenement": "action_prevue",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "[simulation] aurait été fait : prevu",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ]
+  },
+  "sorties": [
+   {
+    "contrat": "presti-dep-accueil@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:accueil:0000000000a1:2026-11-07T2142",
+    "simulation": true,
+    "resultat": {
+     "demandes_recues": 2,
+     "classes": {
+      "peut_attendre": 2
+     },
+     "spam": [],
+     "escalades": [],
+     "questions": [
+      {
+       "demande_id": "00000000-0000-4000-8000-a00000000001",
+       "question": "Quelle surface est concernée, environ ?"
+      },
+      {
+       "demande_id": "00000000-0000-4000-8000-a00000000008",
+       "question": "Pour quand souhaitez-vous les travaux ?"
+      }
+     ],
+     "decisions": [
+      {
+       "demande_id": "00000000-0000-4000-8000-a00000000001",
+       "action": "carte",
+       "motif": "offre"
+      },
+      {
+       "demande_id": "00000000-0000-4000-8000-a00000000008",
+       "action": "carte",
+       "motif": "offre"
+      }
+     ],
+     "cartes": [
+      "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+      "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528"
+     ],
+     "pilote": [],
+     "brouillons_demandes": [],
+     "refus_porte": [],
+     "deja_faits": [],
+     "photos": [
+      {
+       "demande_id": "00000000-0000-4000-8000-a00000000008",
+       "statut": "ok",
+       "description": "Exemple. Un WC au sol ancien, carrelage clair, joints noircis au pied de la cuvette."
+      }
+     ]
+    },
+    "effets_prevus": [
+     {
+      "effet": "ecrire_note",
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "lead_id": "00000000-0000-4000-8000-a00000000001",
+      "cle": "h:qualification:19f92bc86ca3203a6e1e7a8d302fc965f3097305d5282187",
+      "note": 21,
+      "priorite": "a_revoir",
+      "categorie": "Salle de bain",
+      "doublon": false
+     },
+     {
+      "effet": "ecrire_carte",
+      "table": "opportunites",
+      "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+      "entetes": {
+       "Prefer": "resolution=ignore-duplicates,return=representation"
+      },
+      "corps": {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+       "type_action": "reponse_prospect",
+       "objet_type": "demande",
+       "objet_id": "00000000-0000-4000-8000-a00000000001",
+       "canal": "email",
+       "brouillon": {
+        "objet": "Exemple. Votre demande",
+        "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous."
+       }
+      }
+     },
+     {
+      "effet": "ecrire_note",
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "lead_id": "00000000-0000-4000-8000-a00000000008",
+      "cle": "h:qualification:3bce57a73ab38be0359ceb5fa705da18a4b93042ed79efac",
+      "note": 21,
+      "priorite": "a_revoir",
+      "categorie": "WC",
+      "doublon": false
+     },
+     {
+      "effet": "ecrire_carte",
+      "table": "opportunites",
+      "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+      "entetes": {
+       "Prefer": "resolution=ignore-duplicates,return=representation"
+      },
+      "corps": {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "h:decision:bac4a54aa6a76f78631785421452d85f3b3c102706521528",
+       "type_action": "reponse_prospect",
+       "objet_type": "demande",
+       "objet_id": "00000000-0000-4000-8000-a00000000008",
+       "canal": "email",
+       "brouillon": {
+        "objet": "Exemple. Votre demande",
+        "texte": "Exemple. Bonjour, merci pour votre message. Merci pour la photo, nous l’étudions. Bien à vous."
+       }
+      }
+     },
+     {
+      "effet": "inserer_journal",
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "lignes": 11,
+      "cles": [
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1",
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:2",
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:3",
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:4",
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:5",
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:6",
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:7",
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:8",
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:9",
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:10"
+      ]
+     }
+    ],
+    "effets_faits": [],
+    "journal": [
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+      "evenement": "tri",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000001",
+      "decision": "[simulation] aurait été fait : classe peut_attendre",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1",
+      "evenement": "qualification",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000001",
+      "decision": "[simulation] aurait été fait : priorité a_revoir",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:2",
+      "evenement": "decision",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000001",
+      "decision": "[simulation] aurait été fait : carte (offre)",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:3",
+      "evenement": "porte_passe",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000001",
+      "decision": "[simulation] aurait été fait : passe",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:4",
+      "evenement": "action_prevue",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000001",
+      "decision": "[simulation] aurait été fait : prevu",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:5",
+      "evenement": "tri",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000008",
+      "decision": "[simulation] aurait été fait : classe peut_attendre",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:6",
+      "evenement": "photo_decrite",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000008",
+      "decision": "[simulation] aurait été fait : photo décrite, jamais chiffrée",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:7",
+      "evenement": "qualification",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000008",
+      "decision": "[simulation] aurait été fait : priorité a_revoir",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:8",
+      "evenement": "decision",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000008",
+      "decision": "[simulation] aurait été fait : carte (offre)",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:9",
+      "evenement": "porte_passe",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000008",
+      "decision": "[simulation] aurait été fait : passe",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:10",
+      "evenement": "action_prevue",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000008",
+      "decision": "[simulation] aurait été fait : prevu",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   },
+   {
+    "contrat": "presti-dep-accueil@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:accueil:0000000000b2:2026-11-07T2142",
+    "simulation": true,
+    "resultat": {
+     "demandes_recues": 2,
+     "classes": {
+      "peut_attendre": 1,
+      "urgence": 1
+     },
+     "spam": [],
+     "escalades": [
+      {
+       "demande_id": "00000000-0000-4000-8000-b00000000003",
+       "mot": "dégât des eaux"
+      }
+     ],
+     "questions": [
+      {
+       "demande_id": "00000000-0000-4000-8000-b00000000001",
+       "question": "Quelle surface est concernée, environ ?"
+      },
+      {
+       "demande_id": "00000000-0000-4000-8000-b00000000003",
+       "question": "Pour quand souhaitez-vous les travaux ?"
+      }
+     ],
+     "decisions": [
+      {
+       "demande_id": "00000000-0000-4000-8000-b00000000001",
+       "action": "pilote",
+       "motif": "pilote"
+      },
+      {
+       "demande_id": "00000000-0000-4000-8000-b00000000003",
+       "action": "carte",
+       "motif": "escalade"
+      }
+     ],
+     "cartes": [
+      "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8"
+     ],
+     "pilote": [
+      "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c"
+     ],
+     "brouillons_demandes": [],
+     "refus_porte": [],
+     "deja_faits": [],
+     "photos": []
+    },
+    "effets_prevus": [
+     {
+      "effet": "ecrire_note",
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "lead_id": "00000000-0000-4000-8000-b00000000001",
+      "cle": "h:qualification:4aebaaa97ea059e90006daa0f20d10e05ba945439efe1cb7",
+      "note": 21,
+      "priorite": "a_revoir",
+      "categorie": "Dressing",
+      "doublon": false
+     },
+     {
+      "effet": "mettre_en_file_pilote",
+      "table": "pilote_file",
+      "requete": "POST /rest/v1/pilote_file?on_conflict=organisation_id,cle",
+      "entetes": {
+       "Prefer": "resolution=ignore-duplicates,return=representation"
+      },
+      "corps": {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c",
+       "type_action": "reponse_prospect",
+       "objet_type": "demande",
+       "objet_id": "00000000-0000-4000-8000-b00000000001",
+       "canal": "email",
+       "brouillon": {
+        "objet": "Exemple. Votre demande",
+        "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Menuiserie Berthier-Démo."
+       }
+      }
+     },
+     {
+      "effet": "ecrire_note",
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "lead_id": "00000000-0000-4000-8000-b00000000003",
+      "cle": "h:qualification:e4a4253adcf47ce1ee1b0b1a6d95610396cfd93e07205449",
+      "note": 21,
+      "priorite": "a_revoir",
+      "categorie": "Parquet",
+      "doublon": false
+     },
+     {
+      "effet": "ecrire_carte",
+      "table": "opportunites",
+      "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+      "entetes": {
+       "Prefer": "resolution=ignore-duplicates,return=representation"
+      },
+      "corps": {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8",
+       "type_action": "demande_a_traiter",
+       "objet_type": "demande",
+       "objet_id": "00000000-0000-4000-8000-b00000000003"
+      }
+     },
+     {
+      "effet": "inserer_journal",
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "lignes": 10,
+      "cles": [
+       "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:0",
+       "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:1",
+       "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:2",
+       "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:3",
+       "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:4",
+       "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:5",
+       "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:6",
+       "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:7",
+       "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:8",
+       "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:9"
+      ]
+     }
+    ],
+    "effets_faits": [],
+    "journal": [
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:0",
+      "evenement": "tri",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-b00000000001",
+      "decision": "[simulation] aurait été fait : classe peut_attendre",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:1",
+      "evenement": "qualification",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-b00000000001",
+      "decision": "[simulation] aurait été fait : priorité a_revoir",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:2",
+      "evenement": "decision",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-b00000000001",
+      "decision": "[simulation] aurait été fait : pilote (pilote)",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:3",
+      "evenement": "porte_passe",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-b00000000001",
+      "decision": "[simulation] aurait été fait : passe",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:4",
+      "evenement": "action_prevue",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-b00000000001",
+      "decision": "[simulation] aurait été fait : prevu",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:5",
+      "evenement": "tri",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-b00000000003",
+      "decision": "[simulation] aurait été fait : classe urgence, escalade",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:6",
+      "evenement": "qualification",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-b00000000003",
+      "decision": "[simulation] aurait été fait : priorité a_revoir",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:7",
+      "evenement": "decision",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-b00000000003",
+      "decision": "[simulation] aurait été fait : carte (escalade)",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:8",
+      "evenement": "porte_passe",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-b00000000003",
+      "decision": "[simulation] aurait été fait : passe",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     },
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:9",
+      "evenement": "action_prevue",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-b00000000003",
+      "decision": "[simulation] aurait été fait : prevu",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   }
+  ]
+ },
+ {
+  "workflow": "presti-dep-accueil",
+  "execution": 471,
+  "titre": "presti-dep-accueil hors simulation : arrêt « Hors simulation » avant tout appel",
+  "statut_n8n": "error",
+  "noeud": "Contrat de sortie",
+  "entrees": [
+   {
+    "contrat": "presti-dep-accueil@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": false,
+    "cle_idempotence": "dep:accueil:0000000000a1:2026-11-07T2142",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-banc-cerveau",
+     "tentative": 0
+    },
+    "config": {
+     "nom_artisan": "Exemple. Plomberie Arnal-Démo",
+     "offre": "studio",
+     "mode_reponse": "assistee",
+     "capacites": [
+      "canaux.email",
+      "relances",
+      "factures.relances",
+      "assistant"
+     ],
+     "pilote": {
+      "drapeau": true,
+      "actif": false,
+      "types": {}
+     },
+     "parties_depuis_24h": 0,
+     "interrupteur_general": true,
+     "interrupteur_departement": true,
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ],
+     "fournisseurs": [],
+     "horaires": {
+      "jours_permis": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "heures_permises": {
+       "debut": "00:00",
+       "fin": "23:59"
+      }
+     },
+     "plafond_jour": 20,
+     "qualification": {
+      "grille": [
+       {
+        "critere": "urgence=urgent",
+        "poids": 40
+       },
+       {
+        "critere": "canal=formulaire",
+        "poids": 25
+       },
+       {
+        "critere": "canal=site",
+        "poids": 25
+       },
+       {
+        "critere": "canal=telephone",
+        "poids": 15
+       },
+       {
+        "critere": "canal=email",
+        "poids": 15
+       }
+      ],
+      "seuils": {
+       "haute": 60,
+       "normale": 30
+      },
+      "delais_cibles_min": {
+       "haute": 15,
+       "normale": 60,
+       "a_revoir": 240
+      }
+     }
+    },
+    "donnees": {
+     "demandes": [
+      {
+       "id": "00000000-0000-4000-8000-a00000000001",
+       "canal": "page_p",
+       "recu_le": "2026-11-06T10:15:00.000+01:00",
+       "message": "Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne.",
+       "champs": {
+        "canal": "formulaire",
+        "type_chantier": "Salle de bain",
+        "delai_souhaite": "dans 3 mois"
+       },
+       "empreinte_contact": "ac5f807a71f6fae9fa01ecded21a084f6c147e029d098b9da6052b57d0bddcc3",
+       "client_existant": false,
+       "honeypot": false,
+       "photo": null,
+       "proposition": {
+        "canal": "email",
+        "objet": "Exemple. Votre demande",
+        "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous.",
+        "outil": "valider_reponse_proposee"
+       },
+       "destinataire": {
+        "opposition": false,
+        "consentement_sms": null
+       }
+      },
+      {
+       "id": "00000000-0000-4000-8000-a00000000008",
+       "canal": "page_p",
+       "recu_le": "2026-11-06T10:15:00.000+01:00",
+       "message": "Exemple. Bonjour, une rénovation de WC, voici une photo.",
+       "champs": {
+        "canal": "formulaire",
+        "type_chantier": "WC",
+        "photo_jointe": true
+       },
+       "empreinte_contact": "a03df5daa0bb4bed551672ffa3e3791f8137356a24a32d6efd9bde666a429637",
+       "client_existant": false,
+       "honeypot": false,
+       "photo": {
+        "ref": "exemple-wc-01.jpg",
+        "type_mime": "image/jpeg"
+       },
+       "proposition": {
+        "canal": "email",
+        "objet": "Exemple. Votre demande",
+        "texte": "Exemple. Bonjour, merci pour votre message. Merci pour la photo, nous l’étudions. Bien à vous.",
+        "outil": "valider_reponse_proposee"
+       },
+       "destinataire": {
+        "opposition": false,
+        "consentement_sms": null
+       }
+      }
+     ],
+     "empreintes_connues": [],
+     "cles_existantes": [],
+     "maintenant": "2026-11-07T21:42:00.000+01:00"
+    }
+   }
+  ],
+  "epingles": {},
+  "erreur": "Hors simulation : effet réel non branché (tâche 036-001). Rien n'a été lu, écrit ni envoyé."
+ },
+ {
+  "workflow": "presti-dep-devis",
+  "execution": 472,
+  "titre": "presti-dep-devis (squelette) : un seul retour, « non_branche »",
+  "statut_n8n": "success",
+  "noeud": "Contrat de sortie",
+  "entrees": [
+   {
+    "contrat": "presti-dep-devis@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "dep:devis:0000000000a1:2026-11-07T2142",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-banc-cerveau",
+     "tentative": 0
+    },
+    "config": {},
+    "donnees": {
+     "evenements": [
+      {
+       "id": "00000000-0000-4000-8000-0000000000e1",
+       "type": "devis_a_preparer"
+      }
+     ]
+    }
+   }
+  ],
+  "epingles": {},
+  "sorties": [
+   {
+    "contrat": "presti-dep-devis@1",
+    "statut": "rien_a_faire",
+    "cle_idempotence": "dep:devis:0000000000a1:2026-11-07T2142",
+    "simulation": true,
+    "resultat": {
+     "etat": "non_branche",
+     "departement": "devis",
+     "lot": "036-005",
+     "evenements_recus": 1
+    },
+    "effets_prevus": [],
+    "effets_faits": [],
+    "journal": [
+     {
+      "evenement": "non_branche",
+      "agent": "presti-dep-devis",
+      "objet_ref": null,
+      "decision": "département en squelette : rien n’est fait (036-005)",
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   }
+  ]
+ },
+ {
+  "workflow": "presti-cerveau",
+  "execution": 477,
+  "titre": "presti-cerveau de bout en bout : 3 comptes, doublon, événement d'un autre compte et type inconnu rejetés, compte en palier « ombre » sauté, 0 effet fait",
+  "statut_n8n": "success",
+  "noeud": "Bilan du passage",
+  "entrees": [
+   {}
+  ],
+  "epingles": {
+   "Lire l'interrupteur général (simulation : épinglé)": [
+    {
+     "interrupteur_general": true,
+     "organisation_systeme": "00000000-0000-4000-8000-000000000000",
+     "passage": "2026-11-07T2142",
+     "maintenant": "2026-11-07T21:42:00.000+01:00"
+    }
+   ],
+   "Lire les comptes (simulation : épinglé)": [
+    {
+     "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+     "palier": "simulation",
+     "offre": "studio",
+     "interrupteurs": {
+      "general": true,
+      "departements": {
+       "accueil": true,
+       "devis": true,
+       "suivi": true,
+       "facturation": true,
+       "apres": true,
+       "operations": true,
+       "direction": true
+      }
+     },
+     "accueil": {
+      "nom_artisan": "Exemple. Plomberie Arnal-Démo",
+      "offre": "studio",
+      "mode_reponse": "assistee",
+      "capacites": [
+       "canaux.email",
+       "relances",
+       "factures.relances",
+       "assistant"
+      ],
+      "pilote": {
+       "drapeau": true,
+       "actif": false,
+       "types": {}
+      },
+      "parties_depuis_24h": 0,
+      "mots_escalade_artisan": [
+       "Exemple. mot sensible"
+      ],
+      "fournisseurs": [],
+      "horaires": {
+       "jours_permis": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "heures_permises": {
+        "debut": "00:00",
+        "fin": "23:59"
+       }
+      },
+      "plafond_jour": 20,
+      "qualification": {
+       "grille": [
+        {
+         "critere": "urgence=urgent",
+         "poids": 40
+        },
+        {
+         "critere": "canal=formulaire",
+         "poids": 25
+        },
+        {
+         "critere": "canal=site",
+         "poids": 25
+        },
+        {
+         "critere": "canal=telephone",
+         "poids": 15
+        },
+        {
+         "critere": "canal=email",
+         "poids": 15
+        }
+       ],
+       "seuils": {
+        "haute": 60,
+        "normale": 30
+       },
+       "delais_cibles_min": {
+        "haute": 15,
+        "normale": 60,
+        "a_revoir": 240
+       }
+      }
+     },
+     "empreintes_connues": [],
+     "cles_existantes": []
+    },
+    {
+     "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+     "palier": "simulation",
+     "offre": "signature",
+     "interrupteurs": {
+      "general": true,
+      "departements": {
+       "accueil": true,
+       "devis": true,
+       "suivi": true,
+       "facturation": true,
+       "apres": true,
+       "operations": true,
+       "direction": true
+      }
+     },
+     "accueil": {
+      "nom_artisan": "Exemple. Menuiserie Berthier-Démo",
+      "offre": "signature",
+      "mode_reponse": "auto",
+      "capacites": [
+       "canaux.email",
+       "relances",
+       "factures.relances",
+       "assistant",
+       "plateforme.ia.auto",
+       "relances.auto",
+       "factures.relances.auto",
+       "crm",
+       "assistant.pilote"
+      ],
+      "pilote": {
+       "drapeau": true,
+       "actif": true,
+       "types": {
+        "reponse_prospect": true
+       }
+      },
+      "parties_depuis_24h": 3,
+      "mots_escalade_artisan": [
+       "Exemple. mot sensible"
+      ],
+      "fournisseurs": [],
+      "horaires": {
+       "jours_permis": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "heures_permises": {
+        "debut": "00:00",
+        "fin": "23:59"
+       }
+      },
+      "plafond_jour": 20,
+      "qualification": {
+       "grille": [
+        {
+         "critere": "urgence=urgent",
+         "poids": 40
+        },
+        {
+         "critere": "canal=formulaire",
+         "poids": 25
+        },
+        {
+         "critere": "canal=site",
+         "poids": 25
+        },
+        {
+         "critere": "canal=telephone",
+         "poids": 15
+        },
+        {
+         "critere": "canal=email",
+         "poids": 15
+        }
+       ],
+       "seuils": {
+        "haute": 60,
+        "normale": 30
+       },
+       "delais_cibles_min": {
+        "haute": 15,
+        "normale": 60,
+        "a_revoir": 240
+       }
+      }
+     },
+     "empreintes_connues": [],
+     "cles_existantes": []
+    },
+    {
+     "artisan_id": "00000000-0000-4000-8000-0000000000c3",
+     "palier": "ombre",
+     "offre": "signature",
+     "interrupteurs": {
+      "general": true,
+      "departements": {
+       "accueil": true,
+       "devis": true,
+       "suivi": true,
+       "facturation": true,
+       "apres": true,
+       "operations": true,
+       "direction": true
+      }
+     },
+     "accueil": {
+      "nom_artisan": "Exemple. Menuiserie Berthier-Démo",
+      "offre": "signature",
+      "mode_reponse": "auto",
+      "capacites": [
+       "canaux.email",
+       "relances",
+       "factures.relances",
+       "assistant",
+       "plateforme.ia.auto",
+       "relances.auto",
+       "factures.relances.auto",
+       "crm",
+       "assistant.pilote"
+      ],
+      "pilote": {
+       "drapeau": true,
+       "actif": true,
+       "types": {
+        "reponse_prospect": true
+       }
+      },
+      "parties_depuis_24h": 3,
+      "mots_escalade_artisan": [
+       "Exemple. mot sensible"
+      ],
+      "fournisseurs": [],
+      "horaires": {
+       "jours_permis": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "heures_permises": {
+        "debut": "00:00",
+        "fin": "23:59"
+       }
+      },
+      "plafond_jour": 20,
+      "qualification": {
+       "grille": [
+        {
+         "critere": "urgence=urgent",
+         "poids": 40
+        },
+        {
+         "critere": "canal=formulaire",
+         "poids": 25
+        },
+        {
+         "critere": "canal=site",
+         "poids": 25
+        },
+        {
+         "critere": "canal=telephone",
+         "poids": 15
+        },
+        {
+         "critere": "canal=email",
+         "poids": 15
+        }
+       ],
+       "seuils": {
+        "haute": 60,
+        "normale": 30
+       },
+       "delais_cibles_min": {
+        "haute": 15,
+        "normale": 60,
+        "a_revoir": 240
+       }
+      }
+     },
+     "empreintes_connues": [],
+     "cles_existantes": []
+    }
+   ],
+   "Lire les événements non traités, page par page (simulation : épinglé)": [
+    {
+     "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+     "page": 0,
+     "suivante": null,
+     "evenements": [
+      {
+       "id": "00000000-0000-4000-8000-a00000000001",
+       "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+       "type": "demande_recue",
+       "cle": "demande:a00000000001",
+       "demande": {
+        "id": "00000000-0000-4000-8000-a00000000001",
+        "canal": "page_p",
+        "recu_le": "2026-11-06T10:15:00.000+01:00",
+        "message": "Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne.",
+        "champs": {
+         "canal": "formulaire",
+         "type_chantier": "Salle de bain",
+         "delai_souhaite": "dans 3 mois"
+        },
+        "empreinte_contact": "ac5f807a71f6fae9fa01ecded21a084f6c147e029d098b9da6052b57d0bddcc3",
+        "client_existant": false,
+        "honeypot": false,
+        "photo": null,
+        "proposition": {
+         "canal": "email",
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous.",
+         "outil": "valider_reponse_proposee"
+        },
+        "destinataire": {
+         "opposition": false,
+         "consentement_sms": null
+        }
+       }
+      },
+      {
+       "id": "00000000-0000-4000-8000-a00000000001",
+       "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+       "type": "demande_recue",
+       "cle": "demande:a00000000001",
+       "demande": {
+        "id": "00000000-0000-4000-8000-a00000000001",
+        "canal": "page_p",
+        "recu_le": "2026-11-06T10:15:00.000+01:00",
+        "message": "Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne.",
+        "champs": {
+         "canal": "formulaire",
+         "type_chantier": "Salle de bain",
+         "delai_souhaite": "dans 3 mois"
+        },
+        "empreinte_contact": "ac5f807a71f6fae9fa01ecded21a084f6c147e029d098b9da6052b57d0bddcc3",
+        "client_existant": false,
+        "honeypot": false,
+        "photo": null,
+        "proposition": {
+         "canal": "email",
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous.",
+         "outil": "valider_reponse_proposee"
+        },
+        "destinataire": {
+         "opposition": false,
+         "consentement_sms": null
+        }
+       }
+      },
+      {
+       "id": "00000000-0000-4000-8000-b00000000001",
+       "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+       "type": "demande_recue",
+       "cle": "demande:b00000000001",
+       "demande": {
+        "id": "00000000-0000-4000-8000-b00000000001",
+        "canal": "page_p",
+        "recu_le": "2026-11-06T21:10:00.000+01:00",
+        "message": "Exemple. Bonjour, je souhaite un dressing sur mesure dans la chambre.",
+        "champs": {
+         "canal": "formulaire",
+         "type_chantier": "Dressing",
+         "delai_souhaite": "dans 2 mois",
+         "recu_hors_horaires": true
+        },
+        "empreinte_contact": "ce657021e44a15de0f7f4ea33fbf2f851de8cfb2823b917a7001b45e5e78b8cb",
+        "client_existant": false,
+        "honeypot": false,
+        "photo": null,
+        "proposition": {
+         "canal": "email",
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.",
+         "outil": "valider_reponse_proposee"
+        },
+        "destinataire": {
+         "opposition": false,
+         "consentement_sms": null
+        }
+       }
+      },
+      {
+       "id": "00000000-0000-4000-8000-0000000000e1",
+       "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+       "type": "devis_a_preparer",
+       "cle": "devis:e1",
+       "donnees": {}
+      },
+      {
+       "id": "00000000-0000-4000-8000-0000000000e2",
+       "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+       "type": "stock_bas",
+       "cle": "stock:e2"
+      }
+     ]
+    },
+    {
+     "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+     "page": 0,
+     "suivante": null,
+     "evenements": [
+      {
+       "id": "00000000-0000-4000-8000-b00000000001",
+       "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+       "type": "demande_recue",
+       "cle": "demande:b00000000001",
+       "demande": {
+        "id": "00000000-0000-4000-8000-b00000000001",
+        "canal": "page_p",
+        "recu_le": "2026-11-06T21:10:00.000+01:00",
+        "message": "Exemple. Bonjour, je souhaite un dressing sur mesure dans la chambre.",
+        "champs": {
+         "canal": "formulaire",
+         "type_chantier": "Dressing",
+         "delai_souhaite": "dans 2 mois",
+         "recu_hors_horaires": true
+        },
+        "empreinte_contact": "ce657021e44a15de0f7f4ea33fbf2f851de8cfb2823b917a7001b45e5e78b8cb",
+        "client_existant": false,
+        "honeypot": false,
+        "photo": null,
+        "proposition": {
+         "canal": "email",
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.",
+         "outil": "valider_reponse_proposee"
+        },
+        "destinataire": {
+         "opposition": false,
+         "consentement_sms": null
+        }
+       }
+      },
+      {
+       "id": "00000000-0000-4000-8000-b00000000003",
+       "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+       "type": "demande_recue",
+       "cle": "demande:b00000000003",
+       "demande": {
+        "id": "00000000-0000-4000-8000-b00000000003",
+        "canal": "page_p",
+        "recu_le": "2026-11-06T10:15:00.000+01:00",
+        "message": "Exemple. Mon parquet est gondolé après un dégât des eaux, l’assurance demande un devis.",
+        "champs": {
+         "canal": "formulaire",
+         "type_chantier": "Parquet"
+        },
+        "empreinte_contact": "1a45e10c58f8bc4a8440a6f8ad88f7ada1d8fcf9a175a72ab4f9979addd66f30",
+        "client_existant": false,
+        "honeypot": false,
+        "photo": null,
+        "proposition": {
+         "canal": "email",
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Nous regardons cela. Bien à vous.",
+         "outil": "valider_reponse_proposee"
+        },
+        "destinataire": {
+         "opposition": false,
+         "consentement_sms": null
+        }
+       }
+      }
+     ]
+    },
+    {
+     "artisan_id": "00000000-0000-4000-8000-0000000000c3",
+     "page": 0,
+     "suivante": null,
+     "evenements": [
+      {
+       "id": "00000000-0000-4000-8000-b00000000006",
+       "artisan_id": "00000000-0000-4000-8000-0000000000c3",
+       "type": "demande_recue",
+       "cle": "demande:b00000000006",
+       "demande": {
+        "id": "00000000-0000-4000-8000-b00000000006",
+        "canal": "page_p",
+        "recu_le": "2026-11-06T10:15:00.000+01:00",
+        "message": "Exemple. Bonjour, une simple question : vous faites les escaliers ?",
+        "champs": {
+         "canal": "site"
+        },
+        "empreinte_contact": "51bd3d60d028041483167d247e64e6c09a3bfa6dd8f3f90ff45858c3f3ddc491",
+        "client_existant": false,
+        "honeypot": false,
+        "photo": null,
+        "proposition": {
+         "canal": "email",
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Oui, nous réalisons des escaliers sur mesure. Bien à vous.",
+         "outil": "valider_reponse_proposee"
+        },
+        "destinataire": {
+         "opposition": false,
+         "consentement_sms": null
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "Appeler presti-dep-accueil": [
+    {
+     "contrat": "presti-dep-accueil@1",
+     "statut": "ok",
+     "cle_idempotence": "dep:accueil:0000000000a1:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "demandes_recues": 1,
+      "classes": {
+       "peut_attendre": 1
+      },
+      "spam": [],
+      "escalades": [],
+      "questions": [
+       {
+        "demande_id": "00000000-0000-4000-8000-a00000000001",
+        "question": "Quelle surface est concernée, environ ?"
+       }
+      ],
+      "decisions": [
+       {
+        "demande_id": "00000000-0000-4000-8000-a00000000001",
+        "action": "carte",
+        "motif": "offre"
+       }
+      ],
+      "cartes": [
+       "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391"
+      ],
+      "pilote": [],
+      "brouillons_demandes": [],
+      "refus_porte": [],
+      "deja_faits": [],
+      "photos": []
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_note",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "lead_id": "00000000-0000-4000-8000-a00000000001",
+       "cle": "h:qualification:19f92bc86ca3203a6e1e7a8d302fc965f3097305d5282187",
+       "note": 21,
+       "priorite": "a_revoir",
+       "categorie": "Salle de bain",
+       "doublon": false
+      },
+      {
+       "effet": "ecrire_carte",
+       "table": "opportunites",
+       "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+       "entetes": {
+        "Prefer": "resolution=ignore-duplicates,return=representation"
+       },
+       "corps": {
+        "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+        "cle": "h:decision:384557db110ca9688826a73861d2c5c743d2b4bbcb1d4391",
+        "type_action": "reponse_prospect",
+        "objet_type": "demande",
+        "objet_id": "00000000-0000-4000-8000-a00000000001",
+        "canal": "email",
+        "brouillon": {
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous."
+        }
+       }
+      },
+      {
+       "effet": "inserer_journal",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "lignes": 5,
+       "cles": [
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:2",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:3",
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:4"
+       ]
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+       "evenement": "tri",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : classe peut_attendre",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:1",
+       "evenement": "qualification",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : priorité a_revoir",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:2",
+       "evenement": "decision",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : carte (offre)",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:3",
+       "evenement": "porte_passe",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : passe",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:4",
+       "evenement": "action_prevue",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : prevu",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "presti-dep-accueil@1",
+     "statut": "ok",
+     "cle_idempotence": "dep:accueil:0000000000b2:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "demandes_recues": 2,
+      "classes": {
+       "peut_attendre": 1,
+       "urgence": 1
+      },
+      "spam": [],
+      "escalades": [
+       {
+        "demande_id": "00000000-0000-4000-8000-b00000000003",
+        "mot": "dégât des eaux"
+       }
+      ],
+      "questions": [
+       {
+        "demande_id": "00000000-0000-4000-8000-b00000000001",
+        "question": "Quelle surface est concernée, environ ?"
+       },
+       {
+        "demande_id": "00000000-0000-4000-8000-b00000000003",
+        "question": "Pour quand souhaitez-vous les travaux ?"
+       }
+      ],
+      "decisions": [
+       {
+        "demande_id": "00000000-0000-4000-8000-b00000000001",
+        "action": "pilote",
+        "motif": "pilote"
+       },
+       {
+        "demande_id": "00000000-0000-4000-8000-b00000000003",
+        "action": "carte",
+        "motif": "escalade"
+       }
+      ],
+      "cartes": [
+       "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8"
+      ],
+      "pilote": [
+       "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c"
+      ],
+      "brouillons_demandes": [],
+      "refus_porte": [],
+      "deja_faits": [],
+      "photos": []
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_note",
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "lead_id": "00000000-0000-4000-8000-b00000000001",
+       "cle": "h:qualification:4aebaaa97ea059e90006daa0f20d10e05ba945439efe1cb7",
+       "note": 21,
+       "priorite": "a_revoir",
+       "categorie": "Dressing",
+       "doublon": false
+      },
+      {
+       "effet": "mettre_en_file_pilote",
+       "table": "pilote_file",
+       "requete": "POST /rest/v1/pilote_file?on_conflict=organisation_id,cle",
+       "entetes": {
+        "Prefer": "resolution=ignore-duplicates,return=representation"
+       },
+       "corps": {
+        "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+        "cle": "h:decision:03d20cbb5a4ceee12aa8ea801c8a557b62d11edadcdbf41c",
+        "type_action": "reponse_prospect",
+        "objet_type": "demande",
+        "objet_id": "00000000-0000-4000-8000-b00000000001",
+        "canal": "email",
+        "brouillon": {
+         "objet": "Exemple. Votre demande",
+         "texte": "Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.\n\n—\nMessage rédigé et envoyé automatiquement par l’assistant de Exemple. Menuiserie Berthier-Démo."
+        }
+       }
+      },
+      {
+       "effet": "ecrire_note",
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "lead_id": "00000000-0000-4000-8000-b00000000003",
+       "cle": "h:qualification:e4a4253adcf47ce1ee1b0b1a6d95610396cfd93e07205449",
+       "note": 21,
+       "priorite": "a_revoir",
+       "categorie": "Parquet",
+       "doublon": false
+      },
+      {
+       "effet": "ecrire_carte",
+       "table": "opportunites",
+       "requete": "POST /rest/v1/opportunites?on_conflict=organisation_id,cle",
+       "entetes": {
+        "Prefer": "resolution=ignore-duplicates,return=representation"
+       },
+       "corps": {
+        "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+        "cle": "h:decision:7563129ed80411513c68f66dddfdd1ce6c822c545c861ce8",
+        "type_action": "demande_a_traiter",
+        "objet_type": "demande",
+        "objet_id": "00000000-0000-4000-8000-b00000000003"
+       }
+      },
+      {
+       "effet": "inserer_journal",
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "lignes": 10,
+       "cles": [
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:0",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:1",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:2",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:3",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:4",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:5",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:6",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:7",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:8",
+        "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:9"
+       ]
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:0",
+       "evenement": "tri",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : classe peut_attendre",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:1",
+       "evenement": "qualification",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : priorité a_revoir",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:2",
+       "evenement": "decision",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : pilote (pilote)",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:3",
+       "evenement": "porte_passe",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : passe",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:4",
+       "evenement": "action_prevue",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : prevu",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:5",
+       "evenement": "tri",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "[simulation] aurait été fait : classe urgence, escalade",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:6",
+       "evenement": "qualification",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "[simulation] aurait été fait : priorité a_revoir",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:7",
+       "evenement": "decision",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "[simulation] aurait été fait : carte (escalade)",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:8",
+       "evenement": "porte_passe",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "[simulation] aurait été fait : passe",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:1899fd86634daa91a58f95f969e954373b6fc346693be801:9",
+       "evenement": "action_prevue",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-b00000000003",
+       "decision": "[simulation] aurait été fait : prevu",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler presti-dep-devis": [
+    {
+     "contrat": "presti-dep-devis@1",
+     "statut": "rien_a_faire",
+     "cle_idempotence": "dep:devis:0000000000a1:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "etat": "non_branche",
+      "departement": "devis",
+      "lot": "036-005",
+      "evenements_recus": 1
+     },
+     "effets_prevus": [],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "non_branche",
+       "agent": "presti-dep-devis",
+       "objet_ref": null,
+       "decision": "département en squelette : rien n’est fait (036-005)",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler lib-journaliser": [
+    {
+     "contrat": "lib-journaliser@1",
+     "statut": "ok",
+     "cle_idempotence": "jc:0000000000a1:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrites": 5
+     },
+     "effets_prevus": [
+      {
+       "effet": "inserer_journal",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "lignes": 5,
+       "cles": [
+        "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:0",
+        "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:1",
+        "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:2",
+        "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:3",
+        "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:4"
+       ]
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:0",
+       "evenement": "departement_appele",
+       "agent": "presti-cerveau",
+       "objet_ref": "presti-dep-accueil",
+       "decision": "[simulation] aurait été fait : statut ok",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:1",
+       "evenement": "departement_appele",
+       "agent": "presti-cerveau",
+       "objet_ref": "presti-dep-devis",
+       "decision": "[simulation] aurait été fait : statut rien_a_faire",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:2",
+       "evenement": "evenement_rejete",
+       "agent": "presti-cerveau",
+       "objet_ref": "00000000-0000-4000-8000-a00000000001",
+       "decision": "[simulation] aurait été fait : doublon",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:3",
+       "evenement": "evenement_rejete",
+       "agent": "presti-cerveau",
+       "objet_ref": "00000000-0000-4000-8000-b00000000001",
+       "decision": "[simulation] aurait été fait : autre_compte",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      },
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:4",
+       "evenement": "evenement_rejete",
+       "agent": "presti-cerveau",
+       "objet_ref": "00000000-0000-4000-8000-0000000000e2",
+       "decision": "[simulation] aurait été fait : type_sans_departement",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-journaliser@1",
+     "statut": "ok",
+     "cle_idempotence": "jc:0000000000b2:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrites": 1
+     },
+     "effets_prevus": [
+      {
+       "effet": "inserer_journal",
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "lignes": 1,
+       "cles": [
+        "j:e74319e8f0dcbec2bcad8b1ef63deacee6b6cc0bd16f6ed5:0"
+       ]
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+       "cle": "j:e74319e8f0dcbec2bcad8b1ef63deacee6b6cc0bd16f6ed5:0",
+       "evenement": "departement_appele",
+       "agent": "presti-cerveau",
+       "objet_ref": "presti-dep-accueil",
+       "decision": "[simulation] aurait été fait : statut ok",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    },
+    {
+     "contrat": "lib-journaliser@1",
+     "statut": "ok",
+     "cle_idempotence": "jc:0000000000c3:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrites": 1
+     },
+     "effets_prevus": [
+      {
+       "effet": "inserer_journal",
+       "organisation_id": "00000000-0000-4000-8000-0000000000c3",
+       "lignes": 1,
+       "cles": [
+        "j:088d3440b0a8845865a2f219976e2b133295394fafb1bfc2:0"
+       ]
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000c3",
+       "cle": "j:088d3440b0a8845865a2f219976e2b133295394fafb1bfc2:0",
+       "evenement": "departement_saute",
+       "agent": "presti-cerveau",
+       "objet_ref": "presti-dep-accueil",
+       "decision": "[simulation] aurait été fait : palier_non_branche",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler lib-battement": [
+    {
+     "contrat": "lib-battement@1",
+     "statut": "ok",
+     "cle_idempotence": "bat:cerveau:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrit": false,
+      "operation": "battre"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_battement",
+       "organisation_id": "00000000-0000-4000-8000-000000000000",
+       "workflow": "presti-cerveau",
+       "passe_le": "2026-11-07T21:42:00.000+01:00"
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "battement",
+       "agent": "presti-cerveau",
+       "objet_ref": null,
+       "decision": "battement prévu",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ]
+  },
+  "sorties": [
+   {
+    "arret": null,
+    "simulation": true,
+    "comptes": 3,
+    "routes": {
+     "accueil": 3,
+     "devis": 1
+    },
+    "statuts": {
+     "accueil": "ok,ok",
+     "devis": "rien_a_faire"
+    },
+    "sautes": [
+     {
+      "artisan_id": "00000000-0000-4000-8000-0000000000c3",
+      "departement": "accueil",
+      "motif": "palier_non_branche"
+     }
+    ],
+    "rejets": [
+     "doublon",
+     "autre_compte",
+     "type_sans_departement"
+    ],
+    "effets_prevus": 12,
+    "effets_faits": 0
+   }
+  ]
+ },
+ {
+  "workflow": "presti-cerveau",
+  "execution": 478,
+  "titre": "presti-cerveau, interrupteur général coupé : rien n'est lu ni appelé",
+  "statut_n8n": "success",
+  "noeud": "Bilan du passage",
+  "entrees": [
+   {}
+  ],
+  "epingles": {
+   "Lire l'interrupteur général (simulation : épinglé)": [
+    {
+     "interrupteur_general": false,
+     "organisation_systeme": "00000000-0000-4000-8000-000000000000",
+     "passage": "2026-11-07T2142",
+     "maintenant": "2026-11-07T21:42:00.000+01:00"
+    }
+   ]
+  },
+  "sorties": [
+   {
+    "arret": "interrupteur_general_coupe",
+    "routes": {},
+    "statuts": {},
+    "effets_prevus": 0,
+    "effets_faits": 0
+   }
+  ]
+ },
+ {
+  "workflow": "presti-banc-cerveau",
+  "execution": 479,
+  "titre": "presti-banc-cerveau sans épinglage : l'Accueil tourne pour de vrai, ses appels aux lib-* existants sont refusés par leur politique d'appel ; statut « erreur », aucune carte (fail-closed)",
+  "statut_n8n": "success",
+  "noeud": "Bilan du banc",
+  "entrees": [
+   {}
+  ],
+  "epingles": {},
+  "sonde": "trois étages (banc → accueil → lib-*) : appels du petit-enfant refusés par n8n (petit-enfant non publié)",
+  "sorties": [
+   {
+    "comptes": [
+     {
+      "statut": "erreur",
+      "erreurs": 4,
+      "cartes": null,
+      "pilote": null,
+      "escalades": null,
+      "spam": null
+     },
+     {
+      "statut": "erreur",
+      "erreurs": 4,
+      "cartes": null,
+      "pilote": null,
+      "escalades": null,
+      "spam": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "workflow": "presti-dep-accueil",
+  "execution": 487,
+  "titre": "presti-dep-accueil, une demande (spam), le trieur NON épinglé : appel réel accueil → lib-trier-demande accepté par sa politique d'appel ; classé spam, aucune carte",
+  "statut_n8n": "success",
+  "noeud": "Contrat de sortie",
+  "entrees": [
+   {
+    "contrat": "presti-dep-accueil@1",
+    "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+    "simulation": true,
+    "cle_idempotence": "dep:accueil:0000000000a1:2026-11-07T2142",
+    "trace": {
+     "execution_parent": "presti-banc-cerveau:2026-11-07T2142",
+     "declencheur": "presti-banc-cerveau",
+     "tentative": 0
+    },
+    "config": {
+     "nom_artisan": "Exemple. Plomberie Arnal-Démo",
+     "offre": "studio",
+     "mode_reponse": "assistee",
+     "capacites": [
+      "canaux.email",
+      "relances",
+      "factures.relances",
+      "assistant"
+     ],
+     "pilote": {
+      "drapeau": true,
+      "actif": false,
+      "types": {}
+     },
+     "parties_depuis_24h": 0,
+     "interrupteur_general": true,
+     "interrupteur_departement": true,
+     "mots_escalade_artisan": [
+      "Exemple. mot sensible"
+     ],
+     "fournisseurs": [],
+     "horaires": {
+      "jours_permis": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "heures_permises": {
+       "debut": "00:00",
+       "fin": "23:59"
+      }
+     },
+     "plafond_jour": 20,
+     "qualification": {
+      "grille": [
+       {
+        "critere": "urgence=urgent",
+        "poids": 40
+       },
+       {
+        "critere": "canal=formulaire",
+        "poids": 25
+       },
+       {
+        "critere": "canal=site",
+        "poids": 25
+       },
+       {
+        "critere": "canal=telephone",
+        "poids": 15
+       },
+       {
+        "critere": "canal=email",
+        "poids": 15
+       }
+      ],
+      "seuils": {
+       "haute": 60,
+       "normale": 30
+      },
+      "delais_cibles_min": {
+       "haute": 15,
+       "normale": 60,
+       "a_revoir": 240
+      }
+     }
+    },
+    "donnees": {
+     "demandes": [
+      {
+       "id": "00000000-0000-4000-8000-a00000000004",
+       "canal": "page_p",
+       "recu_le": "2026-11-06T10:15:00.000+01:00",
+       "message": "Exemple. Gagnez des clients avec notre offre exclusive de référencement naturel, cliquez ici. https://exemple.invalid/a https://exemple.invalid/b https://exemple.invalid/c",
+       "champs": {},
+       "empreinte_contact": "c65f6ed3375ee22fdba7787c26794b0d7e0df6ac178f1a554baa1ae976aa7f82",
+       "client_existant": false,
+       "honeypot": false,
+       "photo": null,
+       "proposition": null,
+       "destinataire": {
+        "opposition": false,
+        "consentement_sms": null
+       }
+      }
+     ],
+     "empreintes_connues": [],
+     "cles_existantes": [],
+     "maintenant": "2026-11-07T21:42:00.000+01:00"
+    }
+   }
+  ],
+  "epingles": {
+   "Appeler lib-journaliser": [
+    {
+     "contrat": "lib-journaliser@1",
+     "statut": "ok",
+     "cle_idempotence": "j:dep:accueil:0000000000a1:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrites": 1
+     },
+     "effets_prevus": [
+      {
+       "effet": "inserer_journal",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "lignes": 1,
+       "cles": [
+        "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0"
+       ]
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+       "evenement": "tri",
+       "agent": "presti-dep-accueil",
+       "objet_ref": "00000000-0000-4000-8000-a00000000004",
+       "decision": "[simulation] aurait été fait : classe spam",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ]
+  },
+  "sorties": [
+   {
+    "contrat": "presti-dep-accueil@1",
+    "statut": "ok",
+    "cle_idempotence": "dep:accueil:0000000000a1:2026-11-07T2142",
+    "simulation": true,
+    "resultat": {
+     "demandes_recues": 1,
+     "classes": {
+      "spam": 1
+     },
+     "spam": [
+      "00000000-0000-4000-8000-a00000000004"
+     ],
+     "escalades": [],
+     "questions": [],
+     "decisions": [],
+     "cartes": [],
+     "pilote": [],
+     "brouillons_demandes": [],
+     "refus_porte": [],
+     "deja_faits": [],
+     "photos": []
+    },
+    "effets_prevus": [
+     {
+      "effet": "inserer_journal",
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "lignes": 1,
+      "cles": [
+       "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0"
+      ]
+     }
+    ],
+    "effets_faits": [],
+    "journal": [
+     {
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "cle": "j:4fb81b2607f281a7c3b56f28f255816c36c1fd5bea204b6d:0",
+      "evenement": "tri",
+      "agent": "presti-dep-accueil",
+      "objet_ref": "00000000-0000-4000-8000-a00000000004",
+      "decision": "[simulation] aurait été fait : classe spam",
+      "modele": null,
+      "jetons_entree": null,
+      "jetons_sortie": null,
+      "cout_eur": null,
+      "source_tarif": null,
+      "simulation": true
+     }
+    ],
+    "erreurs": []
+   }
+  ]
+ },
+ {
+  "workflow": "presti-cerveau",
+  "execution": 499,
+  "titre": "SONDE presti-cerveau → presti-dep-accueil réel (trois étages) : n8n refuse l'appel du petit-enfant lib-trier-demande (non publié) ; l'Accueil finit « erreur », 0 effet (fail-closed)",
+  "statut_n8n": "success",
+  "noeud": "Bilan du passage",
+  "entrees": [
+   {}
+  ],
+  "epingles": {
+   "Lire l'interrupteur général (simulation : épinglé)": [
+    {
+     "interrupteur_general": true,
+     "organisation_systeme": "00000000-0000-4000-8000-000000000000",
+     "passage": "2026-11-07T2142",
+     "maintenant": "2026-11-07T21:42:00.000+01:00"
+    }
+   ],
+   "Lire les comptes (simulation : épinglé)": [
+    {
+     "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+     "palier": "simulation",
+     "offre": "studio",
+     "interrupteurs": {
+      "general": true,
+      "departements": {
+       "accueil": true,
+       "devis": true,
+       "suivi": true,
+       "facturation": true,
+       "apres": true,
+       "operations": true,
+       "direction": true
+      }
+     },
+     "accueil": {
+      "nom_artisan": "Exemple. Plomberie Arnal-Démo",
+      "offre": "studio",
+      "mode_reponse": "assistee",
+      "capacites": [
+       "canaux.email",
+       "relances",
+       "factures.relances",
+       "assistant"
+      ],
+      "pilote": {
+       "drapeau": true,
+       "actif": false,
+       "types": {}
+      },
+      "parties_depuis_24h": 0,
+      "mots_escalade_artisan": [
+       "Exemple. mot sensible"
+      ],
+      "fournisseurs": [],
+      "horaires": {
+       "jours_permis": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "heures_permises": {
+        "debut": "00:00",
+        "fin": "23:59"
+       }
+      },
+      "plafond_jour": 20,
+      "qualification": {
+       "grille": [
+        {
+         "critere": "urgence=urgent",
+         "poids": 40
+        },
+        {
+         "critere": "canal=formulaire",
+         "poids": 25
+        },
+        {
+         "critere": "canal=site",
+         "poids": 25
+        },
+        {
+         "critere": "canal=telephone",
+         "poids": 15
+        },
+        {
+         "critere": "canal=email",
+         "poids": 15
+        }
+       ],
+       "seuils": {
+        "haute": 60,
+        "normale": 30
+       },
+       "delais_cibles_min": {
+        "haute": 15,
+        "normale": 60,
+        "a_revoir": 240
+       }
+      }
+     },
+     "empreintes_connues": [],
+     "cles_existantes": []
+    }
+   ],
+   "Lire les événements non traités, page par page (simulation : épinglé)": [
+    {
+     "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+     "page": 0,
+     "suivante": null,
+     "evenements": [
+      {
+       "id": "00000000-0000-4000-8000-a00000000004",
+       "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+       "type": "demande_recue",
+       "cle": "demande:a00000000004",
+       "demande": {
+        "id": "00000000-0000-4000-8000-a00000000004",
+        "canal": "page_p",
+        "recu_le": "2026-11-06T10:15:00.000+01:00",
+        "message": "Exemple. Gagnez des clients avec notre offre exclusive de référencement naturel, cliquez ici. https://exemple.invalid/a https://exemple.invalid/b https://exemple.invalid/c",
+        "champs": {},
+        "empreinte_contact": "c65f6ed3375ee22fdba7787c26794b0d7e0df6ac178f1a554baa1ae976aa7f82",
+        "client_existant": false,
+        "honeypot": false,
+        "photo": null,
+        "proposition": null,
+        "destinataire": {
+         "opposition": false,
+         "consentement_sms": null
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "Appeler lib-journaliser": [
+    {
+     "contrat": "lib-journaliser@1",
+     "statut": "ok",
+     "cle_idempotence": "jc:0000000000a1:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrites": 1
+     },
+     "effets_prevus": [
+      {
+       "effet": "inserer_journal",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "lignes": 1,
+       "cles": [
+        "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:0"
+       ]
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:0",
+       "evenement": "departement_appele",
+       "agent": "presti-cerveau",
+       "objet_ref": "presti-dep-accueil",
+       "decision": "[simulation] aurait été fait : statut ok",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler lib-battement": [
+    {
+     "contrat": "lib-battement@1",
+     "statut": "ok",
+     "cle_idempotence": "bat:cerveau:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrit": false,
+      "operation": "battre"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_battement",
+       "organisation_id": "00000000-0000-4000-8000-000000000000",
+       "workflow": "presti-cerveau",
+       "passe_le": "2026-11-07T21:42:00.000+01:00"
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "battement",
+       "agent": "presti-cerveau",
+       "objet_ref": null,
+       "decision": "battement prévu",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ]
+  },
+  "sonde": "trois étages (cerveau → accueil → lib-*) : appels du petit-enfant refusés par n8n (petit-enfant non publié)",
+  "sorties": [
+   {
+    "arret": null,
+    "simulation": true,
+    "comptes": 1,
+    "routes": {
+     "accueil": 1
+    },
+    "statuts": {
+     "accueil": "erreur"
+    },
+    "sautes": [],
+    "rejets": [],
+    "effets_prevus": 2,
+    "effets_faits": 0
+   }
+  ]
+ },
+ {
+  "workflow": "presti-cerveau",
+  "execution": 501,
+  "titre": "SONDE identique avec presti-cerveau ajouté aux callerIds du trieur : toujours refusé, aucune exécution du trieur créée ; la politique d'appel n'est pas en cause",
+  "statut_n8n": "success",
+  "noeud": "Bilan du passage",
+  "entrees": [
+   {}
+  ],
+  "epingles": {
+   "Lire l'interrupteur général (simulation : épinglé)": [
+    {
+     "interrupteur_general": true,
+     "organisation_systeme": "00000000-0000-4000-8000-000000000000",
+     "passage": "2026-11-07T2142",
+     "maintenant": "2026-11-07T21:42:00.000+01:00"
+    }
+   ],
+   "Lire les comptes (simulation : épinglé)": [
+    {
+     "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+     "palier": "simulation",
+     "offre": "studio",
+     "interrupteurs": {
+      "general": true,
+      "departements": {
+       "accueil": true,
+       "devis": true,
+       "suivi": true,
+       "facturation": true,
+       "apres": true,
+       "operations": true,
+       "direction": true
+      }
+     },
+     "accueil": {
+      "nom_artisan": "Exemple. Plomberie Arnal-Démo",
+      "offre": "studio",
+      "mode_reponse": "assistee",
+      "capacites": [
+       "canaux.email",
+       "relances",
+       "factures.relances",
+       "assistant"
+      ],
+      "pilote": {
+       "drapeau": true,
+       "actif": false,
+       "types": {}
+      },
+      "parties_depuis_24h": 0,
+      "mots_escalade_artisan": [
+       "Exemple. mot sensible"
+      ],
+      "fournisseurs": [],
+      "horaires": {
+       "jours_permis": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "heures_permises": {
+        "debut": "00:00",
+        "fin": "23:59"
+       }
+      },
+      "plafond_jour": 20,
+      "qualification": {
+       "grille": [
+        {
+         "critere": "urgence=urgent",
+         "poids": 40
+        },
+        {
+         "critere": "canal=formulaire",
+         "poids": 25
+        },
+        {
+         "critere": "canal=site",
+         "poids": 25
+        },
+        {
+         "critere": "canal=telephone",
+         "poids": 15
+        },
+        {
+         "critere": "canal=email",
+         "poids": 15
+        }
+       ],
+       "seuils": {
+        "haute": 60,
+        "normale": 30
+       },
+       "delais_cibles_min": {
+        "haute": 15,
+        "normale": 60,
+        "a_revoir": 240
+       }
+      }
+     },
+     "empreintes_connues": [],
+     "cles_existantes": []
+    }
+   ],
+   "Lire les événements non traités, page par page (simulation : épinglé)": [
+    {
+     "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+     "page": 0,
+     "suivante": null,
+     "evenements": [
+      {
+       "id": "00000000-0000-4000-8000-a00000000004",
+       "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+       "type": "demande_recue",
+       "cle": "demande:a00000000004",
+       "demande": {
+        "id": "00000000-0000-4000-8000-a00000000004",
+        "canal": "page_p",
+        "recu_le": "2026-11-06T10:15:00.000+01:00",
+        "message": "Exemple. Gagnez des clients avec notre offre exclusive de référencement naturel, cliquez ici. https://exemple.invalid/a https://exemple.invalid/b https://exemple.invalid/c",
+        "champs": {},
+        "empreinte_contact": "c65f6ed3375ee22fdba7787c26794b0d7e0df6ac178f1a554baa1ae976aa7f82",
+        "client_existant": false,
+        "honeypot": false,
+        "photo": null,
+        "proposition": null,
+        "destinataire": {
+         "opposition": false,
+         "consentement_sms": null
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "Appeler lib-journaliser": [
+    {
+     "contrat": "lib-journaliser@1",
+     "statut": "ok",
+     "cle_idempotence": "jc:0000000000a1:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrites": 1
+     },
+     "effets_prevus": [
+      {
+       "effet": "inserer_journal",
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "lignes": 1,
+       "cles": [
+        "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:0"
+       ]
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+       "cle": "j:00d2aea23525cb80d16fcf1ffc8a379ba6be3baea051336a:0",
+       "evenement": "departement_appele",
+       "agent": "presti-cerveau",
+       "objet_ref": "presti-dep-accueil",
+       "decision": "[simulation] aurait été fait : statut ok",
+       "modele": null,
+       "jetons_entree": null,
+       "jetons_sortie": null,
+       "cout_eur": null,
+       "source_tarif": null,
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ],
+   "Appeler lib-battement": [
+    {
+     "contrat": "lib-battement@1",
+     "statut": "ok",
+     "cle_idempotence": "bat:cerveau:2026-11-07T2142",
+     "simulation": true,
+     "resultat": {
+      "ecrit": false,
+      "operation": "battre"
+     },
+     "effets_prevus": [
+      {
+       "effet": "ecrire_battement",
+       "organisation_id": "00000000-0000-4000-8000-000000000000",
+       "workflow": "presti-cerveau",
+       "passe_le": "2026-11-07T21:42:00.000+01:00"
+      }
+     ],
+     "effets_faits": [],
+     "journal": [
+      {
+       "evenement": "battement",
+       "agent": "presti-cerveau",
+       "objet_ref": null,
+       "decision": "battement prévu",
+       "simulation": true
+      }
+     ],
+     "erreurs": []
+    }
+   ]
+  },
+  "sonde": "trois étages, presti-cerveau ajouté aux callerIds du trieur : toujours refusé (la politique d’appel n’est pas en cause)",
+  "sorties": [
+   {
+    "arret": null,
+    "simulation": true,
+    "comptes": 1,
+    "routes": {
+     "accueil": 1
+    },
+    "statuts": {
+     "accueil": "erreur"
+    },
+    "sautes": [],
+    "rejets": [],
+    "effets_prevus": 2,
+    "effets_faits": 0
+   }
+  ]
+ }
+]

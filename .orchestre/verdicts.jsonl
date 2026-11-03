@@ -1167,3 +1167,77 @@
 {"id":"032-006","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T13:33:58Z","duree_s":4,"agent":"claude-code","executant":"claude-code","lignes":1830,"dossier":"fait"}
 {"id":"032-007","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T14:04:28Z","duree_s":9,"agent":"claude-code","executant":"claude-code","lignes":1814,"dossier":"en-cours"}
 {"id":"032-007","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T14:05:10Z","duree_s":6,"agent":"claude-code","executant":"claude-code","lignes":1814,"dossier":"fait"}
+{"id":"032-003","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T15:12:37Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":3179,"dossier":"en-cours"}
+{"id":"032-003","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T15:13:12Z","duree_s":2,"agent":"claude-code","executant":"claude-code","lignes":3179,"dossier":"fait"}
+{"id":"032-008","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T15:30:45Z","duree_s":65,"agent":"claude-code","executant":"claude-code","lignes":1504,"dossier":"en-cours"}
+{"id":"032-008","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T15:31:12Z","duree_s":9,"agent":"claude-code","executant":"claude-code","lignes":1504,"dossier":"fait"}
+{"id":"032-009","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":0,"date":"2026-11-02T16:21:59Z","duree_s":40,"agent":"claude-code","executant":"claude-code","lignes":952,"dossier":"en-cours"}
+{"id":"032-009","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T16:25:07Z","duree_s":130,"agent":"claude-code","executant":"claude-code","lignes":952,"dossier":"en-cours"}
+{"id":"032-010","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":0,"date":"2026-11-02T16:27:13Z","duree_s":5,"agent":"claude-code","executant":"claude-code","lignes":745,"dossier":"en-cours"}
+{"id":"032-011","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":0,"date":"2026-11-02T16:28:24Z","duree_s":61,"agent":"claude-code","executant":"claude-code","lignes":973,"dossier":"en-cours"}
+{"id":"032-009","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T16:29:25Z","duree_s":27,"agent":"claude-code","executant":"claude-code","lignes":952,"dossier":"fait"}
+{"id":"032-010","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T16:29:33Z","duree_s":4,"agent":"claude-code","executant":"claude-code","lignes":745,"dossier":"fait"}
+{"id":"032-011","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T16:29:48Z","duree_s":8,"agent":"claude-code","executant":"claude-code","lignes":973,"dossier":"fait"}
+{"id":"033-001","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T16:35:15Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":1694,"dossier":"fait"}
+{"id":"032-012","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T16:39:38Z","duree_s":255,"agent":"claude-code","executant":"claude-code","lignes":2486,"dossier":"fait"}
+{"id":"032-015","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T17:04:15Z","duree_s":23,"agent":"claude-code","executant":"claude-code","lignes":1487,"dossier":"fait"}
+{"id":"032-016","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T17:07:02Z","duree_s":142,"agent":"claude-code","executant":"claude-code","lignes":1722,"dossier":"fait"}
+{"id":"032-017","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T17:32:44Z","duree_s":43,"agent":"claude-code","executant":"claude-code","lignes":1487,"dossier":"fait"}
+{"id":"032-018","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T17:52:40Z","duree_s":13,"agent":"claude-code","executant":"claude-code","lignes":1537,"dossier":"fait"}
+{"id":"032-014","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T18:31:18Z","duree_s":155,"agent":"claude-code","executant":"claude-code","lignes":3227,"dossier":"fait"}
+{"id":"032-013","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T18:46:54Z","duree_s":92,"agent":"claude-code","executant":"claude-code","lignes":3819,"dossier":"fait"}
+{"id":"032-020","verdict":"FAIL","ligne":"Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\\win\\async.c, line 94","code":1,"date":"2026-11-02T18:47:31Z","duree_s":32,"agent":"claude-code","executant":"claude-code","lignes":2792,"dossier":"fait"}
+{"id":"032-019","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T19:32:00Z","duree_s":333,"agent":"claude-code","executant":"claude-code","lignes":5436,"dossier":"fait"}
+{"id":"032-021","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T19:32:21Z","duree_s":16,"agent":"claude-code","executant":"claude-code","lignes":3356,"dossier":"fait"}
+{"id":"032-022","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T19:32:24Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1172,"dossier":"fait"}
+{"id":"032-023","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T19:45:58Z","duree_s":7,"agent":"claude-code","executant":"claude-code","lignes":2345,"dossier":"fait"}
+{"id":"032-024","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T19:46:06Z","duree_s":6,"agent":"claude-code","executant":"claude-code","lignes":2059,"dossier":"fait"}
+{"id":"032-025","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T19:46:10Z","duree_s":2,"agent":"claude-code","executant":"claude-code","lignes":3857,"dossier":"fait"}
+{"id":"032-027","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T19:46:11Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":4744,"dossier":"fait"}
+{"id":"032-028","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T19:47:50Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":4512,"dossier":"fait"}
+{"id":"032-026","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T20:06:38Z","duree_s":91,"agent":"claude-code","executant":"claude-code","lignes":2785,"dossier":"fait"}
+{"id":"032-029","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T20:06:41Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":13413,"dossier":"fait"}
+{"id":"032-030","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T20:11:28Z","duree_s":18,"agent":"claude-code","executant":"claude-code","lignes":2899,"dossier":"fait"}
+{"id":"032-031","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T20:11:37Z","duree_s":7,"agent":"claude-code","executant":"claude-code","lignes":2485,"dossier":"fait"}
+{"id":"032-032","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T20:36:20Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":2812,"dossier":"fait"}
+{"id":"032-033","verdict":"FAIL","ligne":"ÉCHEC — 1 défaut(s) sur l'export réel :","code":1,"date":"2026-11-02T20:36:30Z","duree_s":6,"agent":"claude-code","executant":"claude-code","lignes":5185,"dossier":"fait"}
+{"id":"032-034","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T20:36:32Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":2576,"dossier":"fait"}
+{"id":"032-035","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T20:36:34Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":5536,"dossier":"fait"}
+{"id":"032-037","verdict":"FAIL","ligne":"✓ mutant « onError qui continue sur une lecture » fait rougir la suite","code":1,"date":"2026-11-02T20:59:50Z","duree_s":454,"agent":"claude-code","executant":"claude-code","lignes":4018,"dossier":"fait"}
+{"id":"032-036","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T21:05:49Z","duree_s":57,"agent":"claude-code","executant":"claude-code","lignes":3803,"dossier":"fait"}
+{"id":"035-000","verdict":"FAIL","ligne":"SyntaxError: Invalid regular expression: missing /","code":1,"date":"2026-11-02T21:05:54Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1124,"dossier":"fait"}
+{"id":"035-001","verdict":"FAIL","ligne":"✓ mutant « branche d’erreur ôtée (rang 26) : Error Trigger et workflow d’erreur » (presti-detecteurs) fait rougir la garde","code":1,"date":"2026-11-02T21:05:57Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":2601,"dossier":"fait"}
+{"id":"035-002","verdict":"FAIL","ligne":"SyntaxError: Invalid regular expression: missing /","code":1,"date":"2026-11-02T21:05:59Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":1831,"dossier":"fait"}
+{"id":"035-000","verdict":"FAIL","ligne":"SyntaxError: Invalid regular expression: missing /","code":1,"date":"2026-11-02T21:08:12Z","duree_s":0,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"035-002","verdict":"FAIL","ligne":"SyntaxError: Invalid regular expression: missing /","code":1,"date":"2026-11-02T21:08:15Z","duree_s":1,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"032-033","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T21:08:49Z","duree_s":537,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"035-000","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T21:09:35Z","duree_s":0,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"035-002","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T21:09:38Z","duree_s":1,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"035-001","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T21:09:50Z","duree_s":1,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"032-037","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T21:20:40Z","duree_s":558,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"032-039","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T21:34:21Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":7180,"dossier":"fait"}
+{"id":"035-008","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T21:34:50Z","duree_s":23,"agent":"claude-code","executant":"claude-code","lignes":1602,"dossier":"fait"}
+{"id":"035-003","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T21:42:01Z","duree_s":14,"agent":"claude-code","executant":"claude-code","lignes":6083,"dossier":"fait"}
+{"id":"035-004","verdict":"FAIL","ligne":"Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths mus","code":1,"date":"2026-11-02T23:59:39Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":5106,"dossier":"fait"}
+{"id":"032-040","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T23:59:50Z","duree_s":9,"agent":"claude-code","executant":"claude-code","lignes":2994,"dossier":"fait"}
+{"id":"035-011","verdict":"PASS","ligne":"","code":0,"date":"2026-11-02T23:59:52Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1420,"dossier":"fait"}
+{"id":"035-004","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T00:01:17Z","duree_s":52,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"032-041","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T00:19:57Z","duree_s":4,"agent":"claude-code","executant":"claude-code","lignes":16220,"dossier":"fait"}
+{"id":"035-005","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T07:52:14Z","duree_s":299,"agent":"claude-code","executant":"claude-code","lignes":9170,"dossier":"fait"}
+{"id":"032-044","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T08:48:39Z","duree_s":233,"agent":"claude-code","executant":"claude-code","lignes":4969,"dossier":"fait"}
+{"id":"035-014","verdict":"FAIL","ligne":"✗ plans\\011-cadrage-01-11\\p5-entreprise\\fiches-compte-restructureai-lot3.md:164  52. « A Claude AI sales system sounds like 15 agents doing 15 different jobs » ","code":1,"date":"2026-11-03T08:48:50Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":3138,"dossier":"fait"}
+{"id":"035-014","verdict":"FAIL","ligne":"✗ plans\\011-cadrage-01-11\\p5-entreprise\\fiches-compte-restructureai-lot3.md:164  52. « A Claude AI sales system sounds like 15 agents doing 15 different jobs » ","code":1,"date":"2026-11-03T08:49:47Z","duree_s":9,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"035-014","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T08:51:04Z","duree_s":7,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"035-007","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T09:02:59Z","duree_s":41,"agent":"claude-code","executant":"claude-code","lignes":16128,"dossier":"fait"}
+{"id":"036-000","verdict":"FAIL","ligne":"f �tait inattendu.","code":1,"date":"2026-11-03T09:53:09Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":2365,"dossier":"fait"}
+{"id":"036-000","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T09:53:31Z","duree_s":1,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"036-002","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T10:22:50Z","duree_s":78,"agent":"claude-code","executant":"claude-code","lignes":2566,"dossier":"fait"}
+{"id":"036-001","verdict":"FAIL","ligne":"→ A1 lib-alerter : 10 erreurs en une minute (à cheval sur deux fenêtres de 5 min) doivent donner une seule alerte (10)","code":1,"date":"2026-11-03T10:57:53Z","duree_s":123,"agent":"claude-code","executant":"claude-code","lignes":12282,"dossier":"fait"}
+{"id":"036-001","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T11:01:32Z","duree_s":76,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"036-003","verdict":"FAIL","ligne":"→ L5 jeton expiré : la relève doit se taire sans planter (statut erreur, relève : jeton jeton_expire)","code":1,"date":"2026-11-03T11:04:46Z","duree_s":81,"agent":"claude-code","executant":"claude-code","lignes":7216,"dossier":"fait"}
+{"id":"036-003","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T11:06:18Z","duree_s":69,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"036-005","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T11:41:09Z","duree_s":52,"agent":"claude-code","executant":"claude-code","lignes":6762,"dossier":"fait"}
+{"id":"036-006","verdict":"FAIL","ligne":"result.error = new ErrnoException(result.error, 'spawnSync ' + options.file);","code":1,"date":"2026-11-03T11:43:37Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":10137,"dossier":"fait"}
+{"id":"036-006","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T11:45:45Z","duree_s":86,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"036-007","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T11:54:38Z","duree_s":180,"agent":"claude-code","executant":"claude-code","lignes":8436,"dossier":"fait"}
+{"id":"035-013","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 174 min","code":null,"date":"2026-11-03T11:57:44Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}

@@ -1,0 +1,270 @@
+{
+  "id": "JtGOKOG1ssFP5z1u",
+  "name": "lib-cout-ia",
+  "active": false,
+  "isArchived": false,
+  "versionId": "281096c8-7acf-45b8-95ca-5a3b94bc5010",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 8,
+  "createdAt": "2026-11-03T11:21:23.555Z",
+  "updatedAt": "2026-11-03T11:27:02.497Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "availableInMCP": true,
+    "callerIds": "oHGOyqsZGoUooxa6,K7lsk0lRJtH5xEOJ"
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "description": "lib-cout-ia (036-007) : coût IA par compte et par jour, calculé par le code, plafond, dérive, part externe à part ; INACTIF, simulation.",
+  "canExecute": true,
+  "connections": {
+    "Appelé par presti-dep-direction": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Compter le coût du jour",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compter le coût du jour": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "d181456c-76a0-437b-add4-0e9eedaf7165",
+      "name": "Appelé par presti-dep-direction",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "12d68a5f-25bd-46b2-90db-64d3bdaf8a43",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de lib-cout-ia@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'lib-cout-ia@1';\nconst SCHEMA = {\"sans_contact\":true,\"config\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"interrupteur_general\",\"interrupteur_departement\",\"plafond_jour_centimes\",\"seuil_derive_pct\",\"jours_base_min\",\"plancher_derive_centimes\"],\"properties\":{\"interrupteur_general\":{\"type\":\"boolean\"},\"interrupteur_departement\":{\"type\":\"boolean\"},\"plafond_jour_centimes\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100000000},\"seuil_derive_pct\":{\"type\":\"integer\",\"minimum\":10,\"maximum\":1000},\"jours_base_min\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":14},\"plancher_derive_centimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":1000000}}},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"jour\",\"maintenant\",\"appels\",\"cumul_du_jour\",\"jours_precedents\",\"cles_connues\"],\"properties\":{\"jour\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"maintenant\":{\"type\":\"string\",\"format\":\"date-time\"},\"appels\":{\"type\":\"array\",\"maxItems\":500,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"cle\",\"departement\",\"modele\",\"externe\",\"jetons_entree\",\"jetons_sortie\",\"cout_eur\",\"source_tarif\",\"survenu_le\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"cle\":{\"type\":\"string\",\"minLength\":3,\"maxLength\":120,\"pattern\":\"^[A-Za-z0-9_:.-]+$\"},\"departement\":{\"enum\":[\"tous\",\"accueil\",\"devis\",\"suivi\",\"facturation\",\"apres\",\"operations\",\"direction\"]},\"modele\":{\"type\":\"string\",\"pattern\":\"^[a-z0-9][a-z0-9._-]{1,79}$\"},\"externe\":{\"type\":\"boolean\"},\"jetons_entree\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10000000},\"jetons_sortie\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10000000},\"cout_eur\":{\"type\":[\"number\",\"null\"],\"minimum\":0,\"maximum\":100000},\"source_tarif\":{\"type\":[\"string\",\"null\"],\"maxLength\":120},\"survenu_le\":{\"type\":\"string\",\"format\":\"date-time\"}}}},\"cumul_du_jour\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"jour\",\"departement\",\"modele\",\"externe\",\"appels\",\"cout_millicentimes\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"jour\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"departement\":{\"enum\":[\"tous\",\"accueil\",\"devis\",\"suivi\",\"facturation\",\"apres\",\"operations\",\"direction\"]},\"modele\":{\"type\":\"string\",\"pattern\":\"^[a-z0-9][a-z0-9._-]{1,79}$\"},\"externe\":{\"type\":\"boolean\"},\"appels\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":10000000},\"cout_millicentimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000000000}}}},\"jours_precedents\":{\"type\":\"array\",\"maxItems\":100,\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"artisan_id\",\"jour\",\"cout_millicentimes\"],\"properties\":{\"artisan_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"jour\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}-\\\\d{2}$\"},\"cout_millicentimes\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":100000000000}}}},\"cles_connues\":{\"type\":\"array\",\"maxItems\":5000,\"items\":{\"type\":\"string\",\"maxLength\":120}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: lib-cout-ia@1"
+    },
+    {
+      "id": "2823e09b-9da7-4915-be42-e95a5bfcecd4",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-conforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "f7819bd8-4de9-49eb-9e96-ed09614cd4ec",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "-json-enveloppe-simulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché en mode A."
+    },
+    {
+      "id": "185841d5-72cd-4b13-894b-460eba77bed8",
+      "name": "Compter le coût du jour",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const AGENT = 'lib-cout-ia';\nconst eurC = (c) => { const n = Math.round(c), a = Math.abs(n), ent = Math.floor(a / 100), ct = a % 100; return (n < 0 ? '-' : '') + String(ent).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + (ct ? ',' + String(ct).padStart(2, '0') : '') + ' €'; };\nconst eurosCourt = (n) => String(Math.round(n)).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ' ') + ' €';\nconst parisJour = (iso) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(Date.parse(iso)));\nconst parisHeure = (iso) => Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', hourCycle: 'h23' }).format(new Date(Date.parse(iso))));\nconst joursEntre = (de, a) => Math.floor((Date.parse(a + 'T00:00:00Z') - Date.parse(String(de).slice(0, 10) + 'T00:00:00Z')) / 86400000);\nconst refuse = (j, sim, evenement, raison) => ({ ...j, statut: 'refuse', resultat: null, effets_prevus: [], erreurs: [raison], journal: [{ evenement: evenement, agent: AGENT, objet_ref: null, decision: raison.slice(0, 200), simulation: sim }] });\n// lib-cout-ia (036-007 ; D3, A14, p6:116) : ce que coûte l'IA, PAR COMPTE ET PAR JOUR (jour de Paris), visible et plafonné. Il additionne ce que journalise lib-journaliser\n// (couts_ia_appels, une ligne par appel, clé unique ; couts_ia_jour, le cumul — migration 0193, écrite et non appliquée). Le coût est calculé par le CODE : jetons × tarif daté,\n// en millièmes de centime, déjà posé par le journal ; un appel SANS tarif daté est compté mais son coût reste inconnu (jamais un zéro ni un coût inventé). Le modèle n'en compte rien.\n// La part envoyée à un modèle EXTERNE est comptée à part. Plafond du jour atteint ou dérive : un événement de la liste fermée (cout_qui_derive) est préparé pour lib-alerte-liste.\nfunction traiter(j) {\n  try {\n    const e = j.enveloppe, d = e.donnees, c = e.config, org = e.organisation_id, sim = e.simulation === true;\n    const ligne = (evenement, ref, decision) => ({ evenement: evenement, agent: AGENT, objet_ref: ref, decision: String(decision).slice(0, 200), simulation: sim });\n    if (d.appels.some((x) => x.artisan_id !== org) || d.cumul_du_jour.some((x) => x.artisan_id !== org) || d.jours_precedents.some((x) => x.artisan_id !== org)) return refuse(j, sim, 'cout_refuse', 'autre_compte : une ligne lue n’est pas celle de ce compte');\n    if (!(c.interrupteur_general === true && c.interrupteur_departement === true)) return { ...j, statut: 'rien_a_faire', resultat: { etat: 'interrupteur_coupe', jour: d.jour }, effets_prevus: [], journal: [ligne('cout_saute', null, 'interrupteur coupé : rien n’est compté')] };\n    const connues = new Set(d.cles_connues), vus = new Set();\n    const groupes = new Map();\n    const ajouter = (dep, modele, externe, appels, mc) => { const k = dep + '|' + modele + '|' + (externe ? 1 : 0); const g = groupes.get(k) || { departement: dep, modele: modele, externe: externe, appels: 0, mc: 0 }; g.appels += appels; g.mc += mc; groupes.set(k, g); };\n    for (const r of d.cumul_du_jour) if (r.jour === d.jour) ajouter(r.departement, r.modele, r.externe, r.appels, r.cout_millicentimes);\n    const effets = [];\n    let doublons = 0, sansTarif = 0, nouveaux = 0;\n    for (const a of d.appels.slice().sort((x, y) => (x.cle < y.cle ? -1 : 1))) {\n      if (connues.has(a.cle) || vus.has(a.cle)) { doublons++; continue; }\n      vus.add(a.cle);\n      const tarife = a.cout_eur !== null && a.source_tarif !== null && /\\d{4}-\\d{2}-\\d{2}/.test(a.source_tarif);\n      const mc = tarife ? Math.round(a.cout_eur * 100000) : 0;\n      if (!tarife) sansTarif++;\n      ajouter(a.departement, a.modele, a.externe, 1, mc);\n      nouveaux++;\n      effets.push({ effet: 'ecrire_appel_cout', organisation_id: org, table: 'couts_ia_appels', requete: 'POST /rest/v1/couts_ia_appels?on_conflict=artisan_id,cle', entetes: { Prefer: 'resolution=ignore-duplicates,return=minimal' },\n        corps: { artisan_id: org, cle: a.cle, departement: a.departement, modele: a.modele, externe: a.externe, jetons_entree: a.jetons_entree, jetons_sortie: a.jetons_sortie, cout_millicentimes: mc, survenu_le: a.survenu_le }, cout_connu: tarife });\n    }\n    let total_centimes = 0, externe_centimes = 0, appels = 0, appels_externes = 0;\n    const par_departement = {}, par_modele = {};\n    for (const g of groupes.values()) {\n      const cts = Math.floor((g.mc + 999) / 1000);\n      total_centimes += cts; appels += g.appels;\n      if (g.externe) externe_centimes += cts;\n      if (g.externe) appels_externes += g.appels;\n      par_departement[g.departement] = (par_departement[g.departement] || 0) + cts;\n      par_modele[g.modele] = (par_modele[g.modele] || 0) + cts;\n    }\n    const local_centimes = total_centimes - externe_centimes;\n    const plafond_atteint = total_centimes >= c.plafond_jour_centimes;\n    const reste_centimes = Math.max(0, c.plafond_jour_centimes - total_centimes);\n    const parJour = new Map();\n    for (const r of d.jours_precedents) if (r.jour !== d.jour) parJour.set(r.jour, (parJour.get(r.jour) || 0) + r.cout_millicentimes);\n    const derniers = [...parJour.entries()].sort((a, b) => (a[0] < b[0] ? 1 : -1)).slice(0, 7);\n    const base_insuffisante = derniers.length < c.jours_base_min;\n    const base_centimes = base_insuffisante ? null : Math.round(derniers.reduce((s, x) => s + x[1], 0) / derniers.length / 1000);\n    let derive = null;\n    if (!base_insuffisante && total_centimes >= c.plancher_derive_centimes && total_centimes * 100 > base_centimes * (100 + c.seuil_derive_pct)) {\n      derive = { total_centimes: total_centimes, base_centimes: base_centimes, pourcent: base_centimes > 0 ? Math.round((total_centimes / base_centimes - 1) * 100) : null, jours_de_base: derniers.length };\n    }\n    const evenements_alerte = [];\n    const t = d.maintenant;\n    if (derive) evenements_alerte.push({ artisan_id: org, type: 'cout_qui_derive', cle: 'derive:' + d.jour, survenu_le: t, faits: { total_centimes: total_centimes, base_centimes: base_centimes, workflow: 'lib-cout-ia' } });\n    if (plafond_atteint) evenements_alerte.push({ artisan_id: org, type: 'cout_qui_derive', cle: 'plafond:' + d.jour, survenu_le: t, faits: { total_centimes: total_centimes, workflow: 'lib-cout-ia' } });\n    if (plafond_atteint) effets.push({ effet: 'noter_evenement', organisation_id: org, type: 'plafond_cout_atteint', cle: 'pc:' + d.jour, faits: { total_centimes: total_centimes, plafond_centimes: c.plafond_jour_centimes } });\n    const source = 'couts_ia_jour et couts_ia_appels, jour de Paris ' + d.jour;\n    const lignes = ['Coût IA du ' + d.jour + ' : ' + eurC(total_centimes) + ' pour ' + appels + ' appel' + (appels > 1 ? 's' : '') + ', dont ' + eurC(externe_centimes) + ' vers un modèle externe (' + appels_externes + ' appel' + (appels_externes > 1 ? 's' : '') + ')',\n      'Plafond du jour : ' + eurC(c.plafond_jour_centimes) + (plafond_atteint ? ' — atteint : les actions qui appellent un modèle s’arrêtent jusqu’à demain' : ' — il reste ' + eurC(reste_centimes))];\n    if (sansTarif) lignes.push(sansTarif + ' appel' + (sansTarif > 1 ? 's' : '') + ' sans tarif daté : compté' + (sansTarif > 1 ? 's' : '') + ', coût inconnu (jamais inventé)');\n    return { ...j, statut: 'ok', resultat: { jour: d.jour, source: source, total_centimes: total_centimes, externe_centimes: externe_centimes, local_centimes: local_centimes, part_externe_pct: total_centimes > 0 ? Math.round(externe_centimes * 100 / total_centimes) : null,\n      appels: appels, appels_externes: appels_externes, appels_nouveaux: nouveaux, appels_sans_tarif: sansTarif, doublons_ignores: doublons, par_departement: par_departement, par_modele: par_modele,\n      plafond_jour_centimes: c.plafond_jour_centimes, plafond_atteint: plafond_atteint, reste_centimes: reste_centimes, base_centimes: base_centimes, base_insuffisante: base_insuffisante, derive: derive, evenements_alerte: evenements_alerte, lignes: lignes },\n      effets_prevus: effets, journal: [ligne('cout_ia', 'cout:' + d.jour, eurC(total_centimes) + ', ' + nouveaux + ' appel(s) nouveau(x), plafond ' + (plafond_atteint ? 'atteint' : 'non atteint') + (derive ? ', dérive' : ''))] };\n  } catch (err) {\n    return { ...j, statut: 'erreur', resultat: null, effets_prevus: [], erreurs: ['coût : ' + String((err && err.message) || err).slice(0, 120)] };\n  }\n}\nreturn $input.all().map((item) => ({ json: traiter(item.json) }));"
+      }
+    },
+    {
+      "id": "ee531447-28d8-45e1-b3d0-7c8730a6c995",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de lib-cout-ia@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'lib-cout-ia@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "a927417a-bc29-4695-b9a5-aa5eb0e5be3d",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        120
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (mode A, tâche 036-007). Rien n'a été écrit ni envoyé."
+      },
+      "notes": "Mode A : l'effet réel (push, base, rapport) n'est pas branché. Il le sera au « go » de Benj, derrière cette même porte."
+    },
+    {
+      "id": "b21ea6e6-3caf-4a3f-a8fd-b543b6cfe012",
+      "name": "Sticky Note 640f4932",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## lib-cout-ia (036-007)\nLe compteur de coût IA (D3, A14) : par compte et par jour (jour de Paris), calculé par le code (jetons × tarif daté), plafond du jour, dérive, part envoyée à un modèle externe comptée à part ; un appel sans tarif daté est compté, son coût reste inconnu. Aucun modèle.\nContrat lib-cout-ia@1 (enveloppe@1, gabarit « Contrat » de 035-003). Appelé par presti-dep-direction et par presti-banc-direction.\nINACTIF, jamais publié, en simulation (mode A) : les lectures sont passées par l'appelant, les écritures partent dans effets_prevus. Aucun identifiant.\nJuge : scripts/direction-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 400
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-007), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

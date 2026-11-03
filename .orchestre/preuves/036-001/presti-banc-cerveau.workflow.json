@@ -1,0 +1,188 @@
+{
+  "id": "x7QfmFAZNIxaoUS6",
+  "name": "presti-banc-cerveau",
+  "active": false,
+  "isArchived": false,
+  "versionId": "a5f45834-b5b5-4577-b35f-679b1620fc23",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 6,
+  "createdAt": "2026-11-03T10:24:32.774Z",
+  "updatedAt": "2026-11-03T10:26:21.394Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 300,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "none",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "connections": {
+    "Banc (jamais planifié : inactif)": {
+      "main": [
+        [
+          {
+            "node": "Cas fictifs : compte Studio (20 demandes)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas fictifs : compte Studio (20 demandes)": {
+      "main": [
+        [
+          {
+            "node": "Cas fictifs : compte Signature (20 demandes)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cas fictifs : compte Signature (20 demandes)": {
+      "main": [
+        [
+          {
+            "node": "Appeler presti-dep-accueil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler presti-dep-accueil": {
+      "main": [
+        [
+          {
+            "node": "Bilan du banc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "298cb70a-8103-4a33-95c5-0d70d31d880f",
+      "name": "Banc (jamais planifié : inactif)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "88894b51-3c40-478b-9237-78a42458d8e6",
+      "name": "Cas fictifs : compte Studio (20 demandes)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-banc-cerveau (036-001) : 20 demandes FICTIVES du compte Studio (« Exemple. » devant tout nom), un samedi soir :\n// soir, week-end, escalade, doublon, spam, piège, photo, client existant, proposition avec un prix ou une date inventés.\n// Rien de réel ; aucune adresse ; le numéro de téléphone est fictif et masqué par le chef. Ce nœud ajoute l'enveloppe de son compte.\nconst ENVELOPPE = {\"contrat\":\"presti-dep-accueil@1\",\"organisation_id\":\"00000000-0000-4000-8000-0000000000a1\",\"simulation\":true,\"cle_idempotence\":\"dep:accueil:0000000000a1:2026-11-07T2142\",\"trace\":{\"execution_parent\":\"presti-banc-cerveau:2026-11-07T2142\",\"declencheur\":\"presti-banc-cerveau\",\"tentative\":0},\"config\":{\"nom_artisan\":\"Exemple. Plomberie Arnal-Démo\",\"offre\":\"studio\",\"mode_reponse\":\"assistee\",\"capacites\":[\"canaux.email\",\"relances\",\"factures.relances\",\"assistant\"],\"pilote\":{\"drapeau\":true,\"actif\":false,\"types\":{}},\"parties_depuis_24h\":0,\"interrupteur_general\":true,\"interrupteur_departement\":true,\"mots_escalade_artisan\":[\"Exemple. mot sensible\"],\"fournisseurs\":[],\"horaires\":{\"jours_permis\":[1,2,3,4,5,6,7],\"heures_permises\":{\"debut\":\"00:00\",\"fin\":\"23:59\"}},\"plafond_jour\":20,\"qualification\":{\"grille\":[{\"critere\":\"urgence=urgent\",\"poids\":40},{\"critere\":\"canal=formulaire\",\"poids\":25},{\"critere\":\"canal=site\",\"poids\":25},{\"critere\":\"canal=telephone\",\"poids\":15},{\"critere\":\"canal=email\",\"poids\":15}],\"seuils\":{\"haute\":60,\"normale\":30},\"delais_cibles_min\":{\"haute\":15,\"normale\":60,\"a_revoir\":240}}},\"donnees\":{\"demandes\":[{\"id\":\"00000000-0000-4000-8000-a00000000001\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Bonjour, je voudrais refaire la salle de bain complète, douche à l’italienne.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Salle de bain\",\"delai_souhaite\":\"dans 3 mois\"},\"empreinte_contact\":\"ac5f807a71f6fae9fa01ecded21a084f6c147e029d098b9da6052b57d0bddcc3\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000002\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T21:10:00.000+01:00\",\"message\":\"Exemple. Mon chauffe-eau fuit depuis ce matin, il y a de l’eau partout !\",\"champs\":{\"canal\":\"formulaire\",\"urgence\":\"urgent\",\"type_chantier\":\"Chauffe-eau\",\"recu_hors_horaires\":true},\"empreinte_contact\":\"187bbf7a3435ea539e3ed47b2ecdfaae533b3486caab512cb22e029517030815\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous regardons votre demande. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000003\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-07T15:30:00.000+01:00\",\"message\":\"Exemple. Je souhaite changer mon évier de cuisine.\",\"champs\":{\"canal\":\"site\",\"type_chantier\":\"Cuisine\"},\"empreinte_contact\":\"c96053ab2b5bfd72b76eee5556149bbe5e5bc4bedce703624e2a592dd43cfd09\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Pouvez-vous nous dire quel modèle vous intéresse ? Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000004\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Gagnez des clients avec notre offre exclusive de référencement naturel, cliquez ici. https://exemple.invalid/a https://exemple.invalid/b https://exemple.invalid/c\",\"champs\":{},\"empreinte_contact\":\"c65f6ed3375ee22fdba7787c26794b0d7e0df6ac178f1a554baa1ae976aa7f82\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":null,\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000005\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Juste savoir, combien coute en général un remplacement de robinet ?\",\"champs\":{\"canal\":\"site\"},\"empreinte_contact\":\"04ca1d8eb666c93357e60092c808aa0f1a71e999c777e9533b9f52ff3128eb77\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous pouvons passer voir votre installation pour vous répondre. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000006\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Re-bonjour, c’est pour la suite du chantier de l’an dernier.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Entretien\"},\"empreinte_contact\":\"f5c624f7fa17076bd1c9562a2f74aae41f3a540a0fa07de56ae27d6f71658aa5\",\"client_existant\":true,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Ravi de vous relire, nous reprenons votre dossier. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000007\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Je vais porter plainte, les travaux ont été mal faits et mon avocat vous écrira.\",\"champs\":{\"canal\":\"formulaire\"},\"empreinte_contact\":\"267674eb5e1a278e5d7a1820649171e42e9744cd8c2f6dd522f07442e7b385dc\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous sommes désolés. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000008\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Bonjour, une rénovation de WC, voici une photo.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"WC\",\"photo_jointe\":true},\"empreinte_contact\":\"a03df5daa0bb4bed551672ffa3e3791f8137356a24a32d6efd9bde666a429637\",\"client_existant\":false,\"honeypot\":false,\"photo\":{\"ref\":\"exemple-wc-01.jpg\",\"type_mime\":\"image/jpeg\"},\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Merci pour la photo, nous l’étudions. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000009\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Bonjour, refaire la salle de bain complète, douche à l’italienne.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Salle de bain\"},\"empreinte_contact\":\"ac5f807a71f6fae9fa01ecded21a084f6c147e029d098b9da6052b57d0bddcc3\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous revenons vers vous. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000010\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Pose d’un radiateur dans la chambre, vous pouvez me rappeler au 06 00 00 00 00.\",\"champs\":{\"canal\":\"site\",\"type_chantier\":\"Chauffage\"},\"empreinte_contact\":\"5736ba805628fe3bf31ed2445377cb109b52a23342b8dd26cb9fdaa2294f5855\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous vous recontactons. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000011\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Création d’une salle d’eau dans les combles.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Salle d’eau\",\"surface_m2\":6},\"empreinte_contact\":\"755eb08029ee2b2eea97e9825c30263f691c99d01a3d2c61577dad69246c2e5f\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":null,\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000012\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T21:10:00.000+01:00\",\"message\":\"Exemple. Ça sent le gaz près de la chaudière depuis hier soir.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Chaudière\",\"recu_hors_horaires\":true},\"empreinte_contact\":\"bf395ed51cd0c4aebd6ba234564c67bd5b28e954cd5f15a75c2b9dd646ebc2c7\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous regardons. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000013\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-07T15:30:00.000+01:00\",\"message\":\"Exemple. Remplacement de la baignoire par une douche.\",\"champs\":{\"canal\":\"site\",\"type_chantier\":\"Salle de bain\",\"delai_souhaite\":\"printemps\"},\"empreinte_contact\":\"629bc88656bc626ddc3bd1cf14d0c1a7050bbe3d90e5465915f4444a7ca3aebe\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous pouvons en parler lors d’une visite. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000014\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"\",\"champs\":{},\"empreinte_contact\":\"758e86cec2b94d2a3b88bcd280fa08f11ef4219848d57881a8bbad962500bd27\",\"client_existant\":false,\"honeypot\":true,\"photo\":null,\"proposition\":null,\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000015\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Installation d’un adoucisseur d’eau.\",\"champs\":{\"canal\":\"site\",\"type_chantier\":\"Adoucisseur\"},\"empreinte_contact\":\"d5a789504c4f6d1d3f613526a25258a5c824331ab9f33aa736cfbd87cd95ad82\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Le devis sera de 1 200 € TTC. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000016\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Bonjour, pas d’urgence, quand vous pouvez : changer un mitigeur.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Mitigeur\"},\"empreinte_contact\":\"f77ff2a3b5d87756214e721b36d61a2fb90250865b92a4b6c253e1c912a52382\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous revenons vers vous. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000017\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Bonjour, je veux refaire la plomberie de la cuisine.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Cuisine\"},\"empreinte_contact\":\"fe440dcb062459d690357a2e52736e53c5b55b66d8cd6c42bb5b38c9309032cb\",\"client_existant\":false,\"honeypot\":false,\"photo\":{\"ref\":\"exemple-cuisine-02.jpg\",\"type_mime\":\"image/jpeg\"},\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Merci, nous étudions la photo. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000018\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Mise aux normes d’un tableau de chauffage au sol.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Plancher chauffant\"},\"empreinte_contact\":\"0bd01fa47ac60110d8abef95559e628207c7932168400754d7dcb8148fdc0f29\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous revenons vers vous. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000019\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Le robinet refuit encore après votre passage.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Robinet\"},\"empreinte_contact\":\"f81e72c3965e941dfd3ffd70a822653bb30fa44c26bb7dbb7afcfd374d457bf4\",\"client_existant\":true,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous repassons voir. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-a00000000020\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Bonjour, projet de salle de bain pour l’automne.\",\"champs\":{\"canal\":\"site\",\"type_chantier\":\"Salle de bain\"},\"empreinte_contact\":\"fb2987dfaa9619c8b0082928307d505e05233be4798c8db3911599195d67c0ea\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Avec plaisir, parlons-en. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}}],\"empreintes_connues\":[],\"cles_existantes\":[],\"maintenant\":\"2026-11-07T21:42:00.000+01:00\"}};\nreturn $input.all().filter((x) => x.json && x.json.contrat === 'presti-dep-accueil@1').concat([{ json: ENVELOPPE }]);"
+      }
+    },
+    {
+      "id": "2effaa40-24c9-49fa-8a67-3039f2bd47e6",
+      "name": "Cas fictifs : compte Signature (20 demandes)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// presti-banc-cerveau (036-001) : 20 demandes FICTIVES du compte Signature (« Exemple. » devant tout nom), un samedi soir :\n// soir, week-end, escalade, doublon, spam, piège, photo, client existant, proposition avec un prix ou une date inventés, geste « jamais en automatique ».\n// Rien de réel ; aucune adresse ; le numéro de téléphone est fictif et masqué par le chef. Ce nœud ajoute l'enveloppe de son compte.\nconst ENVELOPPE = {\"contrat\":\"presti-dep-accueil@1\",\"organisation_id\":\"00000000-0000-4000-8000-0000000000b2\",\"simulation\":true,\"cle_idempotence\":\"dep:accueil:0000000000b2:2026-11-07T2142\",\"trace\":{\"execution_parent\":\"presti-banc-cerveau:2026-11-07T2142\",\"declencheur\":\"presti-banc-cerveau\",\"tentative\":0},\"config\":{\"nom_artisan\":\"Exemple. Menuiserie Berthier-Démo\",\"offre\":\"signature\",\"mode_reponse\":\"auto\",\"capacites\":[\"canaux.email\",\"relances\",\"factures.relances\",\"assistant\",\"plateforme.ia.auto\",\"relances.auto\",\"factures.relances.auto\",\"crm\",\"assistant.pilote\"],\"pilote\":{\"drapeau\":true,\"actif\":true,\"types\":{\"reponse_prospect\":true}},\"parties_depuis_24h\":3,\"interrupteur_general\":true,\"interrupteur_departement\":true,\"mots_escalade_artisan\":[\"Exemple. mot sensible\"],\"fournisseurs\":[],\"horaires\":{\"jours_permis\":[1,2,3,4,5,6,7],\"heures_permises\":{\"debut\":\"00:00\",\"fin\":\"23:59\"}},\"plafond_jour\":20,\"qualification\":{\"grille\":[{\"critere\":\"urgence=urgent\",\"poids\":40},{\"critere\":\"canal=formulaire\",\"poids\":25},{\"critere\":\"canal=site\",\"poids\":25},{\"critere\":\"canal=telephone\",\"poids\":15},{\"critere\":\"canal=email\",\"poids\":15}],\"seuils\":{\"haute\":60,\"normale\":30},\"delais_cibles_min\":{\"haute\":15,\"normale\":60,\"a_revoir\":240}}},\"donnees\":{\"demandes\":[{\"id\":\"00000000-0000-4000-8000-b00000000001\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T21:10:00.000+01:00\",\"message\":\"Exemple. Bonjour, je souhaite un dressing sur mesure dans la chambre.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Dressing\",\"delai_souhaite\":\"dans 2 mois\",\"recu_hors_horaires\":true},\"empreinte_contact\":\"ce657021e44a15de0f7f4ea33fbf2f851de8cfb2823b917a7001b45e5e78b8cb\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler avec vous. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000002\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-07T15:30:00.000+01:00\",\"message\":\"Exemple. Une porte d’entrée en chêne à remplacer.\",\"champs\":{\"canal\":\"site\",\"type_chantier\":\"Porte d’entrée\"},\"empreinte_contact\":\"820bc9a8a59f23d2b738e8fd5ef587178db2ef78d8dc589312c24ccc917f1183\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Pouvez-vous nous dire les dimensions de la porte ? Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000003\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Mon parquet est gondolé après un dégât des eaux, l’assurance demande un devis.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Parquet\"},\"empreinte_contact\":\"1a45e10c58f8bc4a8440a6f8ad88f7ada1d8fcf9a175a72ab4f9979addd66f30\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous regardons cela. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000004\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Fabrication d’une bibliothèque murale.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Bibliothèque\"},\"empreinte_contact\":\"0dfbc4457650ef54136202022a49962fe9480b967dfcb187709ad6e910aa0cef\",\"client_existant\":false,\"honeypot\":false,\"photo\":{\"ref\":\"exemple-mur-03.jpg\",\"type_mime\":\"image/jpeg\"},\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Merci pour la photo du mur. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000005\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Crypto : doublez vos gains en une semaine, voir www.exemple.invalid https://exemple.invalid/a https://exemple.invalid/b https://exemple.invalid/c\",\"champs\":{},\"empreinte_contact\":\"f6e37076052e3936465cad9b2e1afcf8c295be28a0297ac451a6fde4add1c062\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":null,\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000006\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Bonjour, une simple question : vous faites les escaliers ?\",\"champs\":{\"canal\":\"site\"},\"empreinte_contact\":\"51bd3d60d028041483167d247e64e6c09a3bfa6dd8f3f90ff45858c3f3ddc491\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Oui, nous réalisons des escaliers sur mesure. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000007\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Suite à notre chantier, je voudrais une seconde fenêtre.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Fenêtre\"},\"empreinte_contact\":\"adec841241ba0838bc9c3c46ed0ac3b4ddd7793595d48f802598571ba334695c\",\"client_existant\":true,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Avec plaisir, nous reprenons votre dossier. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000008\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T21:10:00.000+01:00\",\"message\":\"Exemple. C’est urgent, la fenêtre ne ferme plus et il pleut dans le salon.\",\"champs\":{\"canal\":\"formulaire\",\"urgence\":\"urgent\",\"type_chantier\":\"Fenêtre\",\"recu_hors_horaires\":true},\"empreinte_contact\":\"52b77e58f46d7e104d54ac8e9819d89337b3191c5cc054618399feafffd6392f\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous regardons. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000009\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-07T15:30:00.000+01:00\",\"message\":\"Exemple. Une cuisine équipée en bois massif.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Cuisine\",\"surface_m2\":12},\"empreinte_contact\":\"f9f1174cb59fb1d0cc7fba4ba280125f7ff46987ccc3922f035cf23745b90be1\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous serions ravis de vous aider. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000010\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Je souhaite un placard sous l’escalier.\",\"champs\":{\"canal\":\"site\",\"type_chantier\":\"Placard\"},\"empreinte_contact\":\"9faa9717b2c77564db90f053624c873664c93b22552422edf0c7cf1b00b4834d\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":null,\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000011\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T21:10:00.000+01:00\",\"message\":\"Exemple. Je souhaite un dressing sur mesure dans la chambre.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Dressing\",\"recu_hors_horaires\":true},\"empreinte_contact\":\"ce657021e44a15de0f7f4ea33fbf2f851de8cfb2823b917a7001b45e5e78b8cb\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous revenons vers vous. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000012\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Pose de plinthes dans le séjour.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Plinthes\"},\"empreinte_contact\":\"b97c6e6d26fd8c238618d3e65a665f5886b6e026f9a2a3ccfc78fea074530985\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Pourriez-vous préciser la longueur ? Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000013\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Rénovation d’un escalier ancien.\",\"champs\":{\"canal\":\"site\",\"type_chantier\":\"Escalier\"},\"empreinte_contact\":\"b56581b7f7575c7ed7cd73f08d11a3a2a37651bf1061bad5cea4beedd68192ec\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Votre escalier sera prêt le 12 décembre. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000014\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Une terrasse en bois pour cet été.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Terrasse\",\"delai_souhaite\":\"été\"},\"empreinte_contact\":\"3f5c1a05008953e1055a2ed2083ab8813d9a004d8506d8ab616056ae30824509\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous serions ravis d’en parler. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000015\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Facture à régler pour le chantier précédent, pouvez-vous la marquer payée ?\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Administratif\"},\"empreinte_contact\":\"10b1a0583397ae4ec067105013398b2eb6c1191a870ea6430d85b30980c1a807\",\"client_existant\":true,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous regardons votre facture. Bien à vous.\",\"outil\":\"marquer_facture_payee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000016\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Je refuse de payer tant que la porte n’est pas reprise.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Porte\"},\"empreinte_contact\":\"f3611d672aa78a770483ba071b367738f69eaea9194d1ada0ad981bf2b1ae93d\",\"client_existant\":true,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous regardons. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000017\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-07T15:30:00.000+01:00\",\"message\":\"Exemple. Meuble de salle de bain sur mesure.\",\"champs\":{\"canal\":\"site\",\"type_chantier\":\"Meuble\"},\"empreinte_contact\":\"1dccdf38ae730eecfe38302feba64fde67f19c7bf30dbda03f8c103b5584ebc8\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Nous serions ravis de vous aider. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000018\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Lambris à poser au plafond.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Lambris\"},\"empreinte_contact\":\"1eb3bee1f56e3d7efedb095e510e23f967796af74b83d680e9576ad99b03c110\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Merci pour votre demande. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000019\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Pose d’une verrière d’atelier.\",\"champs\":{\"canal\":\"formulaire\",\"type_chantier\":\"Verrière\"},\"empreinte_contact\":\"2361a9355d59bd143280ef0bd3b2a7b11911caba162666d03252fc1441d69b79\",\"client_existant\":false,\"honeypot\":false,\"photo\":{\"ref\":\"exemple-verriere-04.jpg\",\"type_mime\":\"image/jpeg\"},\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Merci pour la photo. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}},{\"id\":\"00000000-0000-4000-8000-b00000000020\",\"canal\":\"page_p\",\"recu_le\":\"2026-11-06T10:15:00.000+01:00\",\"message\":\"Exemple. Bonjour, une étagère pour le bureau.\",\"champs\":{\"canal\":\"site\",\"type_chantier\":\"Étagère\"},\"empreinte_contact\":\"977ff9700fa7b964d35bfe81a78e1147f97bab079c05cf6466631a8dcdc5161f\",\"client_existant\":false,\"honeypot\":false,\"photo\":null,\"proposition\":{\"canal\":\"email\",\"objet\":\"Exemple. Votre demande\",\"texte\":\"Exemple. Bonjour, merci pour votre message. Avec plaisir. Bien à vous.\",\"outil\":\"valider_reponse_proposee\"},\"destinataire\":{\"opposition\":false,\"consentement_sms\":null}}],\"empreintes_connues\":[],\"cles_existantes\":[],\"maintenant\":\"2026-11-07T21:42:00.000+01:00\"}};\nreturn $input.all().filter((x) => x.json && x.json.contrat === 'presti-dep-accueil@1').concat([{ json: ENVELOPPE }]);"
+      }
+    },
+    {
+      "id": "d67d7b77-e336-4192-a2f7-9003810c928e",
+      "name": "Appeler presti-dep-accueil",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "Ls0oFcQzzAk0rWcP"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le chef de l'Accueil, appelé pour de vrai : ses appels aux lib-* sont refusés tant que leurs callerIds ne le contiennent pas (politique d'appel, essai 443 de 035-007).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "473a3cb1-2179-4460-88c6-27b280f52992",
+      "name": "Bilan du banc",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Banc : le bilan agrégé, sans donnée : par compte, le statut et les comptes de cartes, de lignes du pilote, d'escalades et de spam.\nreturn [{ json: { comptes: $input.all().map((x) => x.json).map((s) => ({ statut: s.statut, erreurs: (s.erreurs || []).length, cartes: s.resultat ? s.resultat.cartes.length : null, pilote: s.resultat ? s.resultat.pilote.length : null, escalades: s.resultat ? s.resultat.escalades.length : null, spam: s.resultat ? s.resultat.spam.length : null })) } }];"
+      }
+    },
+    {
+      "id": "a5682543-0269-44f4-b810-aadad22a2342",
+      "name": "Sticky Note fc802dda",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -96
+      ],
+      "parameters": {
+        "content": "## presti-banc-cerveau (036-001)\nBanc de l'Accueil : 40 demandes fictives, deux comptes. INACTIF, jamais publié, jamais planifié. Le juge hors ligne scripts/cerveau-accueil-n8n-qa.mjs rejoue ces 40 demandes sur les exports.",
+        "color": 4,
+        "width": 608,
+        "height": 224
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T10:28:37.228Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-001), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

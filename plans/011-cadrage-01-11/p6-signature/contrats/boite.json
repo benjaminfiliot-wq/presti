@@ -1,0 +1,1794 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "tache": "036-003",
+  "source": "plans/011-cadrage-01-11/p6-signature/premiere-reponse.md, ligne 036-003 du § 4 ; lib/releveCanal.ts ; lib/pilote/regles.ts",
+  "regle": "Hors contrat = rejet (statut « rejete »), une ligne de journal, rien ne part. Toute ligne lue porte artisan_id et doit être celle du compte (« Supabase account » passe outre la RLS). Les écritures ne sont jamais faites ici : elles partent dans effets_prevus.",
+  "titre": "presti-boite@1 — la boîte mail de l’artisan dans la plateforme (toutes les 5 minutes)",
+  "parent": {
+    "workflow": "presti-boite",
+    "cadence": "toutes les 5 minutes",
+    "lit": {
+      "interrupteur": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "interrupteur_general"
+        ],
+        "properties": {
+          "interrupteur_general": {
+            "type": "boolean"
+          }
+        }
+      },
+      "boite": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "genre",
+          "artisan_id",
+          "maintenant",
+          "canal",
+          "connexion",
+          "boite",
+          "deja_importes",
+          "conversations",
+          "reseaux"
+        ],
+        "properties": {
+          "genre": {
+            "enum": [
+              "boite",
+              "brouillon",
+              "envoi"
+            ]
+          },
+          "artisan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canal": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "artisan_id",
+              "adresse",
+              "derniere_releve"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "artisan_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "adresse": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 254,
+                "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+              },
+              "derniere_releve": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          },
+          "connexion": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "artisan_id",
+              "fournisseur",
+              "etat",
+              "secret_n8n",
+              "verifiee_le"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "artisan_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "fournisseur": {
+                "enum": [
+                  "imap"
+                ]
+              },
+              "etat": {
+                "enum": [
+                  "a_verifier",
+                  "active",
+                  "expiree",
+                  "retiree",
+                  "erreur"
+                ]
+              },
+              "secret_n8n": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 16384
+              },
+              "verifiee_le": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          },
+          "boite": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "issue",
+              "messages"
+            ],
+            "properties": {
+              "issue": {
+                "enum": [
+                  "ok",
+                  "identifiants_refuses",
+                  "jeton_expire",
+                  "serveur_refuse",
+                  "injoignable"
+                ]
+              },
+              "messages": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "uid",
+                    "message_id",
+                    "de_email",
+                    "de_nom",
+                    "sujet",
+                    "texte",
+                    "date"
+                  ],
+                  "properties": {
+                    "uid": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "message_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 250
+                    },
+                    "de_email": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 254
+                    },
+                    "de_nom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 120
+                    },
+                    "sujet": {
+                      "type": "string",
+                      "maxLength": 300
+                    },
+                    "texte": {
+                      "type": "string",
+                      "maxLength": 8000
+                    },
+                    "date": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "deja_importes": {
+            "type": "array",
+            "maxItems": 5000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "message_id"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "message_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 250
+                }
+              }
+            }
+          },
+          "conversations": {
+            "type": "array",
+            "maxItems": 2000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "lead_id",
+                "artisan_id",
+                "contact",
+                "created_at"
+              ],
+              "properties": {
+                "lead_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "contact": {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 254,
+                  "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "reseaux": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "actifs",
+              "domaines"
+            ],
+            "properties": {
+              "actifs": {
+                "type": "boolean"
+              },
+              "domaines": {
+                "type": "array",
+                "maxItems": 60,
+                "items": {
+                  "type": "string",
+                  "maxLength": 60
+                }
+              }
+            }
+          }
+        }
+      },
+      "brouillon": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "genre",
+          "artisan_id",
+          "maintenant",
+          "config",
+          "donnees"
+        ],
+        "properties": {
+          "genre": {
+            "enum": [
+              "boite",
+              "brouillon",
+              "envoi"
+            ]
+          },
+          "artisan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "offre",
+              "interrupteur_general",
+              "interrupteur_departement",
+              "artisan"
+            ],
+            "properties": {
+              "offre": {
+                "enum": [
+                  "studio",
+                  "signature",
+                  "essentiel",
+                  "essai"
+                ]
+              },
+              "interrupteur_general": {
+                "type": "boolean"
+              },
+              "interrupteur_departement": {
+                "type": "boolean"
+              },
+              "artisan": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "nom",
+                  "adresse"
+                ],
+                "properties": {
+                  "nom": {
+                    "type": "string",
+                    "maxLength": 70
+                  },
+                  "adresse": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 254,
+                    "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+                  }
+                }
+              }
+            }
+          },
+          "donnees": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "proposition",
+              "destinataire",
+              "origine",
+              "conformite",
+              "connexion",
+              "deja_ecrits",
+              "maintenant"
+            ],
+            "properties": {
+              "proposition": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "conversation_id",
+                  "canal",
+                  "objet",
+                  "texte",
+                  "outil"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "conversation_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "canal": {
+                    "enum": [
+                      "email"
+                    ]
+                  },
+                  "objet": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 120
+                  },
+                  "texte": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1700
+                  },
+                  "outil": {
+                    "type": "string",
+                    "pattern": "^[a-z_]{2,60}$"
+                  }
+                }
+              },
+              "destinataire": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "email",
+                  "opposition"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 254,
+                    "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+                  },
+                  "opposition": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "origine": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "message_id",
+                  "references",
+                  "sujet"
+                ],
+                "properties": {
+                  "message_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 250
+                  },
+                  "references": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {
+                      "type": "string",
+                      "maxLength": 250
+                    }
+                  },
+                  "sujet": {
+                    "type": "string",
+                    "maxLength": 300
+                  }
+                }
+              },
+              "conformite": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "verdict"
+                ],
+                "properties": {
+                  "verdict": {
+                    "enum": [
+                      "accepte",
+                      "refuse",
+                      "illisible"
+                    ]
+                  }
+                }
+              },
+              "connexion": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "artisan_id",
+                  "fournisseur",
+                  "etat",
+                  "secret_n8n",
+                  "verifiee_le"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "fournisseur": {
+                    "enum": [
+                      "imap"
+                    ]
+                  },
+                  "etat": {
+                    "enum": [
+                      "a_verifier",
+                      "active",
+                      "expiree",
+                      "retiree",
+                      "erreur"
+                    ]
+                  },
+                  "secret_n8n": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 16384
+                  },
+                  "verifiee_le": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date-time"
+                  }
+                }
+              },
+              "deja_ecrits": {
+                "type": "array",
+                "maxItems": 2000,
+                "items": {
+                  "type": "string",
+                  "maxLength": 80
+                }
+              },
+              "maintenant": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "envoi": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "genre",
+          "artisan_id",
+          "maintenant",
+          "config",
+          "donnees"
+        ],
+        "properties": {
+          "genre": {
+            "enum": [
+              "boite",
+              "brouillon",
+              "envoi"
+            ]
+          },
+          "artisan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "offre",
+              "capacites",
+              "mode_reponse",
+              "pilote",
+              "parties_depuis_24h",
+              "plafond_jour",
+              "interrupteur_general",
+              "interrupteur_departement",
+              "artisan"
+            ],
+            "properties": {
+              "offre": {
+                "enum": [
+                  "studio",
+                  "signature",
+                  "essentiel",
+                  "essai"
+                ]
+              },
+              "capacites": {
+                "type": "array",
+                "maxItems": 60,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z_.]{2,40}$"
+                }
+              },
+              "mode_reponse": {
+                "enum": [
+                  "manuelle",
+                  "assistee",
+                  "auto"
+                ]
+              },
+              "pilote": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "drapeau",
+                  "actif",
+                  "types"
+                ],
+                "properties": {
+                  "drapeau": {
+                    "type": "boolean"
+                  },
+                  "actif": {
+                    "type": "boolean"
+                  },
+                  "types": {
+                    "type": "object"
+                  }
+                }
+              },
+              "parties_depuis_24h": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "plafond_jour": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 20
+              },
+              "interrupteur_general": {
+                "type": "boolean"
+              },
+              "interrupteur_departement": {
+                "type": "boolean"
+              },
+              "artisan": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "nom",
+                  "adresse"
+                ],
+                "properties": {
+                  "nom": {
+                    "type": "string",
+                    "maxLength": 70
+                  },
+                  "adresse": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 254,
+                    "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+                  }
+                }
+              }
+            }
+          },
+          "donnees": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "proposition",
+              "destinataire",
+              "origine",
+              "conformite",
+              "connexion",
+              "maintenant"
+            ],
+            "properties": {
+              "action": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "type",
+                  "statut",
+                  "prete_le",
+                  "part_le",
+                  "lead_id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "type": {
+                    "enum": [
+                      "reponse_prospect",
+                      "relance_devis",
+                      "relance_impaye",
+                      "envoi_devis",
+                      "envoi_facture",
+                      "assistant_client"
+                    ]
+                  },
+                  "statut": {
+                    "enum": [
+                      "a_partir",
+                      "en_cours",
+                      "annulee",
+                      "partie",
+                      "echec",
+                      "manuel"
+                    ]
+                  },
+                  "prete_le": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "part_le": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "lead_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "uuid"
+                  }
+                }
+              },
+              "proposition": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "conversation_id",
+                  "canal",
+                  "objet",
+                  "texte",
+                  "outil"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "conversation_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "canal": {
+                    "enum": [
+                      "email"
+                    ]
+                  },
+                  "objet": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 120
+                  },
+                  "texte": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1700
+                  },
+                  "outil": {
+                    "type": "string",
+                    "pattern": "^[a-z_]{2,60}$"
+                  }
+                }
+              },
+              "destinataire": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "email",
+                  "opposition"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 254,
+                    "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+                  },
+                  "opposition": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "origine": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "message_id",
+                  "references",
+                  "sujet"
+                ],
+                "properties": {
+                  "message_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 250
+                  },
+                  "references": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {
+                      "type": "string",
+                      "maxLength": 250
+                    }
+                  },
+                  "sujet": {
+                    "type": "string",
+                    "maxLength": 300
+                  }
+                }
+              },
+              "conformite": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "verdict"
+                ],
+                "properties": {
+                  "verdict": {
+                    "enum": [
+                      "accepte",
+                      "refuse",
+                      "illisible"
+                    ]
+                  }
+                }
+              },
+              "connexion": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "artisan_id",
+                  "fournisseur",
+                  "etat",
+                  "secret_n8n",
+                  "verifiee_le"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "artisan_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "fournisseur": {
+                    "enum": [
+                      "imap"
+                    ]
+                  },
+                  "etat": {
+                    "enum": [
+                      "a_verifier",
+                      "active",
+                      "expiree",
+                      "retiree",
+                      "erreur"
+                    ]
+                  },
+                  "secret_n8n": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 16384
+                  },
+                  "verifiee_le": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date-time"
+                  }
+                }
+              },
+              "maintenant": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      }
+    },
+    "appelle": [
+      "lib-boite-lire@1",
+      "lib-boite-brouillon@1",
+      "lib-boite-envoyer@1"
+    ],
+    "sauts": {
+      "interrupteur_general_coupe": "rien n’est appelé",
+      "hors_contrat": "rejet par le Contrat d’entrée de l’enfant, compté au bilan"
+    }
+  },
+  "enfants": {
+    "lib-boite-lire@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "lot_max",
+          "fenetre_jours",
+          "reseaux"
+        ],
+        "properties": {
+          "lot_max": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 40
+          },
+          "fenetre_jours": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 7
+          },
+          "reseaux": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "actifs",
+              "domaines"
+            ],
+            "properties": {
+              "actifs": {
+                "type": "boolean"
+              },
+              "domaines": {
+                "type": "array",
+                "maxItems": 60,
+                "items": {
+                  "type": "string",
+                  "maxLength": 60
+                }
+              }
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "canal",
+          "connexion",
+          "boite",
+          "deja_importes",
+          "conversations",
+          "maintenant"
+        ],
+        "properties": {
+          "canal": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "artisan_id",
+              "adresse",
+              "derniere_releve"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "artisan_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "adresse": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 254,
+                "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+              },
+              "derniere_releve": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          },
+          "connexion": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "artisan_id",
+              "fournisseur",
+              "etat",
+              "secret_n8n",
+              "verifiee_le"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "artisan_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "fournisseur": {
+                "enum": [
+                  "imap"
+                ]
+              },
+              "etat": {
+                "enum": [
+                  "a_verifier",
+                  "active",
+                  "expiree",
+                  "retiree",
+                  "erreur"
+                ]
+              },
+              "secret_n8n": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 16384
+              },
+              "verifiee_le": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          },
+          "boite": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "issue",
+              "messages"
+            ],
+            "properties": {
+              "issue": {
+                "enum": [
+                  "ok",
+                  "identifiants_refuses",
+                  "jeton_expire",
+                  "serveur_refuse",
+                  "injoignable"
+                ]
+              },
+              "messages": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "uid",
+                    "message_id",
+                    "de_email",
+                    "de_nom",
+                    "sujet",
+                    "texte",
+                    "date"
+                  ],
+                  "properties": {
+                    "uid": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "message_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 250
+                    },
+                    "de_email": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 254
+                    },
+                    "de_nom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 120
+                    },
+                    "sujet": {
+                      "type": "string",
+                      "maxLength": 300
+                    },
+                    "texte": {
+                      "type": "string",
+                      "maxLength": 8000
+                    },
+                    "date": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "deja_importes": {
+            "type": "array",
+            "maxItems": 5000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "artisan_id",
+                "message_id"
+              ],
+              "properties": {
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "message_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 250
+                }
+              }
+            }
+          },
+          "conversations": {
+            "type": "array",
+            "maxItems": 2000,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "lead_id",
+                "artisan_id",
+                "contact",
+                "created_at"
+              ],
+              "properties": {
+                "lead_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "artisan_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "contact": {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 254,
+                  "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "effets_prevus": [
+        "creer_conversation",
+        "deposer_message",
+        "noter_evenement",
+        "maj_canal",
+        "maj_connexion",
+        "alerter",
+        "compter_echec"
+      ]
+    },
+    "lib-boite-brouillon@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "offre",
+          "interrupteur_general",
+          "interrupteur_departement",
+          "artisan"
+        ],
+        "properties": {
+          "offre": {
+            "enum": [
+              "studio",
+              "signature",
+              "essentiel",
+              "essai"
+            ]
+          },
+          "interrupteur_general": {
+            "type": "boolean"
+          },
+          "interrupteur_departement": {
+            "type": "boolean"
+          },
+          "artisan": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "nom",
+              "adresse"
+            ],
+            "properties": {
+              "nom": {
+                "type": "string",
+                "maxLength": 70
+              },
+              "adresse": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 254,
+                "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+              }
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "proposition",
+          "destinataire",
+          "origine",
+          "conformite",
+          "connexion",
+          "deja_ecrits",
+          "maintenant"
+        ],
+        "properties": {
+          "proposition": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "conversation_id",
+              "canal",
+              "objet",
+              "texte",
+              "outil"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "conversation_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "canal": {
+                "enum": [
+                  "email"
+                ]
+              },
+              "objet": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 120
+              },
+              "texte": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1700
+              },
+              "outil": {
+                "type": "string",
+                "pattern": "^[a-z_]{2,60}$"
+              }
+            }
+          },
+          "destinataire": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "email",
+              "opposition"
+            ],
+            "properties": {
+              "email": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 254,
+                "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+              },
+              "opposition": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            }
+          },
+          "origine": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "message_id",
+              "references",
+              "sujet"
+            ],
+            "properties": {
+              "message_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 250
+              },
+              "references": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "type": "string",
+                  "maxLength": 250
+                }
+              },
+              "sujet": {
+                "type": "string",
+                "maxLength": 300
+              }
+            }
+          },
+          "conformite": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "verdict"
+            ],
+            "properties": {
+              "verdict": {
+                "enum": [
+                  "accepte",
+                  "refuse",
+                  "illisible"
+                ]
+              }
+            }
+          },
+          "connexion": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "artisan_id",
+              "fournisseur",
+              "etat",
+              "secret_n8n",
+              "verifiee_le"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "artisan_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "fournisseur": {
+                "enum": [
+                  "imap"
+                ]
+              },
+              "etat": {
+                "enum": [
+                  "a_verifier",
+                  "active",
+                  "expiree",
+                  "retiree",
+                  "erreur"
+                ]
+              },
+              "secret_n8n": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 16384
+              },
+              "verifiee_le": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          },
+          "deja_ecrits": {
+            "type": "array",
+            "maxItems": 2000,
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "effets_prevus": [
+        "ajouter_brouillon_imap",
+        "noter_evenement"
+      ]
+    },
+    "lib-boite-envoyer@1": {
+      "config": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "offre",
+          "capacites",
+          "mode_reponse",
+          "pilote",
+          "parties_depuis_24h",
+          "plafond_jour",
+          "interrupteur_general",
+          "interrupteur_departement",
+          "artisan"
+        ],
+        "properties": {
+          "offre": {
+            "enum": [
+              "studio",
+              "signature",
+              "essentiel",
+              "essai"
+            ]
+          },
+          "capacites": {
+            "type": "array",
+            "maxItems": 60,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_.]{2,40}$"
+            }
+          },
+          "mode_reponse": {
+            "enum": [
+              "manuelle",
+              "assistee",
+              "auto"
+            ]
+          },
+          "pilote": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "drapeau",
+              "actif",
+              "types"
+            ],
+            "properties": {
+              "drapeau": {
+                "type": "boolean"
+              },
+              "actif": {
+                "type": "boolean"
+              },
+              "types": {
+                "type": "object"
+              }
+            }
+          },
+          "parties_depuis_24h": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "plafond_jour": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 20
+          },
+          "interrupteur_general": {
+            "type": "boolean"
+          },
+          "interrupteur_departement": {
+            "type": "boolean"
+          },
+          "artisan": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "nom",
+              "adresse"
+            ],
+            "properties": {
+              "nom": {
+                "type": "string",
+                "maxLength": 70
+              },
+              "adresse": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 254,
+                "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+              }
+            }
+          }
+        }
+      },
+      "donnees": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "proposition",
+          "destinataire",
+          "origine",
+          "conformite",
+          "connexion",
+          "maintenant"
+        ],
+        "properties": {
+          "action": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "type",
+              "statut",
+              "prete_le",
+              "part_le",
+              "lead_id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "enum": [
+                  "reponse_prospect",
+                  "relance_devis",
+                  "relance_impaye",
+                  "envoi_devis",
+                  "envoi_facture",
+                  "assistant_client"
+                ]
+              },
+              "statut": {
+                "enum": [
+                  "a_partir",
+                  "en_cours",
+                  "annulee",
+                  "partie",
+                  "echec",
+                  "manuel"
+                ]
+              },
+              "prete_le": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "part_le": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "lead_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid"
+              }
+            }
+          },
+          "proposition": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "conversation_id",
+              "canal",
+              "objet",
+              "texte",
+              "outil"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "conversation_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "canal": {
+                "enum": [
+                  "email"
+                ]
+              },
+              "objet": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 120
+              },
+              "texte": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1700
+              },
+              "outil": {
+                "type": "string",
+                "pattern": "^[a-z_]{2,60}$"
+              }
+            }
+          },
+          "destinataire": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "email",
+              "opposition"
+            ],
+            "properties": {
+              "email": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 254,
+                "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$"
+              },
+              "opposition": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            }
+          },
+          "origine": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "message_id",
+              "references",
+              "sujet"
+            ],
+            "properties": {
+              "message_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 250
+              },
+              "references": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "type": "string",
+                  "maxLength": 250
+                }
+              },
+              "sujet": {
+                "type": "string",
+                "maxLength": 300
+              }
+            }
+          },
+          "conformite": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "verdict"
+            ],
+            "properties": {
+              "verdict": {
+                "enum": [
+                  "accepte",
+                  "refuse",
+                  "illisible"
+                ]
+              }
+            }
+          },
+          "connexion": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "artisan_id",
+              "fournisseur",
+              "etat",
+              "secret_n8n",
+              "verifiee_le"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "artisan_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "fournisseur": {
+                "enum": [
+                  "imap"
+                ]
+              },
+              "etat": {
+                "enum": [
+                  "a_verifier",
+                  "active",
+                  "expiree",
+                  "retiree",
+                  "erreur"
+                ]
+              },
+              "secret_n8n": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 16384
+              },
+              "verifiee_le": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          },
+          "maintenant": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "effets_prevus": [
+        "reclamer_action",
+        "envoyer_smtp",
+        "marquer_action",
+        "noter_evenement"
+      ]
+    }
+  },
+  "echecs_de_connexion": {
+    "identifiants_illisibles": "durable",
+    "identifiants_refuses": "durable",
+    "jeton_expire": "durable (motif autorisation_expiree)",
+    "serveur_refuse": "durable",
+    "injoignable": "passager (disjoncteur, aucune alerte)"
+  },
+  "studio_signature": {
+    "studio": "lib-boite-brouillon seul : APPEND dans Brouillons, drapeau \\Draft, jamais envoyé",
+    "signature": "lib-boite-envoyer seulement si toutes les conditions du pilote sont tenues ; sinon l’action repasse en carte (manuel)"
+  }
+}

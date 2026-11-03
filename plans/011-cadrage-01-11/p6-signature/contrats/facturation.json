@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "tache": "036-005",
+  "source": "plans/011-cadrage-01-11/p6-signature/premiere-reponse.md, ligne 036-005 et § 3.3",
+  "regle": "Hors contrat = rejet (statut « rejete »), une ligne de journal, rien ne part. Toute lecture filtre sur artisan_id (« Supabase account » passe outre la RLS). Le code calcule, n8n route : aucun montant n’est calculé, converti ni additionné dans n8n ; les montants (centimes entiers et texte affiché) viennent du code de l’application ou de la base et sont recopiés tels quels. Aucun modèle n’est appelé.",
+  "titre": "presti-dep-facturation@1 — le département Facturation et encaissement",
+  "entree": {
+    "config": {
+      "type": "object"
+    },
+    "donnees": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evenements"
+      ],
+      "properties": {
+        "evenements": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "entree_simulation": "config.lectures_simulees = { configuration, apercus, factures, arrets } (même règle)",
+  "evenements_traites": [
+    "facture_a_emettre (faits : devis_id)",
+    "impaye_echu (faits : facture_id)"
+  ],
+  "non_porte": "l’ENVOI d’une facture déjà émise (envoi_facture) n’est pas porté par ce chef : la porte de conformité exige un texte pour tout envoi et lib-rediger-message@1 ne rédige que des relances ; le pilote de l’application garde cet envoi (lib/pilote, jamais l’émission) jusqu’à lib-rediger-message@2",
+  "lectures": {
+    "Lire la configuration du compte (simulation : épinglé)": {
+      "requete": "GET n8n_config_agents?select=artisan_id,nom_artisan,ton,signature,offre,capacites,pilote,parties_depuis_24h,interrupteur_general,interrupteur_departement,mots_escalade_artisan,horaires,plafond_jour,relances_impayes,cles_existantes,maintenant&artisan_id=eq.<compte>&departement=eq.facturation&limit=1",
+      "lignes_rendues": "artisan_id, nom_artisan, ton, signature, offre, capacites[], pilote{drapeau,actif,types}, parties_depuis_24h, interrupteur_general, interrupteur_departement, mots_escalade_artisan[], horaires{jours_permis[],heures_permises{debut,fin}}, plafond_jour, relances_impayes{actif,jours[]}, cles_existantes[], maintenant"
+    },
+    "Lire les aperçus de facture de l’application (simulation : épinglé)": {
+      "requete": "GET n8n_apercus_facture?select=artisan_id,devis_id,chantier_termine,deja_facturee,apercu_ok,apercu_erreur,apercu_type,apercu_total_ttc_centimes,apercu_total_ttc_affiche,apercu_nb_deduites,apercu_le&artisan_id=eq.<compte>&devis_id=in.(<devis des événements>)&limit=200",
+      "lignes_rendues": "artisan_id, devis_id, chantier_termine, deja_facturee, apercu_ok, apercu_erreur, apercu_type (standard | acompte | situation | solde), apercu_total_ttc_centimes, apercu_total_ttc_affiche (rendus par simulerFacture, lib/factureDepuisDevis.ts:64), apercu_nb_deduites, apercu_le"
+    },
+    "Lire les factures (simulation : épinglé)": {
+      "requete": "GET n8n_factures_argent?select=artisan_id,facture_id,numero,objet,statut,avoir_de,regime_tva,date_echeance,total_ttc_centimes,total_ttc_affiche,contestation,paliers_envoyes,historique&artisan_id=eq.<compte>&facture_id=in.(<factures des événements>)&limit=200",
+      "lignes_rendues": "artisan_id, facture_id, numero, objet, statut (emise | payee | annulee…), avoir_de, regime_tva (tva | franchise), date_echeance, total_ttc_centimes, total_ttc_affiche, contestation (lue par le code : contestationDuClient, lib/relancesImpayes.ts ; null = non lue), paliers_envoyes[], historique{ok,traces[{chemin,le}]} (registre commun, lib/relancesRegistre.ts)"
+    },
+    "Lire les arrêts de relance (simulation : épinglé)": {
+      "requete": "GET relances_impayes_arrets?select=artisan_id,facture_id,raison,le,reprise_le,motif&artisan_id=eq.<compte>&facture_id=in.(<factures des événements>)&limit=200",
+      "lignes_rendues": "artisan_id, facture_id, raison (artisan | reponse_client), le, reprise_le, motif (null | oubli | dit_avoir_paye | litige | autre : migration 0185, relances_impayes_arrets.motif)"
+    }
+  },
+  "vues_a_ecrire": "les vues étroites n8n_config_agents, n8n_apercus_facture, n8n_factures_argent ne sont PAS écrites par ce lot ; leurs colonnes montant sont calculées par la base ou par le code (simulerFacture)",
+  "specialistes": [
+    "lib-relancer@1",
+    "lib-decider@1",
+    "lib-rediger-message@1 (modèle épinglé)",
+    "lib-porte-conformite@1",
+    "lib-executer@1",
+    "lib-journaliser@1"
+  ],
+  "sortie": {
+    "statut": [
+      "ok",
+      "rien_a_faire",
+      "rejete",
+      "erreur"
+    ],
+    "resultat": [
+      "evenements_recus",
+      "rejets",
+      "non_traites",
+      "factures_a_emettre",
+      "relances",
+      "relances_arretees",
+      "cartes_motif",
+      "cartes",
+      "pilote",
+      "refus_porte",
+      "deja_faits",
+      "sorties_vers_un_modele"
+    ]
+  },
+  "regles": {
+    "emission": "n8n n’émet jamais une facture : « facture prête » est une carte (creer_facture est dans OUTILS_JAMAIS_AUTO, lib/pilote/regles.ts:79-82), en Studio comme en Signature ; l’émission est le clic de l’artisan (l’étape « Ask you »)",
+    "impaye": "J+3, J+10, J+21 (lib/relancesImpayes.ts:38), opt-in (relances_impayes.actif). La relance s’arrête sur un PAIEMENT (statut payée) ou sur un MOTIF rangé d’un geste ; jamais sur le silence du client",
+    "motifs": {
+      "oubli": "les relances continuent",
+      "dit_avoir_paye": "carte « vérifier le paiement » : l’artisan vérifie, jamais « payée » toute seule",
+      "litige": "carte d’escalade, relances arrêtées (contestation → litige)",
+      "autre": "carte « à traiter à la main » (échéancier → autre)",
+      "null (rien rangé)": "relances arrêtées et carte « ranger le motif » en quatre choix"
+    },
+    "contestation": "un client qui conteste rend la relance en CARTE « à relire » (lib/relancesImpayes.ts, R1 du 02/11), jamais en envoi seul",
+    "paiement": "n8n ne marque aucune facture payée : marquer_facture_payee, rembourser, payer, creer_avoir restent à l’artisan"
+  },
+  "motif_et_colonne": "la colonne existe (migration 0185 préparée, non appliquée) : relances_impayes_arrets.motif ∈ {oubli, dit_avoir_paye, litige, autre}. « contestation » se range sous litige, « échéancier » sous autre ; deux valeurs dédiées seraient un amendement à 0185, à valider par Benj (défaut appliqué : aucune)",
+  "a_venir": {
+    "lecteur_de_paiements": {
+      "etat": "FICHE SEULEMENT, aucun nœud",
+      "quoi": "lire les encaissements du Stripe de l’artisan (lecture seule) pour arrêter la relance sur un paiement reçu avant que l’artisan ne l’ait marqué",
+      "prerequis": [
+        "jeton restreint en lecture saisi par l’artisan lui-même, chiffré au format lib/secretBox.ts",
+        "fiche connecteur (036-009)",
+        "accord de Benj"
+      ],
+      "aujourd_hui": "le paiement arrive par le statut « payée » que pose l’artisan dans l’application"
+    }
+  },
+  "studio_signature": {
+    "studio": "carte « facture prête » ; relance d’impayé préparée (a_valider)",
+    "signature": "carte « facture prête » (toujours une carte) ; relance_impaye part seule si son type est activé (10 minutes pour annuler) ; motifs et contestation : cartes"
+  }
+}

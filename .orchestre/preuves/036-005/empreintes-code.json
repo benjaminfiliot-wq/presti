@@ -1,0 +1,29 @@
+{
+  "presti-banc-argent": {
+    "Cas fictifs : devis (deux comptes)": "962ff542fd75eda2ac16d9f239b5902de376da0d69d08ab226e2d29cc103ef9f",
+    "Cas fictifs : facturation (deux comptes)": "b0b5cc422132050f2b067b9cdba9d56e95fffab1ab8da4d568fba936570ab5a4",
+    "Bilan du banc": "cda4a00a949b5dfde0d469a7a719aff6f7cd7c2785e6de4c050b0dc77df8fb3b"
+  },
+  "presti-dep-devis": {
+    "Contrat d'entrée": "859098bd57f419fe3fbf3ab099847a7576ab4781836e26695da4c9cebe4f1c30",
+    "Contrat de sortie": "ed1318081ba4f0c7299f8331b82f04c001e92c0dce5ece4a26f7c91ea2fc3b3e",
+    "Constituer les dossiers": "f05be6727f34f4b4abd6e1148a420ae9f771d93642a904dc7f17b8ec5eccf364",
+    "Préparer la décision": "a2d2c65102438513cf34e0f2357ea7d5d2a5a1c2f3dfa23d7a36e6b9276379d6",
+    "Préparer la porte": "abde6f1348d61aad5b9bdca6c4faee663bddb8bd7d983b46e267549794f131ce",
+    "Préparer l'exécution": "6ba1f2e195b55ff06aa17b7e770e7dd49106423111aab18749f02dbd8a79bd45",
+    "Préparer le journal": "26414b619f3654170bd76e9c9a82c43e7d291f3b98960e5ec813745291ec4ea7",
+    "Assembler": "a6d787efbd9e36a4899be180ca92f87fa91180fc51de1a31a88e1ccf1c993db7"
+  },
+  "presti-dep-facturation": {
+    "Contrat d'entrée": "1180dc15284f3967c35af39194b422e5005496f724e6833af04d7ea1689681ac",
+    "Contrat de sortie": "4f5e5c9064a5304bd34b93a72626b25b30e5370edf479f44408e65f0e4b428d0",
+    "Constituer les dossiers": "543b08fe0139896fdd9d4682314bdf255f3aa8065d4059833bff9dc23593bf8a",
+    "Préparer la relance": "0fd62757139ff511f577338ceabe54601d22f211dfe83d3694dbbc648bd3c0dc",
+    "Préparer la décision": "74e3018d70bc183de0e1dcd6c0bd6df8732c3530c955e2b37e98106195864669",
+    "Préparer la rédaction": "1fa0315e9f115514457a7b1f005b4e08dc51baa7bce4b33ef32069eaff254cf5",
+    "Préparer la porte": "1bbf541367711fc0510504ead6b9f2fb5c8cd4c898d5e6082c01a861ca5fd14b",
+    "Préparer l'exécution": "770636a15ee0635463a793368c4846e1facfaa17f78fe4bd4a759fb6d3245eae",
+    "Préparer le journal": "629278161940c74744e5d0ff0c04309263efc21a94c81accd0dad3d7076b311c",
+    "Assembler": "f31c1908601436734b6ddb808d0e6817b5205acea02611561d4597d52221b01d"
+  }
+}

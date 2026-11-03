@@ -1,0 +1,768 @@
+{
+  "id": "dNikTYPKKsivUbd3",
+  "name": "presti-dep-devis",
+  "active": false,
+  "isArchived": false,
+  "versionId": "8aa21da4-9e77-425c-ab3c-2ceb982976b2",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "nodeCount": 23,
+  "createdAt": "2026-11-03T10:16:19.343Z",
+  "updatedAt": "2026-11-03T11:28:59.850Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 120,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveExecutionProgress": false,
+    "saveManualExecutions": true,
+    "errorWorkflow": "yekMM9ewk03F9y2q",
+    "callerPolicy": "workflowsFromAList",
+    "callerIds": "596OC5mL2aMBq6SD,LRO3Jng6Te4Xn7Pg",
+    "availableInMCP": true
+  },
+  "tags": [],
+  "parentFolderId": null,
+  "canExecute": true,
+  "connections": {
+    "Appelé par le Cerveau": {
+      "main": [
+        [
+          {
+            "node": "Contrat d'entrée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrat d'entrée": {
+      "main": [
+        [
+          {
+            "node": "Entrée conforme ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entrée conforme ?": {
+      "main": [
+        [
+          {
+            "node": "Porte simulation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Porte simulation": {
+      "main": [
+        [
+          {
+            "node": "Lire la configuration du compte (simulation : épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hors simulation : non branché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire la configuration du compte (simulation : épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Lire les devis préparés par l’application (simulation : épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les devis préparés par l’application (simulation : épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Lire les lignes de ces devis (simulation : épinglé)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les lignes de ces devis (simulation : épinglé)": {
+      "main": [
+        [
+          {
+            "node": "Constituer les dossiers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Constituer les dossiers": {
+      "main": [
+        [
+          {
+            "node": "Préparer la décision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la décision": {
+      "main": [
+        [
+          {
+            "node": "Rien à décider ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à décider ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-decider",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-decider": {
+      "main": [
+        [
+          {
+            "node": "Préparer la porte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la porte": {
+      "main": [
+        [
+          {
+            "node": "Rien à contrôler ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à contrôler ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-porte-conformite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-porte-conformite": {
+      "main": [
+        [
+          {
+            "node": "Préparer l'exécution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer l'exécution": {
+      "main": [
+        [
+          {
+            "node": "Rien à exécuter ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rien à exécuter ?": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appeler lib-executer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-executer": {
+      "main": [
+        [
+          {
+            "node": "Préparer le journal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le journal": {
+      "main": [
+        [
+          {
+            "node": "Appeler lib-journaliser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appeler lib-journaliser": {
+      "main": [
+        [
+          {
+            "node": "Assembler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assembler": {
+      "main": [
+        [
+          {
+            "node": "Contrat de sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "250f840b-9c8f-47ac-b996-61491bb5a127",
+      "name": "Appelé par le Cerveau",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        80
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "5d7ba1ce-ca1b-414f-80b2-7635a3f9a73c",
+      "name": "Contrat d'entrée",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        80
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat d'entrée de presti-dep-devis@1 (enveloppe@1, PR § 5.5). Hors contrat : statut « rejete », une ligne de journal, aucun effet.\nconst CONTRAT = 'presti-dep-devis@1';\nconst SCHEMA = {\"sans_contact\":false,\"config\":{\"type\":\"object\"},\"donnees\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"evenements\"],\"properties\":{\"evenements\":{\"type\":\"array\",\"maxItems\":200,\"items\":{\"type\":\"object\"}}}}};\n// ─── Gabarit « Contrat d'entrée » 035-003 : au-dessus, CONTRAT et SCHEMA seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst REQUIS = ['contrat', 'organisation_id', 'simulation', 'cle_idempotence', 'trace', 'config', 'donnees'];\nconst UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nconst DATE = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,6})?)?(Z|[+-]\\d{2}:\\d{2})$/;\nconst COURRIEL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}/;\nconst TELEPHONE = /(\\+33|0033|\\b0)\\s?[1-9]([ .-]?\\d{2}){4}\\b/;\nconst typeDe = (v) => v === null ? 'null' : Array.isArray(v) ? 'array' : Number.isInteger(v) ? 'integer' : typeof v;\nfunction valider(v, s, ch, err) {\n  if (!s || err.length >= 20) return;\n  if (s.type) {\n    const t = typeDe(v);\n    if (![].concat(s.type).some((x) => x === t || (x === 'number' && t === 'integer'))) { err.push(ch + ' : ' + [].concat(s.type).join(' ou ') + ' attendu'); return; }\n  }\n  if ('const' in s && v !== s.const) err.push(ch + ' : valeur imposée non respectée');\n  if (s.enum && !s.enum.includes(v)) err.push(ch + ' : valeur hors liste');\n  if (typeof v === 'string') {\n    if (s.minLength !== undefined && v.length < s.minLength) err.push(ch + ' : moins de ' + s.minLength + ' caractère(s)');\n    if (s.maxLength !== undefined && v.length > s.maxLength) err.push(ch + ' : plus de ' + s.maxLength + ' caractères');\n    if (s.pattern && !new RegExp(s.pattern).test(v)) err.push(ch + ' : forme invalide');\n    if (s.format === 'uuid' && !UUID.test(v)) err.push(ch + ' : uuid attendu');\n    if (s.format === 'date-time' && (!DATE.test(v) || isNaN(Date.parse(v)))) err.push(ch + ' : date-heure ISO attendue');\n  }\n  if (typeof v === 'number') {\n    if (s.minimum !== undefined && v < s.minimum) err.push(ch + ' : inférieur à ' + s.minimum);\n    if (s.maximum !== undefined && v > s.maximum) err.push(ch + ' : supérieur à ' + s.maximum);\n  }\n  if (Array.isArray(v)) {\n    if (s.maxItems !== undefined && v.length > s.maxItems) { err.push(ch + ' : plus de ' + s.maxItems + ' éléments'); return; }\n    if (s.items) v.forEach((x, i) => valider(x, s.items, ch + '[' + i + ']', err));\n  }\n  if (typeDe(v) === 'object') {\n    for (const k of s.required || []) if (!(k in v)) err.push(ch + '.' + k + ' : manquant');\n    if (s.additionalProperties === false) for (const k of Object.keys(v)) if (!(s.properties || {})[k]) err.push(ch + '.' + k + ' : champ hors contrat');\n    for (const [k, sk] of Object.entries(s.properties || {})) if (k in v) valider(v[k], sk, ch + '.' + k, err);\n  }\n}\nfunction chaines(v, sortie) {\n  if (typeof v === 'string') sortie.push(v);\n  else if (v && typeof v === 'object') for (const x of Object.values(v)) chaines(x, sortie);\n  return sortie;\n}\nconst ENVELOPPE = {\n  type: 'object', additionalProperties: false, required: REQUIS,\n  properties: {\n    contrat: { type: 'string', const: CONTRAT },\n    organisation_id: { type: 'string', format: 'uuid' },\n    simulation: { type: 'boolean' },\n    cle_idempotence: { type: 'string', minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9_:@.#-]+$' },\n    trace: { type: 'object', required: ['execution_parent', 'declencheur', 'tentative'] },\n    config: SCHEMA.config || { type: 'object' },\n    donnees: SCHEMA.donnees || { type: 'object' },\n  },\n};\nreturn $input.all().map((item) => {\n  const e = item.json || {};\n  const err = [];\n  valider(e, ENVELOPPE, 'entrée', err);\n  if (!err.length && SCHEMA.sans_contact === true && chaines([e.config, e.donnees], []).some((t) => COURRIEL.test(t) || TELEPHONE.test(t))) err.push('entrée : adresse e-mail ou téléphone interdits (aucune donnée personnelle dans ce gabarit)');\n  if (err.length) {\n    const cle = typeof e.cle_idempotence === 'string' && /^[A-Za-z0-9_:@.#-]{1,80}$/.test(e.cle_idempotence) ? e.cle_idempotence : '';\n    return { json: { conforme: false, enveloppe: { contrat: CONTRAT, simulation: true, cle_idempotence: cle }, erreurs: err.slice(0, 20) } };\n  }\n  return { json: { conforme: true, enveloppe: e, erreurs: [] } };\n});"
+      },
+      "notes": "contrat: presti-dep-devis@1"
+    },
+    {
+      "id": "d0ada179-106f-4bea-99e2-baa4d72fa7ce",
+      "name": "Entrée conforme ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "entreconforme",
+              "leftValue": "={{ $json.conforme }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "b55a7087-75a9-46a5-a401-107937a2ffdb",
+      "name": "Contrat de sortie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4480,
+        176
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Contrat de sortie de presti-dep-devis@1 : le seul nœud final ; effets_faits reste vide en simulation.\nconst CONTRAT = 'presti-dep-devis@1';\n// ─── Gabarit « Contrat de sortie » 035-003 : au-dessus, CONTRAT seulement ; en dessous, le corps commun (empreinte tenue par le juge) ───\nconst STATUTS = ['ok', 'rien_a_faire', 'rejete', 'refuse', 'erreur'];\nconst liste = (x) => Array.isArray(x) ? x : [];\nreturn $input.all().map((item) => {\n  const j = item.json || {};\n  const e = j.enveloppe && typeof j.enveloppe === 'object' ? j.enveloppe : {};\n  const simulation = e.simulation !== false;\n  const rejete = j.conforme === false;\n  const statut = rejete ? 'rejete' : STATUTS.includes(j.statut) ? j.statut : 'erreur';\n  const journal = liste(j.journal).slice(0, 200);\n  if (rejete) journal.push({ evenement: 'contrat_rejete', agent: CONTRAT, objet_ref: null, decision: 'entrée hors contrat : aucun effet', simulation: simulation });\n  return { json: {\n    'contrat': CONTRAT,\n    'statut': statut,\n    'cle_idempotence': typeof e.cle_idempotence === 'string' ? e.cle_idempotence.slice(0, 80) : '',\n    'simulation': simulation,\n    'resultat': rejete || statut === 'erreur' ? null : (j.resultat && typeof j.resultat === 'object' ? j.resultat : null),\n    'effets_prevus': rejete ? [] : liste(j.effets_prevus),\n    'effets_faits': simulation || rejete ? [] : liste(j.effets_faits),\n    'journal': journal,\n    'erreurs': liste(j.erreurs).map(String).slice(0, 20),\n  } };\n});"
+      }
+    },
+    {
+      "id": "1c4ac53f-3813-4363-8382-57274193fd0b",
+      "name": "Sticky Note 37db6c39",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -16
+      ],
+      "parameters": {
+        "content": "## presti-dep-devis (036-005)\nDépartement 2, Devis (A13, B9) : une demande qualifiée devient une carte « préparer le devis » ; un devis préparé par l'application devient une carte « devis prêt » dont chaque prix porte sa source, sinon « estimé » ; un prix d'un ancien chantier est un repère cité, jamais une source.\nStudio : carte. Signature : envoi_devis seul seulement si TOUTES les lignes sont sourcées (lib/pilote/regles.ts:272).\nLe chiffrage reste le code de l'application (lib/devisAuto.ts), au clic de l'artisan : « le code calcule, n8n route ».\nINACTIF, jamais publié, en simulation, aucun identifiant, aucun modèle. Juge : scripts/devis-facture-n8n-qa.mjs",
+        "color": 4,
+        "width": 608,
+        "height": 224
+      }
+    },
+    {
+      "id": "00f66234-69cd-4d3b-bab9-43dc7d93c0aa",
+      "name": "Porte simulation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "portesimulation",
+              "leftValue": "={{ $json.enveloppe.simulation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "porte: simulation\nVrai : simulation, rien ne part. Faux : l'effet réel, non branché dans ce lot."
+    },
+    {
+      "id": "4dfcabc6-e542-4855-9a4b-a46525d3e657",
+      "name": "Hors simulation : non branché",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        672,
+        464
+      ],
+      "parameters": {
+        "errorType": "errorMessage",
+        "errorMessage": "Hors simulation : effet réel non branché (tâche 036-005). Rien n'a été lu, écrit ni envoyé."
+      },
+      "notes": "Simulation : aucun effet réel n'est branché. Hors simulation, le travail s'arrête ici, avant tout appel."
+    },
+    {
+      "id": "8266b462-9c6c-4878-98b0-e4862bfba03c",
+      "name": "Lire la configuration du compte (simulation : épinglé)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        896,
+        96
+      ],
+      "parameters": {},
+      "notes": "requete: GET n8n_config_agents?select=artisan_id,nom_artisan,ton,signature,offre,capacites,pilote,parties_depuis_24h,interrupteur_general,interrupteur_departement,mots_escalade_artisan,horaires,plafond_jour,relances_impayes,cles_existantes,maintenant&artisan_id=eq.<compte>&departement=eq.facturation&limit=1\nSimulation : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai ; le banc fournit ses lignes dans config.lectures_simulees (honorées seulement en simulation). Les montants lus sont ceux du code de l'application, jamais recalculés. Non fourni, le chef n'agit pas (fail-closed)."
+    },
+    {
+      "id": "10ed35ca-9d4d-4062-8f6c-e49f873aaf89",
+      "name": "Lire les devis préparés par l’application (simulation : épinglé)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        96
+      ],
+      "parameters": {},
+      "notes": "requete: GET n8n_devis_prets?select=artisan_id,devis_id,lead_id,numero,statut,total_ttc_centimes,total_ttc_affiche&artisan_id=eq.<compte>&devis_id=in.(<devis des événements>)&limit=200\nSimulation : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai ; le banc fournit ses lignes dans config.lectures_simulees (honorées seulement en simulation). Les montants lus sont ceux du code de l'application, jamais recalculés. Non fourni, le chef n'agit pas (fail-closed)."
+    },
+    {
+      "id": "46fc2900-d8ad-44a7-a5e1-de4928f68994",
+      "name": "Lire les lignes de ces devis (simulation : épinglé)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        96
+      ],
+      "parameters": {},
+      "notes": "requete: GET n8n_devis_lignes?select=artisan_id,devis_id,rang,designation,quantite,prix_unitaire_ht_centimes,prix_affiche,source_prix,repere_affiche,repere_chantier_le&artisan_id=eq.<compte>&devis_id=in.(<devis des événements>)&order=rang.asc&limit=2000\nSimulation : un emplacement, sa sortie est ÉPINGLÉE dans chaque essai ; le banc fournit ses lignes dans config.lectures_simulees (honorées seulement en simulation). Les montants lus sont ceux du code de l'application, jamais recalculés. Non fourni, le chef n'agit pas (fail-closed)."
+    },
+    {
+      "id": "620423f7-06a4-45bf-b73e-fa2e4fa7e85b",
+      "name": "Constituer les dossiers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const ENVS = $(\"Contrat d'entrée\").all().map((x) => x.json).filter((x) => x.conforme === true).map((x) => x.enveloppe);\nconst LU = (nom, cle) => {\n  const n = $(nom);\n  const lues = n.isExecuted ? n.all().map((x) => x.json).filter((x) => x && typeof x.artisan_id === 'string') : [];\n  for (const e of ENVS) { const s = e.simulation === true && e.config && e.config.lectures_simulees ? e.config.lectures_simulees[cle] : null; if (Array.isArray(s)) for (const r of s) lues.push(r); }\n  return lues;\n};\nconst SOURCE = new RegExp(\"^(vos tarifs|tarif de l.artisan|prix donn[ée] par l.artisan)\", 'i');\nconst CONFIGS = {}; for (const r of LU(\"Lire la configuration du compte (simulation : épinglé)\", 'configuration')) CONFIGS[r.artisan_id] = r;\nconst DEVIS = {}; for (const r of LU(\"Lire les devis préparés par l’application (simulation : épinglé)\", 'devis')) if (typeof r.devis_id === 'string') DEVIS[r.artisan_id + '|' + r.devis_id] = r;\nconst LIGNES = {}; for (const r of LU(\"Lire les lignes de ces devis (simulation : épinglé)\", 'lignes')) if (typeof r.devis_id === 'string') { const q = r.artisan_id + '|' + r.devis_id; if (!LIGNES[q]) LIGNES[q] = []; LIGNES[q].push(r); }\nconst DOSSIERS = [], REJETS = [], vus = new Set();\nfor (const e of ENVS) for (const ev of e.donnees.evenements) {\n  const org = e.organisation_id;\n  if (ev.artisan_id !== org) { REJETS.push({ org: org, id: ev.id, motif: 'autre_compte' }); continue; }\n  if (ev.type !== 'devis_a_preparer') { REJETS.push({ org: org, id: ev.id, motif: 'type_hors_departement' }); continue; }\n  const cle = org + ':' + ev.cle; if (vus.has(cle)) { REJETS.push({ org: org, id: ev.id, motif: 'doublon' }); continue; } vus.add(cle);\n  const f = ev.donnees && typeof ev.donnees === 'object' ? ev.donnees : {}, c = CONFIGS[org];\n  const d = { org: org, ev: ev, f: f, c: c, devis: null, lignes: [], etat: null };\n  if (!c) d.etat = 'configuration_non_lue';\n  else if (f.qualifiee !== true) d.etat = 'non_qualifiee';\n  else if (!f.devis_id) d.etat = 'a_preparer';\n  else { d.devis = DEVIS[org + '|' + f.devis_id] || null; d.lignes = (LIGNES[org + '|' + f.devis_id] || []).slice().sort((a, b) => (a.rang > b.rang ? 1 : -1));\n    d.etat = !d.devis ? 'devis_introuvable' : d.devis.statut !== 'brouillon' ? 'deja_parti' : 'pret'; }\n  DOSSIERS.push(d);\n}\nreturn [{ json: { envs: ENVS.map((e) => ({ organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: e.cle_idempotence, trace: e.trace, nb: e.donnees.evenements.length })), dossiers: DOSSIERS, rejets: REJETS } }];"
+      },
+      "notes": "Lit les lectures et les événements UNE fois, sans rien calculer : les dossiers que les étapes suivantes relisent. Un événement d’un autre compte, d’un autre département ou en double est rejeté ici."
+    },
+    {
+      "id": "2e015ee6-a884-4990-87d1-77c80999d945",
+      "name": "Préparer la décision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Devis (A13, B9) : une demande qualifiée devient une carte « préparer le devis » ; un devis préparé PAR L'APPLICATION devient une carte\n// « devis prêt », où chaque prix porte sa source ou s'affiche « estimé ». Le chiffrage reste le code de l'application (lib/devisAuto.ts), lancé au\n// clic de l'artisan : ce chef ne chiffre rien, et il ne passe AUCUN prix à lib-decider (rien à additionner). Un prix pratiqué sur un ancien chantier est\n// un repère cité, jamais une source. L'ENVOI d'un devis (envoyer_devis) n'est pas porté ici : lib-decider@1 et la porte le réservent à l'artisan (p5:226),\n// le pilote de l'application garde sa règle (toutes les lignes sourcées, lib/pilote/regles.ts:272). Une escalade non lue vaut escalade (côté sûr).\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-devis', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst SOURCE = new RegExp(\"^(vos tarifs|tarif de l.artisan|prix donn[ée] par l.artisan)\", 'i');\nconst niveauMax = (c) => (c.capacites.includes('assistant.pilote') ? 3 : 2);\n// Une ligne dont le prix est SOURCÉ : copie figée de ligneSourcee (lib/pilote/regles.ts). Un repère tiré d'un ancien chantier n'est JAMAIS une source (B9).\nconst sourcee = (l) => Number.isInteger(l.prix_unitaire_ht_centimes) && l.prix_unitaire_ht_centimes > 0 && typeof l.source_prix === 'string' && l.source_prix.trim() !== '' && SOURCE.test(l.source_prix.trim());\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst pret = (d) => d.etat === 'pret', actif = (d) => d.etat === 'pret' || d.etat === 'a_preparer';\nconst tousSources = (d) => d.lignes.length > 0 && d.lignes.every(sourcee);\nconst s = [];\nfor (const d of DOSSIERS) { if (!actif(d)) continue;\n  const c = d.c;\n  const constat = { outil: pret(d) ? 'devis_pret' : 'creer_devis', etape: pret(d) ? 'devis-pret' : 'preparer', escalade: d.f.escalade === false ? false : true };\n  s.push({ json: env(ENVB[d.org], 'lib-decider@1', 'd:' + d.ev.id, { autonomie: { niveau_max: niveauMax(c), niveau_defaut: 2, niveaux: {} }, plan: c.offre, pilote: c.pilote, parties_depuis_24h: c.parties_depuis_24h },\n    { objet_type: pret(d) ? 'devis' : 'demande', objet_id: pret(d) ? d.f.devis_id : d.f.lead_id, constat: constat }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "743a8d36-66fb-4fb1-a2f6-27c43ae201cc",
+      "name": "Préparer la porte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2464,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Devis : la porte de conformité (lib-porte-conformite, veto) avant TOUT effet. Ce chef n'écrit aucun texte : message nul (une carte, pas un envoi).\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-devis', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst SOURCE = new RegExp(\"^(vos tarifs|tarif de l.artisan|prix donn[ée] par l.artisan)\", 'i');\nconst niveauMax = (c) => (c.capacites.includes('assistant.pilote') ? 3 : 2);\n// Une ligne dont le prix est SOURCÉ : copie figée de ligneSourcee (lib/pilote/regles.ts). Un repère tiré d'un ancien chantier n'est JAMAIS une source (B9).\nconst sourcee = (l) => Number.isInteger(l.prix_unitaire_ht_centimes) && l.prix_unitaire_ht_centimes > 0 && typeof l.source_prix === 'string' && l.source_prix.trim() !== '' && SOURCE.test(l.source_prix.trim());\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst pret = (d) => d.etat === 'pret', actif = (d) => d.etat === 'pret' || d.etat === 'a_preparer';\nconst tousSources = (d) => d.lignes.length > 0 && d.lignes.every(sourcee);\nconst dec = parCle('Appeler lib-decider', 'lib-decider@1');\nconst s = [];\nfor (const d of DOSSIERS) { const r = dec['d:' + d.ev.id]; if (!actif(d) || !bon(r) || r.resultat.action === 'rien') continue;\n  const c = d.c, cible = r.resultat.action === 'pilote' ? 'pilote' : 'carte';\n  s.push({ json: env(ENVB[d.org], 'lib-porte-conformite@1', 'p:' + d.ev.id, { jamais_auto: [], regles_metier: { fournisseurs: [], mots_escalade_artisan: c.mots_escalade_artisan, jours_permis: c.horaires.jours_permis, heures_permises: c.horaires.heures_permises }, plafond_jour: c.plafond_jour },\n    { action: { type_action: r.resultat.type_action, outil: pret(d) ? 'devis_pret' : 'creer_devis', prix_sources: true, cible: cible, sans_relecture: cible === 'pilote' }, message: null,\n      destinataire: { opposition: false, consentement_sms: null, escalade: false }, maintenant: c.maintenant, compteurs: { envoyes_aujourdhui: c.parties_depuis_24h } }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "24f26fdf-12ce-4730-bbbe-5d9b3e7038b5",
+      "name": "Préparer l'exécution",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3136,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Devis : SEUL ce que la porte laisse passer va à lib-executer, qui relit les interrupteurs juste avant l'effet et les clés déjà en base. Un devis, une clé.\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-devis', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst SOURCE = new RegExp(\"^(vos tarifs|tarif de l.artisan|prix donn[ée] par l.artisan)\", 'i');\nconst niveauMax = (c) => (c.capacites.includes('assistant.pilote') ? 3 : 2);\n// Une ligne dont le prix est SOURCÉ : copie figée de ligneSourcee (lib/pilote/regles.ts). Un repère tiré d'un ancien chantier n'est JAMAIS une source (B9).\nconst sourcee = (l) => Number.isInteger(l.prix_unitaire_ht_centimes) && l.prix_unitaire_ht_centimes > 0 && typeof l.source_prix === 'string' && l.source_prix.trim() !== '' && SOURCE.test(l.source_prix.trim());\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst pret = (d) => d.etat === 'pret', actif = (d) => d.etat === 'pret' || d.etat === 'a_preparer';\nconst tousSources = (d) => d.lignes.length > 0 && d.lignes.every(sourcee);\nconst dec = parCle('Appeler lib-decider', 'lib-decider@1');\nconst s = [];\nfor (const p of sorties('Appeler lib-porte-conformite')) { if (!p || p.contrat !== 'lib-porte-conformite@1' || !p.resultat || p.resultat.verdict !== 'passe') continue;\n  const id = p.cle_idempotence.slice(2), d = PAR_EV[id], r = dec['d:' + id]; if (!d || !bon(r)) continue;\n  const c = d.c;\n  s.push({ json: env(ENVB[d.org], 'lib-executer@1', r.resultat.cle_idempotence, { niveau_max: niveauMax(c) }, { verdict: 'passe', cible: p.resultat.cible, cle_idempotence: r.resultat.cle_idempotence,\n    charge: { type_action: r.resultat.type_action, objet_type: pret(d) ? 'devis' : 'demande', objet_id: pret(d) ? d.f.devis_id : d.f.lead_id },\n    interrupteurs: { general: c.interrupteur_general, agent: c.interrupteur_departement }, cles_existantes: c.cles_existantes }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "b47e61e8-56d0-45cd-bf75-1b2515e9a2ed",
+      "name": "Rien à décider ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2016,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "riendcider",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "42238907-1ce1-4ade-a2f4-aad3b17b3dcb",
+      "name": "Rien à contrôler ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2688,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "riencontrler",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "b2ff1038-59c9-42e3-a303-6b9e5d491b76",
+      "name": "Rien à exécuter ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3360,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "rienexcuter",
+              "leftValue": "={{ $json.vide === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": false,
+        "options": {}
+      },
+      "notes": "Vrai : rien à faire à cette étape. Faux : on appelle le spécialiste."
+    },
+    {
+      "id": "47d75165-0371-4b0e-9f9a-c7fe57c828cf",
+      "name": "Appeler lib-decider",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "hckqX1tQjIommtTH"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Carte, pilote ou rien (035-004), appelé tel quel. En simulation, sa sortie est épinglée dans l'essai du chef tant que lib-decider n'a pas presti-dep-devis dans ses callerIds (session principale)."
+    },
+    {
+      "id": "5ce4f148-f384-4f62-a7b8-d8e22d3786f3",
+      "name": "Appeler lib-porte-conformite",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2912,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "8c8vkUeSkfgB5FAM"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "La porte de conformité (035-005), veto avant tout effet. En simulation, sa sortie est épinglée dans l'essai du chef tant que lib-porte-conformite n'a pas presti-dep-devis dans ses callerIds (session principale)."
+    },
+    {
+      "id": "662b3e3a-738e-47c8-b83d-4212586b63fb",
+      "name": "Appeler lib-executer",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3584,
+        0
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ADX5mPWqIvq1LGs6"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "La carte ou la ligne du pilote PRÉVUE (035-005) ; relit les interrupteurs juste avant l’effet. En simulation, sa sortie est épinglée dans l'essai du chef tant que lib-executer n'a pas presti-dep-devis dans ses callerIds (session principale)."
+    },
+    {
+      "id": "6ffd0057-f8de-4f7b-a27d-98ebe235850d",
+      "name": "Préparer le journal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3808,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Devis : le journal (lib-journaliser), une enveloppe par compte : des identifiants et des décisions, jamais un nom, un contact, un texte ni un montant.\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-devis', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst SOURCE = new RegExp(\"^(vos tarifs|tarif de l.artisan|prix donn[ée] par l.artisan)\", 'i');\nconst niveauMax = (c) => (c.capacites.includes('assistant.pilote') ? 3 : 2);\n// Une ligne dont le prix est SOURCÉ : copie figée de ligneSourcee (lib/pilote/regles.ts). Un repère tiré d'un ancien chantier n'est JAMAIS une source (B9).\nconst sourcee = (l) => Number.isInteger(l.prix_unitaire_ht_centimes) && l.prix_unitaire_ht_centimes > 0 && typeof l.source_prix === 'string' && l.source_prix.trim() !== '' && SOURCE.test(l.source_prix.trim());\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst pret = (d) => d.etat === 'pret', actif = (d) => d.etat === 'pret' || d.etat === 'a_preparer';\nconst tousSources = (d) => d.lignes.length > 0 && d.lignes.every(sourcee);\nconst dec = parCle('Appeler lib-decider', 'lib-decider@1'), po = parCle('Appeler lib-porte-conformite', 'lib-porte-conformite@1'), ex = parCle('Appeler lib-executer', 'lib-executer@1');\nconst s = [];\nfor (const e of ENVS) { const L = [];\n  const ligne = (evenement, ref, decision) => L.push({ evenement: evenement, agent: 'presti-dep-devis', objet_ref: ref, decision: String(decision).slice(0, 200), modele: null, jetons_entree: null, jetons_sortie: null, cout_eur: null, source_tarif: null, simulation: e.simulation });\n  for (const x of REJETS) if (x.org === e.organisation_id) ligne('evenement_rejete', x.id, x.motif);\n  for (const d of DOSSIERS) { if (d.org !== e.organisation_id) continue;\n    if (!actif(d)) { ligne('devis_non_traite', d.ev.id, d.etat); continue; }\n    const r = dec['d:' + d.ev.id]; if (!bon(r)) { ligne('decision_en_echec', d.ev.id, 'lib-decider n a pas répondu'); continue; }\n    ligne('decision', d.ev.id, r.resultat.action + ' (' + r.resultat.motif + ')' + (pret(d) ? (tousSources(d) ? ', tous les prix sourcés' : ', au moins un prix estimé') : ''));\n    const p = po['p:' + d.ev.id]; if (p && p.resultat) ligne(p.resultat.verdict === 'passe' ? 'porte_passe' : 'porte_refuse', d.ev.id, p.resultat.verdict + (p.resultat.motifs.length ? ' (' + p.resultat.motifs.join(', ') + ')' : ''));\n    const x = ex[r.resultat.cle_idempotence]; if (x && x.resultat) ligne(x.resultat.deja_fait ? 'deja_traite' : 'action_prevue', d.ev.id, x.resultat.deja_fait ? 'déjà fait : rien de refait' : (x.resultat.motif || 'prévue (simulation)')); }\n  s.push({ json: env(e, 'lib-journaliser@1', 'j:' + e.cle_idempotence, {}, { entrees: L.slice(0, 200) }) }); }\nreturn s.length ? s : VIDE;"
+      }
+    },
+    {
+      "id": "5d64e696-288f-4e0f-9a57-01f1e8630ef0",
+      "name": "Appeler lib-journaliser",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4032,
+        96
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "NQg0KDXIa5hhzAvq"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "notes": "Le journal (035-003), une enveloppe par compte."
+    },
+    {
+      "id": "2640cb43-8102-4842-a8aa-3ddf51ad1e69",
+      "name": "Assembler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4256,
+        96
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Devis : la sortie, une par compte. Chaque carte « devis prêt » porte, ligne par ligne, son prix tel que l'application l'affiche, SA SOURCE ou\n// « estimé », et le repère cité s'il y en a un : tout vient des lectures, rien n'est calculé. Les effets prévus viennent de lib-executer : rien n'est fait.\nconst D = $('Constituer les dossiers').first().json, ENVS = D.envs, DOSSIERS = D.dossiers, REJETS = D.rejets;\nconst ENVB = {}; for (const e of ENVS) ENVB[e.organisation_id] = e;\nconst sorties = (nom) => { const n = $(nom); return n.isExecuted ? n.all().map((x) => x.json) : []; };\nconst parCle = (nom, contrat) => { const m = {}; for (const s of sorties(nom)) if (s && s.contrat === contrat && typeof s.cle_idempotence === 'string') m[s.cle_idempotence] = s; return m; };\nconst bon = (s) => !!(s && s.statut === 'ok' && s.resultat);\nconst VIDE = [{ json: { vide: true } }];\nconst env = (e, contrat, cle, config, donnees) => ({ contrat: contrat, organisation_id: e.organisation_id, simulation: e.simulation, cle_idempotence: String(cle).slice(0, 80), trace: { execution_parent: String(e.trace.execution_parent), declencheur: 'presti-dep-devis', tentative: e.trace.tentative }, config: config, donnees: donnees });\nconst SOURCE = new RegExp(\"^(vos tarifs|tarif de l.artisan|prix donn[ée] par l.artisan)\", 'i');\nconst niveauMax = (c) => (c.capacites.includes('assistant.pilote') ? 3 : 2);\n// Une ligne dont le prix est SOURCÉ : copie figée de ligneSourcee (lib/pilote/regles.ts). Un repère tiré d'un ancien chantier n'est JAMAIS une source (B9).\nconst sourcee = (l) => Number.isInteger(l.prix_unitaire_ht_centimes) && l.prix_unitaire_ht_centimes > 0 && typeof l.source_prix === 'string' && l.source_prix.trim() !== '' && SOURCE.test(l.source_prix.trim());\nconst PAR_EV = {}; for (const d of DOSSIERS) PAR_EV[d.ev.id] = d;\nconst pret = (d) => d.etat === 'pret', actif = (d) => d.etat === 'pret' || d.etat === 'a_preparer';\nconst tousSources = (d) => d.lignes.length > 0 && d.lignes.every(sourcee);\nconst dec = parCle('Appeler lib-decider', 'lib-decider@1'), po = parCle('Appeler lib-porte-conformite', 'lib-porte-conformite@1'), ex = parCle('Appeler lib-executer', 'lib-executer@1'), jr = parCle('Appeler lib-journaliser', 'lib-journaliser@1');\nconst communes = [];\nfor (const nom of ['Appeler lib-decider', 'Appeler lib-porte-conformite', 'Appeler lib-executer', 'Appeler lib-journaliser']) for (const x of sorties(nom)) if (!x || typeof x.contrat !== 'string') communes.push(nom + ' : appel en échec');\nreturn ENVS.map((e) => {\n  const erreurs = communes.slice(), effets = [];\n  const r0 = { evenements_recus: e.nb, rejets: [], non_traites: [], a_preparer: [], devis_prets: [], cartes: [], pilote: [], refus_porte: [], deja_faits: [], sorties_vers_un_modele: 0 };\n  for (const x of REJETS) if (x.org === e.organisation_id) r0.rejets.push({ id: x.id, motif: x.motif });\n  for (const d of DOSSIERS) { if (d.org !== e.organisation_id) continue;\n    if (!actif(d)) { r0.non_traites.push({ ref: d.ev.id, raison: d.etat }); continue; }\n    const r = dec['d:' + d.ev.id], p = po['p:' + d.ev.id];\n    if (!bon(r)) { erreurs.push('lib-decider : ' + (r ? r.statut : 'absent')); continue; }\n    if (r.resultat.action === 'rien') { r0.non_traites.push({ ref: d.ev.id, raison: r.resultat.motif }); continue; }\n    if (p && p.resultat && p.resultat.verdict !== 'passe') r0.refus_porte.push({ ref: d.ev.id, motifs: p.resultat.motifs, repli: p.resultat.repli });\n    const x = ex[r.resultat.cle_idempotence]; let cible = null;\n    if (x && x.resultat) { if (Array.isArray(x.effets_prevus)) for (const y of x.effets_prevus) effets.push(y);\n      if (x.resultat.deja_fait) r0.deja_faits.push(r.resultat.cle_idempotence);\n      else if (x.statut === 'ok' && x.resultat.prevu && p && p.resultat) { cible = p.resultat.cible; (cible === 'pilote' ? r0.pilote : r0.cartes).push(r.resultat.cle_idempotence); }\n      if (x.statut !== 'ok' && !x.resultat.deja_fait) erreurs.push('lib-executer : ' + (x.resultat.motif || x.statut)); }\n    if (!cible) continue;\n    if (cible === 'pilote') { erreurs.push('devis : aucune ligne du pilote n est permise ici'); continue; }\n    if (!pret(d)) { r0.a_preparer.push({ cle: r.resultat.cle_idempotence, lead_id: d.f.lead_id, cible: cible, geste: 'creer_devis au clic de l artisan (lib/devisAuto.ts)' }); continue; }\n    r0.devis_prets.push({ cle: r.resultat.cle_idempotence, devis_id: d.f.devis_id, numero: d.devis.numero, total_ttc_affiche: d.devis.total_ttc_affiche, cible: cible,\n      motif_carte: r.resultat.motif, tous_prix_sources: tousSources(d), a_estimer: d.lignes.filter((l) => !sourcee(l)).length, envoi: 'au clic de l artisan',\n      lignes: d.lignes.map((l) => ({ rang: l.rang, designation: l.designation, prix_affiche: l.prix_affiche, statut_prix: sourcee(l) ? 'source' : 'estime', source: sourcee(l) ? l.source_prix : null,\n        repere: l.repere_affiche ? { affiche: l.repere_affiche, chantier_le: l.repere_chantier_le || null } : null })) }); }\n  const j = jr['j:' + e.cle_idempotence]; if (j && Array.isArray(j.effets_prevus)) for (const y of j.effets_prevus) effets.push(y);\n  const statut = erreurs.length ? 'erreur' : e.nb ? 'ok' : 'rien_a_faire';\n  return { json: { enveloppe: e, statut: statut, resultat: r0, effets_prevus: effets.slice(0, 1000), effets_faits: [], journal: j && Array.isArray(j.journal) ? j.journal : [], erreurs: erreurs.slice(0, 20) } };\n});"
+      }
+    }
+  ],
+  "nodeGroups": [],
+  "activeVersion": null,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "exporte_le": "2026-11-03T11:29:27.573Z",
+  "source": "MCP n8n-oracle get_workflow_details (tâche 036-005), réponse enregistrée par le harnais puis recopiée par rapatrier.mjs, sans retouche ; « scopes » ôté"
+}

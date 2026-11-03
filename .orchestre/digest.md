@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-11-02T14:05:10Z
+# Digest — 2026-11-03T11:58:16Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 122 tâche(s) PASS, 107250 ligne(s).
-**État** — file : 60 · en cours : 0 · faites : 391 · refusées : 13
+**Mesure** — déléguées (hermes ; historiques : antigravity, codex) : 210 tâche(s) PASS, 224574 ligne(s) · faites par Claude Code : 174 tâche(s) PASS, 279382 ligne(s). ⚠ Claude Code produit plus de lignes que les exécutants : le système est mal utilisé (§1.0).
+**État** — file : 62 · en cours : 3 · faites : 446 · refusées : 17
 
 ## Attention (6)
 - 026-151 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-151 --forcer`
@@ -19,10 +19,14 @@
 - 4 question(s) en attente : `028-008` — `node scripts/orchestre.mjs repondre 028-008 <n>`
 - 4 question(s) en attente : `028-014` — `node scripts/orchestre.mjs repondre 028-014 <n>`
 - 4 question(s) en attente : `reparation-C-juges-perimes` — `node scripts/orchestre.mjs repondre reparation-C-juges-perimes <n>`
-- sauvegarde vieille de 533 h — `node scripts/instantane-quotidien.mjs --pousser`
+- sauvegarde vieille de 555 h — `node scripts/instantane-quotidien.mjs --pousser`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
+| 036-004 | feature | en-cours | claude-code | — | depuis 2026-11-03T11:02:00Z · Prompt 6, lot 4 : `presti-dep-suivi` (relances de conversation et de devis, carte de lot du lundi, note d'intérêt calculée par le code), `lib-controler-conflit` (déjà en cours, déjà relancé, client sensible), et le registre commun qui compte aussi les envois de n8n — INACTIFS, en simulation, avec les pas 1 à 3 de la migration du cron des relances |
+| 036-008 | feature | en-cours | claude-code | — | depuis 2026-11-03T11:57:44Z · Prompt 6, lot 8 : `presti-dep-operations` — créneaux libres LUS dans l'agenda (jamais inventés), rappel de la veille, gardien du stock (seuil bas → commande fournisseur préparée), import contrôlé d'un export — avec `lib-agenda-creneaux` et `lib-synchroniser-outil` épinglés, INACTIFS, en simulation ; aucun rendez-vous posé seul (décision 5) |
+| 036-009 | feature | en-cours | claude-code | — | depuis 2026-11-03T11:58:15Z · Prompt 6, lot 9 : les fiches connecteurs du § 0.4 (Gmail, Outlook, agendas, Drive, Sheets, fiche Google, WhatsApp, Telegram, SMS, Stripe de l'artisan), le code « Connecter / Retirer » (OAuth avec état et PKCE, jeton chiffré au format secretBox pour l'app et pour n8n) derrière le drapeau `connexions` BAISSÉ, et la demande de vérification Google rédigée, non envoyée |
+| 035-013 | audit | file | claude-code | — | Prompt 5, tâche 035-013 de la première réponse — un audit offensif, distinct de l'auteur, des tâches 035-003 à 035-007 (le socle lib-*, les deux chaînes, la démonstration ent-exemple-*) avant toute publication : isolation entre organisations, porte de simulation, liste « jamais en automatique », idempotence au rejeu, coûts bornés, aucune donnée réelle ni secret dans les exports ; par les agents presti-audit-attaque et presti-gestion-fiabilite ; verdict TIENT ou NE TIENT PAS |
 | 029-001 | test | file | codex-1 | — | L'assistant de gestion est vérifié en conditions réelles : la suite assistant-qa passe ses parties L (comptes de test sur la base réelle) et M (vrai modèle), puis aucun compte de test ne reste en base |
 | 026-120 | feature | file | antigravity | — | Remplir le cadre des panneaux de la station : chaque salle cliquée ouvre son panneau (Recettes et Trésorerie, Usine à sites, Atelier des maquettes, Salle de réunion, Salle des envois avec les gestes du fondateur, Standard, Rédaction, Salle des machines ; les quatre autres ouvrent la fiche de leurs agents en attendant 026-164), et chaque agent sa fiche (tâches récentes, coût par tâche, consignes, boîtes, réponses, Pause), lus par la route de la station seulement pendant qu'ils sont ouverts, sourcés, sans aucun bouton d'envoi, à 390 px comme à 1440 px |
 | 026-249 | feature | file | claude-code | — | Écrire le Vigile, titulaire de la salle Sécurité, au contrat de 026-248 — lib/vigile/releve.ts (relevé pur, caviardé, niveaux), lib/vigile/serveur.ts et lib/vigile/sources.ts (les mêmes lectures que la salle Sécurité et le Poste, sans requête recopiée), la route GET /api/agents/vigile (agrégats sans adresse IP, réservée à l'agent vigile, derrière busAgents), scripts/vigile/releve.mjs (relevé quotidien sur l'usine des erreurs des 24 h, des avis npm audit et des fins de support, des avis du conseiller Supabase, des échéances et présences de jetons et clés, des bannissements ; résumé au gabarit ou par Codex ou Ollama local seulement ; un battement et ses événements au bus ; une pause de sécurité sur un agent par la route partagée avec Matt, seulement sur un seuil de gravité de vigile.json, jamais levée, jamais la pause générale, jamais sur Matt, Claude Code ni le pont ; rien d'autre) et les unités presti-vigile (.service et .timer de 6 h 50), jusqu'au vert de scripts/vigile-qa.mjs |
@@ -81,47 +85,43 @@
 | 028-020 | feature | file | codex | — | Entraîner le TROISIÈME modèle maison de l'écosystème Presti : le rédacteur de contenu (scripts TikTok, légendes, commentaires épinglés, réponses de relance), petit modèle ouvert affiné sur les textes validés par Benj, branché au registre des modèles et au relais comme moteur local gratuit |
 | 028-021 | feature | file | codex | — | Nouvelle séquence de prospection PAR ÉTAPES (méthode de Benj du 08/10) : messages courts qui questionnent d'abord (d'où viennent vos clients ? que trouve-t-on sur Google quand on vous cherche ? un chantier vous rapporte combien ?), relances programmées, puis maquette ; respect de toutes les gardes de conformité existantes |
 | 029-002 | test | file | antigravity | — | La qualité des réponses de l'assistant de gestion est mesurée avec le vrai modèle sur les scénarios de plans/016-assistant.md §7 (ai-eval --assistant), et chaque scénario échoué est expliqué |
-| 032-003 | feature | file | claude-code | — | Construire dans le n8n d'Oracle le workflow presti-detecteurs (lot L3 du chantier 4, règle n8n-first) — les dix détecteurs en lectures Supabase (opérations get et getAll seulement) et nœuds Code, bilan agrégé par détecteur, en simulation, essayé sur des données fictives et non publié |
-| 033-001 | feature | file | claude-code | — | Écrire le texte complet de la landing v2 (les 7 sections imposées par le prompt 4 de Benj, direction A avec le hero de B), sa microcopie, son title et sa meta description, le bloc de démo Entreprise, et une maquette HTML statique en 390 et 1440 px, pour que Benj valide le texte et la maquette avant tout code (chantier 2, lot 4) |
-| 032-007 | audit | fait | claude-code | PASS | 2026-11-02T14:05:10Z · 6s · 1814 l. |
-| 032-006 | audit | fait | claude-code | PASS | 2026-11-02T13:33:58Z · 4s · 1830 l. |
-| 032-005 | audit | fait | claude-code | PASS | 2026-11-02T12:55:27Z · 5s · 1618 l. |
-| 032-004 | audit | fait | claude-code | PASS | 2026-11-02T12:07:27Z · 2s · 1497 l. |
-| 032-001 | audit | fait | claude-code | PASS | 2026-11-02T11:33:22Z · 5s · 1005 l. |
-| 031-014 | audit | fait | claude-code | PASS | 2026-11-02T11:02:12Z · 0s · 970 l. |
-| 031-010 | feature | fait | claude-code | PASS | 2026-11-02T10:21:12Z · 10s · 0 l. |
-| 031-011 | contenu | fait | claude-code | PASS | 2026-11-02T10:18:38Z · 2s · 0 l. |
-| 031-016 | feature | fait | claude-code | PASS | 2026-11-02T10:15:15Z · 66s · 3843 l. |
-| 031-008 | feature | fait | claude-code | PASS | 2026-11-02T09:35:11Z · 14s · 0 l. |
-| 031-012 | audit | fait | claude-code | PASS | 2026-11-02T09:22:47Z · 87s · 1104 l. |
-| 031-006 | feature | fait | claude-code | PASS | 2026-11-02T09:12:33Z · 1s · 0 l. |
-| 031-013 | feature | fait | claude-code | PASS | 2026-11-02T08:57:23Z · 91s · 2112 l. |
-| 031-009 | feature | fait | claude-code | PASS | 2026-11-02T08:32:54Z · 2s · 0 l. |
-| 031-007 | feature | fait | claude-code | PASS | 2026-11-02T08:18:18Z · 1s · 0 l. |
-| 031-002 | feature | fait | hermes | PASS | 2026-11-01T22:39:06Z · 1s · 0 l. |
-| 031-003 | audit | fait | claude-code | PASS | 2026-11-01T21:23:42Z · 0s · 0 l. |
-| 031-005 | feature | fait | claude-code | PASS | 2026-11-01T21:22:56Z · 1s · 0 l. |
-| 031-001 | contenu | fait | hermes | PASS | 2026-11-01T17:41:21Z · 2s · 0 l. |
-| 026-120 | feature | fait | antigravity | PASS | 2026-10-05T10:52:04Z · 376s · 0 l. |
-| 026-117 | feature | fait | antigravity | PASS | 2026-10-05T10:13:47Z · 276s · 0 l. |
-| 026-099 | test | fait | codex | PASS | 2026-10-05T09:32:23Z · 1266s · 0 l. |
-| 026-999 | contenu | fait | usine-claude-1558 | PASS | 2026-10-05T09:14:59Z · 14s · 640 l. |
-| 026-186 | feature | fait | codex | PASS | 2026-10-05T09:11:07Z · 198s · 0 l. |
-| 026-189 | feature | fait | antigravity | PASS | 2026-10-05T09:07:42Z · 67s · 0 l. |
-| 026-188 | feature | fait | antigravity | PASS | 2026-10-05T09:06:28Z · 84s · 0 l. |
-| 026-187 | feature | fait | antigravity | PASS | 2026-10-05T09:04:52Z · 130s · 0 l. |
-| 026-240 | test | fait | claude-code | PASS | 2026-10-05T08:27:35Z · 789s · 0 l. |
-| 026-216 | feature | fait | antigravity | PASS | 2026-10-05T08:15:26Z · 48s · 0 l. |
-| 026-185 | feature | fait | codex | FAIL | station-themes-qa --theme=station : FAIL — TH-7, TH-8, TH-9, TH-10, TH-11, TH-12 |
-| 026-152 | test | fait | codex | PASS | 2026-10-05T07:54:03Z · 1005s · 0 l. |
-| 026-250 | test | fait | codex | PASS | 2026-10-05T07:37:13Z · 299s · 0 l. |
-| 026-130 | test | fait | codex | PASS | 2026-10-05T07:36:47Z · 203s · 0 l. |
-| 026-228 | test | fait | codex | PASS | 2026-10-05T07:31:08Z · 31s · 0 l. |
-| 026-159 | test | fait | codex | REJOUÉ | disjoncteur réarmé explicitement par rejouer --forcer |
-| 026-123 | feature | fait | claude-code | PASS | 2026-10-04T21:50:27Z · 519s · 1760 l. |
-| 026-172 | test | fait | claude-code | EXPIRÉE | bail expiré : claude-code silencieux depuis 131 min |
-| 026-170 | test | fait | claude-code | FAIL | ✅ JA-1 référence 1c87006 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (5823 fichiers), ancêtre de HEAD, sans app/c |
-| 026-094 | feature | fait | codex | PASS | 2026-10-04T21:19:18Z · 129s · 0 l. |
-| 026-179 | feature | fait | codex | PASS | 2026-10-04T20:58:45Z · 313s · 0 l. |
+| 036-010 | feature | file | claude-code | — | Prompt 6, lot 10 : les maquettes statiques des quatre écrans du § 1.3 — centre de commande (barre du jour, page du matin, « À valider » à feu vert par ligne et pour tout le lot, exceptions préparées), « Ce que vos assistants ont fait » (colonnes, « fait : … », coût IA), « Connexions », « Mes départements » (Studio verrouillé par l'offre) — en 390 et 1440 px, critiquées avant d'être rendues |
+| 036-011 | feature | file | claude-code | — | Prompt 6, lot 11 : les quatre écrans des maquettes validées par 036-010, en code, derrière le drapeau `systemeAgents` BAISSÉ (rien dans le DOM, routes en 404), lus depuis Supabase en lecture seule, avec le double chemin et « une question à la fois » ; verrou d'offre par peut() seulement |
+| 036-012 | feature | file | claude-code | — | Prompt 6, lot 12 : tous les juges n8n inscrits au lanceur, la suite transverse des tests obligatoires du § 1.7, le runbook (couper, rejouer, reprendre), le plan de migration des automatisations codées en cinq pas, la base de départ des KPIs (requêtes en lecture), et le dossier du mode ombre prêt pour un compte volontaire — rien de publié, rien d'appliqué |
+| 036-007 | feature | fait | claude-code | PASS | 2026-11-03T11:54:38Z · 180s · 8436 l. |
+| 036-006 | feature | fait | claude-code | PASS | 2026-11-03T11:45:45Z · 86s · 0 l. |
+| 036-005 | feature | fait | claude-code | PASS | 2026-11-03T11:41:09Z · 52s · 6762 l. |
+| 036-003 | feature | fait | claude-code | PASS | 2026-11-03T11:06:18Z · 69s · 0 l. |
+| 036-001 | feature | fait | claude-code | PASS | 2026-11-03T11:01:32Z · 76s · 0 l. |
+| 036-002 | feature | fait | claude-code | PASS | 2026-11-03T10:22:50Z · 78s · 2566 l. |
+| 036-000 | feature | fait | claude-code | PASS | 2026-11-03T09:53:31Z · 1s · 0 l. |
+| 035-007 | feature | fait | claude-code | PASS | 2026-11-03T09:02:59Z · 41s · 16128 l. |
+| 035-014 | contenu | fait | claude-code | PASS | 2026-11-03T08:51:04Z · 7s · 0 l. |
+| 032-044 | feature | fait | claude-code | PASS | 2026-11-03T08:48:39Z · 233s · 4969 l. |
+| 035-005 | feature | fait | claude-code | PASS | 2026-11-03T07:52:14Z · 299s · 9170 l. |
+| 032-041 | feature | fait | claude-code | PASS | 2026-11-03T00:19:57Z · 4s · 16220 l. |
+| 035-004 | feature | fait | claude-code | PASS | 2026-11-03T00:01:17Z · 52s · 0 l. |
+| 035-011 | contenu | fait | claude-code | PASS | 2026-11-02T23:59:52Z · 0s · 1420 l. |
+| 032-040 | feature | fait | claude-code | PASS | 2026-11-02T23:59:50Z · 9s · 2994 l. |
+| 035-003 | feature | fait | claude-code | PASS | 2026-11-02T21:42:01Z · 14s · 6083 l. |
+| 035-008 | test | fait | claude-code | PASS | 2026-11-02T21:34:50Z · 23s · 1602 l. |
+| 032-039 | feature | fait | claude-code | PASS | 2026-11-02T21:34:21Z · 0s · 7180 l. |
+| 032-037 | feature | fait | claude-code | PASS | 2026-11-02T21:20:40Z · 558s · 0 l. |
+| 035-001 | test | fait | claude-code | PASS | 2026-11-02T21:09:50Z · 1s · 0 l. |
+| 035-002 | contenu | fait | claude-code | PASS | 2026-11-02T21:09:38Z · 1s · 0 l. |
+| 035-000 | audit | fait | claude-code | PASS | 2026-11-02T21:09:35Z · 0s · 0 l. |
+| 032-033 | feature | fait | claude-code | PASS | 2026-11-02T21:08:49Z · 537s · 0 l. |
+| 032-036 | feature | fait | claude-code | PASS | 2026-11-02T21:05:49Z · 57s · 3803 l. |
+| 032-035 | audit | fait | claude-code | PASS | 2026-11-02T20:36:34Z · 0s · 5536 l. |
+| 032-034 | audit | fait | claude-code | PASS | 2026-11-02T20:36:32Z · 0s · 2576 l. |
+| 032-032 | feature | fait | claude-code | PASS | 2026-11-02T20:36:20Z · 3s · 2812 l. |
+| 032-031 | feature | fait | claude-code | PASS | 2026-11-02T20:11:37Z · 7s · 2485 l. |
+| 032-030 | feature | fait | claude-code | PASS | 2026-11-02T20:11:28Z · 18s · 2899 l. |
+| 032-029 | audit | fait | claude-code | PASS | 2026-11-02T20:06:41Z · 0s · 13413 l. |
+| 032-026 | feature | fait | claude-code | PASS | 2026-11-02T20:06:38Z · 91s · 2785 l. |
+| 032-028 | audit | fait | claude-code | PASS | 2026-11-02T19:47:50Z · 0s · 4512 l. |
+| 032-027 | contenu | fait | claude-code | PASS | 2026-11-02T19:46:11Z · 0s · 4744 l. |
+| 032-025 | feature | fait | claude-code | PASS | 2026-11-02T19:46:10Z · 2s · 3857 l. |
+| 032-024 | feature | fait | claude-code | PASS | 2026-11-02T19:46:06Z · 6s · 2059 l. |
 
-… 364 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 428 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
