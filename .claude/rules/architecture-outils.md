@@ -13,6 +13,12 @@ Pourquoi : vault `C:/Users/benja/Documents/SaaS`, notes posées le 01/11/2026 (p
     lancer … --moteur=codex`) sont de nouveau exécutants (`.orchestre/orchestre.json`).
   - Ils ne prennent que du code, des contenus et des tests : jamais une donnée de prospect ni de client, jamais un secret.
   - Le jugement (schéma, argent, sécurité, cerveaux, verdicts) reste à Claude Code.
+- **03/11/2026 vers 22 h 45, Benj : « arrête d'utiliser la clé Anthropic API, ça bousille nos réserves ».**
+  - Plus aucun agent de développement sur la clé API : la clé des agents d'Oracle est coupée (`~/agents/cle-api.env` renommé en
+    `cle-api.env.coupee-0311`).
+  - Le travail se termine avec Codex, Antigravity, et freellmapi pour les petites tâches seulement.
+  - freellmapi ne reçoit jamais une donnée de prospect ni de client : c'est la règle de `securite.md`. Les agents n8n de production, qui
+    traitent ces données, gardent donc leur identifiant Anthropic (Haiku, appelé seulement quand une vraie demande arrive).
 - Pas d'autre exécutant.
 - Claude Code : développement, maintenance, tests, revue de code, verdicts.
 - Hermes Agent : intelligence, compréhension des demandes, choix des outils, orchestration,
