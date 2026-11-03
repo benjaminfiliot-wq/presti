@@ -24,9 +24,13 @@ est `outillage/OUTILLAGE.md`.
 - **Sur Oracle, sur la clé API de Benj** :
   - 036-030 branche les vraies lectures, les cartes et la boîte « À valider » ;
   - 036-031 fait parler les gabarits au vrai schéma.
+- **Vers 20 h 45** : 036-030 est jugé (PASS, juge vert, typage propre) et en ligne (`58dac12`). 0194 est posée, ses 8 contrôles sont
+  conformes. Les variables Vercel neuves (clé n8n, Google) sont actives. Tout reste derrière des drapeaux baissés : `systemeAgents`,
+  `boiteAgents`, `connexions`.
 - **À la reprise**, dans l'ordre :
-  1. rapatrier et juger 036-030 et 036-031, puis les pousser (les variables Vercel neuves ne valent qu'au prochain déploiement) ;
-  2. poser 0194 et 0195 s'ils existent ;
+  1. rapatrier et juger 036-031 (schéma des gabarits), 036-032 (multi-agents dans n8n, preuve de la clé) et 036-033 (écran « Mes outils »
+     et bouton « Connecter ») ; typer, pousser ;
+  2. poser 0195 si 036-031 l'a écrite ;
   3. mettre le vrai multi-agents dans n8n ;
   4. construire le bouton « Connecter » dans l'outil de gestion, puis lever `connexions` ;
   5. prouver `$env.BOITE_CLE_N8N` par un banc ;
