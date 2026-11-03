@@ -1262,3 +1262,4 @@
 {"id":"036-024","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T16:22:28Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":968,"dossier":"fait"}
 {"id":"037-000","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T16:31:10Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1493,"dossier":"en-cours"}
 {"id":"037-000","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T16:37:39Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1493,"dossier":"fait"}
+{"id":"036-025","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T16:41:50Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1035,"dossier":"fait"}

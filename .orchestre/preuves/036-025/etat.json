@@ -1,0 +1,101 @@
+{
+  "tache": "036-025",
+  "ecrit_le": "2026-11-03T16:45:00Z",
+  "ecrit_par": "claude-code (hôte d'agents d'Oracle, MCP n8n-oracle)",
+  "identifiant": {
+    "nom": "Anthropic account",
+    "type": "anthropicApi",
+    "id": "hZsu1Oq5gUfaa2jB",
+    "geste": "trouvé par list_credentials ; ni créé, ni modifié, ni lu ; affecté (setNodeCredential) au seul nœud « Claude Haiku 5.5 (sans identifiant) » de lib-rediger-message et de lib-lire-photo, modèle et paramètres inchangés"
+  },
+  "workflows": {
+    "xfRUnkwOKSwQezVb": {
+      "nom": "lib-rediger-message",
+      "identifiant_affecte": "hZsu1Oq5gUfaa2jB (version 26fd7063-2c0d-4174-890e-9adb66f52480)",
+      "publie": false,
+      "publie_puis_depublie": true,
+      "banc": "presti-banc-argent (via presti-dep-facturation), presti-banc-suivi (via presti-dep-suivi), lib-banc-relance",
+      "execution": "784, 802, 820 (sous-exécutions des bancs 775, 797, 818)",
+      "resultat": "échec trois fois sur trois : « The AI model returned an empty response to the Structured Output Parser » ; le modèle consomme exactement son plafond de sortie (completionTokens 700 = maxTokensToSample 700) sans rendre de texte ; rien n'est sorti, aucun brouillon",
+      "retour": "dépublié à 16 h 36 UTC après le 2e échec (règle « deux échecs »), parents d'abord ; se republie quand le nœud Haiku rend une sortie (plafond de sortie à relever ou réflexion du modèle coupée, décision sur le cerveau), puis un banc vert"
+    },
+    "UWjCdC5kv3CXt6jm": {
+      "nom": "lib-lire-photo",
+      "identifiant_affecte": "hZsu1Oq5gUfaa2jB (publié en version ad5c15aa-9908-48bb-9075-db0a5d694681)",
+      "publie": true,
+      "banc": "presti-banc-cerveau (via presti-dep-accueil)",
+      "execution": "790 (sous-exécution du banc 787)",
+      "resultat": "échec une fois : même panne (completionTokens 300 = maxTokensToSample 300, texte vide) ; le prompt ne transmet que la référence de la photo, jamais l'image (passthroughBinaryImages false)",
+      "retour": "laissé publié (un seul échec, sous le seuil de la règle) ; seul appelant en production : presti-dep-accueil, dont le seul parent planifié (presti-cerveau) est dépublié : il ne peut être appelé que par un banc manuel. Retour arrière : unpublish_workflow UWjCdC5kv3CXt6jm après presti-dep-accueil"
+    },
+    "Ls0oFcQzzAk0rWcP": {
+      "nom": "presti-dep-accueil",
+      "publie": true,
+      "banc": "presti-banc-cerveau (x7QfmFAZNIxaoUS6 : c'est lui qui appelle l'accueil, 40 demandes fictives, deux comptes)",
+      "execution": "787 (banc) ; 788 (le chef, réussi au sens de n8n, non conservé)",
+      "resultat": "échec métier : les deux comptes rendent statut « erreur » (1 erreur chacun, aucune carte, aucun effet) à cause de lib-lire-photo ; le chef ferme proprement, n8n marque « succès »",
+      "retour": "laissé publié (le chef n'a jamais échoué au sens de n8n ; il n'est appelable que par presti-cerveau, dépublié, et le banc) ; retour arrière : unpublish_workflow Ls0oFcQzzAk0rWcP"
+    },
+    "jo8eQMEwiB9wCbKN": {
+      "nom": "presti-dep-suivi",
+      "publie": false,
+      "publie_puis_depublie": true,
+      "banc": "presti-banc-suivi (95LajsFcVM4AALac)",
+      "execution": "797 (banc), 798 (le chef), 802 (lib-rediger-message)",
+      "resultat": "échec : deux comptes en « erreur » (rédaction en panne), un cas « rejete » (cas hors contrat du banc) ; aucun effet fait",
+      "retour": "dépublié à 16 h 36 UTC, après presti-cerveau et avant lib-rediger-message ; se republie après lib-rediger-message, enfant d'abord"
+    },
+    "bNAF6Xzx5On853kD": {
+      "nom": "presti-dep-facturation",
+      "publie": false,
+      "publie_puis_depublie": true,
+      "banc": "presti-banc-argent (LRO3Jng6Te4Xn7Pg)",
+      "execution": "775 (banc), 781 (le chef, en erreur), 784 (lib-rediger-message)",
+      "resultat": "échec : le chef rend « The AI model returned an empty response… » ; le banc se dit « succès » (bilan facturation : erreurs 0, cartes null) mais c'est faux ; la branche devis du même banc est bonne (deux comptes « ok », 3 et 5 cartes, pilote 0)",
+      "retour": "dépublié à 16 h 36 UTC, après presti-cerveau ; se republie après lib-rediger-message"
+    },
+    "596OC5mL2aMBq6SD": {
+      "nom": "presti-cerveau",
+      "publie": false,
+      "publie_puis_depublie": true,
+      "banc": "aucun banc ne l'appelle (presti-banc-cerveau appelle presti-dep-accueil directement) ; passage planifié relu dans le code : les lectures sont des emplacements non épinglés, l'interrupteur se lit absent, le passage s'arrête (« interrupteur_general_coupe ») sans rien appeler",
+      "execution": "aucune exécution en erreur entre la publication (16 h 34) et la dépublication (16 h 36) ; les passages réussis ne sont pas conservés (saveDataSuccessExecution none)",
+      "resultat": "publié, puis dépublié en tête de chaîne : il appelle presti-dep-suivi et presti-dep-facturation, dépubliés",
+      "retour": "dépublié en premier (parents d'abord) ; se republie en dernier, après lib-rediger-message, presti-dep-suivi et presti-dep-facturation"
+    }
+  },
+  "bancs_socles": {
+    "rAAqj7NSVJoA3grm": { "nom": "lib-banc-socle", "execution": "805", "resultat": "succès relu nœud par nœud : lib-dedoublonner (ok 2, rien_a_faire 1), lib-journaliser (ok 1), lib-alerter (ok 1, 2 regroupées), lib-disjoncteur (ouvert au 3e échec), lib-battement (1 muet, 1 alerte prévue) ; defauts 0 partout, effets_faits vides" },
+    "A391vnnTMKmJGhgT": { "nom": "lib-banc-metier", "execution": "811", "resultat": "succès relu : lib-capturer-lead (7 réclamées, 2 écartées), lib-qualifier-lead (doublon reconnu), lib-decider 30 décisions toutes « carte » sauf 1 « pilote » ; defauts 0, effets_faits vides" },
+    "H33CKQ8sMB3VULfA": { "nom": "lib-banc-relance", "execution": "818", "resultat": "partiel : lib-relancer ok (palier 3), lib-porte-conformite branche gestes (22 refus attendus, 1 passage pilote, defauts 0), lib-rapport-hebdo ok (6 indicateurs sourcés) ; la branche relances s'arrête à lib-rediger-message (820, même panne) : lib-porte-conformite en branche principale, lib-executer et lib-normaliser-telephone n'ont PAS tourné dans ce banc" }
+  },
+  "erreurs_actifs": [
+    {
+      "workflow": "presti-boite (yQK50I6JXchYBH7Y)",
+      "executions": [],
+      "decision": "aucune exécution en erreur depuis le 03/11 16 h 14 UTC (erreurs conservées : saveDataErrorExecution all) ; le « appel en erreur: 1 » de l'exécution manuelle 696 n'est pas une panne : l'interrupteur non épinglé se lit absent, le passage s'arrête sur la branche « fermé » et le bilan compte l'objet du déclencheur (sans contrat) comme un appel en erreur ; étiquette fausse, aucun appel fait ; laissé publié"
+    },
+    {
+      "workflow": "lib-rediger-message (xfRUnkwOKSwQezVb)",
+      "executions": ["784", "802", "820"],
+      "decision": "deux échecs (puis un troisième, appelé en brouillon par un banc manuel) : dépublié, parents d'abord (presti-cerveau, presti-dep-suivi, presti-dep-facturation, puis lui)"
+    },
+    {
+      "workflow": "presti-dep-facturation (bNAF6Xzx5On853kD)",
+      "executions": ["781", "750"],
+      "decision": "781 vient de son enfant lib-rediger-message (750 : le 03/11 avant la publication, déjà expliqué par 036-024) ; dépublié avec la chaîne"
+    },
+    {
+      "workflow": "lib-lire-photo (UWjCdC5kv3CXt6jm)",
+      "executions": ["790"],
+      "decision": "un seul échec : laissé publié, inatteignable en production tant que presti-cerveau est dépublié ; même cause que lib-rediger-message"
+    },
+    {
+      "workflow": "autres actifs (presti-accuse-reception, presti-suivi-artisan, presti-demande-demo, presti-detecteurs, presti-briefing-matin, presti-erreurs, chefs devis/apres/operations/direction, lib-* publiés)",
+      "executions": [],
+      "decision": "aucune exécution en erreur depuis 16 h 14 UTC ; rien touché"
+    }
+  ],
+  "porte_simulation": "jamais levée ; tous les cas des bancs portent simulation: true ; effets_faits vides partout ; aucun envoi",
+  "appels_modele": "4 appels à claude-haiku-5-5 par l'identifiant de Benj (784 : 2 269 jetons en entrée et 700 en sortie ; 790 : 1 018 et 300 ; 802 : 2 286 et 700 ; 820 : non relevé), chacun en échec"
+}

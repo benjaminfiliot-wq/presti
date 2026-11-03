@@ -129,3 +129,87 @@ l'identifiant `anthropicApi` posé par Benj (§ « Ce qui bloque », point 1).
 - À rejouer avant de croire « vert » : les trois bancs `lib-banc-*`, le banc `presti-banc-cerveau` et `presti-banc-boite` après publication des deux `lib-*` de rédaction ;
   un passage **planifié** de `presti-boite` (relire les exécutions en erreur après 5 minutes ; une exécution réussie n'est pas conservée).
 - Rien n'a été envoyé ni écrit en base par ce travail : tout est resté en simulation (lectures GET, sorties épinglées, `effets_prevus`).
+
+## 036-025 — l'identifiant Anthropic posé par Benj : publication des six, bancs, erreurs (03/11/2026, 16 h 31 à 16 h 45 UTC)
+
+Écrit par Claude Code sur l'hôte d'agents d'Oracle, avec le MCP `n8n-oracle`. Règles tenues :
+- la porte « simulation » n'a été levée nulle part, et rien n'a été envoyé ;
+- aucun identifiant n'a été créé ni modifié ; un seul a été affecté à deux nœuds ;
+- aucun `gabarit-*`, `client-*`, `hermes-*` ni `reseau-neuronal-*` n'a été touché, ni `presti-detecteurs`, ni `presti-briefing-matin`.
+
+Détail machine : `.orchestre/preuves/036-025/etat.json`.
+
+**L'identifiant.** `list_credentials` : « Anthropic account », type `anthropicApi`, id `hZsu1Oq5gUfaa2jB`. Il a été affecté (`setNodeCredential`) au seul nœud
+« Claude Haiku 5.5 (sans identifiant) » de `lib-rediger-message` et de `lib-lire-photo` ; le modèle (`claude-haiku-5-5`) et les paramètres sont inchangés. Les `callerIds`
+ont été relus avant la publication : `lib-rediger-message` contient les huit chefs, le Cerveau et `lib-banc-relance` ; `lib-lire-photo` contient `presti-dep-accueil`.
+Les quatre chefs en ligne portent le même `versionId` que leurs exports (036-001, 036-004, 036-005).
+
+### Ce qui bloque désormais (à lire d'abord)
+
+**Le modèle ne rend rien.** Sur les quatre appels relus, `completionTokens` égale exactement le plafond `maxTokensToSample` : 700 pour `lib-rediger-message`
+(784, 802), 300 pour `lib-lire-photo` (790). Le texte rendu est vide, et n8n lève « The AI model returned an empty response to the Structured Output Parser ».
+Rien n'est sorti, aucun brouillon, et les chefs ferment proprement (statut `erreur`).
+
+La consigne interdisait de toucher au modèle et aux paramètres du nœud : rien n'est corrigé. Deux voies sont à trancher, chacune touche au cerveau :
+1. relever `maxTokensToSample` (par exemple à 2 000) ;
+2. couper la réflexion du modèle si le nœud l'active.
+
+Ensuite, rejouer une fois `presti-banc-argent`, puis republier enfants d'abord : `lib-rediger-message`, `presti-dep-suivi`, `presti-dep-facturation`,
+`presti-cerveau`.
+
+Une seconde question, distincte : `lib-lire-photo` n'envoie au modèle que la référence de la photo, jamais l'image (`passthroughBinaryImages: false`).
+
+**À savoir pour les bancs.** Un banc lancé à la main appelle le **brouillon** des enfants, pas leur version publiée (`fiche-methode-n8n.md`, fiche 9). La preuve :
+`lib-rediger-message`, déjà dépublié, a tourné sous `lib-banc-relance` (exécution 820), et c'est un quatrième appel au modèle. Ici, brouillon et version publiée sont
+identiques (aucune modification après la publication).
+
+### Les six workflows
+
+| Workflow | Id | Identifiant affecté | Publié | Banc | Exécution | Résultat | Retour arrière |
+|---|---|---|---|---|---|---|---|
+| lib-rediger-message | xfRUnkwOKSwQezVb | `hZsu1Oq5gUfaa2jB` | publié à 16 h 33, **dépublié** à 16 h 36 | `presti-banc-argent`, `presti-banc-suivi`, `lib-banc-relance` | 784, 802, 820 | **échec** trois fois : sortie vide, plafond de 700 jetons atteint | fait (règle « deux échecs ») ; se republie après correction du nœud et un banc vert |
+| lib-lire-photo | UWjCdC5kv3CXt6jm | `hZsu1Oq5gUfaa2jB` | **oui** (version `ad5c15aa`) | `presti-banc-cerveau` (via l'accueil) | 790 | **échec** une fois : même cause (plafond de 300 jetons) | laissé publié (un seul échec) ; seul appelant `presti-dep-accueil`, dont le parent planifié est dépublié ; défaire : dépublier après l'accueil |
+| presti-dep-accueil | Ls0oFcQzzAk0rWcP | — | **oui** (version `6d7b830c`) | `presti-banc-cerveau` (x7QfmFAZNIxaoUS6, 40 demandes fictives) | 787 | **échec métier** : les deux comptes en `erreur` (photo), aucune carte, aucun effet ; n8n marque « succès » | laissé publié (jamais en erreur au sens de n8n) ; défaire : `unpublish_workflow` |
+| presti-dep-suivi | jo8eQMEwiB9wCbKN | — | publié à 16 h 34, **dépublié** à 16 h 36 | `presti-banc-suivi` (95LajsFcVM4AALac) | 797 (banc), 802 (enfant) | **échec** : deux comptes en `erreur`, un `rejete` (cas hors contrat du banc) | fait, après le Cerveau ; se republie après `lib-rediger-message` |
+| presti-dep-facturation | bNAF6Xzx5On853kD | — | publié à 16 h 34, **dépublié** à 16 h 36 | `presti-banc-argent` (LRO3Jng6Te4Xn7Pg) | 775 (banc), 781 (chef en erreur), 784 (enfant) | **échec** ; le bilan du banc (« erreurs 0, cartes null ») est un faux succès. La branche devis du même banc est bonne : deux comptes `ok`, 3 et 5 cartes, pilote 0. `presti-dep-devis` a donc enfin un passage relu | fait, après le Cerveau ; se republie après `lib-rediger-message` |
+| presti-cerveau | 596OC5mL2aMBq6SD | — | publié à 16 h 34, **dépublié** à 16 h 36 | aucun banc ne l'appelle ; code relu : lectures non épinglées, interrupteur lu absent, arrêt `interrupteur_general_coupe` sans aucun appel | aucune en erreur pendant ses deux minutes de publication (succès non conservés) | publié sans erreur ; dépublié en tête de la chaîne en panne | fait en premier ; se republie en dernier |
+
+### Bancs des socles, enfin relus
+
+| Banc | Exécution | Ce qui a tourné | Résultat |
+|---|---|---|---|
+| `lib-banc-socle` (rAAqj7NSVJoA3grm) | 805 | lib-dedoublonner, lib-journaliser, lib-alerter, lib-disjoncteur, lib-battement | **succès relu nœud par nœud** : doublon reconnu, 3 alertes regroupées en 1, disjoncteur ouvert au 3e échec, 1 parent muet signalé ; `defauts` 0, `effets_faits` vides |
+| `lib-banc-metier` (A391vnnTMKmJGhgT) | 811 | lib-capturer-lead, lib-qualifier-lead, lib-decider | **succès relu** : 7 demandes réclamées, 2 écartées, doublon de contact reconnu ; 30 décisions, toutes « carte », sauf 1 « pilote » ; `defauts` 0 |
+| `lib-banc-relance` (H33CKQ8sMB3VULfA) | 818 | lib-relancer, lib-rediger-message, lib-porte-conformite (gestes), lib-rapport-hebdo | **partiel** : relancer ok ; porte 22 refus attendus et 1 passage pilote ; rapport : 6 indicateurs sourcés. La branche relances s'arrête à la rédaction (820) : `lib-porte-conformite` en branche principale, `lib-executer` et `lib-normaliser-telephone` **n'ont pas tourné** ici |
+
+Encore sans passage relu : `lib-executer`, `lib-normaliser-telephone`, et `lib-porte-conformite` sur un brouillon réel. Ils viendront avec le banc relance, une fois la
+rédaction réparée.
+
+### Erreurs des workflows actifs depuis le 03/11 à 16 h 14 UTC
+
+`search_workflow_executions` (statuts error, crashed, canceled, unknown) rend six exécutions : 750 (déjà expliquée par 036-024), 781, 784, 790, 802, 820. Toutes
+viennent des bancs de cette tâche. **Aucun workflow actif planifié n'a d'exécution en erreur** :
+- `presti-boite`, `presti-accuse-reception`, `presti-suivi-artisan`, `presti-demande-demo` ;
+- `presti-detecteurs`, `presti-briefing-matin` (non touchés) ;
+- `presti-erreurs` et les chefs devis, après, opérations et direction.
+
+`presti-boite` conserve ses erreurs (`saveDataErrorExecution: all`) : son silence vaut « aucune erreur ». Le « appel en erreur: 1 » de son exécution manuelle 696 n'est **pas
+une panne**. L'interrupteur, non épinglé, rend l'objet du déclencheur ; le passage part sur la branche « fermé ». Le bilan compte alors cet objet sans
+`contrat` comme un appel en erreur, au lieu d'écrire `arret: interrupteur_general_coupe` comme le fait le Cerveau. L'étiquette est fausse, aucun appel n'est fait. Il reste
+publié ; corriger ce bilan est une petite tâche à part.
+
+Décisions par la règle « un workflow qui échoue deux fois est dépublié, parents d'abord » :
+- **`lib-rediger-message` dépublié**, avec ses parents dans cet ordre : `presti-cerveau`, `presti-dep-suivi`, `presti-dep-facturation`, puis lui ;
+- **`lib-lire-photo` laissé publié** (un échec), comme `presti-dep-accueil`. Ils sont inatteignables en production tant que le Cerveau est dépublié.
+
+**Ce qui les relancera** : la correction du nœud Haiku (voir plus haut), puis un banc vert, puis la republication, enfants d'abord.
+
+### Coût
+
+Quatre appels à `claude-haiku-5-5` par l'identifiant de Benj, tous en échec :
+- 784 : 2 269 jetons en entrée et 700 en sortie ;
+- 790 : 1 018 et 300 ;
+- 802 : 2 286 et 700 ;
+- 820 : non relevé.
+
+Chaque banc a été lancé une fois, sans boucle.
