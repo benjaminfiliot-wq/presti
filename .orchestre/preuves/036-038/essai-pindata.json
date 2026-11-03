@@ -1,0 +1,395 @@
+{
+ "Toutes les minutes": [
+  {
+   "json": {}
+  }
+ ],
+ "Lire la pause générale": [
+  {
+   "json": {
+    "data": "false"
+   }
+  }
+ ],
+ "Lire les départements au réel": [
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000d1",
+    "departement": "tous",
+    "palier": "reel",
+    "en_marche": true
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000d1",
+    "departement": "accueil",
+    "palier": "reel",
+    "en_marche": true
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "departement": "tous",
+    "palier": "reel",
+    "en_marche": true
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "departement": "accueil",
+    "palier": "reel",
+    "en_marche": true
+   }
+  },
+  {
+   "json": {
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "departement": "facturation",
+    "palier": "reel",
+    "en_marche": true
+   }
+  }
+ ],
+ "Lire les cartes à envoyer": [
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000c001",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d1",
+    "outil": "reponse_prospect",
+    "statut": "en_cours",
+    "origine": "agent",
+    "departement": "accueil",
+    "cle": "h:decision:essai-studio-1",
+    "expire_le": "2099-01-01T00:00:00.000Z",
+    "entrees": {
+     "type_action": "reponse_prospect",
+     "canal": "email",
+     "objet_id": "00000000-0000-4000-8000-00000000e001",
+     "effet": "ecrire_carte",
+     "palier": "reel",
+     "envoi": "au_clic",
+     "pilote": null,
+     "motif_clic": "offre_studio"
+    },
+    "apercu": {
+     "brouillon": {
+      "objet": "Votre demande de pose de parquet",
+      "texte": "Bonjour, merci pour votre demande de pose de parquet dans le salon. Je peux passer voir la pièce pour prendre les mesures : dites-moi quel moment vous arrange cette semaine."
+     }
+    }
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000c002",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "outil": "reponse_prospect",
+    "statut": "en_attente",
+    "origine": "agent",
+    "departement": "accueil",
+    "cle": "h:decision:essai-signature-1",
+    "expire_le": "2099-01-01T00:00:00.000Z",
+    "entrees": {
+     "type_action": "reponse_prospect",
+     "canal": "email",
+     "objet_id": "00000000-0000-4000-8000-00000000e002",
+     "effet": "ecrire_carte",
+     "palier": "reel",
+     "envoi": "pilote",
+     "pilote": {
+      "envoyer_apres": "2026-11-03T00:00:00.000Z",
+      "capacite": "plateforme.ia.auto",
+      "opt_in": null
+     }
+    },
+    "apercu": {
+     "brouillon": {
+      "objet": "Votre fuite sous l’évier",
+      "texte": "Bonjour, merci pour votre message au sujet de la fuite sous l’évier. Coupez l’arrivée d’eau en attendant ; je peux passer pour un diagnostic, dites-moi vos disponibilités."
+     }
+    }
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000c003",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "outil": "reponse_prospect",
+    "statut": "en_attente",
+    "origine": "agent",
+    "departement": "accueil",
+    "cle": "h:decision:essai-signature-pas-echu",
+    "expire_le": "2099-01-01T00:00:00.000Z",
+    "entrees": {
+     "type_action": "reponse_prospect",
+     "objet_id": "00000000-0000-4000-8000-00000000e002",
+     "effet": "ecrire_carte",
+     "palier": "reel",
+     "envoi": "pilote",
+     "pilote": {
+      "envoyer_apres": "2099-01-01T00:00:00.000Z"
+     }
+    },
+    "apercu": {
+     "brouillon": {
+      "objet": null,
+      "texte": "Bonjour, une carte dont les dix minutes d’annulation ne sont pas écoulées : elle attend."
+     }
+    }
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000c004",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d1",
+    "outil": "reponse_prospect",
+    "statut": "en_attente",
+    "origine": "agent",
+    "departement": "accueil",
+    "cle": "h:decision:essai-studio-sans-clic",
+    "expire_le": "2099-01-01T00:00:00.000Z",
+    "entrees": {
+     "type_action": "reponse_prospect",
+     "objet_id": "00000000-0000-4000-8000-00000000e001",
+     "effet": "ecrire_carte",
+     "palier": "reel",
+     "envoi": "au_clic",
+     "pilote": null
+    },
+    "apercu": {
+     "brouillon": {
+      "objet": null,
+      "texte": "Bonjour, une carte Studio que personne n’a validée : elle ne doit jamais partir."
+     }
+    }
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000c005",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "outil": "reponse_prospect",
+    "statut": "en_attente",
+    "origine": "agent",
+    "departement": "accueil",
+    "cle": "h:decision:essai-signature-stop",
+    "expire_le": "2099-01-01T00:00:00.000Z",
+    "entrees": {
+     "type_action": "reponse_prospect",
+     "objet_id": "00000000-0000-4000-8000-00000000e003",
+     "effet": "ecrire_carte",
+     "palier": "reel",
+     "envoi": "pilote",
+     "pilote": {
+      "envoyer_apres": "2026-11-03T00:00:00.000Z"
+     }
+    },
+    "apercu": {
+     "brouillon": {
+      "objet": null,
+      "texte": "Bonjour, une réponse à un client qui a écrit STOP : elle ne doit jamais partir."
+     }
+    }
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000c006",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "outil": "relance_impaye",
+    "statut": "en_attente",
+    "origine": "agent",
+    "departement": "facturation",
+    "cle": "h:decision:essai-impaye-sans-opt-in",
+    "expire_le": "2099-01-01T00:00:00.000Z",
+    "entrees": {
+     "type_action": "relance_impaye",
+     "objet_id": "00000000-0000-4000-8000-00000000f001",
+     "effet": "ecrire_carte",
+     "palier": "reel",
+     "envoi": "pilote",
+     "pilote": {
+      "envoyer_apres": "2026-11-03T00:00:00.000Z"
+     }
+    },
+    "apercu": {
+     "brouillon": {
+      "objet": null,
+      "texte": "Bonjour, une relance d’impayé sans l’accord de l’artisan : elle ne doit jamais partir seule."
+     }
+    }
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000c007",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d1",
+    "outil": "reponse_prospect",
+    "statut": "en_cours",
+    "origine": "agent",
+    "departement": "accueil",
+    "cle": "h:decision:essai-studio-marque",
+    "expire_le": "2099-01-01T00:00:00.000Z",
+    "entrees": {
+     "type_action": "reponse_prospect",
+     "objet_id": "00000000-0000-4000-8000-00000000e001",
+     "effet": "ecrire_carte",
+     "palier": "reel",
+     "envoi": "au_clic",
+     "pilote": null
+    },
+    "apercu": {
+     "brouillon": {
+      "objet": null,
+      "texte": "Bonjour, ce texte cite Presti au lieu de l’entreprise de l’artisan : il ne doit jamais partir."
+     }
+    }
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000c008",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d1",
+    "outil": "reponse_prospect",
+    "statut": "en_cours",
+    "origine": "agent",
+    "departement": "accueil",
+    "cle": "h:decision:essai-ombre-validee",
+    "expire_le": "2099-01-01T00:00:00.000Z",
+    "entrees": {
+     "type_action": "reponse_prospect",
+     "objet_id": "00000000-0000-4000-8000-00000000e001",
+     "effet": "ecrire_carte"
+    },
+    "apercu": {
+     "brouillon": {
+      "objet": null,
+      "texte": "Bonjour, une carte de l’OMBRE validée : seule une carte du réel peut partir."
+     }
+    }
+   }
+  }
+ ],
+ "Lire les comptes": [
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-0000000000d1",
+    "nom": "Exemple Menuiserie Essai Studio",
+    "email": "atelier-essai-studio@example.com",
+    "plan": "studio",
+    "leads_pause": false,
+    "est_demo": false,
+    "suppression_demandee_le": null
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-0000000000d2",
+    "nom": "Exemple Plomberie Essai Signature",
+    "email": "atelier-essai-signature@example.com",
+    "plan": "signature",
+    "leads_pause": false,
+    "est_demo": false,
+    "suppression_demandee_le": null
+   }
+  }
+ ],
+ "Lire les destinataires": [
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000e001",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d1",
+    "contact": "delivered@resend.dev",
+    "prise_en_main": false,
+    "statut": "nouveau"
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000e002",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "contact": "delivered@resend.dev",
+    "prise_en_main": false,
+    "statut": "nouveau"
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000e003",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "contact": "delivered@resend.dev",
+    "prise_en_main": false,
+    "statut": "nouveau"
+   }
+  }
+ ],
+ "Lire les factures": [
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000f001",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "client_email": "delivered@resend.dev",
+    "statut": "emise",
+    "numero": "ESSAI-001"
+   }
+  }
+ ],
+ "Lire les réponses des clients": [
+  {
+   "json": {
+    "lead_id": "00000000-0000-4000-8000-00000000e003",
+    "contenu": "STOP, merci de ne plus m'écrire.",
+    "sent_at": "2026-11-03T20:00:00.000Z"
+   }
+  }
+ ],
+ "Lire les oppositions": [
+  {
+   "json": {}
+  }
+ ],
+ "Lire les réglages d’impayés": [
+  {
+   "json": {}
+  }
+ ],
+ "Lire les envois du jour": [
+  {
+   "json": {}
+  }
+ ],
+ "Réclamer la carte": [
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000c001",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d1",
+    "statut": "executee"
+   }
+  },
+  {
+   "json": {
+    "id": "00000000-0000-4000-8000-00000000c002",
+    "artisan_id": "00000000-0000-4000-8000-0000000000d2",
+    "statut": "executee"
+   }
+  }
+ ],
+ "Noter le résultat": [
+  {
+   "json": {}
+  }
+ ],
+ "Noter la carte écartée": [
+  {
+   "json": {}
+  }
+ ],
+ "Tracer dans la conversation": [
+  {
+   "json": {}
+  }
+ ]
+}

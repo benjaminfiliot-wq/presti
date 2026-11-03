@@ -3,7 +3,7 @@ import { actif } from '@/lib/flags'
 import { gardeAssistant } from '@/lib/assistant/garde'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { consommerLimite } from '@/lib/limites'
-import { COLONNES_CARTE, DECISIONS, estDecision, versCarteAgent, type CarteAgent, type LigneCarteAgent } from '@/lib/agents/n8n/cartes'
+import { COLONNES_CARTE, estDecision, versCarteAgent, type CarteAgent, type LigneCarteAgent } from '@/lib/agents/n8n/cartes'
 
 export const runtime = 'nodejs'
 
@@ -13,9 +13,11 @@ export const runtime = 'nodejs'
 // GET                         → { cartes } : les 50 dernières cartes d'agents du compte de la session (jamais d'un autre compte).
 // POST { id, decision }       → valider (en_attente → en_cours) ou refuser (en_attente → refusee), UNE fois (réclamation atomique).
 //
-// CETTE ROUTE N'ENVOIE RIEN, sur aucune offre : ni e-mail, ni SMS, ni appel de réalisateur. Elle note la décision ; n8n exécutera une carte
-// validée quand le palier « réel » sera branché (lib-executer), jamais l'app (règle n8n-first). Studio : rien ne part sans ce clic ; et ce
-// clic lui-même ne fait rien partir aujourd'hui.
+// CETTE ROUTE N'ENVOIE RIEN, sur aucune offre : ni e-mail, ni SMS, ni appel de réalisateur. Elle note la décision ; jamais l'app n'envoie une
+// carte d'agent (règle n8n-first). 036-038 : au palier « réel », le statut `en_cours` que SEUL ce clic « Valider » pose est ce que n8n
+// (presti-dep-envoi) réclame puis envoie ; Studio : rien ne part sans ce clic. « Refuser » une carte Signature partie au pilote l'annule
+// pendant ses 10 minutes (en_attente → refusee : la réclamation de n8n ne la trouve plus). Une carte de l'ombre validée n'est envoyée par
+// personne (n8n n'envoie que les cartes marquées entrees.palier = 'reel').
 // Contrôles : drapeau boiteAgents (404 baissé), garde de l'assistant (session, suspension, offre : lib/assistant/garde.ts), débit.
 // Multi-tenant : chaque lecture et chaque écriture est filtrée par artisan_id = la session (la clé de service passe outre la RLS).
 
@@ -52,6 +54,9 @@ export async function POST(req: Request) {
   const id = typeof b?.id === 'string' ? b.id.trim().toLowerCase() : ''
   const decision: unknown = b?.decision
   if (!UUID.test(id) || !estDecision(decision)) return NextResponse.json({ error: 'Demande invalide.' }, { status: 400 })
+  // Le statut exécutable n'est atteint que par le clic explicite « Valider ».
+  // Le filtre en_attente ci-dessous rend la décision unique, même après un rejeu.
+  const statut = decision === 'valider' ? 'en_cours' : 'refusee'
   if (!(await consommerLimite(`agents-decisions:${g.uid}`, LIMITE.max, LIMITE.fenetreSec))) {
     return NextResponse.json({ error: 'Beaucoup de clics en peu de temps : reprenez dans quelques minutes.', code: 'debit' }, { status: 429 })
   }
@@ -61,7 +66,7 @@ export async function POST(req: Request) {
   const maintenant = new Date().toISOString()
   const { data, error } = await supabaseAdmin
     .from('assistant_actions')
-    .update({ statut: DECISIONS[decision], maj_le: maintenant })
+    .update({ statut, maj_le: maintenant })
     .eq('id', id)
     .eq('artisan_id', g.uid)
     .eq('origine', 'agent')

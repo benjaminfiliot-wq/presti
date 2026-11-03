@@ -1,0 +1,33 @@
+{
+  "tache": "036-038",
+  "date": "2026-11-03",
+  "comment": "test_workflow (MCP n8n-oracle) sur presti-dep-envoi (DPZnxlsZHUwFEY0H) LUI-MÊME, non publié : les lectures et écritures Supabase épinglées avec les données fictives de banc-fictif.json (essai-pindata.json) ; les nœuds Code de production exécutés pour de vrai ; le sous-workflow lib-envoyer-courriel (Zs4fVsKZThSRCDjd) appelé pour de vrai, donc Resend (identifiant « Resend (Presti) ») appelé pour de vrai, vers delivered@resend.dev seulement. Relu par get_workflow_execution (includeData).",
+  "executions": [
+    { "workflow": "presti-dep-envoi", "execution": "2749", "statut": "success", "mode": "manual", "debut": "2026-11-03T23:06:21.824Z", "role": "essai",
+      "destinataires": ["delivered@resend.dev"],
+      "sous_executions": ["2750", "2751"],
+      "envois": [
+        { "carte_id": "00000000-0000-4000-8000-00000000c001", "offre": "studio", "moyen": "clic « Valider » (statut en_cours)", "envoi_id": "01a1a3a9-e1dd-7aff-95ed-02fe30fc383d", "ok": true, "cle_idempotence": "reel:0000000000d1:h:decision:essai-studio-1", "resultat_resume": "Fait : réponse envoyée par e-mail (après votre validation)." },
+        { "carte_id": "00000000-0000-4000-8000-00000000c002", "offre": "signature", "moyen": "pilote échu (10 minutes passées, type reponse_prospect permis)", "envoi_id": "01a1a3a9-e2ae-7cd0-8690-887dd515c092", "ok": true, "cle_idempotence": "reel:0000000000d2:h:decision:essai-signature-1", "resultat_resume": "Fait : réponse envoyée par e-mail (partie seule après 10 minutes)." }
+      ],
+      "ecartees": [
+        { "carte_id": "00000000-0000-4000-8000-00000000c005", "motif": "opposition" },
+        { "carte_id": "00000000-0000-4000-8000-00000000c006", "motif": "opt_in" },
+        { "carte_id": "00000000-0000-4000-8000-00000000c007", "motif": "marque" }
+      ],
+      "laissees": ["00000000-0000-4000-8000-00000000c003", "00000000-0000-4000-8000-00000000c004", "00000000-0000-4000-8000-00000000c008"],
+      "enveloppes_relues": [
+        { "carte_id": "00000000-0000-4000-8000-00000000c001", "de": "Exemple Menuiserie Essai Studio <contact@prestiapp.fr>", "reply_to": "atelier-essai-studio@example.com", "a": "delivered@resend.dev", "sujet": "Votre demande de pose de parquet",
+          "pied": "Message préparé par l’assistant de Exemple Menuiserie Essai Studio, relu et validé par Exemple Menuiserie Essai Studio.\nVous ne souhaitez plus recevoir de message de Exemple Menuiserie Essai Studio ? Répondez simplement « STOP » à cet e-mail (désinscription immédiate)." },
+        { "carte_id": "00000000-0000-4000-8000-00000000c002", "de": "Exemple Plomberie Essai Signature <contact@prestiapp.fr>", "reply_to": "atelier-essai-signature@example.com", "a": "delivered@resend.dev", "sujet": "Votre fuite sous l’évier",
+          "pied": "Message rédigé et envoyé automatiquement par l’assistant de Exemple Plomberie Essai Signature.\nVous ne souhaitez plus recevoir de message de Exemple Plomberie Essai Signature ? Répondez simplement « STOP » à cet e-mail (désinscription immédiate)." }
+      ] },
+    { "workflow": "presti-dep-envoi", "execution": "2753", "statut": "success", "mode": "manual", "debut": "2026-11-03T23:06:58.357Z", "role": "rejeu (mêmes cartes, mêmes clés)",
+      "destinataires": ["delivered@resend.dev"],
+      "sous_executions": ["2754", "2755"],
+      "envois": [
+        { "carte_id": "00000000-0000-4000-8000-00000000c001", "envoi_id": "01a1a3a9-e1dd-7aff-95ed-02fe30fc383d", "ok": true },
+        { "carte_id": "00000000-0000-4000-8000-00000000c002", "envoi_id": "01a1a3a9-e2ae-7cd0-8690-887dd515c092", "ok": true }
+      ] }
+  ]
+}

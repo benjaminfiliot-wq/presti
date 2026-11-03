@@ -28,6 +28,7 @@ import { notifierArtisan } from '@/lib/notifications'
 import { historiqueRelances, relanceRecente } from '@/lib/relancesRegistre'
 import { sujetDuFil } from '@/lib/relances'
 import { ecrireEvenement, evenementRelanceDue, type Ecriture } from '@/lib/evenements/ecrivain'
+import { gardeReel } from '@/lib/agents/n8n/garde-reel'
 import { releverEvenementsDuMatin, type BilanReleve } from '@/lib/evenements/departements'
 import { clientOppose } from '@/lib/crm/apresOpposition'
 import { jourDeParis } from '@/lib/evenements/departements'
@@ -81,6 +82,8 @@ export async function GET(req: Request) {
   let sent = 0
   let prepared = 0
   let skipped = 0
+  // 036-038 : relances cédées à n8n (Suivi au palier réel), comptées à part dans le bilan.
+  let cedees = 0
   let interrompue = false
   let plafond = false
   const contactes = new Set<string>()
@@ -151,6 +154,22 @@ export async function GET(req: Request) {
       await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)
       skipped++
       continue
+    }
+    // 036-038 — la garde anti-doublon du Suivi. Au réel (« tous » ET « suivi » au palier reel, en marche : lib/agents/n8n/garde-reel.ts), la
+    // relance est CÉDÉE à n8n : le fait « relance due » est rangé (clé idempotente relance_due:<demande>:r<rang>), puis la relance est prise
+    // (envoyee: true, conditionnelle) — l'app n'écrit ni ne propose rien, et elle ne revient pas dans le lot de demain. Le seul envoi possible
+    // est celui de la carte du Suivi (Studio : au clic ; Signature : par le pilote de n8n). Fait non rangé, garde en erreur ou lente : la
+    // relance suit la voie historique ci-dessous — l'app garde la main, jamais personne ; rien n'est perdu.
+    if (actif('systemeAgents') && await gardeReel(lead.artisan_id, 'suivi')) {
+      const canal = typeof lead.contact === 'string' && lead.contact.includes('@') ? 'email' : 'aucun'
+      const ev = await ecrireEvenement(supabaseAdmin, evenementRelanceDue({ artisanId: lead.artisan_id, leadId: lead.id, rang: r.rang ?? 1,
+        echeance: typeof r.planifiee_le === 'string' ? r.planifiee_le : null, canal, registreLu: true, sujetEscalade: false, pauseGenerale: false, stop: null }))
+      if (ev.ok) {
+        await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id).eq('envoyee', false)
+        cedees++
+        skipped++
+        continue
+      }
     }
     // 036-036 : la relance a passé les contrôles de l'app (demande « repondu », main non prise, registre des 3 jours lu, aucun sujet
     // d'escalade) : le fait est rangé pour le Suivi, AVANT la prise et l'envoi (l'ombre montre ce que l'agent aurait fait). Idempotent
@@ -335,8 +354,18 @@ export async function GET(req: Request) {
   let impayes: unknown = 'fermées'
   if (!enPause && !interrompue && actif('relancesImpayes')) {
     try {
+      // 036-038 — la garde anti-doublon de la Facturation : un compte dont « tous » ET « facturation » sont au réel n'est pas relancé par
+      // l'app (n8n fait partir la carte d'impayé). Garde en erreur ou lente : faux, l'app garde la main. Les autres méthodes du magasin
+      // restent les siennes (prototype).
+      const magasinHorsReel = Object.assign(Object.create(magasinSupabase) as typeof magasinSupabase, {
+        comptes: async (limite: number) => {
+          const tous = await magasinSupabase.comptes(limite)
+          const gardes = await Promise.all(tous.map((c) => gardeReel(c.artisan_id, 'facturation')))
+          return tous.filter((_, i) => !gardes[i])
+        },
+      })
       const r = await tourRelancesImpayes({
-        actif: true, magasin: magasinSupabase, sortiePermise: async () => (await sortiePermise()).permise,
+        actif: true, magasin: magasinHorsReel, sortiePermise: async () => (await sortiePermise()).permise,
         envoyer: (m) => sendEmail({ to: m.to, subject: m.subject, text: m.text, fromName: m.fromName, replyTo: m.replyTo, transactionnel: true }),
       })
       impayes = r
@@ -408,8 +437,8 @@ export async function GET(req: Request) {
     : releveNonConfiguree ? 'boîte non configurée sur cet environnement'
     : `ÉCHEC — ${(courriers as { erreur?: string })?.erreur ?? 'raison inconnue'}`.slice(0, 180)
   await enregistrerPassage('relances', {
-    due: relances.length, sent, prepared, skipped, pause: enPause || interrompue, plafond, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
+    due: relances.length, sent, prepared, skipped, cedees_n8n: cedees, pause: enPause || interrompue, plafond, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
     boite: releveResume,
   }, courriers === 'messagerie fermée' || releveOk || releveNonConfiguree)
-  return NextResponse.json({ ok: true, pause: enPause || interrompue, jour_ferie: jourFerie.etat, plafond, due: relances.length, sent, prepared, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, expirations, alertes, courriers, compta, impayes, rappels: rappelsMatin, apres_chantier: apresChantier, evenements })
+  return NextResponse.json({ ok: true, pause: enPause || interrompue, jour_ferie: jourFerie.etat, plafond, due: relances.length, sent, prepared, skipped, cedees_n8n: cedees, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, expirations, alertes, courriers, compta, impayes, rappels: rappelsMatin, apres_chantier: apresChantier, evenements })
 }
