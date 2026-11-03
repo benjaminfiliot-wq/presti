@@ -1,0 +1,672 @@
+{
+ "tache": "036-030",
+ "source": "MCP n8n-oracle, get_workflow_execution, relu sans retouche",
+ "essais": [
+  {
+   "nom": "lectures-reelles",
+   "execution": "996",
+   "workflowId": "596OC5mL2aMBq6SD",
+   "mode": "manual",
+   "statut": "success",
+   "debut": "2026-11-03T17:35:22.497Z",
+   "noeuds": {
+    "Toutes les minutes": [
+     {
+      "timestamp": "2026-11-03T18:35:22.480+01:00",
+      "Readable date": "November 3rd 2026, 6:35:22 pm",
+      "Readable time": "6:35:22 pm",
+      "Day of week": "Tuesday",
+      "Year": "2026",
+      "Month": "November",
+      "Day of month": "03",
+      "Hour": "18",
+      "Minute": "35",
+      "Second": "22",
+      "Timezone": "Europe/Paris (UTC+01:00)"
+     }
+    ],
+    "Lire les interrupteurs généraux": [
+     {}
+    ],
+    "Interrupteur général": [
+     {
+      "interrupteur_general": false,
+      "organisation_systeme": "00000000-0000-4000-8000-000000000000",
+      "passage": "2026-11-03T1735",
+      "maintenant": "2026-11-03T17:35:22.662Z",
+      "comptes": [],
+      "lecture": "ok"
+     }
+    ],
+    "Interrupteur général ouvert ?": [],
+    "Bilan du passage": [
+     {
+      "arret": "interrupteur_general_coupe",
+      "routes": {},
+      "statuts": {},
+      "effets_prevus": 0,
+      "effets_faits": 0,
+      "cartes_ecrites": 0,
+      "marques": 0
+     }
+    ]
+   }
+  },
+  {
+   "nom": "ombre",
+   "execution": "999",
+   "workflowId": "596OC5mL2aMBq6SD",
+   "mode": "manual",
+   "statut": "success",
+   "debut": "2026-11-03T17:36:34.165Z",
+   "noeuds": {
+    "Aiguiller": [
+     {
+      "contrat": "presti-dep-accueil@1",
+      "organisation_id": "00000000-0000-4000-8000-0000000000a1",
+      "simulation": true,
+      "cle_idempotence": "dep:accueil:0000000000a1:2026-11-03T1736",
+      "trace": {
+       "execution_parent": "presti-cerveau:2026-11-03T1736",
+       "declencheur": "presti-cerveau",
+       "tentative": 0
+      },
+      "config": {
+       "nom_artisan": "Exemple. Plomberie Arnal-Démo",
+       "offre": "studio",
+       "mode_reponse": "assistee",
+       "capacites": [
+        "canaux.email",
+        "relances",
+        "factures.relances",
+        "assistant"
+       ],
+       "pilote": {
+        "drapeau": true,
+        "actif": false,
+        "types": {}
+       },
+       "parties_depuis_24h": 0,
+       "mots_escalade_artisan": [],
+       "fournisseurs": [],
+       "horaires": {
+        "jours_permis": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ],
+        "heures_permises": {
+         "debut": "00:00",
+         "fin": "23:59"
+        }
+       },
+       "plafond_jour": 10,
+       "qualification": {
+        "grille": [
+         {
+          "critere": "urgence=urgent",
+          "poids": 40
+         },
+         {
+          "critere": "canal=formulaire",
+          "poids": 25
+         },
+         {
+          "critere": "canal=site",
+          "poids": 25
+         },
+         {
+          "critere": "canal=telephone",
+          "poids": 15
+         },
+         {
+          "critere": "canal=email",
+          "poids": 15
+         }
+        ],
+        "seuils": {
+         "haute": 60,
+         "normale": 30
+        },
+        "delais_cibles_min": {
+         "haute": 15,
+         "normale": 60,
+         "a_revoir": 240
+        }
+       },
+       "interrupteur_general": true,
+       "interrupteur_departement": true
+      },
+      "donnees": {
+       "demandes": [
+        {
+         "id": "00000000-0000-4000-8000-a00000000001",
+         "canal": "page_p",
+         "recu_le": "2026-11-03T17:37:58.000Z",
+         "message": "Exemple. Bonjour, je voudrais refaire ma salle de bain.",
+         "champs": {
+          "canal": "formulaire",
+          "urgence": "normal",
+          "type_chantier": "Salle de bain",
+          "photo_jointe": false
+         },
+         "empreinte_contact": null,
+         "client_existant": false,
+         "honeypot": false,
+         "photo": null,
+         "proposition": null,
+         "destinataire": {
+          "opposition": null,
+          "consentement_sms": null
+         }
+        }
+       ],
+       "empreintes_connues": [],
+       "cles_existantes": [],
+       "maintenant": "2026-11-03T17:36:34.189Z"
+      }
+     },
+     {
+      "contrat": "presti-dep-accueil@1",
+      "organisation_id": "00000000-0000-4000-8000-0000000000b2",
+      "simulation": true,
+      "cle_idempotence": "dep:accueil:0000000000b2:2026-11-03T1736",
+      "trace": {
+       "execution_parent": "presti-cerveau:2026-11-03T1736",
+       "declencheur": "presti-cerveau",
+       "tentative": 0
+      },
+      "config": {
+       "nom_artisan": "Exemple. Menuiserie Berthier-Démo",
+       "offre": "signature",
+       "mode_reponse": "auto",
+       "capacites": [
+        "canaux.email",
+        "relances",
+        "factures.relances",
+        "assistant",
+        "plateforme.ia.auto",
+        "relances.auto",
+        "factures.relances.auto",
+        "crm",
+        "assistant.pilote"
+       ],
+       "pilote": {
+        "drapeau": true,
+        "actif": false,
+        "types": {}
+       },
+       "parties_depuis_24h": 0,
+       "mots_escalade_artisan": [],
+       "fournisseurs": [],
+       "horaires": {
+        "jours_permis": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ],
+        "heures_permises": {
+         "debut": "00:00",
+         "fin": "23:59"
+        }
+       },
+       "plafond_jour": 20,
+       "qualification": {
+        "grille": [
+         {
+          "critere": "urgence=urgent",
+          "poids": 40
+         },
+         {
+          "critere": "canal=formulaire",
+          "poids": 25
+         },
+         {
+          "critere": "canal=site",
+          "poids": 25
+         },
+         {
+          "critere": "canal=telephone",
+          "poids": 15
+         },
+         {
+          "critere": "canal=email",
+          "poids": 15
+         }
+        ],
+        "seuils": {
+         "haute": 60,
+         "normale": 30
+        },
+        "delais_cibles_min": {
+         "haute": 15,
+         "normale": 60,
+         "a_revoir": 240
+        }
+       },
+       "interrupteur_general": true,
+       "interrupteur_departement": true
+      },
+      "donnees": {
+       "demandes": [
+        {
+         "id": "00000000-0000-4000-8000-b00000000005",
+         "canal": "page_p",
+         "recu_le": "2026-11-03T17:38:28.000Z",
+         "message": "Exemple. Un placard sur mesure.",
+         "champs": {
+          "canal": "formulaire",
+          "urgence": "normal",
+          "type_chantier": "Placard",
+          "photo_jointe": false
+         },
+         "empreinte_contact": null,
+         "client_existant": false,
+         "honeypot": false,
+         "photo": null,
+         "proposition": null,
+         "destinataire": {
+          "opposition": null,
+          "consentement_sms": null
+         }
+        }
+       ],
+       "empreintes_connues": [],
+       "cles_existantes": [],
+       "maintenant": "2026-11-03T17:36:34.189Z"
+      }
+     },
+     {
+      "contrat": "aucun",
+      "rejets": [
+       {
+        "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+        "id": "00000000-0000-4000-8000-e00000000002",
+        "motif": "type_sans_departement"
+       },
+       {
+        "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+        "id": "00000000-0000-4000-8000-e00000000003",
+        "motif": "demande_introuvable"
+       }
+      ],
+      "sautes": [],
+      "routes_ids": {
+       "00000000-0000-4000-8000-0000000000a1|accueil": {
+        "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+        "departement": "accueil",
+        "palier": "ombre",
+        "ids": [
+         "00000000-0000-4000-8000-e00000000001"
+        ],
+        "objets": [
+         {
+          "id": "00000000-0000-4000-8000-e00000000001",
+          "type": "demande_recue",
+          "objet_id": "00000000-0000-4000-8000-a00000000001"
+         }
+        ]
+       },
+       "00000000-0000-4000-8000-0000000000b2|accueil": {
+        "artisan_id": "00000000-0000-4000-8000-0000000000b2",
+        "departement": "accueil",
+        "palier": "simulation",
+        "ids": [
+         "00000000-0000-4000-8000-e00000000005"
+        ],
+        "objets": [
+         {
+          "id": "00000000-0000-4000-8000-e00000000005",
+          "type": "demande_recue",
+          "objet_id": "00000000-0000-4000-8000-b00000000005"
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Préparer les cartes de l’ombre": [
+     {
+      "lignes": [
+       {
+        "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+        "conversation_id": "00000000-0000-4000-8000-e00000000001",
+        "tour": 1,
+        "outil": "reponse_prospect",
+        "mode": "confirmation",
+        "statut": "en_attente",
+        "titre": "Répondre à une nouvelle demande",
+        "entrees": {
+         "type_action": "reponse_prospect",
+         "canal": "email",
+         "objet_id": "00000000-0000-4000-8000-a00000000001",
+         "effet": "ecrire_carte"
+        },
+        "apercu": {
+         "brouillon": {
+          "objet": "Exemple. Votre demande",
+          "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite."
+         },
+         "canal": "email",
+         "pilote_en_reel": false
+        },
+        "objet_type": "conversation",
+        "objet_id": "00000000-0000-4000-8000-a00000000001",
+        "expire_le": "2026-11-10T17:36:34.288Z",
+        "origine": "agent",
+        "departement": "accueil",
+        "motif": "Une nouvelle demande est arrivée sur votre page ; préparé en mode ombre, rien n’est parti.",
+        "sources": [
+         {
+          "fait": "evenement",
+          "source": "evenements_metier:00000000-0000-4000-8000-e00000000001"
+         },
+         {
+          "fait": "objet",
+          "source": "leads:00000000-0000-4000-8000-a00000000001"
+         },
+         {
+          "fait": "palier",
+          "source": "departements_reglages:00000000-0000-4000-8000-0000000000a1:accueil:ombre"
+         },
+         {
+          "fait": "brouillon",
+          "source": "presti-dep-accueil:h:decision:exemple-a1"
+         }
+        ],
+        "cle": "h:decision:exemple-a1"
+       },
+       {
+        "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+        "conversation_id": "00000000-0000-4000-8000-e00000000001",
+        "tour": 1,
+        "outil": "reponse_prospect",
+        "mode": "confirmation",
+        "statut": "en_attente",
+        "titre": "Répondre à une nouvelle demande",
+        "entrees": {
+         "type_action": "reponse_prospect",
+         "canal": "email",
+         "objet_id": "00000000-0000-4000-8000-a00000000001",
+         "effet": "mettre_en_file_pilote"
+        },
+        "apercu": {
+         "brouillon": {
+          "objet": "Exemple. Votre demande",
+          "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite."
+         },
+         "canal": "email",
+         "pilote_en_reel": true
+        },
+        "objet_type": "conversation",
+        "objet_id": "00000000-0000-4000-8000-a00000000001",
+        "expire_le": "2026-11-10T17:36:34.288Z",
+        "origine": "agent",
+        "departement": "accueil",
+        "motif": "Une nouvelle demande est arrivée sur votre page ; préparé en mode ombre, rien n’est parti (au réel, le pilote l’enverrait après 10 minutes).",
+        "sources": [
+         {
+          "fait": "evenement",
+          "source": "evenements_metier:00000000-0000-4000-8000-e00000000001"
+         },
+         {
+          "fait": "objet",
+          "source": "leads:00000000-0000-4000-8000-a00000000001"
+         },
+         {
+          "fait": "palier",
+          "source": "departements_reglages:00000000-0000-4000-8000-0000000000a1:accueil:ombre"
+         },
+         {
+          "fait": "brouillon",
+          "source": "presti-dep-accueil:h:decision:exemple-a1-pilote"
+         }
+        ],
+        "cle": "h:decision:exemple-a1-pilote"
+       }
+      ]
+     }
+    ],
+    "Préparer les marques": [
+     {
+      "p_artisan": "00000000-0000-4000-8000-0000000000a1",
+      "p_ids": [
+       "00000000-0000-4000-8000-e00000000001",
+       "00000000-0000-4000-8000-e00000000002"
+      ]
+     },
+     {
+      "p_artisan": "00000000-0000-4000-8000-0000000000b2",
+      "p_ids": [
+       "00000000-0000-4000-8000-e00000000005",
+       "00000000-0000-4000-8000-e00000000003"
+      ]
+     }
+    ],
+    "Bilan du passage": [
+     {
+      "arret": null,
+      "simulation": true,
+      "comptes": 2,
+      "routes": {
+       "accueil": 2
+      },
+      "statuts": {
+       "accueil": "ok,ok"
+      },
+      "sautes": [],
+      "rejets": [
+       "type_sans_departement",
+       "demande_introuvable"
+      ],
+      "effets_prevus": 6,
+      "effets_faits": 0,
+      "cartes_ecrites": 2,
+      "ecriture_cartes": "ok",
+      "marques": 4
+     }
+    ],
+    "Des cartes à écrire ?": [
+     {
+      "lignes": [
+       {
+        "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+        "conversation_id": "00000000-0000-4000-8000-e00000000001",
+        "tour": 1,
+        "outil": "reponse_prospect",
+        "mode": "confirmation",
+        "statut": "en_attente",
+        "titre": "Répondre à une nouvelle demande",
+        "entrees": {
+         "type_action": "reponse_prospect",
+         "canal": "email",
+         "objet_id": "00000000-0000-4000-8000-a00000000001",
+         "effet": "ecrire_carte"
+        },
+        "apercu": {
+         "brouillon": {
+          "objet": "Exemple. Votre demande",
+          "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite."
+         },
+         "canal": "email",
+         "pilote_en_reel": false
+        },
+        "objet_type": "conversation",
+        "objet_id": "00000000-0000-4000-8000-a00000000001",
+        "expire_le": "2026-11-10T17:36:34.288Z",
+        "origine": "agent",
+        "departement": "accueil",
+        "motif": "Une nouvelle demande est arrivée sur votre page ; préparé en mode ombre, rien n’est parti.",
+        "sources": [
+         {
+          "fait": "evenement",
+          "source": "evenements_metier:00000000-0000-4000-8000-e00000000001"
+         },
+         {
+          "fait": "objet",
+          "source": "leads:00000000-0000-4000-8000-a00000000001"
+         },
+         {
+          "fait": "palier",
+          "source": "departements_reglages:00000000-0000-4000-8000-0000000000a1:accueil:ombre"
+         },
+         {
+          "fait": "brouillon",
+          "source": "presti-dep-accueil:h:decision:exemple-a1"
+         }
+        ],
+        "cle": "h:decision:exemple-a1"
+       },
+       {
+        "artisan_id": "00000000-0000-4000-8000-0000000000a1",
+        "conversation_id": "00000000-0000-4000-8000-e00000000001",
+        "tour": 1,
+        "outil": "reponse_prospect",
+        "mode": "confirmation",
+        "statut": "en_attente",
+        "titre": "Répondre à une nouvelle demande",
+        "entrees": {
+         "type_action": "reponse_prospect",
+         "canal": "email",
+         "objet_id": "00000000-0000-4000-8000-a00000000001",
+         "effet": "mettre_en_file_pilote"
+        },
+        "apercu": {
+         "brouillon": {
+          "objet": "Exemple. Votre demande",
+          "texte": "Exemple. Bonjour, merci pour votre message. Nous revenons vers vous pour convenir d’une visite."
+         },
+         "canal": "email",
+         "pilote_en_reel": true
+        },
+        "objet_type": "conversation",
+        "objet_id": "00000000-0000-4000-8000-a00000000001",
+        "expire_le": "2026-11-10T17:36:34.288Z",
+        "origine": "agent",
+        "departement": "accueil",
+        "motif": "Une nouvelle demande est arrivée sur votre page ; préparé en mode ombre, rien n’est parti (au réel, le pilote l’enverrait après 10 minutes).",
+        "sources": [
+         {
+          "fait": "evenement",
+          "source": "evenements_metier:00000000-0000-4000-8000-e00000000001"
+         },
+         {
+          "fait": "objet",
+          "source": "leads:00000000-0000-4000-8000-a00000000001"
+         },
+         {
+          "fait": "palier",
+          "source": "departements_reglages:00000000-0000-4000-8000-0000000000a1:accueil:ombre"
+         },
+         {
+          "fait": "brouillon",
+          "source": "presti-dep-accueil:h:decision:exemple-a1-pilote"
+         }
+        ],
+        "cle": "h:decision:exemple-a1-pilote"
+       }
+      ]
+     }
+    ],
+    "Des marques à poser ?": [
+     {
+      "p_artisan": "00000000-0000-4000-8000-0000000000a1",
+      "p_ids": [
+       "00000000-0000-4000-8000-e00000000001",
+       "00000000-0000-4000-8000-e00000000002"
+      ]
+     },
+     {
+      "p_artisan": "00000000-0000-4000-8000-0000000000b2",
+      "p_ids": [
+       "00000000-0000-4000-8000-e00000000005",
+       "00000000-0000-4000-8000-e00000000003"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "nom": "banc-cerveau",
+   "execution": "1007",
+   "workflowId": "x7QfmFAZNIxaoUS6",
+   "mode": "manual",
+   "statut": "success",
+   "debut": "2026-11-03T17:39:34.880Z",
+   "noeuds": {
+    "Bilan du banc": [
+     {
+      "comptes": [
+       {
+        "statut": "ok",
+        "erreurs": 0,
+        "cartes": 16,
+        "pilote": 0,
+        "escalades": 4,
+        "spam": 2
+       },
+       {
+        "statut": "ok",
+        "erreurs": 0,
+        "cartes": 4,
+        "pilote": 13,
+        "escalades": 3,
+        "spam": 1
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "nom": "banc-argent",
+   "execution": "1016",
+   "workflowId": "LRO3Jng6Te4Xn7Pg",
+   "mode": "manual",
+   "statut": "success",
+   "debut": "2026-11-03T17:39:38.363Z",
+   "noeuds": {
+    "Bilan du banc": [
+     {
+      "devis": [
+       {
+        "statut": "ok",
+        "erreurs": 0,
+        "cartes": 3,
+        "pilote": 0
+       },
+       {
+        "statut": "ok",
+        "erreurs": 0,
+        "cartes": 5,
+        "pilote": 0
+       }
+      ],
+      "facturation": [
+       {
+        "statut": "ok",
+        "erreurs": 0,
+        "cartes": 4,
+        "pilote": 0
+       },
+       {
+        "statut": "ok",
+        "erreurs": 0,
+        "cartes": 3,
+        "pilote": 2
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

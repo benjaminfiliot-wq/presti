@@ -1,4 +1,4 @@
-# Carte du code — presti (2026-11-03T17:48:45Z)
+# Carte du code — presti (2026-11-03T18:20:01Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -47,11 +47,11 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/systeme` : clients, connexions, departements, fait, ·
 - `/tarifs` : ·
 
-## API (224) — `app/api/**/route.ts`, préfixe `/api`
+## API (225) — `app/api/**/route.ts`, préfixe `/api`
 - `/account` : delete [GET POST DELETE], inscription [POST], slug [GET POST]
 - `/agenda` : [jeton] [GET]
 - `/agents` : battement [POST], decisions [POST GET], demandes/[id] [PATCH], demandes [GET], etat [GET], evenements [POST GET], reunion/chiffres [GET], reunion [POST], taches/[id]/rendre [POST], taches/prendre [POST], taches [POST], telegram/entree [POST], telegram/sortie [GET], tic [GET], usine/depot [POST], usine/entree [POST], vigile [GET]
-- `/assistant` : actions [POST], · [POST]
+- `/assistant` : actions [POST], agents [GET POST], · [POST]
 - `/audience` : · [POST]
 - `/aujourdhui` : · [GET]
 - `/auth` : code [POST GET], code/verifier [POST], lien [POST], mdp-fuite [POST], reset-confirm [POST], reset-request [POST]
@@ -95,14 +95,14 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/usine` : atelier/depot [POST], atelier/lien [POST], atelier/maquette [POST], atelier/travail [GET], facteur/avis [POST], facteur/travail [GET], porteur/oppositions [GET POST], porteur/rendu [POST], porteur/travail [GET], pubs/depot [POST], pubs/rendu [POST], pubs/travail [GET], qualite/rapport [POST], qualite/travail [GET], sav/brouillon [POST], sav/rapport [GET], sav/travail [GET], standard/classement [POST], standard/travail [GET]
 - `/webhooks` : meta [GET POST]
 
-## Drapeaux — `lib/flags.ts` (63) : une fonctionnalité non finie n'apparaît pas
-busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformeRegles=true · aideVisites=true · aideCentre=true · landingVideo=false · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · canauxLeboncoin=false · siteCommande=true · siteCommandeVente=true · siteAchatPublic=false · landingDemoSite=true · audience=true · pilotage=true · stationCarte=true · packPub=false · packPubVente=false · demandesEcosysteme=true · prospectsEntrant=true · aimantSite=false · ecommerce=false · essaiFormulaire=true · comptaDateReglement=true · comptaAlerteImpayes=true · comptaExportMensuel=true · assistant=true · crm=true · relancesImpayes=true · crmPieces=true · crmPlanning=true · crmApresChantier=true · crmPlan=true · crmSuivi=true · crmAtelierVivant=true · crmTempsReelComplet=true · piloteAutomatique=true · crmPointage=true · devisLots=true · facturesSituation=true · canauxTelegram=true · canauxNotifications=true · canauxLiens=true · importProspects=true · consoleV2=false · smsClients=false · demandesDemo=false · accuseParN8n=false · systemeAgents=false · connexions=false
+## Drapeaux — `lib/flags.ts` (64) : une fonctionnalité non finie n'apparaît pas
+busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformeRegles=true · aideVisites=true · aideCentre=true · landingVideo=false · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · canauxLeboncoin=false · siteCommande=true · siteCommandeVente=true · siteAchatPublic=false · landingDemoSite=true · audience=true · pilotage=true · stationCarte=true · packPub=false · packPubVente=false · demandesEcosysteme=true · prospectsEntrant=true · aimantSite=false · ecommerce=false · essaiFormulaire=true · comptaDateReglement=true · comptaAlerteImpayes=true · comptaExportMensuel=true · assistant=true · crm=true · relancesImpayes=true · crmPieces=true · crmPlanning=true · crmApresChantier=true · crmPlan=true · crmSuivi=true · crmAtelierVivant=true · crmTempsReelComplet=true · piloteAutomatique=true · crmPointage=true · devisLots=true · facturesSituation=true · canauxTelegram=true · canauxNotifications=true · canauxLiens=true · importProspects=true · consoleV2=false · smsClients=false · demandesDemo=false · accuseParN8n=false · systemeAgents=false · connexions=false · boiteAgents=false
 
 ## Formules — `lib/plans.ts`
 - plans : gratuit (Essai, 0 €/mois, BASE) · essentiel (Essentiel, 29 €/mois, BASE) · studio (Studio, 30 €/mois, STUDIO) · signature (Signature, 60 €/mois, SIGNATURE) · entreprise (Presti pour l’entreprise, 0 €/mois, ENTREPRISE) · business (Business, 0 €/mois, ENTREPRISE)
 - grille complète (41 lignes) : Niveau d’automatisation · La plateforme : page de conversation à votre marque · Réponse aux demandes de vos clients · Comptes clients (lien magique, historique) · Écran « Ma plateforme » : réglages de l’assistant et apparence de votre page · Personnalisation · Relances des conversations (J+2, J+5, J+10) · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA sur vos prix : vous relisez et envoyez · Factures + export XML Factur-X · Devis par lots : un sous-total par corps de métier · Factures d’acompte, situations de travaux et facture de solde · Relances des factures impayées une fois activées (J+3, J+10, J+21 réglables), arrêtées dès le paiement ou la réponse du client · Écran « Mes chiffres » : chiffre d’affaires, impayés, devis à relancer, vos fichiers rangés par l’assistant · Alerte e-mail quand une facture reste impayée, automatique une fois activée · Export mensuel du journal des factures à votre comptable, automatique une fois activé · Pipeline des demandes et fiches clients · Chantiers : statuts, tâches, matériaux réservés · Équipe et véhicules affectés aux chantiers · Carte Atelier : chantiers, équipe et alertes (retards, livraisons, stock bas), en temps réel · Devis, factures et relances menés par la conversation · Stock et tarifs pilotés par la conversation · Le CRM piloté par la conversation · Briefing du matin : urgences, retards, ce qui vous attend · Vous confirmez ce qui part chez un client ; journal des actions, annulables · Limites · Pilote automatique : ce que vous choisissez part seul après 10 minutes pour annuler (jamais un prix estimé, jamais un paiement) · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Telegram : votre bot, messages reçus et envoyés depuis Presti · Vos réseaux regroupés : LinkedIn, Facebook, Instagram, TikTok, plateformes de devis (par leurs e-mails de notification) · Un lien et un QR code par réseau vers votre page · Import des prospects de vos publicités (fichier CSV) · Crédits chaque mois · Espace pour vos images (logo, réalisations) · Espace pour les photos de chantier envoyées par vos clients · Export de vos données · Support par écrit
 
-## Bibliothèque — `lib/**/*.ts` (379 fichiers, exports nommés)
+## Bibliothèque — `lib/**/*.ts` (381 fichiers, exports nommés)
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
 - `lib/accesOffre.ts` (7) : Ecran, ECRANS, RefusOffre, AccesOffre, decisionEcran, decisionPourEcran, libelleOffreMinimale
 - `lib/accesOffreServeur.ts` (2) : GardeOffre, exigerCapacite
@@ -150,6 +150,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/agents/lectureFirecrawl.ts` (3) : PLAFOND_CAHIER, COUT_PAGE, lireAvecFirecrawl
 - `lib/agents/llm.ts` (32) : Lecteur, OptionsLecteur, RetourCout, DepsLecteur, PLAFONDS, COUT_VOIE_EUROS, coutValide, verifierPlafondReel, …
 - `lib/agents/moteurs.ts` (20) : MODELE_AGENTS, MODELE_REJUGE, EntreeMoteur, MOTEUR_DE, TRAVAIL_DE, EntreeCatalogue, VERSION_CATALOGUE, CATALOGUE, …
+- `lib/agents/n8n/cartes.ts` (15) : DEPARTEMENTS, Departement, NOMS_DEPARTEMENTS, COLONNES_CARTE, LigneCarteAgent, SourceFait, StatutCarte, CarteAgent, …
 - `lib/agents/pause.ts` (2) : EtatPause, pauseGenerale
 - `lib/agents/relais.ts` (27) : Nature, IdMoteur, Raison, CHAINE, moteurPermis, SANS_REPLI, Politique, politiqueDe, …
 - `lib/agents/sav/repondeurClient.ts` (52) : SEUIL_AUTOMATIQUE, CERTITUDE_AUTO, CERTITUDE_MIN, TEXTE_MAX, QUESTION_MAX, ATTENTE_BROUILLON_HEURES, ClasseSav, DecisionSav, …
@@ -324,6 +325,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/essaiGratuit.ts` (16) : estPlanPayant, essaiJours, creditsEssai, normaliserEmail, FaitsEssai, RaisonRefus, DecisionEssai, decisionEssai, …
 - `lib/essaiGratuitServeur.ts` (4) : empreinteEmail, evaluerEssai, marquerEssai, alerteFinEssai
 - `lib/essais.ts` (1) : ouvertPour
+- `lib/evenements/ecrivain.ts` (13) : DELAI_MS, TYPES_EVENEMENT, TypeEvenement, ObjetEvenement, Fait, Evenement, Ecriture, ClientEvenements, …
 - `lib/facturation.ts` (15) : DATE_CIBS, FIN_TOLERANCE_CGI, BaseMention, mentionFranchise, toleranceCgiEncoreValable, sirenValide, formaterSiren, CategorieOperation, …
 - `lib/factureDepuisDevis.ts` (6) : LigneIn, ResultatFacture, ParamsFacture, SimulationFacture, creerFacture, simulerFacture
 - `lib/factureEmission.ts` (7) : JETON_NUMERO, DemandeEmission, ResultatEmission, EMISSION_INDISPONIBLE, fonctionAbsente, refusDeLaBase, emettreFacture
@@ -483,10 +485,10 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/ville.ts` (2) : NB_COMMUNES, villeDe
 - `lib/zip.ts` (2) : crc32, ZipFlux
 
-## Migrations — `supabase/migrations` (179)
-- dernières : 0189_role_lecture_n8n.sql, 0190_demandes_demo.sql, 0191_suivi_artisan_envois.sql, 0192_accuse_reception_n8n.sql, 0193_systeme_agents.sql
+## Migrations — `supabase/migrations` (180)
+- dernières : 0190_demandes_demo.sql, 0191_suivi_artisan_envois.sql, 0192_accuse_reception_n8n.sql, 0193_systeme_agents.sql, 0194_cartes_agents.sql
 
-## Scripts — `scripts/` (597 .mjs, dont 88 suites e2e)
+## Scripts — `scripts/` (598 .mjs, dont 88 suites e2e)
 
-## Orchestre — file : 60 · en cours : 1 · faites : 468 · refusées : 17
+## Orchestre — file : 60 · en cours : 3 · faites : 469 · refusées : 17
 

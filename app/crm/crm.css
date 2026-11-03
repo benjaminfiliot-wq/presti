@@ -491,5 +491,30 @@ span.crm-lien-inerte.psh-btn, span.crm-lien-inerte.tag { opacity: .62 }
 .gst-liste a span { color: var(--muted); font-size: 12.5px; line-height: 1.4 }
 .atl-fait { margin: 0 0 10px; font-size: 12.5px; line-height: 1.45; color: var(--ink-soft) }
 .atl-fait b { color: var(--ok) }
+/* — La boîte « À valider » des agents (app/crm/BoiteAgents.tsx, 036-030). Jetons de base.css, corail en accent, densité d'outil. — */
+.bag-titre { display: flex; align-items: center; gap: 8px }
+.bag-compte { font-size: 11px; background: var(--accent-tint); color: var(--accent-ink); border-color: var(--accent-tint-2) }
+.bag-aide, .bag-vide { margin: 0; color: var(--muted); font-size: 13px }
+.bag-avis { margin: 0; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--surface-2); color: var(--ink-soft); font-size: 13px }
+.bag-erreur { margin: 0; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--crit-tint); color: var(--crit); font-size: 13px }
+.bag-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px }
+.bag-carte { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: var(--radius-sm) }
+.bag-carte[data-statut="validee"], .bag-carte[data-statut="faite"] { border-left-color: var(--ok) }
+.bag-carte[data-statut="refusee"], .bag-carte[data-statut="expiree"], .bag-carte[data-statut="echec"] { border-left-color: var(--line); opacity: .78 }
+.bag-tete { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0 }
+.bag-dep { font-size: 11px }
+.bag-titre-carte { font-size: 14.5px; line-height: 1.3; text-wrap: balance }
+.bag-proposition { margin: 0; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; background: var(--surface-2); border-radius: 8px; font-size: 13px; line-height: 1.5; color: var(--ink-soft); white-space: pre-line; overflow-wrap: anywhere }
+.bag-proposition b { color: var(--ink); font-size: 12.5px }
+.bag-pourquoi { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-soft) }
+.bag-pourquoi b, .bag-statut { color: var(--muted) }
+.bag-statut { margin: 0; font-size: 12.5px }
+.bag-sources summary, .bag-historique summary { cursor: pointer; color: var(--muted); font-size: 12.5px }
+.bag-sources ul { margin: 6px 0 0; padding: 0 0 0 16px; display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted) }
+.bag-sources code { font-family: var(--font-mono); font-size: 11px; color: var(--faint); overflow-wrap: anywhere }
+.bag-historique { display: flex; flex-direction: column; gap: 8px }
+.bag-actions { display: flex; gap: 8px; flex-wrap: wrap }
+.bag-actions button { min-height: 40px }
+.bag-actions button:focus-visible, .bag-sources summary:focus-visible, .bag-historique summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
 @media (max-width: 720px) { .gst-portes { grid-template-columns: minmax(0, 1fr) } .gst-maquette { flex-basis: 84px; width: 84px; height: 56px } }
 @media (prefers-reduced-motion: reduce) { .gst-porte, .gst-liste a { transition: none } .gst-porte:hover { transform: none } .gst-porte:active { transform: none } }

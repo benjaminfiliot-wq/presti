@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { actif } from '@/lib/flags'
 import { peut } from '@/lib/plans'
+import BoiteAgents from './BoiteAgents'
 
 // L'OUTIL DE GESTION (03/11/2026, demande de Benj, mot pour mot : « j'avais juste demandé qu'on puisse tout voir via l'outil de gestion,
 // donc le CRM. Juste tu vires tout ce qui va être devis, facture et tout, et tout va dans l'outil de gestion : là tu peux aller sur son
@@ -83,6 +84,8 @@ export default function Gestion() {
           </a>
         ))}
       </div>
+      {/* 036-030 : les cartes préparées par les agents n8n, à valider (drapeau boiteAgents baissé : ne rend rien). */}
+      <BoiteAgents />
       {GROUPES.map((g) => {
         const liste = ECRANS.filter((e) => e.groupe === g && (!e.drapeau || actif(e.drapeau)))
         return (

@@ -20,6 +20,7 @@ import { artisanParAncienSlug } from '@/lib/slugRedirect'
 import { PREFIXE_ADRESSE_PURGEE } from '@/lib/purgeComptes'
 import { MESSAGE_PUBLIC_SANS_PLATEFORME, plateformeOuverte } from '@/lib/plateformeAcces'
 import { lireOrigine } from '@/lib/canaux/reseaux'
+import { ecrireEvenement, evenementDemandeRecue } from '@/lib/evenements/ecrivain'
 
 // 025-18 : la route rédige la proposition de réponse (IA) avant de répondre au prospect. Sans ce plafond, la limite par
 // défaut de Vercel pouvait couper la fonction en pleine rédaction : crédit non rendu, artisan non prévenu, prospect qui
@@ -256,6 +257,14 @@ export async function POST(req: Request) {
       } catch (e) {
         console.warn('[leads] photos ignorées (upload échoué):', e)
       }
+    }
+
+    // 2quater) Le fait « demande reçue » pour le Cerveau de n8n (036-030) : l'app RANGE l'événement, n8n DÉCIDE (règle n8n-first).
+    // Idempotent (clé unique `demande_recue:<lead>`), sans texte libre, jamais bloquant : ecrireEvenement ne lève jamais et abandonne au
+    // bout de 1,5 s ; son échec n'est qu'une ligne de journal, la demande du prospect continue. Drapeau baissé : rien n'est écrit.
+    if (actif('systemeAgents')) {
+      const ev = await ecrireEvenement(supabaseAdmin, evenementDemandeRecue({ artisanId: artisan.id, leadId: lead.id, canal: 'formulaire', urgence: qualif.urgence, aMessage: !!message, photos: photoCount }))
+      if (!ev.ok) console.warn('[leads] événement demande_recue non rangé :', ev.raison)
     }
 
     // Sans plateforme (formulaire d'un site commandé seulement, voir plus haut) : la demande est gardée — elle s'affichera dans Messages avec la

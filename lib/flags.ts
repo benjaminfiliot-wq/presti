@@ -331,6 +331,11 @@ export const FLAGS = {
    *  jamais sur n8n) : la table `connexions` de 0193, deux secrets chiffrés au format v1 de lib/secretBox.ts, jamais lisibles par le
    *  navigateur. Baissé : route 404, rien à l'écran, aucun jeton stocké. On colle 0193, PUIS on lève, après le juge de 036-009 vert. */
   connexions: false,
+  /** 03/11/2026 — tâche 036-030 (audit 036-029 § 2). La boîte « À valider » des agents n8n dans l'outil de gestion (app/crm) et sa route
+   *  (app/api/assistant/agents) : les cartes que les départements préparent en palier « ombre » (assistant_actions, origine « agent »,
+   *  migration 0194). Valider ou refuser ne fait que noter la décision : rien n'est envoyé par l'app, sur aucune offre. Baissé : rien
+   *  dans le DOM, route 404. On colle 0194, PUIS on lève (sans ses colonnes, la route répond « indisponible »). */
+  boiteAgents: false,
 } as const
 
 export type Flag = keyof typeof FLAGS

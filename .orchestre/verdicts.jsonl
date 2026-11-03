@@ -1268,3 +1268,5 @@
 {"id":"036-028","verdict":"FAIL","ligne":"Error: ENOENT: no such file or directory, open 'C:\\Users\\benja\\Documents\\presti\\plans\\011-cadrage-01-11\\p6-signature\\audit-0311-conformite.md'","code":1,"date":"2026-11-03T17:18:34Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":876,"dossier":"fait"}
 {"id":"036-029","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T17:18:37Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":1070,"dossier":"fait"}
 {"id":"036-028","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T17:48:43Z","duree_s":0,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"036-030","verdict":"FAIL","ligne":"✗ B1 drapeau neuf boiteAgents, baissé","code":1,"date":"2026-11-03T18:00:19Z","duree_s":8,"agent":"claude-code","executant":"claude-code","lignes":4446,"dossier":"fait"}
+{"id":"036-030","verdict":"PASS","ligne":"","code":0,"date":"2026-11-03T18:19:59Z","duree_s":8,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}

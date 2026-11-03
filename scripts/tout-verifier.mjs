@@ -240,6 +240,7 @@ const SUITES = [
   { nom: 'Suite transverse du prompt 6 (036-012) — chaque test du § 1.7 porté par un juge à mutant, et chaque juge joué par ce lanceur', cmd: 'node', args: ['scripts/p6-transverse-qa.mjs'], cout: 'gratuit' },
   { nom: 'L’offre Entreprise sur le site (036-023, 036-026) — carte enrichie de #tarifs, page /entreprise, contact au motif entreprise : aucun prix, aucun « démo », aucun gain, aucun témoignage ni logo (mutants)', cmd: 'node', args: ['scripts/offre-entreprise-site-qa.mjs'], cout: 'gratuit' },
   { nom: 'Garde des sessions lancées par Orca (défaut E de 031-012) — ni commit, ni push, ni déploiement, ni migration, ni build partagé ; la session principale jamais bloquée (mutant)', cmd: 'node', args: ['scripts/garde-agents-orca-qa.mjs'], cout: 'gratuit' },
+  { nom: 'Branchement réel des agents n8n (036-030) — écrivain des événements jamais bloquant, lectures réelles du Cerveau, palier ombre, cartes sourcées dans assistant_actions, boîte « À valider » derrière boiteAgents (mutants)', cmd: 'node', args: ['scripts/branchement-reel-qa.mjs'], cout: 'gratuit' },
   // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
   { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },
   { nom: 'Persona : le ton réglé change vraiment la réponse', cmd: 'node', args: ['scripts/persona-e2e.mjs'], cout: 'ia' },
