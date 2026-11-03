@@ -102,6 +102,8 @@ const BRIEFS = {
   // 03/11 vers 14 h (prompt 6, outillage, tâche 036-017 ; Benj : « utilise Hermes et Orca avec l'API pour aider et aller plus vite ») :
   // une fiche connecteur par outil de OUTILLAGE.md, depuis la documentation officielle ; Claude Code tranche ensuite les portées et la voie O3
   'p6-fiches-connecteurs': { brief: 'plans/011-cadrage-01-11/briefs/p6-fiches-connecteurs.md', executant: 'hermes' },
+  // 03/11 vers 16 h 30 (Benj : « les SMS, tu le fais » ; dépôt public-apis donné) : comparatif des SMS gratuits pour la France, sans envoi
+  'p6-sms-gratuit': { brief: 'plans/011-cadrage-01-11/briefs/p6-sms-gratuit.md', executant: 'hermes' },
 }
 const TAILLE_MAX_BRIEF = 50_000
 const DOSSIER_BRIEFS = path.resolve(RACINE, 'plans', '011-cadrage-01-11', 'briefs')
