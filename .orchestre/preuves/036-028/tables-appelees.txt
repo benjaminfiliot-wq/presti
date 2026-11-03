@@ -1,0 +1,63 @@
+| articles_sous_seuil | NON | artisan-operations |
+| assistant_actions | oui | artisan-devis, artisan-facturation, artisan-suivi, artisan-apres, artisan-operations |
+| briefing_organisation | NON | artisan-direction |
+| chantiers | oui | artisan-apres, artisan-operations |
+| clients | oui | artisan-apres, artisan-operations |
+| couts_ia_jour | oui | artisan-direction |
+| entreprise_actions | NON | ent-accueil, ent-leads, ent-marketing, ent-ventes, ent-administratif, ent-apres-vente, ent-direction, ent-finance, ent-operations |
+| entreprise_attestations | NON | ent-administratif |
+| entreprise_autonomie | NON | ent-accueil, ent-leads, ent-marketing, ent-ventes, ent-administratif, ent-apres-vente, ent-direction, ent-finance, ent-operations |
+| entreprise_cartes | NON | ent-accueil, ent-leads, ent-marketing, ent-ventes, ent-administratif, ent-apres-vente, ent-direction, ent-finance, ent-operations |
+| entreprise_chantiers | NON | ent-finance, ent-operations |
+| entreprise_charte | NON | ent-marketing |
+| entreprise_chiffres | NON | ent-direction |
+| entreprise_configuration | NON | ent-accueil, ent-leads, ent-marketing, ent-ventes, ent-administratif, ent-apres-vente, ent-direction, ent-finance, ent-operations |
+| entreprise_contenus | NON | ent-leads, ent-marketing |
+| entreprise_contrats | NON | ent-apres-vente |
+| entreprise_conversations | NON | ent-accueil, ent-leads |
+| entreprise_cout_ia | NON | ent-direction |
+| entreprise_desinscrits | NON | ent-leads, ent-ventes |
+| entreprise_echeances | NON | ent-administratif |
+| entreprise_equipes | NON | ent-operations |
+| entreprise_evenements_canaux | NON | ent-accueil, ent-leads, ent-apres-vente |
+| entreprise_factures | NON | ent-finance |
+| entreprise_formats | NON | ent-marketing |
+| entreprise_grille | NON | ent-accueil |
+| entreprise_imports | NON | ent-operations |
+| entreprise_indicateurs | NON | ent-leads, ent-marketing, ent-direction, ent-finance |
+| entreprise_messages_recus | NON | ent-accueil, ent-leads |
+| entreprise_messages_sortants | NON | ent-accueil, ent-apres-vente |
+| entreprise_notes_interet | NON | ent-ventes |
+| entreprise_pieces_attendues | NON | ent-administratif |
+| entreprise_propositions | NON | ent-ventes |
+| entreprise_rapports | NON | ent-direction |
+| entreprise_relances | NON | ent-administratif, ent-apres-vente, ent-finance |
+| entreprise_tarifs | NON | ent-ventes, ent-finance |
+| evenements_metier | oui | artisan-apres, artisan-direction, artisan-operations |
+| journal_agents | NON | artisan-accueil-boite, artisan-accueil-leads, artisan-accueil-reponse |
+| messages | oui | artisan-suivi |
+| n8n_apercus_facture | NON | artisan-facturation |
+| n8n_config_agents | NON | artisan-devis, artisan-facturation, artisan-suivi |
+| n8n_demandes_a_chiffrer | NON | artisan-devis |
+| n8n_destinataires | NON | artisan-devis, artisan-facturation, artisan-suivi |
+| n8n_devis_lignes | NON | artisan-devis |
+| n8n_devis_prets | NON | artisan-devis |
+| n8n_factures_argent | NON | artisan-facturation |
+| n8n_relances_dues | NON | artisan-suivi |
+| n8n_reperes_prix | NON | artisan-devis |
+| n8n_tarifs_artisan | NON | artisan-devis |
+| opportunites | oui | artisan-accueil-reponse, artisan-facturation, artisan-suivi |
+| pilote_file | NON | artisan-accueil-envoi, artisan-accueil-reponse |
+| pilote_reglages | oui | artisan-apres, artisan-direction, artisan-operations |
+| rapport_hebdo_organisation | NON | artisan-direction |
+| relances_impayes | oui | artisan-facturation |
+| rendez_vous | NON | artisan-operations |
+| rpc/deposer_message | NON | artisan-accueil-boite, artisan-accueil-leads |
+| rpc/n8n_pdf_devis | NON | artisan-devis |
+| rpc/n8n_pdf_facture | NON | artisan-facturation |
+| v_accueil_destinataires | NON | artisan-accueil-reponse |
+| v_accueil_envois_dus | NON | artisan-accueil-envoi |
+| v_accueil_evenements | NON | artisan-accueil-reponse |
+| v_accueil_reglages | NON | artisan-accueil-boite, artisan-accueil-envoi, artisan-accueil-leads, artisan-accueil-reponse |
+
+61 tables/vues/fonctions appelées ; 52 absentes de toute migration

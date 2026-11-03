@@ -1,0 +1,15 @@
+| gabarit | lot | nœuds | Code | agents | agents-outils | outils d'agent | nœuds d'outil natifs | HTTP | logique | avec identifiant | webhook | actif |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| gabarit-artisan-accueil-boite | 036-013 | 13 | 4 | 0 | 0 | 0 | 3 | 3 | 3 | 0 | 0 | false |
+| gabarit-artisan-accueil-envoi | 036-013 | 17 | 2 | 0 | 0 | 0 | 7 | 4 | 4 | 0 | 5 | false |
+| gabarit-artisan-accueil-leads | 036-013 | 13 | 4 | 0 | 0 | 0 | 1 | 3 | 5 | 0 | 0 | false |
+| gabarit-artisan-accueil-reponse | 036-013 | 39 | 10 | 2 | 0 | 6 | 2 | 6 | 8 | 0 | 6 | false |
+| gabarit-artisan-apres | 036-015 | 30 | 6 | 1 | 0 | 2 | 5 | 7 | 7 | 0 | 3 | false |
+| gabarit-artisan-devis | 036-014 | 42 | 8 | 1 | 0 | 5 | 7 | 11 | 8 | 0 | 6 | false |
+| gabarit-artisan-direction | 036-015 | 34 | 5 | 2 | 0 | 4 | 6 | 5 | 8 | 0 | 5 | false |
+| gabarit-artisan-facturation | 036-014 | 41 | 7 | 1 | 0 | 4 | 10 | 8 | 9 | 0 | 6 | false |
+| gabarit-artisan-operations | 036-015 | 71 | 11 | 3 | 0 | 4 | 16 | 11 | 20 | 0 | 7 | false |
+| gabarit-artisan-suivi | 036-014 | 34 | 8 | 1 | 0 | 4 | 6 | 6 | 7 | 0 | 7 | false |
+
+TOTAL 10 gabarits, 334 nœuds ; familles {"outil-natif":63,"code":65,"logique":79,"http":64,"modele":12,"agent":11,"outil-agent":29,"parseur":11} ; 41 types distincts ; 19 outils distincts
+OUTILS converttofile, emailreadimap, emailsend, facebookgraphapi, gmail, googlebusinessprofile, googlecalendar, googledrive, googlesheets, microsoftexcel, microsoftonedrive, microsoftoutlook, microsoftteams, slack, stripe, telegram, toolworkflow, twilio, whatsapp
